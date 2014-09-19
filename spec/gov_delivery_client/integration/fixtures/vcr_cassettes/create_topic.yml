@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://gov-delivery%2Bstaging%40digital.cabinet-office.gov.uk:nottherealpassword@stage-api.govdelivery.com/api/account/UKGOVUK/topics.xml
+    body:
+      encoding: UTF-8
+      string: "\n        <topic>\n          <name>integration_test_topic 1411395282.037025</name>\n
+        \         <short-name>integration_test_topic 1411395282.037025</short-name>\n
+        \         <visibility>Unlisted</visibility>\n          <pagewatch-enabled
+        type=\"boolean\">false</pagewatch-enabled>\n          <rss-feed-url nil=\"true\"></rss-feed-url>\n
+        \         <rss-feed-title nil=\"true\"></rss-feed-title>\n          <rss-feed-description
+        nil=\"true\"></rss-feed-description>\n        </topic>\n      "
+    headers:
+      User-Agent:
+      - Faraday v0.9.0
+      Content-Type:
+      - application/xml
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 22 Sep 2014 14:14:51 GMT
+      Server:
+      - Apache/2.2.15 (CentOS)
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      P3p:
+      - CP="CAO DSP COR ADM DEV TAIo PSAo IVAo IVDo OUR DELo SAMo OTRo BUS UNI PRE",
+        policyref="/w3c/p3p.xml"
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      X-Request-Id:
+      - 3e4a2f6da5b7a4e5dc6ca92f9c2bc1bd
+      X-Runtime:
+      - '0.833198'
+      X-Rack-Cache:
+      - invalidate, pass
+      X-Powered-By:
+      - Phusion Passenger 4.0.48
+      Set-Cookie:
+      - _trunk_session=BAh7BzoUY3VycmVudF91c2VyX2lkaQLzSUkiD3Nlc3Npb25faWQGOgZFRkkiJTVlMTM3MGI0OGQzYzU3ODJkNzZlZjBlNGFkMWEyYjRkBjsGVA%3D%3D--c836f30588a269b9bf44929a9df4c08404cd1e89;
+        path=/; secure; HttpOnly
+      Status:
+      - 200 OK
+      X-Served-By:
+      - stg-evoweb2-ep.tops.gdi
+      Connection:
+      - close
+      Transfer-Encoding:
+      - chunked
+      Content-Type:
+      - application/xml; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <topic>
+          <to-param>UKGOVUK_908</to-param>
+          <topic-uri>/api/account/UKGOVUK/topics/UKGOVUK_908.xml</topic-uri>
+          <link rel="self" href="/api/account/UKGOVUK/topics/UKGOVUK_908"/>
+        </topic>
+    http_version: 
+  recorded_at: Mon, 22 Sep 2014 14:14:43 GMT
+recorded_with: VCR 2.9.3
