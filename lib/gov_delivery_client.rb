@@ -1,10 +1,13 @@
 require "faraday"
+require "nokogiri"
+require "ostruct"
 
 module GovDeliveryClient
   def self.create_client(config)
     ClientFactory.new(
       config.merge(
         http_client_factory: method(:http_client_factory),
+        response_parser: response_parser,
       )
     ).call
   end
@@ -21,6 +24,28 @@ module GovDeliveryClient
     end
   end
 
+  def self.response_parser
+    ResponseParser.new(
+      xml_parser: Nokogiri::XML.method(:parse),
+    )
+  end
+
+  class ResponseParser
+    def initialize(args)
+      @xml_parser = args.fetch(:xml_parser)
+    end
+
+    def call(response_body)
+      OpenStruct.new(
+        id: xml_parser.call(response_body).xpath("//to-param").text,
+      )
+    end
+
+  private
+
+    attr_reader :xml_parser
+  end
+
   class ClientFactory
     def initialize(config)
       @http_client_factory = config.fetch(:http_client_factory)
@@ -29,11 +54,13 @@ module GovDeliveryClient
       @account_code = config.fetch(:account_code)
       @username = config.fetch(:username)
       @password = config.fetch(:password)
+      @response_parser = config.fetch(:response_parser)
     end
 
     def call
       Client.new(
         http_client: http_client,
+        response_parser: response_parser,
       )
     end
 
@@ -45,6 +72,7 @@ module GovDeliveryClient
       :account_code,
       :username,
       :password,
+      :response_parser,
     )
 
     def http_client
@@ -63,18 +91,21 @@ module GovDeliveryClient
   class Client
     def initialize(dependencies = {})
       @http_client = dependencies.fetch(:http_client)
+      @response_parser = dependencies.fetch(:response_parser)
     end
 
     def create_topic(attributes)
-      http_client.post(
-        "topics.xml",
-        create_topic_xml(attributes),
-        content_type: "application/xml",
+      parse_topic_response(
+        http_client.post(
+          "topics.xml",
+          create_topic_xml(attributes),
+          content_type: "application/xml",
+        ).body
       )
     end
 
   private
-    attr_reader :http_client
+    attr_reader :http_client, :response_parser
 
     def create_topic_xml(attributes)
       # TODO Write a spec to prevent content injection
@@ -89,6 +120,10 @@ module GovDeliveryClient
           <rss-feed-description nil="true"></rss-feed-description>
         </topic>
       } % attributes
+    end
+
+    def parse_topic_response(response)
+      response_parser.call(response)
     end
   end
 end

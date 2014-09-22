@@ -24,7 +24,7 @@ private
   end
 
   def topic_id
-    @topic_id ||= gov_delivery_client.create_topic(name: topic_name)
+    @topic_id ||= gov_delivery_client.create_topic(name: topic_name).id
   end
 
   def topic_name

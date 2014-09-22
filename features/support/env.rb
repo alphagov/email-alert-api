@@ -1,5 +1,6 @@
 require "cucumber"
 require "rack/test"
+require "ostruct"
 
 require "pry"
 require "awesome_print"
@@ -24,7 +25,7 @@ class MockGovDeliveryClient
 
     @topics[topic_id] = attributes
 
-    topic_id
+    OpenStruct.new(id: topic_id)
   end
 
   def generate_topic_id
