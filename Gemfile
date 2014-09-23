@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "sinatra", "1.4.5"
 gem "faraday"
+gem "rake", "~> 10.3"
 
 group :test, :development do
   gem "pry"

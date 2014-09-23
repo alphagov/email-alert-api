@@ -1,3 +1,4 @@
+require "pathname"
 ROOT = Pathname.new(File.dirname(__FILE__))
 
 $LOAD_PATH.push(ROOT)

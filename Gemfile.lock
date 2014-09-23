@@ -36,6 +36,7 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
+    rake (10.3.2)
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
       rspec-expectations (~> 3.0.0)
@@ -70,6 +71,7 @@ DEPENDENCIES
   faraday
   pry
   rack-test (~> 0.6.2)
+  rake (~> 10.3)
   rspec (= 3.0.0)
   sinatra (= 1.4.5)
   vcr
