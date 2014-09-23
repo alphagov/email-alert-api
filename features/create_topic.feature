@@ -21,3 +21,13 @@ Feature: Create a topic
         "subscription_url": "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=ABC_1234"
       }
       """
+
+  Scenario: Topic already exists
+    Given a topic already exists
+    When I POST to "/topics" with duplicate tag set
+    Then I get a "422" response with the following body
+      """
+        {
+          "error": "Topic with that tag set already exists"
+        }
+      """

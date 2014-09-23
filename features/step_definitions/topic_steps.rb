@@ -18,3 +18,20 @@ Then(/^a topic is created$/) do
   #   </topic>
   # }
 end
+
+Given(/^a topic already exists$/) do
+  APP.create_topic(
+    {
+      "tags" => {
+        "document_type" => [ "cma_case" ],
+        "case_type" => [ "markets", "mergers" ],
+        "market_sector" => [ "energy" ],
+      }
+    },
+    NullContext.new,
+  )
+end
+
+When(/^I POST to "(.*?)" with duplicate tag set$/) do |arg1|
+  pending # express the regexp above with the code you wish you had
+end
