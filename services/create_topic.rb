@@ -6,7 +6,7 @@ class CreateTopic
   end
 
   def call
-    context.success(
+    context.created(
       subscription_url: topic_link,
     )
   end

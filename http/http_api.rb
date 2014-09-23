@@ -16,6 +16,12 @@ class HTTPAPI < Sinatra::Application
     self
   end
 
+  def created(response)
+    content_type(:json)
+    status(201)
+    body(JSON.dump(response))
+  end
+
   def success(response)
     content_type(:json)
     status(200)

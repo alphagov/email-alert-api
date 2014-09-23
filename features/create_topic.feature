@@ -15,7 +15,7 @@ Feature: Create a topic
       }
       """
     Then a topic is created
-    And I get the response
+    And I get a "201" response with the following body
       """
       {
         "subscription_url": "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=ABC_1234"
