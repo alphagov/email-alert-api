@@ -68,7 +68,7 @@ DEPENDENCIES
   awesome_print
   cucumber (~> 1.3)
   equivalent-xml (= 0.5.1)
-  faraday
+  faraday (= 0.9.0)
   pry
   rack-test (~> 0.6.2)
   rake (~> 10.3)
