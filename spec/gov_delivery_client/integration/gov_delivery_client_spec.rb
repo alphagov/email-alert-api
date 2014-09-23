@@ -17,6 +17,7 @@ RSpec.describe GovDeliveryClient do
       account_code: "UKGOVUK",
       username: "gov-delivery+staging@digital.cabinet-office.gov.uk",
       password: "nottherealpassword",
+      subscription_link_template: "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=%{topic_id}",
     )
   }
 
@@ -36,5 +37,6 @@ RSpec.describe GovDeliveryClient do
     end
 
     expect(topic.id).to eq("UKGOVUK_908")
+    expect(topic.link).to eq("https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=UKGOVUK_908")
   end
 end

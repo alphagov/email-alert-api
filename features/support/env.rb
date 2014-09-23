@@ -25,7 +25,10 @@ class MockGovDeliveryClient
 
     @topics[topic_id] = attributes
 
-    OpenStruct.new(id: topic_id)
+    OpenStruct.new(
+      id: topic_id,
+      link: "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=ABC_1234",
+    )
   end
 
   def generate_topic_id

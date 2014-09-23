@@ -7,7 +7,7 @@ module GovDeliveryClient
     ClientFactory.new(
       config.merge(
         http_client_factory: method(:http_client_factory),
-        response_parser: response_parser,
+        response_parser: response_parser(config.fetch(:subscription_link_template)),
       )
     ).call
   end
@@ -24,26 +24,49 @@ module GovDeliveryClient
     end
   end
 
-  def self.response_parser
-    ResponseParser.new(
-      xml_parser: Nokogiri::XML.method(:parse),
-    )
+  def self.response_parser(subscription_link_template)
+    ->(response_body) {
+      ResponseParser.new(
+        xml_parser: Nokogiri::XML.method(:parse),
+        response_body: response_body,
+        subscription_link_template: subscription_link_template,
+      ).call
+    }
   end
 
   class ResponseParser
     def initialize(args)
       @xml_parser = args.fetch(:xml_parser)
+      @response_body = args.fetch(:response_body)
+      @subscription_link_template = args.fetch(:subscription_link_template)
     end
 
-    def call(response_body)
+    def call
       OpenStruct.new(
-        id: xml_parser.call(response_body).xpath("//to-param").text,
+        id: id,
+        link: link,
       )
     end
 
   private
 
-    attr_reader :xml_parser
+    attr_reader(
+      :xml_parser,
+      :response_body,
+      :subscription_link_template,
+    )
+
+    def xml_tree
+      @xml_tree ||= xml_parser.call(response_body)
+    end
+
+    def id
+      xml_tree.xpath("//to-param").text
+    end
+
+    def link
+      subscription_link_template % { topic_id: id }
+    end
   end
 
   class ClientFactory
@@ -100,7 +123,7 @@ module GovDeliveryClient
           "topics.xml",
           create_topic_xml(attributes),
           content_type: "application/xml",
-        ).body
+        )
       )
     end
 
@@ -123,7 +146,7 @@ module GovDeliveryClient
     end
 
     def parse_topic_response(response)
-      response_parser.call(response)
+      response_parser.call(response.body)
     end
   end
 end

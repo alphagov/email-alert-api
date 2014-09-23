@@ -7,7 +7,7 @@ class CreateTopic
 
   def call
     context.success(
-      subscription_url: subscription_url,
+      subscription_url: topic_link,
     )
   end
 
@@ -15,16 +15,12 @@ private
 
   attr_reader :topic_attributes, :gov_delivery_client, :context
 
-  def subscription_url
-    subscription_url_template % { topic_id: topic_id }
+  def topic_link
+    topic.link
   end
 
-  def subscription_url_template
-    GOVDELIVERY_CREDENTIALS.fetch(:signup_form)
-  end
-
-  def topic_id
-    @topic_id ||= gov_delivery_client.create_topic(name: topic_name).id
+  def topic
+    @topic ||= gov_delivery_client.create_topic(name: topic_name)
   end
 
   def topic_name

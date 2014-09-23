@@ -12,5 +12,5 @@ GOVDELIVERY_CREDENTIALS = {
   account_code: "UKGOVUK",
   protocol: "https",
   hostname: "stage-api.govdelivery.com",
-  signup_form: "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=%{topic_id}",
+  subscription_link_template: "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=%{topic_id}",
 }
