@@ -20,18 +20,29 @@ Then(/^a topic is created$/) do
 end
 
 Given(/^a topic already exists$/) do
+  @tag_set = {
+    "document_type" => [ "cma_case" ],
+    "case_type" => [ "markets", "mergers" ],
+    "market_sector" => [ "energy" ],
+  }
+
+  params = {
+    "title" => "CMA cases of type Markets and Mergers and about Energy",
+    "tags" => @tag_set,
+  }
+
   APP.create_topic(
-    {
-      "tags" => {
-        "document_type" => [ "cma_case" ],
-        "case_type" => [ "markets", "mergers" ],
-        "market_sector" => [ "energy" ],
-      }
-    },
-    NullContext.new,
+    NullContext.new(
+      params: params,
+    )
   )
 end
 
-When(/^I POST to "(.*?)" with duplicate tag set$/) do |arg1|
-  pending # express the regexp above with the code you wish you had
+When(/^I POST to "(.*?)" with duplicate tag set$/) do |path|
+  params = {
+    "title" => "Any title",
+    "tags" => @tag_set,
+  }
+
+  @response = post(path, params)
 end

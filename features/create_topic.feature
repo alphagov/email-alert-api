@@ -18,7 +18,16 @@ Feature: Create a topic
     And I get a "201" response with the following body
       """
       {
-        "subscription_url": "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=ABC_1234"
+        "topic": {
+          "title": "CMA cases of type Markets and Mergers and about Energy",
+          "subscription_url": "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=ABC_1234",
+          "gov_delivery_id": "ABC_1234",
+          "tags": {
+            "document_type": [ "cma_case" ],
+            "case_type": [ "markets", "mergers" ],
+            "market_sector": [ "energy" ]
+          }
+        }
       }
       """
 

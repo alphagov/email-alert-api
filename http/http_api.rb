@@ -1,9 +1,13 @@
 require "sinatra"
 
-# TODO Make this work
+# TODO: Disable ShowExceptions in a less gross way, do we care about development mode?
 Sinatra::ShowExceptions.class_eval do
   def prefers_plain_text?(_env)
     true
+  end
+
+  def call(env)
+    @app.call(env)
   end
 end
 
