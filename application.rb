@@ -3,7 +3,7 @@ require "core_ext"
 require "create_topic"
 
 class Application
-  def initialize(gov_delivery_client:)
+  def initialize(gov_delivery_client: default_gov_delivery_client)
     @gov_delivery_client = gov_delivery_client
   end
 
@@ -18,4 +18,8 @@ class Application
   private
 
   attr_reader :gov_delivery_client
+
+  def default_gov_delivery_client
+    GovDeliveryClient.create_client(GOVDELIVERY_CREDENTIALS)
+  end
 end

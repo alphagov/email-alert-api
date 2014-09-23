@@ -20,7 +20,7 @@ private
   end
 
   def subscription_url_template
-    GOVDELIVERY_SIGNUP_FORM
+    GOVDELIVERY_CREDENTIALS.fetch(:signup_form)
   end
 
   def topic_id
