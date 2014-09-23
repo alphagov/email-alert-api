@@ -1,7 +1,8 @@
 require_relative "configuration"
 require "core_ext"
 require "create_topic"
-require "unique_topic_filter"
+require "unique_tag_set_filter"
+require "topic_persistence_aspect"
 
 class Application
   def initialize(gov_delivery_client: default_gov_delivery_client)
@@ -9,11 +10,11 @@ class Application
   end
 
   def create_topic(context)
-    TopicPersistenceAspect.new(
-      context: context,
-      repo: topics,
-      service: create_topic_service,
-    ).call
+    unique_tag_set_filter(
+      topic_persistence_aspect(
+        create_topic_service
+      )
+    ).call(context)
   end
 
   private
@@ -24,6 +25,27 @@ class Application
     def to_json(*args, &block)
       to_h.to_json(*args, &block)
     end
+  end
+
+  def unique_tag_set_filter(service)
+    ->(context) {
+      UniqueTagSetFilter.new(
+        repo: topics_repository,
+        tags: context.params.fetch("tags"),
+        context: context,
+        service: service,
+      ).call
+    }
+  end
+
+  def topic_persistence_aspect(service)
+    ->(context) {
+      TopicPersistenceAspect.new(
+        context: context,
+        repo: topics_repository,
+        service: service,
+      ).call
+    }
   end
 
   def create_topic_service
@@ -55,7 +77,9 @@ class Application
     end
 
     def find_by_tags(tags)
-      # go get some stuff out
+      storage.select { |_id, topic|
+        topic.tags == tags
+      }
     end
 
   private

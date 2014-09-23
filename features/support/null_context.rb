@@ -7,4 +7,7 @@ class NullContext
 
   def created(*args)
   end
+
+  def unprocessible(*args)
+  end
 end

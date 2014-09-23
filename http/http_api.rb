@@ -32,6 +32,12 @@ class HTTPAPI < Sinatra::Application
     body(JSON.dump(response))
   end
 
+  def unprocessible(response)
+    content_type(:json)
+    status(422)
+    body(JSON.dump(response))
+  end
+
   def app
     APP
   end

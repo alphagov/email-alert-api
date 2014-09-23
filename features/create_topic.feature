@@ -14,8 +14,7 @@ Feature: Create a topic
         }
       }
       """
-    Then a topic is created
-    And I get a "201" response with the following body
+    Then I get a "201" response with the following body
       """
       {
         "topic": {
@@ -30,6 +29,7 @@ Feature: Create a topic
         }
       }
       """
+    And a topic is created
 
   Scenario: Topic already exists
     Given a topic already exists
@@ -37,6 +37,7 @@ Feature: Create a topic
     Then I get a "422" response with the following body
       """
         {
-          "error": "Topic with that tag set already exists"
+          "error": "A topic with that tag set already exists"
         }
       """
+    And a topic has not been created

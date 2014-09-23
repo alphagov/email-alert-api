@@ -46,3 +46,7 @@ When(/^I POST to "(.*?)" with duplicate tag set$/) do |path|
 
   @response = post(path, params)
 end
+
+Then(/^a topic has not been created$/) do
+  expect(GOV_DELIVERY_API_CLIENT.created_topics.size).to eq(1)
+end
