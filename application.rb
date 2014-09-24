@@ -5,7 +5,11 @@ require "unique_tag_set_filter"
 require "topic_persistence_aspect"
 
 class Application
-  def initialize(gov_delivery_client: default_gov_delivery_client)
+  def initialize(
+    storage_adapter: default_storage_adapter,
+    gov_delivery_client: default_gov_delivery_client
+  )
+    @storage_adapter = storage_adapter
     @gov_delivery_client = gov_delivery_client
   end
 
@@ -19,7 +23,10 @@ class Application
 
   private
 
-  attr_reader :gov_delivery_client
+  attr_reader(
+    :storage_adapter,
+    :gov_delivery_client,
+  )
 
   class Thing < OpenStruct
     def to_json(*args, &block)
@@ -63,8 +70,12 @@ class Application
     GovDeliveryClient.create_client(GOVDELIVERY_CREDENTIALS)
   end
 
+  def default_storage_adapter
+    {}
+  end
+
   def topics_repository
-    @topics_repository ||= MemoryRepository.new
+    @topics_repository ||= MemoryRepository.new(storage_adapter)
   end
 
   require "forwardable"

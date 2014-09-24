@@ -37,12 +37,15 @@ class MockGovDeliveryClient
 end
 
 GOV_DELIVERY_API_CLIENT = MockGovDeliveryClient.new
+STORAGE_ADAPTER = {}
 APP = Application.new(
+  storage_adapter: STORAGE_ADAPTER,
   gov_delivery_client: GOV_DELIVERY_API_CLIENT,
 )
 
 After do
   GOV_DELIVERY_API_CLIENT.reset!
+  STORAGE_ADAPTER.clear
 end
 
 # Sinatra stuff
