@@ -10,6 +10,8 @@ require_relative "../../application"
 class MockGovDeliveryClient
   def initialize
     reset!
+    @id_start = 1234
+    @insert_count = 0
   end
 
   def created_topics
@@ -24,15 +26,23 @@ class MockGovDeliveryClient
     topic_id = generate_topic_id
 
     @topics[topic_id] = attributes
+    @insert_count += 1
 
     OpenStruct.new(
       id: topic_id,
-      link: "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=ABC_1234",
+      link: "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=#{topic_id}",
     )
   end
 
   def generate_topic_id
-    "ABC_1234"
+    [
+      "UKGOVUK",
+      next_id,
+    ].join("_")
+  end
+
+  def next_id
+    @id_start + @insert_count
   end
 end
 
