@@ -3,8 +3,10 @@ ROOT = Pathname.new(File.dirname(__FILE__))
 
 $LOAD_PATH.push(ROOT)
 $LOAD_PATH.push(ROOT.join("services"))
+$LOAD_PATH.push(ROOT.join("repositories"))
 $LOAD_PATH.push(ROOT.join("lib"))
 $LOAD_PATH.push(ROOT.join("http"))
+$LOAD_PATH.push(ROOT.join("persistence"))
 
 GOVDELIVERY_CREDENTIALS = {
   username: "gov-delivery+staging@digital.cabinet-office.gov.uk",

@@ -47,7 +47,29 @@ class MockGovDeliveryClient
 end
 
 GOV_DELIVERY_API_CLIENT = MockGovDeliveryClient.new
-STORAGE_ADAPTER = {}
+
+require "forwardable"
+class MemoryStorageAdapter
+  extend Forwardable
+  def_delegators :storage, :store, :fetch
+
+  def find_by(field, value)
+    storage.select { |_id, data|
+      data.fetch(field, nil) == value
+    }
+  end
+
+  def storage
+    @storage ||= {}
+  end
+
+  def clear
+    @storage = {}
+  end
+end
+
+STORAGE_ADAPTER = MemoryStorageAdapter.new
+
 APP = Application.new(
   storage_adapter: STORAGE_ADAPTER,
   gov_delivery_client: GOV_DELIVERY_API_CLIENT,

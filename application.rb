@@ -1,10 +1,11 @@
 require_relative "configuration"
 require "core_ext"
 require "create_topic"
-require "processable_input_filter"
-require "unique_tag_set_filter"
-require "topic_persistence_aspect"
 require "ostruct"
+require "processable_input_filter"
+require "topic_persistence_aspect"
+require "topic_repository"
+require "unique_tag_set_filter"
 
 class Application
   def initialize(
@@ -90,27 +91,9 @@ class Application
   end
 
   def topics_repository
-    @topics_repository ||= MemoryRepository.new(storage_adapter)
-  end
-
-  require "forwardable"
-  class MemoryRepository
-    extend Forwardable
-    def_delegators :@storage, :store, :fetch
-
-    def initialize(storage = {})
-      @storage = storage
-    end
-
-    def find_by_tags(tags)
-      storage.select { |_id, topic|
-        topic.tags == tags
-      }
-    end
-
-  private
-    attr_reader(
-      :storage,
+    @topics_repository ||= TopicRepository.new(
+      adapter: storage_adapter,
+      factory: Thing.method(:new),
     )
   end
 end
