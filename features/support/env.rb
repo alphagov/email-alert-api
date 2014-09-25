@@ -48,14 +48,14 @@ end
 
 GOV_DELIVERY_API_CLIENT = MockGovDeliveryClient.new
 
-DB_URI = "postgres://localhost/email_alert_api_test?username=stephenbest"
+DB_URI = "postgres://localhost/email_alert_api_test?username=email_alert_api_user"
 
 require "forwardable"
 class MemoryStorageAdapter
   extend Forwardable
   def_delegators :storage, :store, :fetch
 
-  def find_by(field, value)
+  def find_by(namespace, field, value)
     storage.select { |_id, data|
       data.fetch(field, nil) == value
     }
@@ -70,7 +70,7 @@ class MemoryStorageAdapter
   end
 end
 
-STORAGE_ADAPTER = MemoryStorageAdapter.new
+STORAGE_ADAPTER = PostgresAdapter.new(uri: DB_URI)
 
 APP = Application.new(
   storage_adapter: STORAGE_ADAPTER,

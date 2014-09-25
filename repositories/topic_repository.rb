@@ -11,12 +11,14 @@ class TopicRepository
   end
 
   def store(key, entity)
-    adapter.store(key, dump(entity))
+    attrs = dump(entity).except(:gov_delivery_id)
+
+    adapter.store(namespace, key, attrs)
   end
 
   def find_by_tags(tags)
     adapter
-      .find_by(:tags, tags)
+      .find_by(namespace, :tags, tags)
       .map { |_id, topic_data|
         load(topic_data)
       }
@@ -28,13 +30,15 @@ private
     :factory,
   )
 
-  def load(datum)
-    factory.call(
-      datum
-    )
+  def load(data)
+    factory.call(data)
   end
 
   def dump(entity)
     entity.to_h
+  end
+
+  def namespace
+    :topics
   end
 end

@@ -4,6 +4,7 @@ require "create_topic"
 require "ostruct"
 require "processable_input_filter"
 require "topic_persistence_aspect"
+require "postgres_adapter"
 require "topic_repository"
 require "unique_tag_set_filter"
 
@@ -33,7 +34,7 @@ class Application
     :gov_delivery_client,
   )
 
-  class Thing < OpenStruct
+  class Topic < OpenStruct
     def to_json(*args, &block)
       to_h.to_json(*args, &block)
     end
@@ -77,7 +78,7 @@ class Application
         context: context,
         topic_attributes: context.params.slice("title", "tags"),
         gov_delivery_client: gov_delivery_client,
-        topic_factory: Thing.method(:new),
+        topic_factory: Topic.method(:new),
       ).call
     }
   end
@@ -87,13 +88,15 @@ class Application
   end
 
   def default_storage_adapter
-    {}
+    PostgresAdapter.new(
+      uri: DB_URI,
+    )
   end
 
   def topics_repository
     @topics_repository ||= TopicRepository.new(
       adapter: storage_adapter,
-      factory: Thing.method(:new),
+      factory: Topic.method(:new),
     )
   end
 end
