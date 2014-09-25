@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require_relative "../config/env"
+
+migration_name = ARGV.fetch(0) {
+  puts "You must provide a name for the migration"
+  Process.exit 1
+}
+template = DATA.read
+migration_dir = DB_MIGRATIONS_DIR
+
+time_format = "%Y%m%d%H%M%S"
+version = Time.now.strftime(time_format)
+file_name = "#{version}_#{migration_name}.rb"
+
+file_path = File.join(migration_dir, file_name)
+
+File.open(file_path, "w") do |f|
+  f.write(template)
+end
+
+puts "New migration generated: \n#{file_path}"
+
+__END__
+Sequel.migration do
+  change do
+    # Your migration here e.g.
+    #
+    # create_table(:artists) do
+    #   primary_key :id
+    #   String :name, :null=>false
+    # end
+    #
+    # add_column :artists, :location, String
+  end
+end

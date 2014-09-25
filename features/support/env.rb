@@ -48,6 +48,8 @@ end
 
 GOV_DELIVERY_API_CLIENT = MockGovDeliveryClient.new
 
+DB_URI = "postgres://localhost/email_alert_api_test?username=stephenbest"
+
 require "forwardable"
 class MemoryStorageAdapter
   extend Forwardable
