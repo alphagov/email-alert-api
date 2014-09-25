@@ -1,7 +1,7 @@
 class TopicRepository
   def initialize(adapter:, factory:)
     @adapter = adapter
-    @factory = factory
+    @mapper = Mapper.new(factory)
   end
 
   def fetch(key)
@@ -27,18 +27,36 @@ class TopicRepository
 private
   attr_reader(
     :adapter,
-    :factory,
+    :mapper,
   )
 
   def load(data)
-    factory.call(data)
+    mapper.load(data)
   end
 
   def dump(entity)
-    entity.to_h
+    mapper.dump(entity)
   end
 
   def namespace
     :topics
+  end
+
+  class Mapper
+    def initialize(factory)
+      @factory = factory
+    end
+
+    def dump(topic)
+      topic.to_h
+    end
+
+    def load(data)
+      factory.call(data)
+    end
+
+  private
+
+    attr_reader :factory
   end
 end
