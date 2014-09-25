@@ -1,4 +1,4 @@
-require_relative "configuration"
+require_relative "config/env"
 require "core_ext"
 require "create_topic"
 require "ostruct"

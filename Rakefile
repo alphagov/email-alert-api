@@ -1,4 +1,4 @@
-require_relative "configuration"
+require_relative "config/env"
 
 Dir[File.join(File.dirname(__FILE__), 'lib/tasks/*.rake')].each { |file| load file }
 
