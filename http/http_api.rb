@@ -1,4 +1,11 @@
 require "sinatra"
+require "airbrake"
+require "config/initializers/airbrake"
+
+configure do
+  Airbrake.configuration.ignore << "Sinatra::NotFound"
+  use Airbrake::Sinatra
+end
 
 # TODO: Disable ShowExceptions in a less gross way, do we care about development mode?
 Sinatra::ShowExceptions.class_eval do
