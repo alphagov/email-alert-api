@@ -31,11 +31,7 @@ Given(/^a topic already exists$/) do
     "tags" => @tag_set,
   }
 
-  APP.create_topic(
-    NullContext.new(
-      params: params,
-    )
-  )
+  create_topic(params)
 end
 
 When(/^I POST to "(.*?)" with duplicate tag set$/) do |path|

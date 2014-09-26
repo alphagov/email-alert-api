@@ -5,9 +5,11 @@ class NullContext
 
   attr_reader :params
 
-  def created(*args)
+  def created(response)
+    response
   end
 
-  def unprocessable(*args)
+  def unprocessable(response)
+    response
   end
 end
