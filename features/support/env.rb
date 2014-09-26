@@ -11,7 +11,9 @@ $LOAD_PATH.push(ROOT.join("features/support"))
 # Put together an application instace with mock things
 
 require "mock_gov_delivery_client"
+require "deterministic_uuid_generator"
 
+UUID_GENERATOR = DeterministicUUIDGenerator.new
 GOV_DELIVERY_API_CLIENT = MockGovDeliveryClient.new
 
 STORAGE_ADAPTER = PostgresAdapter.new(
@@ -20,6 +22,7 @@ STORAGE_ADAPTER = PostgresAdapter.new(
 
 APP = Application.new(
   config: CONFIG,
+  uuid_generator: UUID_GENERATOR,
   storage_adapter: STORAGE_ADAPTER,
   gov_delivery_client: GOV_DELIVERY_API_CLIENT,
 )

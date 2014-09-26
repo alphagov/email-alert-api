@@ -27,7 +27,7 @@ private
   def notify_topics
     topics.each do |topic|
       gov_delivery_client.notify_topic(
-        topic.id,
+        topic.gov_delivery_id,
         subject,
         body,
       )

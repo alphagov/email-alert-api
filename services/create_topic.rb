@@ -1,8 +1,8 @@
 class CreateTopic
-  def initialize(topic_attributes:, gov_delivery_client:, topic_factory:, context:)
+  def initialize(topic_attributes:, gov_delivery_client:, topic_builder:, context:)
     @topic_attributes = topic_attributes
     @gov_delivery_client = gov_delivery_client
-    @topic_factory = topic_factory
+    @topic_builder = topic_builder
     @context = context
   end
 
@@ -14,13 +14,13 @@ private
 
   attr_reader(
     :topic_attributes,
-    :topic_factory,
+    :topic_builder,
     :gov_delivery_client,
     :context,
   )
 
   def new_topic
-    topic_factory.call(topic_data)
+    topic_builder.call(topic_data)
   end
 
   def topic_data

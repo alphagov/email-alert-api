@@ -11,9 +11,7 @@ class TopicRepository
   end
 
   def store(key, entity)
-    attrs = dump(entity).except(:gov_delivery_id)
-
-    adapter.store(namespace, key, attrs)
+    adapter.store(namespace, key, dump(entity))
   end
 
   # TODO: find_by_exact_tags?

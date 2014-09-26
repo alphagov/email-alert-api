@@ -15,11 +15,13 @@ class Application
   def initialize(
     config:,
     storage_adapter: default_storage_adapter,
-    gov_delivery_client: default_gov_delivery_client
+    gov_delivery_client: default_gov_delivery_client,
+    uuid_generator: default_uuid_generator
   )
     @config = config
     @storage_adapter = storage_adapter
     @gov_delivery_client = gov_delivery_client
+    @uuid_generator = uuid_generator
   end
 
   def create_topic(context)
@@ -42,6 +44,7 @@ class Application
     :config,
     :storage_adapter,
     :gov_delivery_client,
+    :uuid_generator,
   )
 
   class Topic < OpenStruct
@@ -88,7 +91,7 @@ class Application
         context: context,
         topic_attributes: context.params.slice("title", "tags"),
         gov_delivery_client: gov_delivery_client,
-        topic_factory: Topic.method(:new),
+        topic_builder: topic_builder,
       ).call
     }
   end
@@ -116,10 +119,28 @@ class Application
     )
   end
 
+  def default_uuid_generator
+    SecureRandom.method(:uuid)
+  end
+
   def topics_repository
     @topics_repository ||= TopicRepository.new(
       adapter: storage_adapter,
-      factory: Topic.method(:new),
+      factory: topic_factory,
     )
+  end
+
+  def topic_builder
+    ->(attributes) {
+      topic_factory.call(
+        attributes.merge(
+          id: uuid_generator.call,
+        )
+      )
+    }
+  end
+
+  def topic_factory
+    Topic.method(:new)
   end
 end

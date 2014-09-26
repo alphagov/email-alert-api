@@ -42,25 +42,37 @@ private
     db.tables - [:schema_migrations]
   end
 
-  def schema(namespace)
-    Schema.new(db.schema(namespace))
+  def schema(table_name)
+    Schema.new(table_name, db.schema(table_name))
   end
 
   class Schema
-    def initialize(column_data)
+    def initialize(table_name, column_data)
+      @table_name = table_name
       @column_data = column_data
     end
 
     def column_type(column_name)
-      field_attributes(column_name).fetch(:db_type)
+      column_attributes(column_name).fetch(:db_type)
     end
 
   private
 
-    attr_reader :column_data
+    attr_reader :table_name, :column_data
 
-    def field_attributes(field)
-      column_data.select { |key, data| key == field }.flatten.last
+    class ColumnNotFound < StandardError
+      def initialize(table_name, column)
+        @message = "Table `#{table_name}` does not have column `#{column}`"
+      end
+
+      attr_reader :message
+    end
+
+    def column_attributes(desired_column_name)
+      column_data
+        .select { |name, _data| name == desired_column_name }
+        .fetch(0) { raise ColumnNotFound.new(table_name, desired_column_name) }
+        .fetch(1)
     end
   end
 
