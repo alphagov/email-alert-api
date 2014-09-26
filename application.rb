@@ -3,6 +3,7 @@ require "core_ext"
 require "create_topic"
 require "unique_tag_set_filter"
 require "topic_persistence_aspect"
+require "ostruct"
 
 class Application
   def initialize(
