@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://gov-delivery%2Bstaging%40digital.cabinet-office.gov.uk:nottherealpassword@stage-api.govdelivery.com/api/account/UKGOVUK/bulletins/send_now.xml
+    body:
+      encoding: UTF-8
+      string: "\n        <bulletin>\n          <subject>Integration test subject</subject>\n
+        \         <body><![CDATA[Integration test message body]]></body>\n          <topics
+        type='array'>\n            \n          <topic>\n            <code>UKGOVUK_935</code>\n
+        \         </topic>\n      \n          </topics>\n        </bulletin>\n       "
+    headers:
+      User-Agent:
+      - Faraday v0.9.0
+      Content-Type:
+      - application/xml
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 26 Sep 2014 15:25:49 GMT
+      Server:
+      - Apache/2.2.15 (CentOS)
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      P3p:
+      - CP="CAO DSP COR ADM DEV TAIo PSAo IVAo IVDo OUR DELo SAMo OTRo BUS UNI PRE",
+        policyref="/w3c/p3p.xml"
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      X-Request-Id:
+      - cd8e75ff37d12623278889f00aed77dd
+      X-Runtime:
+      - '0.876474'
+      X-Rack-Cache:
+      - invalidate, pass
+      X-Powered-By:
+      - Phusion Passenger 4.0.48
+      Set-Cookie:
+      - _trunk_session=BAh7BzoUY3VycmVudF91c2VyX2lkaQLzSUkiD3Nlc3Npb25faWQGOgZFRkkiJTU5Y2E5NzQ2NGUyYjJhNWI1ZDJmZmFlY2NjODBlOTZjBjsGVA%3D%3D--1d621df69ba95544903b5cbdaae5bbf6f31784f9;
+        path=/; secure; HttpOnly
+      Status:
+      - 200 OK
+      X-Served-By:
+      - stg-evoweb2-ep.tops.gdi
+      Connection:
+      - close
+      Transfer-Encoding:
+      - chunked
+      Content-Type:
+      - application/xml; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <bulletin>
+          <to-param>7895129</to-param>
+          <bulletin-uri>/api/account/UKGOVUK/bulletins/7895129.xml</bulletin-uri>
+          <link rel="self" href="/api/account/UKGOVUK/bulletins/7895129"/>
+          <total-subscribers>2</total-subscribers>
+          <link rel="details" href="/api/account/UKGOVUK/bulletin_details/7895129"/>
+        </bulletin>
+    http_version: 
+  recorded_at: Fri, 26 Sep 2014 15:25:51 GMT
+recorded_with: VCR 2.9.3

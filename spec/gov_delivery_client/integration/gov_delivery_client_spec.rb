@@ -39,4 +39,23 @@ RSpec.describe GovDeliveryClient do
     expect(topic.id).to eq("UKGOVUK_908")
     expect(topic.link).to eq("https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=UKGOVUK_908")
   end
+
+  it "sends a bulletin" do
+    # When re-recording this response you must use an existing Topic which must
+    # have at least one subscriber. You can do this in the staging admin
+    # interface https://stage-admin.govdelivery.com
+
+    topic_id = "UKGOVUK_935"
+    response = nil
+
+    VCR.use_cassette("notify_topics") do
+      response = client.notify_topics(
+        [topic_id],
+        "Integration test subject",
+        "Integration test message body",
+      )
+    end
+
+    expect(response.status).to eq(200)
+  end
 end

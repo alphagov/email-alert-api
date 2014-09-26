@@ -119,16 +119,32 @@ module GovDeliveryClient
 
     def create_topic(attributes)
       parse_topic_response(
-        http_client.post(
+        post_xml(
           "topics.xml",
           create_topic_xml(attributes),
-          content_type: "application/xml",
+        )
+      )
+    end
+
+    def notify_topics(topic_ids, subject, body)
+      parse_topic_response(
+        post_xml(
+          "bulletins/send_now.xml",
+          send_bulletin_xml(topic_ids, subject, body),
         )
       )
     end
 
   private
     attr_reader :http_client, :response_parser
+
+    def post_xml(path, params)
+      http_client.post(
+        path,
+        params,
+        content_type: "application/xml",
+      )
+    end
 
     def create_topic_xml(attributes)
       # TODO Write a spec to prevent content injection
@@ -143,6 +159,30 @@ module GovDeliveryClient
           <rss-feed-description nil="true"></rss-feed-description>
         </topic>
       } % attributes
+    end
+
+    def send_bulletin_xml(topic_ids, subject, body)
+      topics = topic_ids
+        .map { |id| topic_template % { id: id } }
+        .join("\n")
+
+      %{
+        <bulletin>
+          <subject>%{subject}</subject>
+          <body><![CDATA[%{body}]]></body>
+          <topics type='array'>
+            %{topics}
+          </topics>
+        </bulletin>
+       } % { subject: subject, body: body, topics: topics }
+    end
+
+    def topic_template
+      %{
+          <topic>
+            <code>%{id}</code>
+          </topic>
+      }
     end
 
     def parse_topic_response(response)
