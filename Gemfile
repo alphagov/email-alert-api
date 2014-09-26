@@ -4,6 +4,10 @@ gem "sinatra", "1.4.5"
 gem "faraday", "0.9.0"
 gem "rake", "~> 10.3"
 
+group :development do
+  gem "mr-sparkle"
+end
+
 group :test, :development do
   gem "pry"
   gem "awesome_print"
