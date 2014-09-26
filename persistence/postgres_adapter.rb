@@ -7,6 +7,10 @@ class PostgresAdapter
     @db = Sequel.connect(uri)
   end
 
+  def all(table_name)
+    db[table_name].all
+  end
+
   def find_by(table_name, key, values)
     prepared_values = Sequel.hstore(values)
     db[table_name].where(key => prepared_values)

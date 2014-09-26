@@ -18,8 +18,13 @@ class MockGovDeliveryClient
     @topics
   end
 
+  def notifications
+    @notifications ||= []
+  end
+
   def reset!
     @topics = {}
+    @notifications = []
   end
 
   def create_topic(attributes)
@@ -32,6 +37,16 @@ class MockGovDeliveryClient
       id: topic_id,
       link: "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=#{topic_id}",
     )
+  end
+
+  def notify_topic(topic_id, subject, message)
+    @notifications ||= []
+    @notifications << OpenStruct.new(
+      topic_id: topic_id,
+      subject: subject,
+      body: message,
+    )
+    nil
   end
 
   def generate_topic_id

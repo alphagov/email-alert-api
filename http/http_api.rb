@@ -23,25 +23,33 @@ class HTTPAPI < Sinatra::Application
     app.create_topic(adapter)
   end
 
+  post "/notifications" do
+    app.notify_topics_by_tags(adapter)
+  end
+
   def adapter
     self
   end
 
-  def created(response)
-    content_type(:json)
-    status(201)
-    body(JSON.dump(response))
+  def success(response)
+    respond_json(200, response)
   end
 
-  def success(response)
-    content_type(:json)
-    status(200)
-    body(JSON.dump(response))
+  def created(response)
+    respond_json(201, response)
+  end
+
+  def accepted(response)
+    respond_json(202, response)
   end
 
   def unprocessable(response)
+    respond_json(422, response)
+  end
+
+  def respond_json(status_code, response)
     content_type(:json)
-    status(422)
+    status(status_code)
     body(JSON.dump(response))
   end
 

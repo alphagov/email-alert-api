@@ -16,10 +16,15 @@ class TopicRepository
     adapter.store(namespace, key, attrs)
   end
 
+  # TODO: find_by_exact_tags?
   def find_by_tags(tags)
     adapter
       .find_by(namespace, :tags, tags)
       .map(&method(:load))
+  end
+
+  def find_by_publications_tags(tags)
+    adapter.all(namespace).map(&method(:load))
   end
 
 private

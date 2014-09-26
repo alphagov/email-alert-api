@@ -3,6 +3,8 @@ require "core_ext"
 require "create_topic"
 require "ostruct"
 require "processable_input_filter"
+require "notify_topics"
+require "unique_tag_set_filter"
 require "topic_persistence_aspect"
 require "ostruct"
 require "postgres_adapter"
@@ -28,6 +30,10 @@ class Application
         )
       )
     ).call(context)
+  end
+
+  def notify_topics_by_tags(context)
+    notify_topics_service.call(context)
   end
 
   private
@@ -83,6 +89,19 @@ class Application
         topic_attributes: context.params.slice("title", "tags"),
         gov_delivery_client: gov_delivery_client,
         topic_factory: Topic.method(:new),
+      ).call
+    }
+  end
+
+  def notify_topics_service
+    ->(context) {
+      NotifyTopics.new(
+        context: context,
+        topics_repository: topics_repository,
+        subject: context.params.fetch("subject"),
+        body: context.params.fetch("body"),
+        tags: context.params.fetch("tags"),
+        gov_delivery_client: gov_delivery_client,
       ).call
     }
   end
