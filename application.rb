@@ -92,6 +92,7 @@ class Application
         topic_attributes: context.params.slice("title", "tags"),
         gov_delivery_client: gov_delivery_client,
         topic_builder: topic_builder,
+        subscription_link_template: subscription_link_template,
       ).call
     }
   end
@@ -142,5 +143,9 @@ class Application
 
   def topic_factory
     Topic.method(:new)
+  end
+
+  def subscription_link_template
+    config.fetch(:gov_delivery).fetch(:subscription_link_template)
   end
 end
