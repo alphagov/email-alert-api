@@ -52,7 +52,13 @@ private
     end
 
     def load(data)
-      factory.call(data)
+      fixed_tags = data.fetch(:tags).reduce({}) { |result, (k, v)|
+        result.merge(k => JSON.load(v))
+      }
+
+      factory.call(data.merge(
+        tags: fixed_tags,
+      ))
     end
 
   private
