@@ -4,6 +4,11 @@ class TopicRepository
     @mapper = Mapper.new(factory)
   end
 
+  def all
+    adapter.all(namespace)
+      .map(&method(:load))
+  end
+
   def fetch(key)
     load(
       adapter.fetch(key)
@@ -19,10 +24,6 @@ class TopicRepository
     adapter
       .find_by(namespace, :tags, tags)
       .map(&method(:load))
-  end
-
-  def find_by_publications_tags(tags)
-    adapter.all(namespace).map(&method(:load))
   end
 
 private

@@ -10,6 +10,7 @@ require "ostruct"
 require "postgres_adapter"
 require "topic_repository"
 require "unique_tag_set_filter"
+require "topic_tag_searcher"
 
 class Application
   def initialize(
@@ -102,6 +103,7 @@ class Application
       NotifyTopics.new(
         context: context,
         topics_repository: topics_repository,
+        topic_searcher: topic_searcher,
         subject: context.params.fetch("subject"),
         body: context.params.fetch("body"),
         tags: context.params.fetch("tags"),
@@ -143,6 +145,14 @@ class Application
 
   def topic_factory
     Topic.method(:new)
+  end
+
+  def topic_searcher
+    ->(publication_tags:, search_topics:) {
+      TopicTagSearcher
+        .new(publication_tags: publication_tags, search_topics: search_topics)
+        .topics
+    }
   end
 
   def subscription_link_template
