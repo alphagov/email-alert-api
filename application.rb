@@ -1,6 +1,7 @@
 require_relative "configuration"
 require "core_ext"
 require "create_topic"
+require "processable_input_filter"
 require "unique_tag_set_filter"
 require "topic_persistence_aspect"
 require "ostruct"
@@ -15,9 +16,11 @@ class Application
   end
 
   def create_topic(context)
-    unique_tag_set_filter(
-      topic_persistence_aspect(
-        create_topic_service
+    processable_input_filter(
+      unique_tag_set_filter(
+        topic_persistence_aspect(
+          create_topic_service
+        )
       )
     ).call(context)
   end
@@ -33,6 +36,17 @@ class Application
     def to_json(*args, &block)
       to_h.to_json(*args, &block)
     end
+  end
+
+  def processable_input_filter(service)
+    ->(context) {
+      ProcessableInputFilter.new(
+        title: context.params.fetch("title", nil),
+        tags: context.params.fetch("tags", {}),
+        context: context,
+        service: service,
+      ).call
+    }
   end
 
   def unique_tag_set_filter(service)
