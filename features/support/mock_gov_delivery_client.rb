@@ -26,10 +26,12 @@ class MockGovDeliveryClient
     @topics[topic_id] = attributes
     @insert_count += 1
 
-    OpenStruct.new(
-      id: topic_id,
-      link: "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=#{topic_id}",
-    )
+    response = {
+      to_param: topic_id,
+      topic_uri: "/api/account/UKGOVUK/topics/#{topic_id}.xml",
+    }
+
+    Struct.new(*response.keys).new(*response.values)
   end
 
   def notify_topic(topic_id, subject, message)

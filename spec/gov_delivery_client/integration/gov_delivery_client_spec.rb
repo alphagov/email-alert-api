@@ -36,8 +36,8 @@ RSpec.describe GovDeliveryClient do
       topic = client.create_topic(name: "integration_test_topic #{Time.now.to_f}")
     end
 
-    expect(topic.id).to eq("UKGOVUK_908")
-    expect(topic.link).to eq("https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=UKGOVUK_908")
+    expect(topic.to_param).to eq("UKGOVUK_908")
+    expect(topic.topic_uri).to eq("/api/account/UKGOVUK/topics/UKGOVUK_908.xml")
   end
 
   it "sends a bulletin" do
@@ -46,16 +46,16 @@ RSpec.describe GovDeliveryClient do
     # interface https://stage-admin.govdelivery.com
 
     topic_id = "UKGOVUK_935"
-    response = nil
+    notification = nil
 
     VCR.use_cassette("notify_topics") do
-      response = client.notify_topics(
+      notification = client.notify_topics(
         [topic_id],
         "Integration test subject",
         "Integration test message body",
       )
     end
 
-    expect(response.status).to eq(200)
+    expect(notification.total_subscribers).to eq("2")
   end
 end

@@ -128,5 +128,15 @@ RSpec.describe GovDeliveryClient::Client do
         expect(headers).to match(hash_including(content_type: "application/xml"))
       end
     end
+
+    it "returns an object that encapsulates the parsed response" do
+      expect(
+        client.notify_topics(
+          topic_ids,
+          subject,
+          body,
+        )
+      ).to eq(parsed_response)
+    end
   end
 end

@@ -7,7 +7,7 @@ module GovDeliveryClient
     ClientFactory.new(
       config.merge(
         http_client_factory: method(:http_client_factory),
-        response_parser: response_parser(config.fetch(:subscription_link_template)),
+        response_parser: response_parser,
       )
     ).call
   end
@@ -24,12 +24,11 @@ module GovDeliveryClient
     end
   end
 
-  def self.response_parser(subscription_link_template)
+  def self.response_parser
     ->(response_body) {
       ResponseParser.new(
         xml_parser: Nokogiri::XML.method(:parse),
         response_body: response_body,
-        subscription_link_template: subscription_link_template,
       ).call
     }
   end
@@ -38,14 +37,10 @@ module GovDeliveryClient
     def initialize(args)
       @xml_parser = args.fetch(:xml_parser)
       @response_body = args.fetch(:response_body)
-      @subscription_link_template = args.fetch(:subscription_link_template)
     end
 
     def call
-      OpenStruct.new(
-        id: id,
-        link: link,
-      )
+      Struct.new(*keys).new(*values)
     end
 
   private
@@ -53,19 +48,25 @@ module GovDeliveryClient
     attr_reader(
       :xml_parser,
       :response_body,
-      :subscription_link_template,
     )
+
+    def keys
+      first_level_element_nodes
+        .map(&:node_name)
+        .map { |k| k.gsub("-", "_") }
+        .map(&:to_sym)
+    end
+
+    def values
+      first_level_element_nodes.map(&:text)
+    end
+
+    def first_level_element_nodes
+      xml_tree.root.element_children
+    end
 
     def xml_tree
       @xml_tree ||= xml_parser.call(response_body)
-    end
-
-    def id
-      xml_tree.xpath("//to-param").text
-    end
-
-    def link
-      subscription_link_template % { topic_id: id }
     end
   end
 
