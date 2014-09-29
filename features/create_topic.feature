@@ -41,3 +41,65 @@ Feature: Create a topic
         }
       """
     And a topic has not been created
+
+  Scenario: Unprocessable request
+    Given there are no topics
+    When I POST to "/topics" with
+      """
+      {
+        "title": "Anything",
+        "tags": {}
+      }
+      """
+    Then I get a "422" response with the following body
+      """
+        {
+          "error": "A topic was not created due to invalid attributes"
+        }
+      """
+    When I POST to "/topics" with
+      """
+      {
+        "title": "Anything",
+        "tags": {
+          "tag_key": "anything"
+        }
+      }
+      """
+    Then I get a "422" response with the following body
+      """
+        {
+          "error": "A topic was not created due to invalid attributes"
+        }
+      """
+    When I POST to "/topics" with
+      """
+      {
+        "title": "Anything",
+        "tags": ""
+      }
+      """
+    Then I get a "422" response with the following body
+      """
+        {
+          "error": "A topic was not created due to invalid attributes"
+        }
+      """
+    When I POST to "/topics" with
+      """
+      {
+        "title": "",
+        "tags": {
+          "document_type": [ "cma_case" ],
+          "case_type": [ "markets", "mergers" ],
+          "market_sector": [ "energy" ]
+        }
+      }
+      """
+    Then I get a "422" response with the following body
+      """
+        {
+          "error": "A topic was not created due to invalid attributes"
+        }
+      """
+
