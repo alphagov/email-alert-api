@@ -2,7 +2,8 @@ require "sequel"
 Sequel.extension :pg_hstore, :pg_hstore_ops
 
 class PostgresAdapter
-  def initialize(uri:)
+  def initialize(config:)
+    @config = config
     @db = Sequel.connect(uri)
   end
 
@@ -25,8 +26,13 @@ class PostgresAdapter
 
 private
   attr_reader(
+    :config,
     :db,
   )
+
+  def uri
+    "postgres://%{host}/%{database}?user=%{user}&password=%{password}" % config
+  end
 
   def data_tables
     db.tables - [:schema_migrations]

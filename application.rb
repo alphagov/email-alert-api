@@ -4,15 +4,18 @@ require "create_topic"
 require "ostruct"
 require "processable_input_filter"
 require "topic_persistence_aspect"
+require "ostruct"
 require "postgres_adapter"
 require "topic_repository"
 require "unique_tag_set_filter"
 
 class Application
   def initialize(
+    config:,
     storage_adapter: default_storage_adapter,
     gov_delivery_client: default_gov_delivery_client
   )
+    @config = config
     @storage_adapter = storage_adapter
     @gov_delivery_client = gov_delivery_client
   end
@@ -30,6 +33,7 @@ class Application
   private
 
   attr_reader(
+    :config,
     :storage_adapter,
     :gov_delivery_client,
   )
@@ -89,7 +93,7 @@ class Application
 
   def default_storage_adapter
     PostgresAdapter.new(
-      uri: DB_URI,
+      config: config,
     )
   end
 
