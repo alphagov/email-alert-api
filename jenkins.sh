@@ -36,6 +36,10 @@ github_status "$REPO_NAME" pending "is running on Jenkins"
 git merge --no-commit origin/master || git merge --abort
 
 bundle install --path "${HOME}/bundles/${JOB_NAME}" --deployment --without development
+cp -f config/postgres.yml.ci config/postgres.yml
+bundle exec rake db:setup
+bundle exec sequel --migrate-directory ./persistence/postgres/migrations 'postgres://localhost/email_alert_api_test?user=jenkins&password=jenkins'
+
 RAILS_ENV=test bundle exec rake
 
 export EXIT_STATUS=$?
