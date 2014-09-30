@@ -47,8 +47,13 @@ class MockGovDeliveryClient
 end
 
 GOV_DELIVERY_API_CLIENT = MockGovDeliveryClient.new
-STORAGE_ADAPTER = {}
+
+STORAGE_ADAPTER = PostgresAdapter.new(
+  config: CONFIG.fetch(:postgres),
+)
+
 APP = Application.new(
+  config: CONFIG,
   storage_adapter: STORAGE_ADAPTER,
   gov_delivery_client: GOV_DELIVERY_API_CLIENT,
 )

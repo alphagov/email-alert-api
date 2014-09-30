@@ -12,7 +12,12 @@ the appropriate topic.
 * GovDelivery - A third party service for generating, subscribing to, and delivering emails.
 
 ## Nomenclature
-Topic: A subscriber list to which we assign a unique set of tags.
+* Topic: A subscriber list to which we assign a unique set of tags.
+
+## Initial setup
+* Check that the database connection defaults in `config/env.rb` are
+  appropriate.
+* Create the databases: `bin/create_databases`
 
 ## Running the application
 ```
@@ -25,6 +30,12 @@ If you are using the GDS development virtual machine then the application will b
 ```
 $ bundle exec rake
 ```
+
+## Persistence
+Postgresql database with [Sequel](http://sequel.jeremyevans.net/) library.
+
+Migrations can be created using `bin/generate_migration <name_of_migration>`
+and run using `bin/migrate`.
 
 ## Application Structure
 * Hexagonal Ruby application with service layer

@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require_relative "../config/env"
+
+migrations_dir = CONFIG.fetch(:postgres).fetch(:migrations_dir)
+uri = "postgres://%{host}/%{database}?user=%{user}&password=%{password}" % CONFIG.fetch(:postgres)
+
+`bundle exec sequel --migrate-directory #{migrations_dir} #{uri}`

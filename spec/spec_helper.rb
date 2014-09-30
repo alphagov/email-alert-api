@@ -15,4 +15,4 @@ RSpec.configure do |config|
   end
 end
 
-require_relative "../configuration"
+require_relative "../config/env"

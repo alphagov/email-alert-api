@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+echo "Creating databases"
+psql --command 'CREATE DATABASE email_alert_api;'
+psql --command 'CREATE DATABASE email_alert_api_test;'
+
+echo "Creating role and permissions"
+psql --command 'CREATE ROLE email_alert_api_user with LOGIN;'
+psql --command 'GRANT ALL ON DATABASE email_alert_api TO email_alert_api_user;'
+psql --command 'GRANT ALL ON DATABASE email_alert_api_test TO email_alert_api_user;'
+
+echo "Adding HSTORE extention"
+psql --dbname=email_alert_api --command 'CREATE EXTENSION hstore;'
+psql --dbname=email_alert_api_test --command 'CREATE EXTENSION hstore;'

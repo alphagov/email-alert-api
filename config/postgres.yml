@@ -1,0 +1,6 @@
+postgres:
+  host: localhost
+  user: email_alert_api_user
+  database: email_alert_api_test
+  password:
+  migrations_dir: persistence/postgres/migrations

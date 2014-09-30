@@ -1,16 +1,21 @@
-require_relative "configuration"
+require_relative "config/env"
 require "core_ext"
 require "create_topic"
+require "ostruct"
 require "processable_input_filter"
-require "unique_tag_set_filter"
 require "topic_persistence_aspect"
 require "ostruct"
+require "postgres_adapter"
+require "topic_repository"
+require "unique_tag_set_filter"
 
 class Application
   def initialize(
+    config:,
     storage_adapter: default_storage_adapter,
     gov_delivery_client: default_gov_delivery_client
   )
+    @config = config
     @storage_adapter = storage_adapter
     @gov_delivery_client = gov_delivery_client
   end
@@ -28,11 +33,12 @@ class Application
   private
 
   attr_reader(
+    :config,
     :storage_adapter,
     :gov_delivery_client,
   )
 
-  class Thing < OpenStruct
+  class Topic < OpenStruct
     def to_json(*args, &block)
       to_h.to_json(*args, &block)
     end
@@ -76,7 +82,7 @@ class Application
         context: context,
         topic_attributes: context.params.slice("title", "tags"),
         gov_delivery_client: gov_delivery_client,
-        topic_factory: Thing.method(:new),
+        topic_factory: Topic.method(:new),
       ).call
     }
   end
@@ -86,31 +92,15 @@ class Application
   end
 
   def default_storage_adapter
-    {}
+    PostgresAdapter.new(
+      config: config,
+    )
   end
 
   def topics_repository
-    @topics_repository ||= MemoryRepository.new(storage_adapter)
-  end
-
-  require "forwardable"
-  class MemoryRepository
-    extend Forwardable
-    def_delegators :@storage, :store, :fetch
-
-    def initialize(storage = {})
-      @storage = storage
-    end
-
-    def find_by_tags(tags)
-      storage.select { |_id, topic|
-        topic.tags == tags
-      }
-    end
-
-  private
-    attr_reader(
-      :storage,
+    @topics_repository ||= TopicRepository.new(
+      adapter: storage_adapter,
+      factory: Topic.method(:new),
     )
   end
 end
