@@ -10,7 +10,7 @@ class ProcessableInputFilter
     if processable_request?
       service.call(context)
     else
-      context.unprocessible(error: error_message)
+      context.unprocessable(error: error_message)
     end
   end
 

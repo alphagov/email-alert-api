@@ -8,6 +8,6 @@ class NullContext
   def created(*args)
   end
 
-  def unprocessible(*args)
+  def unprocessable(*args)
   end
 end
