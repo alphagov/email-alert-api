@@ -48,8 +48,8 @@ RSpec.describe GovDeliveryClient do
     topic_id = "UKGOVUK_935"
     notification = nil
 
-    VCR.use_cassette("notify_topics") do
-      notification = client.notify_topics(
+    VCR.use_cassette("send_bulletin") do
+      notification = client.send_bulletin(
         [topic_id],
         "Integration test subject",
         "Integration test message body",
