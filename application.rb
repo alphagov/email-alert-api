@@ -11,6 +11,7 @@ require "postgres_adapter"
 require "topic_repository"
 require "unique_tag_set_filter"
 require "topic_tag_searcher"
+require "topic_search_aspect"
 
 class Application
   def initialize(
@@ -36,7 +37,9 @@ class Application
   end
 
   def notify_topics_by_tags(context)
-    notify_topics_service.call(context)
+    tag_searcher(
+      notify_topics_service
+    ).call(context)
   end
 
   private
@@ -61,6 +64,18 @@ class Application
         tags: context.params.fetch("tags", {}),
         context: context,
         service: service,
+      ).call
+    }
+  end
+
+  def tag_searcher(service)
+    ->(context) {
+      TopicSearchAspect.new(
+        repo: topics_repository,
+        topic_searcher: topic_searcher,
+        service: notify_topics_service,
+        context: context,
+        tags: context.params.fetch("tags"),
       ).call
     }
   end
@@ -99,15 +114,13 @@ class Application
   end
 
   def notify_topics_service
-    ->(context) {
+    ->(topics, context) {
       NotifyTopics.new(
+        gov_delivery_client: gov_delivery_client,
         context: context,
-        topics_repository: topics_repository,
-        topic_searcher: topic_searcher,
         subject: context.params.fetch("subject"),
         body: context.params.fetch("body"),
-        tags: context.params.fetch("tags"),
-        gov_delivery_client: gov_delivery_client,
+        topics: topics,
       ).call
     }
   end

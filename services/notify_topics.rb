@@ -1,11 +1,9 @@
 class NotifyTopics
-  def initialize(gov_delivery_client:, topics_repository:, topic_searcher:, subject:, body:, tags:, context:)
+  def initialize(gov_delivery_client:, subject:, body:, topics:, context:)
     @gov_delivery_client = gov_delivery_client
-    @topics_repository = topics_repository
-    @topic_searcher = topic_searcher
+    @topics = topics
     @subject = subject
     @body = body
-    @tags = tags
     @context = context
   end
 
@@ -17,12 +15,10 @@ class NotifyTopics
 
 private
   attr_reader(
-    :topics_repository,
     :gov_delivery_client,
-    :topic_searcher,
     :subject,
     :body,
-    :tags,
+    :topics,
     :context
   )
 
@@ -34,16 +30,5 @@ private
         body,
       )
     end
-  end
-
-  def topics
-    topic_searcher.call(
-      publication_tags: tags,
-      search_topics: all_the_topics_yes_all_of_them,
-    )
-  end
-
-  def all_the_topics_yes_all_of_them
-    topics_repository.all
   end
 end
