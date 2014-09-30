@@ -15,3 +15,8 @@ Then(/^I get a "(.*?)" response with the following body$/) do |status, expected_
 
   expect(response_data).to eq(expected_response_data)
 end
+
+When(/^I GET "(.*?)" with query$/) do |path, query_as_json|
+  @parsed_query = JSON.load(query_as_json)
+  @response = get(path, @parsed_query)
+end

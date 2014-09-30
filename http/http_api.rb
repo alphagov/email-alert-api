@@ -23,6 +23,10 @@ class HTTPAPI < Sinatra::Application
     app.create_subscriber_list(adapter)
   end
 
+  get "/subscriber_lists" do
+    app.search_subscriber_lists(adapter)
+  end
+
   post "/notifications" do
     app.notify_subscriber_lists_by_tags(adapter)
   end

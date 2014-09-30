@@ -7,6 +7,7 @@ require "create_subscriber_list"
 require "notify_subscriber_lists"
 require "postgres_adapter"
 require "processable_input_filter"
+require "search_subscriber_list_by_tag"
 require "subscriber_list_persistence_aspect"
 require "subscriber_list_repository"
 require "subscriber_list_search_aspect"
@@ -35,6 +36,14 @@ class Application
         )
       )
     ).call(context)
+  end
+
+  def search_subscriber_lists(context)
+    SearchSubscriberListByTags.new(
+      repo: subscriber_list_repository,
+      context: context,
+      tags: context.params.fetch("tags"),
+    ).call
   end
 
   def notify_subscriber_lists_by_tags(context)
