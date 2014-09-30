@@ -5,6 +5,7 @@ gem "faraday", "0.9.0"
 gem "rake", "~> 10.3"
 gem "unicorn", "4.8.3"
 gem "nokogiri", "1.6.3.1"
+gem "airbrake", "4.0.0"
 
 group :development do
   gem "mr-sparkle"

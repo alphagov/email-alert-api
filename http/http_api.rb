@@ -1,4 +1,6 @@
 require "sinatra"
+require "airbrake"
+require "config/initializers/airbrake"
 
 # TODO: Disable ShowExceptions in a less gross way, do we care about development mode?
 Sinatra::ShowExceptions.class_eval do
@@ -12,6 +14,11 @@ Sinatra::ShowExceptions.class_eval do
 end
 
 class HTTPAPI < Sinatra::Application
+  configure do
+    Airbrake.configuration.ignore << "Sinatra::NotFound"
+    use Airbrake::Sinatra
+  end
+
   post "/topics" do
     app.create_topic(adapter)
   end
