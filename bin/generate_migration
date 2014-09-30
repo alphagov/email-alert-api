@@ -7,7 +7,7 @@ migration_name = ARGV.fetch(0) {
   Process.exit 1
 }
 template = DATA.read
-migration_dir = DB_MIGRATIONS_DIR
+migration_dir = CONFIG.fetch(:postgres).fetch(:migrations_dir)
 
 time_format = "%Y%m%d%H%M%S"
 version = Time.now.strftime(time_format)
