@@ -1,8 +1,8 @@
-Given(/^there are no topics$/) do
+Given(/^there are no subscriber lists$/) do
   # TODO: This may need to be more than a noop at some point
 end
 
-Then(/^a topic is created$/) do
+Then(/^a subscriber list is created$/) do
   expect(GOV_DELIVERY_API_CLIENT.created_topics.values).to include(
     name: "CMA cases of type Markets and Mergers and about Energy",
   )
@@ -19,7 +19,7 @@ Then(/^a topic is created$/) do
   # }
 end
 
-Given(/^a topic already exists$/) do
+Given(/^a subscriber list already exists$/) do
   @tag_set = {
     "document_type" => [ "cma_case" ],
     "case_type" => [ "markets", "mergers" ],
@@ -31,7 +31,7 @@ Given(/^a topic already exists$/) do
     "tags" => @tag_set,
   }
 
-  create_topic(params)
+  create_subscriber_list(params)
 end
 
 When(/^I POST to "(.*?)" with duplicate tag set$/) do |path|
@@ -43,22 +43,22 @@ When(/^I POST to "(.*?)" with duplicate tag set$/) do |path|
   @response = post(path, params)
 end
 
-Then(/^a topic has not been created$/) do
+Then(/^a subscriber list has not been created$/) do
   expect(GOV_DELIVERY_API_CLIENT.created_topics.size).to eq(1)
 end
 
-Given(/^the topic "(.*?)" with tags$/) do |name, tags|
+Given(/^the subscriber list "(.*?)" with tags$/) do |name, tags|
   tags = JSON.load(tags)
 
-  @topic = create_topic(
+  @subscriber_list = create_subscriber_list(
     "title" => name,
     "tags" => tags,
-  ).fetch(:topic)
+  ).fetch(:subscriber_list)
 end
 
-Then(/^a notification is sent to the topic$/) do
+Then(/^a notification is sent to the subscriber list$/) do
   expect(GOV_DELIVERY_API_CLIENT.notifications.map(&:to_h)).to include(
-    topic_id: @topic.gov_delivery_id,
+    topic_id: @subscriber_list.gov_delivery_id,
     subject: @request_body.fetch("subject"),
     body: @request_body.fetch("body"),
   )

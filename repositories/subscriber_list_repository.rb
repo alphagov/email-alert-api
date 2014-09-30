@@ -1,4 +1,4 @@
-class TopicRepository
+class SubscriberListRepository
   def initialize(adapter:, factory:)
     @adapter = adapter
     @mapper = Mapper.new(factory)
@@ -41,7 +41,7 @@ private
   end
 
   def namespace
-    :topics
+    :subscriber_lists
   end
 
   class Mapper
@@ -49,8 +49,8 @@ private
       @factory = factory
     end
 
-    def dump(topic)
-      topic.to_h
+    def dump(subscriber_list)
+      subscriber_list.to_h
     end
 
     def load(data)

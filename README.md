@@ -12,7 +12,15 @@ the appropriate topic.
 * GovDelivery - A third party service for generating, subscribing to, and delivering emails.
 
 ## Nomenclature
-* Topic: A subscriber list to which we assign a unique set of tags.
+* Subscriber list
+  - An email subscriber list (actual email addresses on GovDelivery's servers)
+  - Associated tags indicate what the subscribers are interested in and what updates they should receive
+* Topic
+  - GovDelivery terminology for a subscriber list
+  - Topics have tags
+  - Subscribers receive emails when you "send a bulletin" to that topic
+* Bulletin
+  - GovDelivery terminology for an email notification
 
 ## Initial setup
 * Check that the database connection defaults in `config/env.rb` are

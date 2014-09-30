@@ -2,7 +2,7 @@ Feature: Send a notification
   Notify subscribers of an update
 
   Scenario: Do the notification
-    Given the topic "CMA cases about markets and mergers" with tags
+    Given the subscriber list "CMA cases about markets and mergers" with tags
       """
       {
         "document_type": [ "cma_case" ],
@@ -28,4 +28,4 @@ Feature: Send a notification
       """
         { }
       """
-    And a notification is sent to the topic
+    And a notification is sent to the subscriber list

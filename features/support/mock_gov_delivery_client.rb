@@ -34,14 +34,26 @@ class MockGovDeliveryClient
     Struct.new(*response.keys).new(*response.values)
   end
 
-  def notify_topic(topic_id, subject, message)
+  def send_bulletin(topic_ids, subject, body)
     @notifications ||= []
-    @notifications << OpenStruct.new(
-      topic_id: topic_id,
-      subject: subject,
-      body: message,
+    @notifications = @notifications.concat(
+      topic_ids.map { |topic_id|
+        OpenStruct.new(
+          topic_id: topic_id,
+          subject: subject,
+          body: body,
+        )
+      }
     )
-    nil
+
+    OpenStruct.new(
+      "bulletin" => {
+          "to_param" => "7895129",
+          "bulletin_uri" => "/api/account/UKGOVUK/bulletins/7895129.xml",
+          "total_subscribers" => "2",
+          "link" => "",
+      }
+    )
   end
 
   def generate_topic_id

@@ -19,12 +19,12 @@ class HTTPAPI < Sinatra::Application
     use Airbrake::Sinatra
   end
 
-  post "/topics" do
-    app.create_topic(adapter)
+  post "/subscriber_lists" do
+    app.create_subscriber_list(adapter)
   end
 
   post "/notifications" do
-    app.notify_topics_by_tags(adapter)
+    app.notify_subscriber_lists_by_tags(adapter)
   end
 
   def adapter

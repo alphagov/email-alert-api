@@ -127,7 +127,7 @@ module GovDeliveryClient
       )
     end
 
-    def notify_topics(topic_ids, subject, body)
+    def send_bulletin(topic_ids, subject, body)
       parse_topic_response(
         post_xml(
           "bulletins/send_now.xml",
