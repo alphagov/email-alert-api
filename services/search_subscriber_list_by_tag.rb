@@ -6,7 +6,11 @@ class SearchSubscriberListByTags
   end
 
   def call
-    context.success(subscriber_list: subscriber_list)
+    if subscriber_list
+      context.success(subscriber_list: subscriber_list)
+    else
+      context.not_found(error: "A subscriber list with those tags does not exist")
+    end
   end
 
 private

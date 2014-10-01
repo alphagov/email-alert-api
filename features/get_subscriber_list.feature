@@ -33,3 +33,21 @@ Feature: Get a subscriber list
         }
       }
       """
+
+  Scenario: Subscriber list does not exist
+    Given the subscriber list does not already exist
+    When I GET "/subscriber_lists" with query
+      """
+      {
+        "tags": {
+          "document_type": [ "cma_case" ],
+          "case_type": [ "markets", "mergers" ]
+        }
+      }
+      """
+    Then I get a "404" response with the following body
+      """
+      {
+        "error": "A subscriber list with those tags does not exist"
+      }
+      """

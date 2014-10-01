@@ -2,6 +2,9 @@ Given(/^there are no subscriber lists$/) do
   # TODO: This may need to be more than a noop at some point
 end
 
+Given(/^the subscriber list does not already exist$/) do
+end
+
 Then(/^a subscriber list is created$/) do
   expect(GOV_DELIVERY_API_CLIENT.created_topics.values).to include(
     name: "CMA cases of type Markets and Mergers and about Energy",
