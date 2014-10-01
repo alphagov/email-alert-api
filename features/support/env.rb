@@ -1,51 +1,19 @@
 require "cucumber"
 require "rack/test"
-require "ostruct"
 
 require "pry"
 require "awesome_print"
 
 require_relative "../../application"
 
-class MockGovDeliveryClient
-  def initialize
-    reset!
-    @id_start = 1234
-    @insert_count = 0
-  end
+$LOAD_PATH.push(ROOT.join("features/support"))
 
-  def created_topics
-    @topics
-  end
+# Put together an application instace with mock things
 
-  def reset!
-    @topics = {}
-  end
+require "mock_gov_delivery_client"
+require "deterministic_uuid_generator"
 
-  def create_topic(attributes)
-    topic_id = generate_topic_id
-
-    @topics[topic_id] = attributes
-    @insert_count += 1
-
-    OpenStruct.new(
-      id: topic_id,
-      link: "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=#{topic_id}",
-    )
-  end
-
-  def generate_topic_id
-    [
-      "UKGOVUK",
-      next_id,
-    ].join("_")
-  end
-
-  def next_id
-    @id_start + @insert_count
-  end
-end
-
+UUID_GENERATOR = DeterministicUUIDGenerator.new
 GOV_DELIVERY_API_CLIENT = MockGovDeliveryClient.new
 
 STORAGE_ADAPTER = PostgresAdapter.new(
@@ -54,14 +22,10 @@ STORAGE_ADAPTER = PostgresAdapter.new(
 
 APP = Application.new(
   config: CONFIG,
+  uuid_generator: UUID_GENERATOR,
   storage_adapter: STORAGE_ADAPTER,
   gov_delivery_client: GOV_DELIVERY_API_CLIENT,
 )
-
-After do
-  GOV_DELIVERY_API_CLIENT.reset!
-  STORAGE_ADAPTER.clear
-end
 
 # Sinatra stuff
 
@@ -74,4 +38,19 @@ module SinatraTestIntegration
   end
 end
 
+# Reset mocks between tests
+
+After do
+  GOV_DELIVERY_API_CLIENT.reset!
+  UUID_GENERATOR.reset!
+  STORAGE_ADAPTER.clear
+end
+
+# Helpers and other support etc
+
+require "bare_app_integration_helpers"
+require "topic_helpers"
+
 World(SinatraTestIntegration)
+World(BareAppIntegrationHelpers)
+World(TopicHelpers)

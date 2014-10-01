@@ -4,6 +4,11 @@ class TopicRepository
     @mapper = Mapper.new(factory)
   end
 
+  def all
+    adapter.all(namespace)
+      .map(&method(:load))
+  end
+
   def fetch(key)
     load(
       adapter.fetch(key)
@@ -11,11 +16,10 @@ class TopicRepository
   end
 
   def store(key, entity)
-    attrs = dump(entity).except(:gov_delivery_id)
-
-    adapter.store(namespace, key, attrs)
+    adapter.store(namespace, key, dump(entity))
   end
 
+  # TODO: find_by_exact_tags?
   def find_by_tags(tags)
     adapter
       .find_by(namespace, :tags, tags)

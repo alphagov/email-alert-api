@@ -31,11 +31,7 @@ Given(/^a topic already exists$/) do
     "tags" => @tag_set,
   }
 
-  APP.create_topic(
-    NullContext.new(
-      params: params,
-    )
-  )
+  create_topic(params)
 end
 
 When(/^I POST to "(.*?)" with duplicate tag set$/) do |path|
@@ -49,4 +45,21 @@ end
 
 Then(/^a topic has not been created$/) do
   expect(GOV_DELIVERY_API_CLIENT.created_topics.size).to eq(1)
+end
+
+Given(/^the topic "(.*?)" with tags$/) do |name, tags|
+  tags = JSON.load(tags)
+
+  @topic = create_topic(
+    "title" => name,
+    "tags" => tags,
+  ).fetch(:topic)
+end
+
+Then(/^a notification is sent to the topic$/) do
+  expect(GOV_DELIVERY_API_CLIENT.notifications.map(&:to_h)).to include(
+    topic_id: @topic.gov_delivery_id,
+    subject: @request_body.fetch("subject"),
+    body: @request_body.fetch("body"),
+  )
 end

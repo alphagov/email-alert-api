@@ -1,8 +1,9 @@
 class CreateTopic
-  def initialize(topic_attributes:, gov_delivery_client:, topic_factory:, context:)
-    @topic_attributes = topic_attributes
+  def initialize(gov_delivery_client:, subscription_link_template:, topic_builder:, topic_attributes:, context:)
     @gov_delivery_client = gov_delivery_client
-    @topic_factory = topic_factory
+    @subscription_link_template = subscription_link_template
+    @topic_builder = topic_builder
+    @topic_attributes = topic_attributes
     @context = context
   end
 
@@ -13,20 +14,21 @@ class CreateTopic
 private
 
   attr_reader(
-    :topic_attributes,
-    :topic_factory,
+    :subscription_link_template,
     :gov_delivery_client,
+    :topic_builder,
+    :topic_attributes,
     :context,
   )
 
   def new_topic
-    topic_factory.call(topic_data)
+    topic_builder.call(topic_data)
   end
 
   def topic_data
     {
-      gov_delivery_id: remote_topic_data.id,
-      subscription_url: remote_topic_data.link,
+      gov_delivery_id: gov_delivery_id,
+      subscription_url: subscription_url,
     }.merge(topic_attributes)
   end
 
@@ -36,5 +38,13 @@ private
 
   def topic_name
     topic_attributes.fetch("title")
+  end
+
+  def gov_delivery_id
+    remote_topic_data.to_param
+  end
+
+  def subscription_url
+    subscription_link_template % { topic_id: gov_delivery_id }
   end
 end
