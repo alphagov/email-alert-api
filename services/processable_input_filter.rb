@@ -44,6 +44,6 @@ private
   end
 
   def error_message
-    "A topic was not created due to invalid attributes"
+    "A subscriber list was not created due to invalid attributes"
   end
 end

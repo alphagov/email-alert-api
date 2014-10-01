@@ -1,17 +1,18 @@
+# Application essentials
 require_relative "config/env"
 require "core_ext"
-require "create_topic"
-require "ostruct"
-require "processable_input_filter"
-require "notify_topics"
-require "unique_tag_set_filter"
-require "topic_persistence_aspect"
-require "ostruct"
+
+# Application components (alphabetical please)
+require "create_subscriber_list"
+require "notify_subscriber_lists"
 require "postgres_adapter"
-require "topic_repository"
+require "processable_input_filter"
+require "subscriber_list_persistence_aspect"
+require "subscriber_list_repository"
+require "subscriber_list_search_aspect"
+require "subscriber_list_tag_searcher"
 require "unique_tag_set_filter"
-require "topic_tag_searcher"
-require "topic_search_aspect"
+require "unique_tag_set_filter"
 
 class Application
   def initialize(
@@ -26,19 +27,19 @@ class Application
     @uuid_generator = uuid_generator
   end
 
-  def create_topic(context)
+  def create_subscriber_list(context)
     processable_input_filter(
       unique_tag_set_filter(
-        topic_persistence_aspect(
-          create_topic_service
+        subscriber_list_persistence_aspect(
+          create_subscriber_list_service
         )
       )
     ).call(context)
   end
 
-  def notify_topics_by_tags(context)
+  def notify_subscriber_lists_by_tags(context)
     tag_searcher(
-      notify_topics_service
+      notify_subscriber_lists_service
     ).call(context)
   end
 
@@ -51,7 +52,8 @@ class Application
     :uuid_generator,
   )
 
-  class Topic < OpenStruct
+  require "ostruct"
+  class SubscriberList < OpenStruct
     def to_json(*args, &block)
       to_h.to_json(*args, &block)
     end
@@ -70,10 +72,10 @@ class Application
 
   def tag_searcher(service)
     ->(context) {
-      TopicSearchAspect.new(
-        repo: topics_repository,
-        topic_searcher: topic_searcher,
-        service: notify_topics_service,
+      SubscriberListSearchAspect.new(
+        repo: subscriber_list_repository,
+        subscriber_list_searcher: subscriber_list_searcher,
+        service: notify_subscriber_lists_service,
         context: context,
         tags: context.params.fetch("tags"),
       ).call
@@ -83,7 +85,7 @@ class Application
   def unique_tag_set_filter(service)
     ->(context) {
       UniqueTagSetFilter.new(
-        repo: topics_repository,
+        repo: subscriber_list_repository,
         tags: context.params.fetch("tags"),
         context: context,
         service: service,
@@ -91,64 +93,50 @@ class Application
     }
   end
 
-  def topic_persistence_aspect(service)
+  def subscriber_list_persistence_aspect(service)
     ->(context) {
-      TopicPersistenceAspect.new(
+      SubscriberListPersistenceAspect.new(
         context: context,
-        repo: topics_repository,
+        repo: subscriber_list_repository,
         service: service,
       ).call
     }
   end
 
-  def create_topic_service
+  def create_subscriber_list_service
     ->(context) {
-      CreateTopic.new(
+      CreateSubscriberList.new(
         context: context,
-        topic_attributes: context.params.slice("title", "tags"),
+        subscriber_list_attributes: context.params.slice("title", "tags"),
         gov_delivery_client: gov_delivery_client,
-        topic_builder: topic_builder,
+        subscriber_list_builder: subscriber_list_builder,
         subscription_link_template: subscription_link_template,
       ).call
     }
   end
 
-  def notify_topics_service
-    ->(topics, context) {
-      NotifyTopics.new(
+  def notify_subscriber_lists_service
+    ->(subscriber_lists, context) {
+      NotifySubscriberLists.new(
         gov_delivery_client: gov_delivery_client,
         context: context,
         subject: context.params.fetch("subject"),
         body: context.params.fetch("body"),
-        topics: topics,
+        subscriber_lists: subscriber_lists,
       ).call
     }
   end
 
-  def default_gov_delivery_client
-    GovDeliveryClient.create_client(GOVDELIVERY_CREDENTIALS)
-  end
-
-  def default_storage_adapter
-    PostgresAdapter.new(
-      config: config,
-    )
-  end
-
-  def default_uuid_generator
-    SecureRandom.method(:uuid)
-  end
-
-  def topics_repository
-    @topics_repository ||= TopicRepository.new(
+  def subscriber_list_repository
+    @subscriber_list_repository ||= SubscriberListRepository.new(
       adapter: storage_adapter,
-      factory: topic_factory,
+      factory: subscriber_list_factory,
     )
   end
 
-  def topic_builder
+  def subscriber_list_builder
     ->(attributes) {
-      topic_factory.call(
+      subscriber_list_factory.call(
         attributes.merge(
           id: uuid_generator.call,
         )
@@ -156,15 +144,15 @@ class Application
     }
   end
 
-  def topic_factory
-    Topic.method(:new)
+  def subscriber_list_factory
+    SubscriberList.method(:new)
   end
 
-  def topic_searcher
-    ->(publication_tags:, search_topics:) {
-      TopicTagSearcher
-        .new(publication_tags: publication_tags, search_topics: search_topics)
-        .topics
+  def subscriber_list_searcher
+    ->(publication_tags:, search_subscriber_lists:) {
+      SubscriberListTagSearcher
+        .new(publication_tags: publication_tags, subscriber_lists: search_subscriber_lists)
+        .subscriber_lists
     }
   end
 

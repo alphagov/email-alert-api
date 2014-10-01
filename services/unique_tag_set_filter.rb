@@ -23,6 +23,6 @@ private
   )
 
   def error_message
-    "A topic with that tag set already exists"
+    "A subscriber list with that tag set already exists"
   end
 end

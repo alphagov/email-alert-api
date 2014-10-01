@@ -1,4 +1,4 @@
-class TopicPersistenceAspect
+class SubscriberListPersistenceAspect
   def initialize(service:, repo:, context:)
     @repo = repo
     @service = service
@@ -14,7 +14,7 @@ class TopicPersistenceAspect
   end
 
   def created(stuff)
-    persist_topic(stuff.fetch(:topic))
+    persist_subscriber_list(stuff.fetch(:subscriber_list))
     context.created(stuff)
   end
 
@@ -25,7 +25,7 @@ private
     :context,
   )
 
-  def persist_topic(topic)
-    repo.store(topic.gov_delivery_id, topic)
+  def persist_subscriber_list(subscriber_list)
+    repo.store(subscriber_list.gov_delivery_id, subscriber_list)
   end
 end

@@ -1,9 +1,9 @@
-Feature: Create a topic
-  Create a topic from a title and a set of tags
+Feature: Create a subscriber list
+  Create a subscriber list from a title and a set of tags
 
-  Scenario: Creating a new topic
-    Given there are no topics
-    When I POST to "/topics" with
+  Scenario: Creating a new subscriber list
+    Given there are no subscriber lists
+    When I POST to "/subscriber_lists" with
       """
       {
         "title": "CMA cases of type Markets and Mergers and about Energy",
@@ -18,7 +18,7 @@ Feature: Create a topic
     Then I get a "201" response with the following body
       """
       {
-        "topic": {
+        "subscriber_list": {
           "id": "447135c3-07d6-4c3a-8a3b-efa49ef70e52",
           "title": "CMA cases of type Markets and Mergers and about Energy",
           "subscription_url": "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=UKGOVUK_1234",
@@ -31,22 +31,22 @@ Feature: Create a topic
         }
       }
       """
-    And a topic is created
+    And a subscriber list is created
 
-  Scenario: Topic already exists
-    Given a topic already exists
-    When I POST to "/topics" with duplicate tag set
+  Scenario: Subscriber List already exists
+    Given a subscriber list already exists
+    When I POST to "/subscriber_lists" with duplicate tag set
     Then I get a "422" response with the following body
       """
         {
-          "error": "A topic with that tag set already exists"
+          "error": "A subscriber list with that tag set already exists"
         }
       """
-    And a topic has not been created
+    And a subscriber list has not been created
 
   Scenario: Unprocessable request
-    Given there are no topics
-    When I POST to "/topics" with
+    Given there are no subscriber lists
+    When I POST to "/subscriber_lists" with
       """
       {
         "title": "Anything",
@@ -56,10 +56,10 @@ Feature: Create a topic
     Then I get a "422" response with the following body
       """
         {
-          "error": "A topic was not created due to invalid attributes"
+          "error": "A subscriber list was not created due to invalid attributes"
         }
       """
-    When I POST to "/topics" with
+    When I POST to "/subscriber_lists" with
       """
       {
         "title": "Anything",
@@ -71,10 +71,10 @@ Feature: Create a topic
     Then I get a "422" response with the following body
       """
         {
-          "error": "A topic was not created due to invalid attributes"
+          "error": "A subscriber list was not created due to invalid attributes"
         }
       """
-    When I POST to "/topics" with
+    When I POST to "/subscriber_lists" with
       """
       {
         "title": "Anything",
@@ -84,10 +84,10 @@ Feature: Create a topic
     Then I get a "422" response with the following body
       """
         {
-          "error": "A topic was not created due to invalid attributes"
+          "error": "A subscriber list was not created due to invalid attributes"
         }
       """
-    When I POST to "/topics" with
+    When I POST to "/subscriber_lists" with
       """
       {
         "title": "",
@@ -101,7 +101,6 @@ Feature: Create a topic
     Then I get a "422" response with the following body
       """
         {
-          "error": "A topic was not created due to invalid attributes"
+          "error": "A subscriber list was not created due to invalid attributes"
         }
       """
-

@@ -1,18 +1,18 @@
-class TopicTagSearcher
-  def initialize(publication_tags:, search_topics:)
+class SubscriberListTagSearcher
+  def initialize(publication_tags:, subscriber_lists:)
     @publication_tags = publication_tags
-    @search_topics = search_topics
+    @subscriber_lists = subscriber_lists
   end
 
   attr_reader(
-    :search_topics,
+    :subscriber_lists,
     :publication_tags,
   )
 
   # TODO: With current data this is expected to take between 50-200ms
   #       This may need optimisation when we have an adaquate dataset.
-  def topics
-    search_topics.select { |topic|
+  def matching_subscriber_lists
+    subscriber_lists.select { |topic|
       publication_matches_all_topic_tags_on_at_least_one_value(topic.tags)
     }
   end

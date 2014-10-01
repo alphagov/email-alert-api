@@ -49,8 +49,8 @@ end
 # Helpers and other support etc
 
 require "bare_app_integration_helpers"
-require "topic_helpers"
+require "subscriber_list_helpers"
 
 World(SinatraTestIntegration)
 World(BareAppIntegrationHelpers)
-World(TopicHelpers)
+World(SubscriberListHelpers)

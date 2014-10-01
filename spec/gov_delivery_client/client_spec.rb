@@ -75,7 +75,7 @@ RSpec.describe GovDeliveryClient::Client do
     end
   end
 
-  describe "#notify_topics" do
+  describe "#send_bulletin" do
     let(:response_body) { double(:response_body) }
     let(:parsed_response) { double(:parsed_response) }
 
@@ -96,7 +96,7 @@ RSpec.describe GovDeliveryClient::Client do
     let(:body) { "a beautiful body" }
 
     it "POSTs the topic creation request XML to the topics endpoint" do
-      client.notify_topics(
+      client.send_bulletin(
         topic_ids,
         subject,
         body,
@@ -131,7 +131,7 @@ RSpec.describe GovDeliveryClient::Client do
 
     it "returns an object that encapsulates the parsed response" do
       expect(
-        client.notify_topics(
+        client.send_bulletin(
           topic_ids,
           subject,
           body,
