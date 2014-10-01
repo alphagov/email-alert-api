@@ -19,9 +19,7 @@ class TopicRepository
   def find_by_tags(tags)
     adapter
       .find_by(namespace, :tags, tags)
-      .map { |_id, topic_data|
-        load(topic_data)
-      }
+      .map(&method(:load))
   end
 
 private
@@ -52,7 +50,13 @@ private
     end
 
     def load(data)
-      factory.call(data)
+      deserialized_tags = data.fetch(:tags).reduce({}) { |result, (k, v)|
+        result.merge(k => JSON.load(v))
+      }
+
+      factory.call(data.merge(
+        tags: deserialized_tags,
+      ))
     end
 
   private
