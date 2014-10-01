@@ -42,12 +42,15 @@ class Application
   end
 
   def search_subscriber_lists(context)
+    # TODO: Express somehow that in this case tags must be an exact match
     tag_input_normalizer(
       search_subscriber_list_by_tags_service
     ).call(context)
   end
 
   def notify_subscriber_lists_by_tags(context)
+    # TODO: Express somehow that in this case publication tags fuzzy match a
+    # number of subscriber lists
     tag_searcher(
       notify_subscriber_lists_service
     ).call(context)
