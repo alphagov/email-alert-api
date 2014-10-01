@@ -14,6 +14,7 @@ require "subscriber_list_search_aspect"
 require "subscriber_list_tag_searcher"
 require "unique_tag_set_filter"
 require "unique_tag_set_filter"
+require "tag_input_normalizer"
 
 class Application
   def initialize(
@@ -39,11 +40,9 @@ class Application
   end
 
   def search_subscriber_lists(context)
-    SearchSubscriberListByTags.new(
-      repo: subscriber_list_repository,
-      context: context,
-      tags: context.params.fetch("tags"),
-    ).call
+    tag_input_normalizer(
+      search_subscriber_list_by_tags_service
+    ).call(context)
   end
 
   def notify_subscriber_lists_by_tags(context)
@@ -66,6 +65,16 @@ class Application
     def to_json(*args, &block)
       to_h.to_json(*args, &block)
     end
+  end
+
+  def tag_input_normalizer(service)
+    ->(context) {
+      TagInputNormalizer.new(
+        service: service,
+        context: context,
+        tags: context.params.fetch("tags"),
+      ).call
+    }
   end
 
   def processable_input_filter(service)
@@ -120,6 +129,16 @@ class Application
         gov_delivery_client: gov_delivery_client,
         subscriber_list_builder: subscriber_list_builder,
         subscription_link_template: subscription_link_template,
+      ).call
+    }
+  end
+
+  def search_subscriber_list_by_tags_service
+    ->(context, tags:) {
+      SearchSubscriberListByTags.new(
+        repo: subscriber_list_repository,
+        context: context,
+        tags: tags,
       ).call
     }
   end
