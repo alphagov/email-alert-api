@@ -1,17 +1,18 @@
+# Application essentials
 require_relative "config/env"
 require "core_ext"
-require "ostruct"
-require "processable_input_filter"
+
+# Application components (alphabetical please)
 require "create_subscriber_list"
 require "notify_subscriber_lists"
-require "unique_tag_set_filter"
-require "subscriber_list_persistence_aspect"
-require "ostruct"
 require "postgres_adapter"
-require "unique_tag_set_filter"
+require "processable_input_filter"
+require "subscriber_list_persistence_aspect"
 require "subscriber_list_repository"
-require "subscriber_list_tag_searcher"
 require "subscriber_list_search_aspect"
+require "subscriber_list_tag_searcher"
+require "unique_tag_set_filter"
+require "unique_tag_set_filter"
 
 class Application
   def initialize(
@@ -51,6 +52,7 @@ class Application
     :uuid_generator,
   )
 
+  require "ostruct"
   class SubscriberList < OpenStruct
     def to_json(*args, &block)
       to_h.to_json(*args, &block)
