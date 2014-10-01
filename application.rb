@@ -31,9 +31,11 @@ class Application
 
   def create_subscriber_list(context)
     processable_input_filter(
-      unique_tag_set_filter(
-        subscriber_list_persistence_aspect(
-          create_subscriber_list_service
+      tag_input_normalizer(
+        unique_tag_set_filter(
+          subscriber_list_persistence_aspect(
+            create_subscriber_list_service
+          )
         )
       )
     ).call(context)
@@ -101,10 +103,10 @@ class Application
   end
 
   def unique_tag_set_filter(service)
-    ->(context) {
+    ->(context, tags: tags) {
       UniqueTagSetFilter.new(
         repo: subscriber_list_repository,
-        tags: context.params.fetch("tags"),
+        tags: tags,
         context: context,
         service: service,
       ).call

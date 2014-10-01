@@ -46,6 +46,20 @@ When(/^I POST to "(.*?)" with duplicate tag set$/) do |path|
   @response = post(path, params)
 end
 
+When(/^I POST to "(.*?)" with duplicate but differently ordered tag set$/) do |path|
+  duplicate_tags_with_different_order = @tag_set
+    .reduce({}) { |result, (tag, values)|
+      result.merge(tag => values.reverse)
+    }
+
+  params = {
+    "title" => "Any title",
+    "tags" => duplicate_tags_with_different_order,
+  }
+
+  @response = post(path, params)
+end
+
 Then(/^a subscriber list has not been created$/) do
   expect(GOV_DELIVERY_API_CLIENT.created_topics.size).to eq(1)
 end
