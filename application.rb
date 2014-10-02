@@ -13,15 +13,14 @@ require "subscriber_list_repository"
 require "subscriber_list_search_aspect"
 require "subscriber_list_tag_searcher"
 require "unique_tag_set_filter"
-require "unique_tag_set_filter"
 require "tag_input_normalizer"
 
 class Application
   def initialize(
     config:,
-    storage_adapter: default_storage_adapter,
-    gov_delivery_client: default_gov_delivery_client,
-    uuid_generator: default_uuid_generator
+    storage_adapter:,
+    gov_delivery_client:,
+    uuid_generator:
   )
     @config = config
     @storage_adapter = storage_adapter
