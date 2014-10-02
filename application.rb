@@ -7,12 +7,14 @@ require "create_subscriber_list"
 require "notify_subscriber_lists"
 require "postgres_adapter"
 require "processable_input_filter"
+require "search_subscriber_list_by_tag"
 require "subscriber_list_persistence_aspect"
 require "subscriber_list_repository"
 require "subscriber_list_search_aspect"
 require "subscriber_list_tag_searcher"
 require "unique_tag_set_filter"
 require "unique_tag_set_filter"
+require "tag_input_normalizer"
 
 class Application
   def initialize(
@@ -29,15 +31,26 @@ class Application
 
   def create_subscriber_list(context)
     processable_input_filter(
-      unique_tag_set_filter(
-        subscriber_list_persistence_aspect(
-          create_subscriber_list_service
+      tag_input_normalizer(
+        unique_tag_set_filter(
+          subscriber_list_persistence_aspect(
+            create_subscriber_list_service
+          )
         )
       )
     ).call(context)
   end
 
+  def search_subscriber_lists(context)
+    # TODO: Express somehow that in this case tags must be an exact match
+    tag_input_normalizer(
+      search_subscriber_list_by_tags_service
+    ).call(context)
+  end
+
   def notify_subscriber_lists_by_tags(context)
+    # TODO: Express somehow that in this case publication tags fuzzy match a
+    # number of subscriber lists
     tag_searcher(
       notify_subscriber_lists_service
     ).call(context)
@@ -57,6 +70,16 @@ class Application
     def to_json(*args, &block)
       to_h.to_json(*args, &block)
     end
+  end
+
+  def tag_input_normalizer(service)
+    ->(context) {
+      TagInputNormalizer.new(
+        service: service,
+        context: context,
+        tags: context.params.fetch("tags"),
+      ).call
+    }
   end
 
   def processable_input_filter(service)
@@ -83,10 +106,10 @@ class Application
   end
 
   def unique_tag_set_filter(service)
-    ->(context) {
+    ->(context, tags: tags) {
       UniqueTagSetFilter.new(
         repo: subscriber_list_repository,
-        tags: context.params.fetch("tags"),
+        tags: tags,
         context: context,
         service: service,
       ).call
@@ -111,6 +134,16 @@ class Application
         gov_delivery_client: gov_delivery_client,
         subscriber_list_builder: subscriber_list_builder,
         subscription_link_template: subscription_link_template,
+      ).call
+    }
+  end
+
+  def search_subscriber_list_by_tags_service
+    ->(context, tags:) {
+      SearchSubscriberListByTags.new(
+        repo: subscriber_list_repository,
+        context: context,
+        tags: tags,
       ).call
     }
   end

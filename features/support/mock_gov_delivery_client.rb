@@ -2,9 +2,11 @@ require "ostruct"
 
 class MockGovDeliveryClient
   def initialize
-    reset!
-    @id_start = 1234
-    @insert_count = 0
+    initialize_ivars
+  end
+
+  def reset!
+    initialize_ivars
   end
 
   def created_topics
@@ -13,11 +15,6 @@ class MockGovDeliveryClient
 
   def notifications
     @notifications ||= []
-  end
-
-  def reset!
-    @topics = {}
-    @notifications = []
   end
 
   def create_topic(attributes)
@@ -65,6 +62,15 @@ class MockGovDeliveryClient
 
   def next_id
     @id_start + @insert_count
+  end
+
+  private
+
+  def initialize_ivars
+    @topics = {}
+    @notifications = []
+    @id_start = 1234
+    @insert_count = 0
   end
 end
 

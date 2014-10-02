@@ -9,9 +9,16 @@ Then(/^I get a "(.*?)" response with the following body$/) do |status, expected_
   response_data = JSON.load(@response.body)
   expected_response_data = JSON.load(expected_response_body_json)
 
-  # all responses that are asserted on thus far are attr hashes in nested under
-  # a single key. Comparing the nested values first gives a more readable diff.
-  expect(response_data.values.first).to eq(expected_response_data.values.first)
+  if response_data && response_data.values.first.is_a?(Hash)
+    # all responses that are asserted on thus far are attr hashes in nested under
+    # a single key. Comparing the nested values first gives a more readable diff.
+    expect(response_data.values.first).to eq(expected_response_data.values.first)
+  end
 
   expect(response_data).to eq(expected_response_data)
+end
+
+When(/^I GET "(.*?)" with query$/) do |path, query_as_json|
+  @parsed_query = JSON.load(query_as_json)
+  @response = get(path, @parsed_query)
 end

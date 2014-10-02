@@ -58,9 +58,13 @@ private
         result.merge(k => JSON.load(v))
       }
 
-      factory.call(data.merge(
-        tags: deserialized_tags,
-      ))
+      factory.call(
+        data
+          .except(:created_at)
+          .merge(
+            tags: deserialized_tags,
+          )
+      )
     end
 
   private

@@ -44,6 +44,17 @@ Feature: Create a subscriber list
       """
     And a subscriber list has not been created
 
+  Scenario: Create list with duplicate tags with different ordering
+    Given a subscriber list already exists
+    When I POST to "/subscriber_lists" with duplicate but differently ordered tag set
+    Then I get a "422" response with the following body
+      """
+        {
+          "error": "A subscriber list with that tag set already exists"
+        }
+      """
+    And a subscriber list has not been created
+
   Scenario: Unprocessable request
     Given there are no subscriber lists
     When I POST to "/subscriber_lists" with

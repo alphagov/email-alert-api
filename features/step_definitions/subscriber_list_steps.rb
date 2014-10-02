@@ -2,6 +2,9 @@ Given(/^there are no subscriber lists$/) do
   # TODO: This may need to be more than a noop at some point
 end
 
+Given(/^the subscriber list does not already exist$/) do
+end
+
 Then(/^a subscriber list is created$/) do
   expect(GOV_DELIVERY_API_CLIENT.created_topics.values).to include(
     name: "CMA cases of type Markets and Mergers and about Energy",
@@ -38,6 +41,20 @@ When(/^I POST to "(.*?)" with duplicate tag set$/) do |path|
   params = {
     "title" => "Any title",
     "tags" => @tag_set,
+  }
+
+  @response = post(path, params)
+end
+
+When(/^I POST to "(.*?)" with duplicate but differently ordered tag set$/) do |path|
+  duplicate_tags_with_different_order = @tag_set
+    .reduce({}) { |result, (tag, values)|
+      result.merge(tag => values.reverse)
+    }
+
+  params = {
+    "title" => "Any title",
+    "tags" => duplicate_tags_with_different_order,
   }
 
   @response = post(path, params)
