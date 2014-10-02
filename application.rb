@@ -18,9 +18,9 @@ require "tag_input_normalizer"
 class Application
   def initialize(
     config:,
-    storage_adapter: default_storage_adapter,
-    gov_delivery_client: default_gov_delivery_client,
-    uuid_generator: default_uuid_generator
+    storage_adapter:,
+    gov_delivery_client:,
+    uuid_generator:
   )
     @config = config
     @storage_adapter = storage_adapter
