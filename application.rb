@@ -13,7 +13,6 @@ require "subscriber_list_repository"
 require "subscriber_list_search_aspect"
 require "subscriber_list_tag_searcher"
 require "unique_tag_set_filter"
-require "unique_tag_set_filter"
 require "tag_input_normalizer"
 
 class Application
