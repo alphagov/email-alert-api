@@ -12,8 +12,8 @@ require "subscriber_list_persistence_aspect"
 require "subscriber_list_repository"
 require "subscriber_list_search_aspect"
 require "subscriber_list_tag_searcher"
-require "unique_tag_set_filter"
 require "tag_input_normalizer"
+require "unique_tag_set_filter"
 
 class Application
   def initialize(
