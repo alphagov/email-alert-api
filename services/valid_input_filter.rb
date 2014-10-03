@@ -25,6 +25,6 @@ private
   end
 
   def error_message
-    "A subscriber list was not created due to invalid attributes"
+    "Request rejected due to invalid parameters"
   end
 end

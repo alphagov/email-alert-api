@@ -60,6 +60,6 @@ Feature: Create a subscriber list
     Then I get a "422" response with the following body
       """
         {
-          "error": "A subscriber list was not created due to invalid attributes"
+          "error": "Request rejected due to invalid parameters"
         }
       """
