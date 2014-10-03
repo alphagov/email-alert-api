@@ -7,6 +7,7 @@ $LOAD_PATH.push(ROOT.join("repositories"))
 $LOAD_PATH.push(ROOT.join("lib"))
 $LOAD_PATH.push(ROOT.join("http"))
 $LOAD_PATH.push(ROOT.join("persistence"))
+$LOAD_PATH.push(ROOT.join("validators"))
 
 require "config_loader"
 CONFIG = ConfigLoader.new(Dir.glob("config/*.yml"))

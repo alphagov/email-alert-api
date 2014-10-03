@@ -6,14 +6,16 @@ require "core_ext"
 require "create_subscriber_list"
 require "notify_subscriber_lists"
 require "postgres_adapter"
-require "processable_input_filter"
 require "search_subscriber_list_by_tag"
+require "string_param_validator"
 require "subscriber_list_persistence_aspect"
 require "subscriber_list_repository"
 require "subscriber_list_search_aspect"
 require "subscriber_list_tag_searcher"
-require "unique_tag_set_filter"
 require "tag_input_normalizer"
+require "tags_param_validator"
+require "unique_tag_set_filter"
+require "valid_input_filter"
 
 class Application
   def initialize(
@@ -29,7 +31,7 @@ class Application
   end
 
   def create_subscriber_list(context)
-    processable_input_filter(
+    valid_create_subscriber_list_input_filter(
       tag_input_normalizer(
         unique_tag_set_filter(
           subscriber_list_persistence_aspect(
@@ -42,16 +44,20 @@ class Application
 
   def search_subscriber_lists(context)
     # TODO: Express somehow that in this case tags must be an exact match
-    tag_input_normalizer(
-      search_subscriber_list_by_tags_service
+    valid_search_subscriber_lists_input_filter(
+      tag_input_normalizer(
+        search_subscriber_list_by_tags_service
+      )
     ).call(context)
   end
 
   def notify_subscriber_lists_by_tags(context)
     # TODO: Express somehow that in this case publication tags fuzzy match a
     # number of subscriber lists
-    tag_searcher(
-      notify_subscriber_lists_service
+    valid_notify_subscriber_lists_input_filter(
+      tag_searcher(
+        notify_subscriber_lists_service
+      )
     ).call(context)
   end
 
@@ -81,13 +87,41 @@ class Application
     }
   end
 
-  def processable_input_filter(service)
+  def valid_create_subscriber_list_input_filter(service)
     ->(context) {
-      ProcessableInputFilter.new(
-        title: context.params.fetch("title", nil),
-        tags: context.params.fetch("tags", {}),
-        context: context,
+      ValidInputFilter.new(
+        validators: [
+          TagsParamValidator.new(context.params.fetch("tags", nil)),
+          StringParamValidator.new(context.params.fetch("title", nil)),
+        ],
         service: service,
+        context: context,
+      ).call
+    }
+  end
+
+  def valid_search_subscriber_lists_input_filter(service)
+    ->(context) {
+      ValidInputFilter.new(
+        validators: [
+          TagsParamValidator.new(context.params.fetch("tags", nil)),
+        ],
+        service: service,
+        context: context,
+      ).call
+    }
+  end
+
+  def valid_notify_subscriber_lists_input_filter(service)
+    ->(context) {
+      ValidInputFilter.new(
+        validators: [
+          TagsParamValidator.new(context.params.fetch("tags", nil)),
+          StringParamValidator.new(context.params.fetch("subject", nil)),
+          StringParamValidator.new(context.params.fetch("body", nil)),
+        ],
+        service: service,
+        context: context,
       ).call
     }
   end
