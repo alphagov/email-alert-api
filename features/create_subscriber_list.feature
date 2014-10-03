@@ -55,60 +55,8 @@ Feature: Create a subscriber list
       """
     And a subscriber list has not been created
 
-  Scenario: Unprocessable request
-    Given there are no subscriber lists
-    When I POST to "/subscriber_lists" with
-      """
-      {
-        "title": "Anything",
-        "tags": {}
-      }
-      """
-    Then I get a "422" response with the following body
-      """
-        {
-          "error": "A subscriber list was not created due to invalid attributes"
-        }
-      """
-    When I POST to "/subscriber_lists" with
-      """
-      {
-        "title": "Anything",
-        "tags": {
-          "tag_key": "anything"
-        }
-      }
-      """
-    Then I get a "422" response with the following body
-      """
-        {
-          "error": "A subscriber list was not created due to invalid attributes"
-        }
-      """
-    When I POST to "/subscriber_lists" with
-      """
-      {
-        "title": "Anything",
-        "tags": ""
-      }
-      """
-    Then I get a "422" response with the following body
-      """
-        {
-          "error": "A subscriber list was not created due to invalid attributes"
-        }
-      """
-    When I POST to "/subscriber_lists" with
-      """
-      {
-        "title": "",
-        "tags": {
-          "document_type": [ "cma_case" ],
-          "case_type": [ "markets", "mergers" ],
-          "market_sector": [ "energy" ]
-        }
-      }
-      """
+  Scenario: Invalid parameters
+    When I POST to "/subscriber_lists" with invalid parameters
     Then I get a "422" response with the following body
       """
         {

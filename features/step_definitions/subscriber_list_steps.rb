@@ -60,6 +60,15 @@ When(/^I POST to "(.*?)" with duplicate but differently ordered tag set$/) do |p
   @response = post(path, params)
 end
 
+When(/^When I POST to "(.*?)" with invalid parameters$/) do |path|
+  params = {
+    "not_title" => "Any title",
+    "tags" => ["not", "a", "hash"],
+  }
+
+  @response = post(path, params)
+end
+
 Then(/^a subscriber list has not been created$/) do
   expect(GOV_DELIVERY_API_CLIENT.created_topics.size).to eq(1)
 end
