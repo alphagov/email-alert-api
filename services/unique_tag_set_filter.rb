@@ -7,7 +7,7 @@ class UniqueTagSetFilter
   end
 
   def call
-    if repo.find_by_tags(tags).empty?
+    if repo.find_by_tags(tags.to_h).empty?
       service.call(context)
     else
       context.unprocessable(error: error_message)

@@ -22,6 +22,6 @@ private
   )
 
   def subscriber_list
-    repo.find_by_tags(tags).first
+    repo.find_by_tags(tags.to_h).first
   end
 end

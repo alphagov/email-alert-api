@@ -12,7 +12,8 @@ require "subscriber_list_persistence_aspect"
 require "subscriber_list_repository"
 require "subscriber_list_search_aspect"
 require "subscriber_list_tag_searcher"
-require "tag_input_normalizer"
+require "tag_set_domain_aspect"
+require "tag_set"
 require "tags_param_validator"
 require "unique_tag_set_filter"
 require "valid_input_filter"
@@ -32,7 +33,7 @@ class Application
 
   def create_subscriber_list(context)
     valid_create_subscriber_list_input_filter(
-      tag_input_normalizer(
+      tag_set_domain_aspect(
         unique_tag_set_filter(
           subscriber_list_persistence_aspect(
             create_subscriber_list_service
@@ -45,7 +46,7 @@ class Application
   def search_subscriber_lists(context)
     # TODO: Express somehow that in this case tags must be an exact match
     valid_search_subscriber_lists_input_filter(
-      tag_input_normalizer(
+      tag_set_domain_aspect(
         search_subscriber_list_by_tags_service
       )
     ).call(context)
@@ -77,9 +78,10 @@ class Application
     end
   end
 
-  def tag_input_normalizer(service)
+  def tag_set_domain_aspect(service)
     ->(context) {
-      TagInputNormalizer.new(
+      TagSetDomainAspect.new(
+        factory: tag_set_factory,
         service: service,
         context: context,
         tags: context.params.fetch("tags"),
@@ -198,6 +200,10 @@ class Application
       adapter: storage_adapter,
       factory: subscriber_list_factory,
     )
+  end
+
+  def tag_set_factory
+    TagSet.method(:new)
   end
 
   def subscriber_list_builder
