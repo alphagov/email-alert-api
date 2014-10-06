@@ -60,7 +60,7 @@ When(/^I POST to "(.*?)" with duplicate but differently ordered tag set$/) do |p
   @response = post(path, params)
 end
 
-When(/^When I POST to "(.*?)" with invalid parameters$/) do |path|
+When(/^I POST to "(.*?)" with invalid parameters$/) do |path|
   params = {
     "not_title" => "Any title",
     "tags" => ["not", "a", "hash"],
