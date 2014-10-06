@@ -49,26 +49,45 @@ private
       @factory = factory
     end
 
+    # The storage adapters return hashes with symbol keys
+    # Fortunately Struct#to_h returns symbol keys
     def dump(subscriber_list)
-      subscriber_list.to_h
+      subscriber_list
+        .to_h
+        .merge(
+          created_at: subscriber_list.created_at.utc,
+        )
     end
 
-    def load(data)
-      deserialized_tags = data.fetch(:tags).reduce({}) { |result, (k, v)|
-        result.merge(k => JSON.load(v))
-      }
+    # The storage adapters return hashes with symbol keys
+    # We expect string keys throughout the application
+    def load(persisted_data)
+      deserialized_tags = json_load_hash_values(persisted_data.fetch(:tags))
+      created_at = persisted_data.fetch(:created_at).utc
 
-      factory.call(
-        data
-          .except(:created_at)
-          .merge(
-            tags: deserialized_tags,
-          )
-      )
+      loaded_data = stringify_hash_keys(persisted_data)
+        .merge(
+          "created_at" => created_at,
+          "tags" => deserialized_tags,
+        )
+
+      factory.call(loaded_data)
     end
 
   private
 
     attr_reader :factory
+
+    def stringify_hash_keys(hash)
+      hash.reduce({}) { |result, (k,v)|
+        result.merge(k.to_s => v)
+      }
+    end
+
+    def json_load_hash_values(hash)
+      hash.reduce({}) { |result, (k, v)|
+        result.merge(k => JSON.load(v))
+      }
+    end
   end
 end

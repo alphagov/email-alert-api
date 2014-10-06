@@ -27,8 +27,8 @@ private
 
   def subscriber_list_data
     {
-      gov_delivery_id: gov_delivery_id,
-      subscription_url: subscription_url,
+      "gov_delivery_id" => gov_delivery_id,
+      "subscription_url" => subscription_url,
     }.merge(subscriber_list_attributes)
   end
 

@@ -23,6 +23,7 @@ Feature: Create a subscriber list
           "title": "CMA cases of type Markets and Mergers and about Energy",
           "subscription_url": "https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=UKGOVUK_1234",
           "gov_delivery_id": "UKGOVUK_1234",
+          "created_at": "2014-10-06T14:00:00Z",
           "tags": {
             "document_type": [ "cma_case" ],
             "case_type": [ "markets", "mergers" ],
