@@ -9,7 +9,7 @@ begin
   require 'cucumber'
   require 'cucumber/rake/task'
   Cucumber::Rake::Task.new(:cucumber) do |t|
-    t.cucumber_opts = "features --format pretty"
+    t.cucumber_opts = "features --strict --format pretty"
   end
 
   task default: [
