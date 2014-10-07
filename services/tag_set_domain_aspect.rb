@@ -1,13 +1,13 @@
 class TagSetDomainAspect
-  def initialize(factory:, service:, context:, tags:)
+  def initialize(factory:, service:, responder:, tags:)
     @factory = factory
     @service = service
-    @context = context
+    @responder = responder
     @tags = tags
   end
 
   def call
-    service.call(context, tags: tag_set)
+    service.call(responder, tags: tag_set)
   end
 
   private
@@ -15,7 +15,7 @@ class TagSetDomainAspect
   attr_reader(
     :factory,
     :service,
-    :context,
+    :responder,
     :tags,
   )
 

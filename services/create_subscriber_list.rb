@@ -1,14 +1,15 @@
 class CreateSubscriberList
-  def initialize(gov_delivery_client:, subscription_link_template:, subscriber_list_builder:, subscriber_list_attributes:, context:)
+  def initialize(gov_delivery_client:, subscription_link_template:, subscriber_list_builder:, responder:, title:, tags:)
     @gov_delivery_client = gov_delivery_client
     @subscription_link_template = subscription_link_template
     @subscriber_list_builder = subscriber_list_builder
-    @subscriber_list_attributes = subscriber_list_attributes
-    @context = context
+    @responder = responder
+    @title = title
+    @tags = tags
   end
 
   def call
-    context.created(subscriber_list: new_subscriber_list)
+    responder.created(subscriber_list: new_subscriber_list)
   end
 
 private
@@ -17,8 +18,9 @@ private
     :subscription_link_template,
     :gov_delivery_client,
     :subscriber_list_builder,
-    :subscriber_list_attributes,
-    :context,
+    :responder,
+    :title,
+    :tags,
   )
 
   def new_subscriber_list
@@ -27,17 +29,15 @@ private
 
   def subscriber_list_data
     {
-      "gov_delivery_id" => gov_delivery_id,
-      "subscription_url" => subscription_url,
-    }.merge(subscriber_list_attributes)
+      gov_delivery_id: gov_delivery_id,
+      subscription_url: subscription_url,
+      title: title,
+      tags: tags.to_h,
+    }
   end
 
   def remote_subscriber_list_data
-    @remote_subscriber_list_data ||= gov_delivery_client.create_topic(name: subscriber_list_name)
-  end
-
-  def subscriber_list_name
-    subscriber_list_attributes.fetch("title")
+    @remote_subscriber_list_data ||= gov_delivery_client.create_topic(name: title)
   end
 
   def gov_delivery_id

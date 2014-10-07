@@ -1,31 +1,49 @@
 class SubscriberListPersistenceAspect
-  def initialize(service:, repo:, context:)
+  def initialize(service:, repo:, responder:)
     @repo = repo
     @service = service
-    @context = context
+    @responder = responder
   end
 
   def call
-    service.call(self)
-  end
-
-  def params
-    context.params
-  end
-
-  def created(stuff)
-    persist_subscriber_list(stuff.fetch(:subscriber_list))
-    context.created(stuff)
+    service.call(responder_proxy)
   end
 
 private
   attr_reader(
     :repo,
     :service,
-    :context,
+    :responder,
   )
+
+  def responder_proxy
+    ResponderProxy.new(responder, method(:created_callback))
+  end
+
+  def created_callback(response)
+    persist_subscriber_list(response.fetch(:subscriber_list))
+  end
 
   def persist_subscriber_list(subscriber_list)
     repo.store(subscriber_list.gov_delivery_id, subscriber_list)
+  end
+
+  class ResponderProxy
+    def initialize(responder, callback)
+      @callback = callback
+      @responder = responder
+    end
+
+    def created(response)
+      callback.call(response)
+      responder.created(response)
+    end
+
+    private
+
+    attr_reader(
+      :callback,
+      :responder,
+    )
   end
 end

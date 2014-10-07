@@ -7,12 +7,12 @@ RSpec.describe ValidInputFilter do
     ValidInputFilter.new(
       validators: validators,
       service: service,
-      context: context,
+      responder: responder,
     )
   end
 
   let(:service) { double(:service) }
-  let(:context) { double(:context) }
+  let(:responder) { double(:responder) }
 
   let(:true_validator) { double(:true_validator, valid?: true) }
   let(:false_validator) { double(:false_validator, valid?: false) }
@@ -25,8 +25,8 @@ RSpec.describe ValidInputFilter do
       ]
     }
 
-    it "calls the service with the context" do
-      expect(service).to receive(:call).with(context)
+    it "calls the service with the responder" do
+      expect(service).to receive(:call).with(responder)
 
       filter.call
     end
@@ -41,8 +41,8 @@ RSpec.describe ValidInputFilter do
       ]
     }
 
-    it "calls #unprocessable on the context with an error message" do
-      expect(context).to receive(:unprocessable).with(
+    it "calls #unprocessable on the responder with an error message" do
+      expect(responder).to receive(:unprocessable).with(
         hash_including(error: /invalid/)
       )
 

@@ -1,16 +1,16 @@
 class UniqueTagSetFilter
-  def initialize(repo:, service:, context:, tags:)
+  def initialize(repo:, service:, responder:, tags:)
     @repo = repo
     @service = service
-    @context = context
+    @responder = responder
     @tags = tags
   end
 
   def call
     if repo.find_by_tags(tags.to_h).empty?
-      service.call(context)
+      service.call(responder, tags: tags)
     else
-      context.unprocessable(error: error_message)
+      responder.unprocessable(error: error_message)
     end
   end
 private
@@ -18,7 +18,7 @@ private
   attr_reader(
     :repo,
     :service,
-    :context,
+    :responder,
     :tags,
   )
 

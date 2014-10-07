@@ -5,11 +5,17 @@ class NullContext
 
   attr_reader :params
 
-  def created(response)
-    response
+  def responder
+    Responder.new
   end
 
-  def unprocessable(response)
-    response
+  class Responder
+    def created(response)
+      response
+    end
+
+    def unprocessable(response)
+      response
+    end
   end
 end
