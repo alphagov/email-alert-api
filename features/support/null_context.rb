@@ -17,5 +17,9 @@ class NullContext
     def unprocessable(response)
       response
     end
+
+    def missing_parameters(response)
+      unprocessable(response)
+    end
   end
 end

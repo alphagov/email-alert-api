@@ -95,6 +95,10 @@ class Application
     context.responder.missing_parameters(error: "Request rejected due to invalid parameters")
   end
 
+  def missing_parameters
+    raise MissingParameters
+  end
+
   def extract_context_params(context, keys)
     string_keys = keys.map(&:to_s)
 
@@ -128,8 +132,8 @@ class Application
     ->(responder, **args) {
       ValidInputFilter.new(
         validators: [
-          TagsParamValidator.new(args.fetch(:tags) { raise MissingParameters }),
-          StringParamValidator.new(args.fetch(:title) { raise MissingParameters }),
+          TagsParamValidator.new(args.fetch(:tags) { missing_parameters }),
+          StringParamValidator.new(args.fetch(:title) { missing_parameters }),
         ],
         service: compose_service(service, **args),
         responder: responder,
@@ -141,7 +145,7 @@ class Application
     ->(responder, **args) {
       ValidInputFilter.new(
         validators: [
-          TagsParamValidator.new(args.fetch(:tags) { raise MissingParameters }),
+          TagsParamValidator.new(args.fetch(:tags) { missing_parameters }),
         ],
         service: compose_service(service, **args),
         responder: responder,
@@ -153,9 +157,9 @@ class Application
     ->(responder, **args) {
       ValidInputFilter.new(
         validators: [
-          TagsParamValidator.new(args.fetch(:tags) { raise MissingParameters }),
-          StringParamValidator.new(args.fetch(:subject) { raise MissingParameters }),
-          StringParamValidator.new(args.fetch(:body) { raise MissingParameters }),
+          TagsParamValidator.new(args.fetch(:tags) { missing_parameters }),
+          StringParamValidator.new(args.fetch(:subject) { missing_parameters }),
+          StringParamValidator.new(args.fetch(:body) { missing_parameters }),
         ],
         service: compose_service(service, **args),
         responder: responder,
