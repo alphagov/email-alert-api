@@ -1,5 +1,6 @@
 require "sequel"
 Sequel.extension :pg_hstore, :pg_hstore_ops
+Sequel.default_timezone = :utc
 
 class PostgresAdapter
   def initialize(config:)

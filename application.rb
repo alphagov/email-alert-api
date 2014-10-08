@@ -8,6 +8,7 @@ require "notify_subscriber_lists"
 require "postgres_adapter"
 require "search_subscriber_list_by_tag"
 require "string_param_validator"
+require "subscriber_list"
 require "subscriber_list_persistence_aspect"
 require "subscriber_list_repository"
 require "subscriber_list_search_aspect"
@@ -23,11 +24,13 @@ class Application
     config:,
     storage_adapter:,
     gov_delivery_client:,
+    clock:,
     uuid_generator:
   )
     @config = config
     @storage_adapter = storage_adapter
     @gov_delivery_client = gov_delivery_client
+    @clock = clock
     @uuid_generator = uuid_generator
   end
 
@@ -69,14 +72,8 @@ class Application
     :storage_adapter,
     :gov_delivery_client,
     :uuid_generator,
+    :clock,
   )
-
-  require "ostruct"
-  class SubscriberList < OpenStruct
-    def to_json(*args, &block)
-      to_h.to_json(*args, &block)
-    end
-  end
 
   def tag_set_domain_aspect(service)
     ->(context) {
@@ -210,14 +207,21 @@ class Application
     ->(attributes) {
       subscriber_list_factory.call(
         attributes.merge(
-          id: uuid_generator.call,
+          "id" => uuid_generator.call,
+          "created_at" => clock.call,
         )
       )
     }
   end
 
   def subscriber_list_factory
-    SubscriberList.method(:new)
+    ->(attributes) {
+      SubscriberList.new(
+        *SubscriberList.members.map { |member|
+          attributes.fetch(member.to_s)
+        }
+      )
+    }
   end
 
   def subscriber_list_searcher

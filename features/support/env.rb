@@ -20,11 +20,14 @@ STORAGE_ADAPTER = PostgresAdapter.new(
   config: CONFIG.fetch(:postgres),
 )
 
+CURRENT_TIME = Time.parse("2014-10-06T14:00:00 UTC")
+
 APP = Application.new(
   config: CONFIG,
   uuid_generator: UUID_GENERATOR,
   storage_adapter: STORAGE_ADAPTER,
   gov_delivery_client: GOV_DELIVERY_API_CLIENT,
+  clock: ->() { CURRENT_TIME.dup },
 )
 
 # Sinatra stuff

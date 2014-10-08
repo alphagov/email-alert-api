@@ -7,6 +7,7 @@ APP = Application.new(
   gov_delivery_client: GovDeliveryClient.create_client(CONFIG.fetch(:gov_delivery)),
   storage_adapter: PostgresAdapter.new(config: CONFIG.fetch(:postgres)),
   uuid_generator: ->() { SecureRandom.uuid },
+  clock: ->() { Time.now },
 )
 
 run HTTPAPI
