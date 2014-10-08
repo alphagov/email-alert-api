@@ -261,8 +261,8 @@ class Application
     ->(attributes) {
       subscriber_list_factory.call(
         attributes.merge(
-          "id" => uuid_generator.call,
-          "created_at" => clock.call,
+          id: uuid_generator.call,
+          created_at: clock.call,
         )
       )
     }
@@ -272,7 +272,7 @@ class Application
     ->(attributes) {
       SubscriberList.new(
         *SubscriberList.members.map { |member|
-          attributes.fetch(member.to_s)
+          attributes.fetch(member)
         }
       )
     }
