@@ -92,7 +92,9 @@ class Application
       **extract_context_params(context, arguments)
     )
   rescue MissingParameters
-    context.responder.missing_parameters(error: "Request rejected due to invalid parameters")
+    context.responder.missing_parameters(
+      error: "Request rejected due to invalid parameters"
+    )
   end
 
   def missing_parameters
@@ -102,9 +104,12 @@ class Application
   def extract_context_params(context, keys)
     string_keys = keys.map(&:to_s)
 
-    context.params
-      .select { |k,v|
-        string_keys.include?(k)
+    string_keys
+      .map { |key|
+        [
+          key,
+          context.params.fetch(key) { missing_parameters },
+        ]
       }
       .reduce({}) { |result, (k,v)|
         result.merge(k.to_sym => v)
@@ -129,39 +134,45 @@ class Application
   end
 
   def valid_create_subscriber_list_input_filter(service)
-    ->(responder, **args) {
+    ->(responder, tags:, title:, **args) {
       ValidInputFilter.new(
         validators: [
-          TagsParamValidator.new(args.fetch(:tags) { missing_parameters }),
-          StringParamValidator.new(args.fetch(:title) { missing_parameters }),
+          TagsParamValidator.new(tags),
+          StringParamValidator.new(title),
         ],
-        service: compose_service(service, **args),
+        service: compose_service(service, tags: tags, title: title, **args),
         responder: responder,
       ).call
     }
   end
 
   def valid_search_subscriber_lists_input_filter(service)
-    ->(responder, **args) {
+    ->(responder, tags:, **args) {
       ValidInputFilter.new(
         validators: [
-          TagsParamValidator.new(args.fetch(:tags) { missing_parameters }),
+          TagsParamValidator.new(tags),
         ],
-        service: compose_service(service, **args),
+        service: compose_service(service, tags: tags, **args),
         responder: responder,
       ).call
     }
   end
 
   def valid_notify_subscriber_lists_input_filter(service)
-    ->(responder, **args) {
+    ->(responder, tags:, subject:, body:, **args) {
       ValidInputFilter.new(
         validators: [
-          TagsParamValidator.new(args.fetch(:tags) { missing_parameters }),
-          StringParamValidator.new(args.fetch(:subject) { missing_parameters }),
-          StringParamValidator.new(args.fetch(:body) { missing_parameters }),
+          TagsParamValidator.new(tags),
+          StringParamValidator.new(subject),
+          StringParamValidator.new(body),
         ],
-        service: compose_service(service, **args),
+        service: compose_service(
+          service,
+          tags: tags,
+          body: body,
+          subject: subject,
+          **args
+        ),
         responder: responder,
       ).call
     }

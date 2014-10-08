@@ -22,3 +22,7 @@ When(/^I GET "(.*?)" with query$/) do |path, query_as_json|
   @parsed_query = JSON.load(query_as_json)
   @response = get(path, @parsed_query)
 end
+
+When(/^I POST to "(.*?)" with missing parameters$/) do |path|
+  @response = post(path, {})
+end
