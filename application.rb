@@ -6,6 +6,7 @@ require "core_ext"
 require "create_subscriber_list"
 require "notify_subscriber_lists"
 require "postgres_adapter"
+require "responder_proxy"
 require "search_subscriber_list_by_tag"
 require "string_param_validator"
 require "subscriber_list"
@@ -93,7 +94,7 @@ class Application
       }
 
     composed_service.call(
-      context.responder,
+      ResponderProxy.new(context.responder),
       **extract_context_params(context.params, arguments)
     )
   rescue MissingParameters
