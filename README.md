@@ -32,7 +32,7 @@ the appropriate topic.
 $ ./startup.sh
 ```
 
-If you are using the GDS development virtual machine then the application will be available on the host at [http://finder-frontend.dev.gov.uk/](http://finder-frontend.dev.gov.uk/)
+If you are using the GDS development virtual machine then the application will be available on the host at [http://email-alert-api.dev.gov.uk/](http://email-alert-api.dev.gov.uk/)
 
 ## Running the test suite
 ```
