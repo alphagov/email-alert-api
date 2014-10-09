@@ -1,14 +1,14 @@
 class SubscriberListSearchAspect
-  def initialize(service:, repo:, subscriber_list_searcher:, tags:, context:)
+  def initialize(service:, repo:, responder:, subscriber_list_searcher:, tags:)
     @service = service
     @repo = repo
     @subscriber_list_searcher = subscriber_list_searcher
     @tags = tags
-    @context = context
+    @responder = responder
   end
 
   def call
-    service.call(subscriber_lists, context)
+    service.call(responder, subscriber_lists: subscriber_lists)
   end
 
 private
@@ -29,6 +29,6 @@ private
     :repo,
     :subscriber_list_searcher,
     :tags,
-    :context,
+    :responder,
   )
 end

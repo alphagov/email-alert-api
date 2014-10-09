@@ -1,22 +1,22 @@
 class ValidInputFilter
-  def initialize(service:, context:, validators:)
+  def initialize(service:, responder:, validators:)
     @service = service
-    @context = context
+    @responder = responder
     @validators = validators
   end
 
   def call
     if input_valid?
-      service.call(context)
+      service.call(responder)
     else
-      context.unprocessable(error: error_message)
+      responder.unprocessable(error: error_message)
     end
   end
 
 private
   attr_reader(
     :service,
-    :context,
+    :responder,
     :validators,
   )
 

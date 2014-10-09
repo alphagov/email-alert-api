@@ -65,10 +65,10 @@ private
       deserialized_tags = json_load_hash_values(persisted_data.fetch(:tags))
       created_at = persisted_data.fetch(:created_at).utc
 
-      loaded_data = stringify_hash_keys(persisted_data)
+      loaded_data = persisted_data
         .merge(
-          "created_at" => created_at,
-          "tags" => deserialized_tags,
+          created_at: created_at,
+          tags: deserialized_tags,
         )
 
       factory.call(loaded_data)
@@ -77,12 +77,6 @@ private
   private
 
     attr_reader :factory
-
-    def stringify_hash_keys(hash)
-      hash.reduce({}) { |result, (k,v)|
-        result.merge(k.to_s => v)
-      }
-    end
 
     def json_load_hash_values(hash)
       hash.reduce({}) { |result, (k, v)|

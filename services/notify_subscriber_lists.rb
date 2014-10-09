@@ -1,16 +1,16 @@
 class NotifySubscriberLists
-  def initialize(gov_delivery_client:, subject:, body:, subscriber_lists:, context:)
+  def initialize(gov_delivery_client:, responder:, subject:, body:, subscriber_lists:)
     @gov_delivery_client = gov_delivery_client
     @subscriber_lists = subscriber_lists
     @subject = subject
     @body = body
-    @context = context
+    @responder = responder
   end
 
   def call
     notify_subscriber_lists
 
-    context.accepted({})
+    responder.accepted({})
   end
 
 private
@@ -19,7 +19,7 @@ private
     :subject,
     :body,
     :subscriber_lists,
-    :context
+    :responder
   )
 
   def gov_delivery_topic_ids

@@ -35,34 +35,43 @@ class Application
   end
 
   def create_subscriber_list(context)
-    valid_create_subscriber_list_input_filter(
-      tag_set_domain_aspect(
-        unique_tag_set_filter(
-          subscriber_list_persistence_aspect(
-            create_subscriber_list_service
+    call_service(
+      service: valid_create_subscriber_list_input_filter(
+        tag_set_domain_aspect(
+          unique_tag_set_filter(
+            subscriber_list_persistence_aspect(
+              create_subscriber_list_service
+            )
           )
         )
-      )
-    ).call(context)
+      ),
+      context: context,
+      arguments: %w(tags title),
+    )
   end
 
   def search_subscriber_lists(context)
-    # TODO: Express somehow that in this case tags must be an exact match
-    valid_search_subscriber_lists_input_filter(
-      tag_set_domain_aspect(
-        search_subscriber_list_by_tags_service
-      )
-    ).call(context)
+    call_service(
+      service: valid_search_subscriber_lists_input_filter(
+        tag_set_domain_aspect(
+          search_subscriber_list_by_tags_service
+        )
+      ),
+      context: context,
+      arguments: %w(tags),
+    )
   end
 
   def notify_subscriber_lists_by_tags(context)
-    # TODO: Express somehow that in this case publication tags fuzzy match a
-    # number of subscriber lists
-    valid_notify_subscriber_lists_input_filter(
-      tag_searcher(
-        notify_subscriber_lists_service
-      )
-    ).call(context)
+    call_service(
+      service: valid_notify_subscriber_lists_input_filter(
+        tag_searcher(
+          notify_subscriber_lists_service
+        )
+      ),
+      context: context,
+      arguments: %w(tags subject body)
+    )
   end
 
   private
@@ -75,118 +84,163 @@ class Application
     :clock,
   )
 
+  MissingParameters = Class.new(StandardError)
+
+  def call_service(service:, context:, arguments: [])
+    service.call(
+      context.responder,
+      **extract_context_params(context, arguments)
+    )
+  rescue MissingParameters
+    context.responder.missing_parameters(
+      error: "Request rejected due to invalid parameters"
+    )
+  end
+
+  def missing_parameters
+    raise MissingParameters
+  end
+
+  def extract_context_params(context, keys)
+    string_keys = keys.map(&:to_s)
+
+    string_keys
+      .map { |key|
+        [
+          key,
+          context.params.fetch(key) { missing_parameters },
+        ]
+      }
+      .reduce({}) { |result, (k,v)|
+        result.merge(k.to_sym => v)
+      }
+  end
+
+  def compose_service(service, **collected_args)
+    ->(responder, **more_args) {
+      service.call(responder, **collected_args.merge(more_args))
+    }
+  end
+
   def tag_set_domain_aspect(service)
-    ->(context) {
+    ->(responder, tags:, **args) {
       TagSetDomainAspect.new(
         factory: tag_set_factory,
-        service: service,
-        context: context,
-        tags: context.params.fetch("tags"),
+        service: compose_service(service, **args),
+        responder: responder,
+        tags: tags,
       ).call
     }
   end
 
   def valid_create_subscriber_list_input_filter(service)
-    ->(context) {
+    ->(responder, tags:, title:, **args) {
       ValidInputFilter.new(
         validators: [
-          TagsParamValidator.new(context.params.fetch("tags", nil)),
-          StringParamValidator.new(context.params.fetch("title", nil)),
+          TagsParamValidator.new(tags),
+          StringParamValidator.new(title),
         ],
-        service: service,
-        context: context,
+        service: compose_service(service, tags: tags, title: title, **args),
+        responder: responder,
       ).call
     }
   end
 
   def valid_search_subscriber_lists_input_filter(service)
-    ->(context) {
+    ->(responder, tags:, **args) {
       ValidInputFilter.new(
         validators: [
-          TagsParamValidator.new(context.params.fetch("tags", nil)),
+          TagsParamValidator.new(tags),
         ],
-        service: service,
-        context: context,
+        service: compose_service(service, tags: tags, **args),
+        responder: responder,
       ).call
     }
   end
 
   def valid_notify_subscriber_lists_input_filter(service)
-    ->(context) {
+    ->(responder, tags:, subject:, body:, **args) {
       ValidInputFilter.new(
         validators: [
-          TagsParamValidator.new(context.params.fetch("tags", nil)),
-          StringParamValidator.new(context.params.fetch("subject", nil)),
-          StringParamValidator.new(context.params.fetch("body", nil)),
+          TagsParamValidator.new(tags),
+          StringParamValidator.new(subject),
+          StringParamValidator.new(body),
         ],
-        service: service,
-        context: context,
+        service: compose_service(
+          service,
+          tags: tags,
+          body: body,
+          subject: subject,
+          **args
+        ),
+        responder: responder,
       ).call
     }
   end
 
   def tag_searcher(service)
-    ->(context) {
+    ->(responder, tags:, **args) {
       SubscriberListSearchAspect.new(
         repo: subscriber_list_repository,
         subscriber_list_searcher: subscriber_list_searcher,
-        service: notify_subscriber_lists_service,
-        context: context,
-        tags: context.params.fetch("tags"),
+        service: compose_service(notify_subscriber_lists_service, **args),
+        responder: responder,
+        tags: tags,
       ).call
     }
   end
 
   def unique_tag_set_filter(service)
-    ->(context, tags: tags) {
+    ->(responder, tags:, **args) {
       UniqueTagSetFilter.new(
         repo: subscriber_list_repository,
         tags: tags,
-        context: context,
-        service: service,
+        responder: responder,
+        service: compose_service(service, **args),
       ).call
     }
   end
 
   def subscriber_list_persistence_aspect(service)
-    ->(context) {
+    ->(responder, **args) {
       SubscriberListPersistenceAspect.new(
-        context: context,
+        responder: responder,
         repo: subscriber_list_repository,
-        service: service,
+        service: compose_service(service, **args)
       ).call
     }
   end
 
   def create_subscriber_list_service
-    ->(context) {
+    ->(responder, tags:, title:) {
       CreateSubscriberList.new(
-        context: context,
-        subscriber_list_attributes: context.params.slice("title", "tags"),
+        responder: responder,
         gov_delivery_client: gov_delivery_client,
         subscriber_list_builder: subscriber_list_builder,
         subscription_link_template: subscription_link_template,
+        title: title,
+        tags: tags,
       ).call
     }
   end
 
   def search_subscriber_list_by_tags_service
-    ->(context, tags:) {
+    ->(responder, tags:) {
       SearchSubscriberListByTags.new(
         repo: subscriber_list_repository,
-        context: context,
+        responder: responder,
         tags: tags,
       ).call
     }
   end
 
   def notify_subscriber_lists_service
-    ->(subscriber_lists, context) {
+    ->(responder, subject:, body:, subscriber_lists:, **args) {
       NotifySubscriberLists.new(
         gov_delivery_client: gov_delivery_client,
-        context: context,
-        subject: context.params.fetch("subject"),
-        body: context.params.fetch("body"),
+        responder: responder,
+        subject: subject,
+        body: body,
         subscriber_lists: subscriber_lists,
       ).call
     }
@@ -207,8 +261,8 @@ class Application
     ->(attributes) {
       subscriber_list_factory.call(
         attributes.merge(
-          "id" => uuid_generator.call,
-          "created_at" => clock.call,
+          id: uuid_generator.call,
+          created_at: clock.call,
         )
       )
     }
@@ -218,7 +272,7 @@ class Application
     ->(attributes) {
       SubscriberList.new(
         *SubscriberList.members.map { |member|
-          attributes.fetch(member.to_s)
+          attributes.fetch(member)
         }
       )
     }

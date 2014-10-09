@@ -64,3 +64,12 @@ Feature: Create a subscriber list
           "error": "Request rejected due to invalid parameters"
         }
       """
+
+  Scenario: Missing parameters
+    When I POST to "/subscriber_lists" with missing parameters
+    Then I get a "422" response with the following body
+      """
+        {
+          "error": "Request rejected due to invalid parameters"
+        }
+      """
