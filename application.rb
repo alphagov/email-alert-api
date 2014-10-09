@@ -89,7 +89,7 @@ class Application
   def call_service(service:, context:, arguments: [])
     service.call(
       context.responder,
-      **extract_context_params(context, arguments)
+      **extract_context_params(context.params, arguments)
     )
   rescue MissingParameters
     context.responder.missing_parameters(
@@ -101,14 +101,14 @@ class Application
     raise MissingParameters
   end
 
-  def extract_context_params(context, keys)
+  def extract_context_params(params, keys)
     string_keys = keys.map(&:to_s)
 
     string_keys
       .map { |key|
         [
           key,
-          context.params.fetch(key) { missing_parameters },
+          params.fetch(key) { missing_parameters },
         ]
       }
       .reduce({}) { |result, (k,v)|
