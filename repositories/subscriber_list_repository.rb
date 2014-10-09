@@ -49,8 +49,6 @@ private
       @factory = factory
     end
 
-    # The storage adapters return hashes with symbol keys
-    # Fortunately Struct#to_h returns symbol keys
     def dump(subscriber_list)
       subscriber_list
         .to_h
@@ -59,8 +57,6 @@ private
         )
     end
 
-    # The storage adapters return hashes with symbol keys
-    # We expect string keys throughout the application
     def load(persisted_data)
       deserialized_tags = json_load_hash_values(persisted_data.fetch(:tags))
       created_at = persisted_data.fetch(:created_at).utc
