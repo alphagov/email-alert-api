@@ -2,6 +2,7 @@ require "sinatra"
 require "airbrake"
 require "config/initializers/airbrake"
 require "sinatra_adapter"
+require "middleware/post_body_content_type_parser"
 
 # TODO: Disable ShowExceptions in a less gross way, do we care about development mode?
 Sinatra::ShowExceptions.class_eval do
@@ -18,6 +19,8 @@ class HTTPAPI < Sinatra::Application
   configure do
     Airbrake.configuration.ignore << "Sinatra::NotFound"
     use Airbrake::Sinatra
+
+    use Rack::PostBodyContentTypeParser
   end
 
   post "/subscriber_lists" do
