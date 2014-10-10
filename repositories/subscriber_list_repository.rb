@@ -22,7 +22,7 @@ class SubscriberListRepository
   # TODO: find_by_exact_tags?
   def find_by_tags(tags)
     adapter
-      .find_by(namespace, :tags, tags)
+      .find_by(namespace, :tags, mapper.dump_hash_values(tags))
       .map(&method(:load))
   end
 
@@ -49,39 +49,44 @@ private
       @factory = factory
     end
 
-    # The storage adapters return hashes with symbol keys
-    # Fortunately Struct#to_h returns symbol keys
     def dump(subscriber_list)
+      serialized_tags = dump_hash_values(subscriber_list.tags)
+
       subscriber_list
         .to_h
         .merge(
+          tags: serialized_tags,
           created_at: subscriber_list.created_at.utc,
         )
     end
 
-    # The storage adapters return hashes with symbol keys
-    # We expect string keys throughout the application
     def load(persisted_data)
-      deserialized_tags = json_load_hash_values(persisted_data.fetch(:tags))
+      deserialized_tags = load_hash_values(persisted_data.fetch(:tags))
       created_at = persisted_data.fetch(:created_at).utc
 
       loaded_data = persisted_data
         .merge(
-          created_at: created_at,
           tags: deserialized_tags,
+          created_at: created_at,
         )
 
       factory.call(loaded_data)
     end
 
-  private
+    def dump_hash_values(hash)
+      hash.reduce({}) { |result, (k, v)|
+        result.merge(k => JSON.dump(v))
+      }
+    end
 
-    attr_reader :factory
-
-    def json_load_hash_values(hash)
+    def load_hash_values(hash)
       hash.reduce({}) { |result, (k, v)|
         result.merge(k => JSON.load(v))
       }
     end
+
+  private
+
+    attr_reader :factory
   end
 end
