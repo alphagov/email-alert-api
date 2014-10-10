@@ -36,15 +36,13 @@ class Application
 
   def create_subscriber_list(context)
     call_service(
-      service: valid_create_subscriber_list_input_filter(
-        tag_set_domain_aspect(
-          unique_tag_set_filter(
-            subscriber_list_persistence_aspect(
-              create_subscriber_list_service
-            )
-          )
-        )
-      ),
+      aspects: [
+        :valid_create_subscriber_list_input_filter,
+        :tag_set_domain_aspect,
+        :unique_tag_set_filter,
+        :subscriber_list_persistence_aspect,
+      ],
+      service: create_subscriber_list_service,
       context: context,
       arguments: %w(tags title),
     )
@@ -52,11 +50,11 @@ class Application
 
   def search_subscriber_lists(context)
     call_service(
-      service: valid_search_subscriber_lists_input_filter(
-        tag_set_domain_aspect(
-          search_subscriber_list_by_tags_service
-        )
-      ),
+      aspects: [
+        :valid_search_subscriber_lists_input_filter,
+        :tag_set_domain_aspect,
+      ],
+      service: search_subscriber_list_by_tags_service,
       context: context,
       arguments: %w(tags),
     )
@@ -64,11 +62,11 @@ class Application
 
   def notify_subscriber_lists_by_tags(context)
     call_service(
-      service: valid_notify_subscriber_lists_input_filter(
-        tag_searcher(
-          notify_subscriber_lists_service
-        )
-      ),
+      aspects: [
+        :valid_notify_subscriber_lists_input_filter,
+        :tag_searcher,
+      ],
+      service: notify_subscriber_lists_service,
       context: context,
       arguments: %w(tags subject body)
     )
@@ -86,10 +84,17 @@ class Application
 
   MissingParameters = Class.new(StandardError)
 
-  def call_service(service:, context:, arguments: [])
-    service.call(
+  def call_service(service:, aspects:, context:, arguments: [])
+    composed_service = aspects
+      .reverse
+      .map(&method(:method))
+      .reduce(service) { |composed, aspect|
+        aspect.call(composed)
+      }
+
+    composed_service.call(
       context.responder,
-      **extract_context_params(context, arguments)
+      **extract_context_params(context.params, arguments)
     )
   rescue MissingParameters
     context.responder.missing_parameters(
@@ -101,14 +106,14 @@ class Application
     raise MissingParameters
   end
 
-  def extract_context_params(context, keys)
+  def extract_context_params(params, keys)
     string_keys = keys.map(&:to_s)
 
     string_keys
       .map { |key|
         [
           key,
-          context.params.fetch(key) { missing_parameters },
+          params.fetch(key) { missing_parameters },
         ]
       }
       .reduce({}) { |result, (k,v)|
