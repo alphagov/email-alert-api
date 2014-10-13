@@ -1,4 +1,5 @@
 namespace :db do
+  desc "Set up database"
   task :setup do
     # Hardcoded for now to test if this works.
     config = CONFIG.fetch(:postgres)

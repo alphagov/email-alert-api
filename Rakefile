@@ -19,5 +19,3 @@ begin
 rescue LoadError
   # nope
 end
-
-require 'lib/tasks/db/setup'
