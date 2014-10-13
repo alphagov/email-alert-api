@@ -1,4 +1,18 @@
 namespace :db do
+  desc "Run migrations"
+  task :migrate do
+    require "logger"
+    require "sequel"
+
+    Sequel.extension :migration
+
+    config = CONFIG.fetch(:postgres)
+    uri = "postgres://%{host}/%{database}?user=%{user}&password=%{password}" % config
+    db = Sequel.connect(uri, logger: Logger.new($stdout))
+
+    Sequel::Migrator.run(db, config.fetch(:migrations_dir))
+  end
+
   desc "Set up database"
   task :setup do
     # Hardcoded for now to test if this works.
