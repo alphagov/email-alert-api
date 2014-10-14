@@ -1,6 +1,6 @@
 postgres:
   host: localhost
-  user: email_alert_api_user
+  user: vagrant
   database: email_alert_api_test
-  password:
+  password: vagrant
   migrations_dir: persistence/postgres/migrations
