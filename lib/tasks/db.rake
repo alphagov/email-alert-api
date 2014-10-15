@@ -20,6 +20,6 @@ namespace :db do
     database_name = config[:database]
     system("psql -d postgres -c 'DROP DATABASE #{database_name}'")
     system("psql -d postgres -c 'CREATE DATABASE #{database_name}'")
-    system("psql -d #{database_name} -c 'CREATE EXTENSION IF NOT EXISTS hstore'")
+    system("sudo -u postgres psql -d #{database_name} -c 'CREATE EXTENSION IF NOT EXISTS hstore'")
   end
 end
