@@ -8,6 +8,7 @@ gem "nokogiri", "1.6.3.1"
 gem "airbrake", "4.0.0"
 gem "sequel", "~> 4.14.0"
 gem "pg", "0.17.1"
+gem "rack-logstasher", "0.0.3"
 
 group :development do
   gem "mr-sparkle"
