@@ -1,5 +1,5 @@
 gov_delivery:
-  username: gov-delivery+staging@digital.cabinet-office.gov.uk
+  username: govdelivery@example.com
   password: nottherealpassword
   account_code: UKGOVUK
   protocol: https
