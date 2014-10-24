@@ -18,6 +18,7 @@ module EmailAlertAPI
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
+    config.autoload_paths << Rails.root.join('lib')
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
@@ -27,4 +28,9 @@ module EmailAlertAPI
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
   end
+
+  cattr_accessor :config
 end
+
+require "lib/email_alert_api/config"
+EmailAlertAPI.config = EmailAlertAPI::Config.new(Rails.env)
