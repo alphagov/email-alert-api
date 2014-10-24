@@ -1,6 +1,0 @@
-postgres:
-  host: localhost
-  user: jenkins
-  database: email_alert_api_test
-  password: jenkins
-  migrations_dir: persistence/postgres/migrations
