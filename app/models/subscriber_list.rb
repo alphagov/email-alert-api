@@ -1,6 +1,8 @@
 require 'json'
 
 class SubscriberList < ActiveRecord::Base
+  self.include_root_in_json = true
+
   def self.with_at_least_one_tag_of_each_type(tags:)
     lists_with_matching_keys(tags).select do |list|
       list.tags.all? do |tag_type, tag_array|

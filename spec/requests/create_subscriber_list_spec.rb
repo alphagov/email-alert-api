@@ -18,7 +18,9 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
     response_hash = JSON.parse(response.body)
 
-    expect(response_hash.keys.to_set).to eq([
+    subscriber_list = response_hash["subscriber_list"]
+
+    expect(subscriber_list.keys.to_set).to eq([
       "id",
       "title",
       "subscription_url",
@@ -28,7 +30,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       "tags"
     ].to_set)
 
-    expect(response_hash).to include(
+    expect(subscriber_list).to include(
       "tags" => {
         "topics" => ["oil-and-gas/licensing"]
       }
