@@ -32,5 +32,5 @@ module EmailAlertAPI
   cattr_accessor :config
 end
 
-require "lib/email_alert_api/config"
+require_relative "../lib/email_alert_api/config"
 EmailAlertAPI.config = EmailAlertAPI::Config.new(Rails.env)
