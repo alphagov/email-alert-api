@@ -17,4 +17,5 @@ module EmailAlertAPI
   class ServiceNotRegisteredException < Exception; end
 end
 
+require "gov_delivery/client"
 EmailAlertAPI.services(:gov_delivery, GovDelivery::Client.new(EmailAlertAPI.config.gov_delivery))
