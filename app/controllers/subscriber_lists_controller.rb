@@ -1,4 +1,14 @@
 class SubscriberListsController < ApplicationController
+  def show
+    subscriber_list = SubscriberList.where_tags_equal(params[:tags]).first
+
+    if subscriber_list
+      render json: subscriber_list.to_json
+    else
+      render json: {message: "Could not find the subscriber list"}, status: 404
+    end
+  end
+
   def create
     gov_delivery = EmailAlertAPI.services(:gov_delivery)
     response = gov_delivery.create_topic(name: params[:title])

@@ -25,4 +25,6 @@ ActiveRecord::Schema.define(version: 20141025105641) do
     t.datetime "updated_at"
   end
 
+  add_index "subscriber_lists", ["tags"], name: "tags_index_for_subtree", using: :gin
+
 end

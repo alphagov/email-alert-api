@@ -36,6 +36,19 @@ RSpec.describe SubscriberList, type: :model do
     end
   end
 
+  describe ".where_tags_equal(tag_hash)" do
+    it "finds exact matches" do
+      list = FactoryGirl.create(:subscriber_list, tags: {
+        topics: ["oil-and-gas/licensing"],
+        organisations: ["environment-agency", "hm-revenue-customs"]
+      })
+
+      found_lists = SubscriberList.where_tags_equal({topics: ["oil-and-gas/licensing"],organisations: ["environment-agency", "hm-revenue-customs"]})
+
+      expect(found_lists).to eq([list])
+    end
+  end
+
   describe "#tags" do
     it "deserializes the tag arrays" do
       list = FactoryGirl.create(:subscriber_list, tags: {

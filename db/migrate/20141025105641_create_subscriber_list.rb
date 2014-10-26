@@ -6,5 +6,7 @@ class CreateSubscriberList < ActiveRecord::Migration
       t.hstore :tags
       t.timestamps
     end
+
+    add_index :subscriber_lists, :tags, using: :gin
   end
 end
