@@ -45,7 +45,16 @@ private
     EmailAlertAPI.config.gov_delivery
   end
 
+  # Return all SubscriberLists which are marked with any of the same tag types
+  # as those requested.  For example, if `tags` is:
+  #
+  #     {"topics": [...], "organisations": [...]}
+  #
+  # then this returns all lists which have any "topics" or "organisations"
+  # tags.
   def self.lists_with_matching_keys(tags)
+    # This uses the `@>` hstore operator, which returns true if and only
+    # if its left operand contains its right one.
     where("Array[:tag_keys] @> akeys(tags)", tag_keys: tags.keys)
   end
 end
