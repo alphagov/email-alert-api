@@ -36,12 +36,12 @@ appropriate topic.
 ## Initial setup
 
 * Check that the configuration in `config/database.yml` is right
-* Run `bundle exec rake db:create && bundle exec db:schema:load` to load the
-  database
+* Run `bundle exec rake db:setup` to load the database
 
 ## Running the test suite
 
-Run `bundle exec rspec` to run the tests.
+* Run `RAILS_ENV=test bundle exec rake db:setup` to load the database
+* Run `bundle exec rspec` to run the tests
 
 ## Running the application
 
