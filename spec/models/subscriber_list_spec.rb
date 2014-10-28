@@ -66,28 +66,6 @@ RSpec.describe SubscriberList, type: :model do
       })
     end
 
-    it "finds exact matches regardless of order" do
-      found_lists = SubscriberList.where_tags_equal({
-        topics: ["oil-and-gas/licensing"],
-        organisations: ["environment-agency", "hm-revenue-customs"],
-      })
-      expect(found_lists).to eq([@list])
-
-      found_lists = SubscriberList.where_tags_equal({
-        topics: ["oil-and-gas/licensing"],
-        organisations: ["hm-revenue-customs", "environment-agency"],
-      })
-      expect(found_lists).to eq([@list])
-    end
-
-    it "finds exact matches regardless of duplicated tags in the document" do
-      found_lists = SubscriberList.where_tags_equal({
-        topics: ["oil-and-gas/licensing"],
-        organisations: ["environment-agency", "environment-agency", "hm-revenue-customs"],
-      })
-      expect(found_lists).to eq([@list])
-    end
-
     it "requires all tag types in the document to be present in the list" do
       found_lists = SubscriberList.where_tags_equal({
         topics: ["oil-and-gas/licensing"],
@@ -103,6 +81,7 @@ RSpec.describe SubscriberList, type: :model do
       })
       expect(found_lists).to eq([])
     end
+
   end
 
   describe "#tags" do

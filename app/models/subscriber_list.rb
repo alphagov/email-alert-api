@@ -12,7 +12,7 @@ class SubscriberList < ActiveRecord::Base
   end
 
   def self.where_tags_equal(tags)
-    lists_with_matching_keys(tags).select do |list|
+    lists_with_all_matching_keys(tags).select do |list|
       list.tags.all? do |tag_type, tag_array|
         tags[tag_type] == tag_array
       end
@@ -56,5 +56,18 @@ private
     # This uses the `@>` hstore operator, which returns true if and only
     # if its left operand contains its right one.
     where("Array[:tag_keys] @> akeys(tags)", tag_keys: tags.keys)
+  end
+
+  # Return all SubscriberLists which are marked with all of the same tag types
+  # as those requested.  For example, if `tags` is:
+  #
+  #     {"topics": [...], "organisations": [...]}
+  #
+  # then this returns all lists which have any "topics" AND "organisations"
+  # tags.
+  def self.lists_with_all_matching_keys(tags)
+    # This uses the `?&` hstore operator, which returns true only if the hstore
+    # contains all the specified keys.
+    where("tags ?& Array[:tag_keys]", tag_keys: tags.keys)
   end
 end
