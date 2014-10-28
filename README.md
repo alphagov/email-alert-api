@@ -50,3 +50,51 @@ Run `./startup.sh`.
 ## GovDelivery interaction
 
 GovDelivery client code is stored in `app/services/gov_delivery`.
+
+## Available endpoints
+
+* `GET /subscriber-lists?tags[organisation]=cabinet-office` - gets a stored
+  subscriber list that's relevant to just the `cabinet-office` organisation, in
+  the form:
+
+```json
+{
+  "subscriber_list": {
+    "id": "an id",
+    "title": "Title of topic",
+    "subscription_url": "https://public-url/subscribe-here?topic_id=123",
+    "gov_delivery_id": "123",
+    "created_at": "20141010T12:00:00",
+    "updated_at": "20141010T12:00:00",
+    "tags": {
+      "topics": ["topic-slug"]
+    }
+  }
+}
+```
+
+* `POST /subscriber-lists` with data:
+```json
+{
+  "title": "My title",
+  "tags": {
+    "organisations": ["my-org"]
+  }
+}
+```
+and it will respond with the JSON response for the `GET` call above.
+
+* `POST /notifications` with data:
+
+```json
+{
+  "subject": "This is the subject/title of my bulletin",
+  "body": "Email body here",
+  "tags": {
+    "tag": ["values"]
+  }
+}
+```
+
+and it will respond with `202 Accepted` (the call is queued to prevent slowness
+in the external notifications API).
