@@ -13,9 +13,9 @@ gem 'airbrake', '4.1.0'
 gem 'unicorn', '4.8.3'
 gem 'capistrano-rails', group: :development
 gem 'byebug', group: [:development, :test]
+gem 'rspec-rails', '3.1.0', group: [:development, :test]
 
 group :test do
-  gem 'rspec-rails', '3.1.0'
   gem 'factory_girl_rails'
   gem 'webmock'
 end
