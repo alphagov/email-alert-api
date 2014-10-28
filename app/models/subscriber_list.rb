@@ -3,6 +3,9 @@ require 'json'
 class SubscriberList < ActiveRecord::Base
   self.include_root_in_json = true
 
+  # Find all lists in which all the tags present have at least one match in the
+  # supplied list of tags.  Note - does not require that all the tags supplied
+  # have any matches.
   def self.with_at_least_one_tag_of_each_type(tags:)
     lists_with_matching_keys(tags).select do |list|
       list.tags.all? do |tag_type, tag_array|
