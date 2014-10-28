@@ -1,29 +1,22 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "sinatra", "1.4.5"
-gem "faraday", "0.9.0"
-gem "rake", "~> 10.3"
-gem "unicorn", "4.8.3"
-gem "nokogiri", "1.6.3.1"
-gem "airbrake", "4.0.0"
-gem "sequel", "~> 4.14.0"
-gem "pg", "0.17.1"
-gem "rack-logstasher", "0.0.3"
+gem 'rails', '4.1.6'
+gem 'pg', '0.17.1'
 
-group :development do
-  gem "mr-sparkle"
-end
+gem 'faraday', '0.9.0'
+gem 'nokogiri', '1.6.3.1'
+gem 'sidekiq', '3.2.6'
 
-group :test, :development do
-  gem "pry"
-  gem "awesome_print"
-end
+gem 'plek', '1.9.0'
+gem 'airbrake', '4.1.0'
+
+gem 'unicorn', '4.8.3'
+gem 'capistrano-rails', group: :development
+gem 'byebug', group: [:development, :test]
+gem 'rspec-rails', '3.1.0', group: [:development, :test]
+gem 'logstasher', '0.4.8'
 
 group :test do
-  gem "rspec", "3.0.0"
-  gem "cucumber", "~> 1.3"
-  gem "rack-test", "~> 0.6.2"
-  gem "equivalent-xml", "0.5.1"
-  gem "webmock"
-  gem "vcr"
+  gem 'factory_girl_rails'
+  gem 'webmock'
 end

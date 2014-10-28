@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 bundle install
-bundle exec rackup -p 3088
+bundle exec rails s -p 3088
