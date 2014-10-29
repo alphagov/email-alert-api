@@ -2,11 +2,11 @@
 
 Updates users that subscribe to specific GOV.UK email alerts.
 
-Provides a consistent internal interface to external email notification services
-(eg GovDelivery).
+Provides a consistent internal interface to external email notification services.
+Currently supports only [GovDelivery](http://www.govdelivery.com/).
 
-Given a tagged publication event it sends an email alert via GovDelivery for the
-appropriate topic.
+Given a tagged publication event it sends email alerts for subscribers to those
+tags via the external services.
 
 ## Dependencies
 
@@ -19,9 +19,10 @@ appropriate topic.
 
 ### Subscriber list
 
-* An email subscriber list (actual email addresses on GovDelivery's servers)
-* Associated tags indicate what the subscribers are interested in and what
-  updates they should receive
+* An email subscriber list (the actual email addresses are stored on
+  GovDelivery's servers)
+* Associated tags indicate what the subscribers for that list are interested in
+  and what updates they should receive
 
 ### Topic
 
