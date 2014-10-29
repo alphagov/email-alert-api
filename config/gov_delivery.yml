@@ -1,7 +1,15 @@
-gov_delivery:
+development:
   username: govdelivery@example.com
   password: nottherealpassword
   account_code: UKGOVUK
   protocol: https
   hostname: stage-api.govdelivery.com
-  subscription_link_template: https://stage-public.govdelivery.com/accounts/UKGOVUK/subscriber/new?topic_id=%{topic_id}
+  public_hostname: stage-public.govdelivery.com
+
+test:
+  username: test@example.com
+  password: test123
+  account_code: UKGOVUK
+  protocol: http
+  hostname: govdelivery-api.example.com
+  public_hostname: govdelivery-public.example.com
