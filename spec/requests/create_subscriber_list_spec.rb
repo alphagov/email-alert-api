@@ -37,6 +37,12 @@ RSpec.describe "Creating a subscriber list", type: :request do
     )
   end
 
+  it "returns an error if tag isn't an array" do
+    create_subscriber_list(topic: "oil-and-gas/licensing")
+
+    expect(response.status).to eq(422)
+  end
+
   def create_subscriber_list(tags)
     post "/subscriber-lists", {
       title: "This is a sample title",

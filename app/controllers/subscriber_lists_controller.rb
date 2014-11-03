@@ -1,6 +1,8 @@
 require "gov_delivery/client"
 
 class SubscriberListsController < ApplicationController
+  before_filter :validate_request, only: :create
+
   def show
     subscriber_list = SubscriberList.where_tags_equal(params[:tags]).first
 
@@ -36,5 +38,13 @@ private
       gov_delivery_id: response.to_param,
       tags: params[:tags]
     )
+  end
+
+  def validate_request
+    params[:tags].each do |key, value|
+      unless value.is_a?(Array)
+        render json: {message: "All tag values must be sent as Arrays"}, status: 422
+      end
+    end
   end
 end
