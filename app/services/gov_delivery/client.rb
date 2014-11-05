@@ -1,11 +1,14 @@
 module GovDelivery
   class Client
+    class UnknownError < StandardError; end
+    class TopicAlreadyExistsError < UnknownError; end
+
     def initialize(options = {})
       @options = options
     end
 
     def create_topic(name)
-      # GovDelivery documenation for this endpoint:
+      # GovDelivery documentation for this endpoint:
       # http://knowledge.govdelivery.com/display/API/Create+Topic
       parse_topic_response(
         post_xml(
@@ -15,8 +18,17 @@ module GovDelivery
       )
     end
 
+    def read_topic_by_name(name)
+      # GovDelivery documentation for this endpoint:
+      # https://knowledge.govdelivery.com/display/API/List+Topic
+      parse_topic_list_response(
+        http_client.get("topics.xml"),
+        name,
+      )
+    end
+
     def send_bulletin(topic_ids, subject, body)
-      # GovDelivery documenation for this endpoint:
+      # GovDelivery documentation for this endpoint:
       # http://knowledge.govdelivery.com/display/API/Create+and+Send+Bulletin
       parse_topic_response(
         post_xml(
@@ -27,7 +39,6 @@ module GovDelivery
     end
 
   private
-
     attr_reader :options
 
     def base_url
@@ -54,7 +65,25 @@ module GovDelivery
     end
 
     def parse_topic_response(response)
-      ResponseParser.new(response.body).parse
+      ResponseParser.new(response.body).parse.tap do |parsed_response|
+        raise_correct_error(parsed_response) if parsed_response.respond_to? :error
+      end
+    end
+
+    def parse_topic_list_response(response, name)
+      TopicListResponseParser.new(
+        response.body,
+        name,
+      ).parse
+    end
+
+    def raise_correct_error(parsed_response)
+      error_class = case parsed_response.code
+                    when "GD-14004" then TopicAlreadyExistsError
+                    else UnknownError
+                    end
+
+      raise error_class.new, parsed_response.error
     end
   end
 end
