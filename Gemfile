@@ -17,6 +17,7 @@ gem 'rspec-rails', '3.1.0', group: [:development, :test]
 gem 'logstasher', '0.4.8'
 
 group :test do
+  gem 'equivalent-xml'
   gem 'factory_girl_rails'
   gem 'webmock'
 end

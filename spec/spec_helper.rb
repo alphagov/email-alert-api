@@ -17,6 +17,9 @@
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..')
 
+require 'webmock/rspec'
+WebMock.disable_net_connect!(allow_localhost: true)
+
 RSpec.configure do |config|
   config.disable_monkey_patching!
   config.expose_dsl_globally = false

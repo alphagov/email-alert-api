@@ -11,7 +11,7 @@ class SubscriberListsController < ApplicationController
 
   def create
     gov_delivery = EmailAlertAPI.services(:gov_delivery)
-    response = gov_delivery.create_topic(name: params[:title])
+    response = gov_delivery.create_topic(params[:title])
 
     list = SubscriberList.new(
       title: params[:title],
