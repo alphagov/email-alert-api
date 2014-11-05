@@ -12,12 +12,16 @@ gem 'airbrake', '4.1.0'
 
 gem 'unicorn', '4.8.3'
 gem 'capistrano-rails', group: :development
-gem 'byebug', group: [:development, :test]
-gem 'rspec-rails', '3.1.0', group: [:development, :test]
 gem 'logstasher', '0.4.8'
 
 group :test do
   gem 'equivalent-xml'
   gem 'factory_girl_rails'
   gem 'webmock'
+end
+
+group :development, :test do
+  gem 'byebug'
+  gem 'rspec-rails', '3.1.0'
+  gem 'pry'
 end
