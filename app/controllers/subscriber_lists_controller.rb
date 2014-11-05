@@ -1,3 +1,5 @@
+require "gov_delivery/client"
+
 class SubscriberListsController < ApplicationController
   def show
     subscriber_list = SubscriberList.where_tags_equal(params[:tags]).first
@@ -10,19 +12,29 @@ class SubscriberListsController < ApplicationController
   end
 
   def create
-    gov_delivery = EmailAlertAPI.services(:gov_delivery)
-    response = gov_delivery.create_topic(params[:title])
-
-    list = SubscriberList.new(
-      title: params[:title],
-      gov_delivery_id: response.to_param,
-      tags: params[:tags]
-    )
+    list = create_or_sync_subscriber_list
 
     if list.save
       render json: list.to_json, status: 201
     else
       render json: {message: "Couldn't create the subscriber list"}, status: 422
     end
+  end
+
+private
+  def create_or_sync_subscriber_list
+    gov_delivery = EmailAlertAPI.services(:gov_delivery)
+
+    begin
+      response = gov_delivery.create_topic(params[:title])
+    rescue GovDelivery::Client::TopicAlreadyExistsError
+      response = gov_delivery.read_topic_by_name(params[:title])
+    end
+
+    SubscriberList.new(
+      title: params[:title],
+      gov_delivery_id: response.to_param,
+      tags: params[:tags]
+    )
   end
 end
