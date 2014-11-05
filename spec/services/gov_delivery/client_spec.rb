@@ -1,5 +1,6 @@
 require "spec_helper"
 
+require "app/services/gov_delivery/client"
 require "app/services/gov_delivery/request_builder"
 
 RSpec.describe GovDelivery::Client do
@@ -48,6 +49,65 @@ RSpec.describe GovDelivery::Client do
       stub_request(:post, @base_url).to_return(body: @govdelivery_response)
 
       response = client.create_topic(@topic_name)
+
+      expect(response).to be_equivalent_to(Struct.new(
+        :to_param, :topic_uri, :link
+      ).new(
+        "UKGOVUK_1234", "/api/account/UKGOVUK/topics/UKGOVUK_1234.xml", ""
+      ))
+    end
+
+    context "when the topic already exists" do
+      before do
+        stub_request(:post, @base_url).to_return(body: %{<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+          <errors>
+            <code>GD-14004</code>
+            <error>Name must be unique for an account</error>
+          </errors>
+        }, status: 422)
+      end
+
+      it "raises a TopicAlreadyExistsError" do
+        expect { client.create_topic(@topic_name) }.to raise_error(GovDelivery::Client::TopicAlreadyExistsError)
+      end
+    end
+
+  end
+
+  describe "#read_topic_by_name" do
+    before do
+      @topic_name = "Test topic"
+      @base_url = "http://#{config.fetch(:username)}:#{config.fetch(:password)}@#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/topics.xml"
+
+      @govdelivery_response = %{
+        <?xml version="1.0" encoding="UTF-8"?>
+        <topics type="array">
+          <topic>
+            <code>UKGOVUK_1234</code>
+            <description nil="true">topic description here</description>
+            <name>#{@topic_name}</name>
+            <short-name>TOPIC_SHORT_NAME</short-name>
+            <wireless-enabled type="boolean">false</wireless-enabled>
+            <visibility>Listed</visibility>
+            <link rel="self" href="/api/account/UKGOVUK/topics/UKGOVUK_1234"/>
+          </topic>
+          <topic>
+            <code>UKGOVUK_4321</code>
+            <description nil="true">topic description here</description>
+            <name>#{@topic_name.reverse}</name>
+            <short-name>EMAN_TROHS_CIPOT</short-name>
+            <wireless-enabled type="boolean">false</wireless-enabled>
+            <visibility>Listed</visibility>
+            <link rel="self" href="/api/account/UKGOVUK/topics/UKGOVUK_4321"/>
+          </topic>
+        </topics>
+      }
+    end
+
+    it "returns an object that represents the existing topic" do
+      stub_request(:get, @base_url).to_return(body: @govdelivery_response)
+
+      response = client.read_topic_by_name(@topic_name)
 
       expect(response).to be_equivalent_to(Struct.new(
         :to_param, :topic_uri, :link
