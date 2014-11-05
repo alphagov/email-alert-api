@@ -5,19 +5,23 @@ module GovDelivery
     end
 
     def create_topic(name)
+      # GovDelivery documenation for this endpoint:
+      # http://knowledge.govdelivery.com/display/API/Create+Topic
       parse_topic_response(
         post_xml(
           "topics.xml",
-          create_topic_xml(name),
+          RequestBuilder.create_topic_xml(name),
         )
       )
     end
 
     def send_bulletin(topic_ids, subject, body)
+      # GovDelivery documenation for this endpoint:
+      # http://knowledge.govdelivery.com/display/API/Create+and+Send+Bulletin
       parse_topic_response(
         post_xml(
           "bulletins/send_now.xml",
-          send_bulletin_xml(topic_ids, subject, body),
+          RequestBuilder.send_bulletin_xml(topic_ids, subject, body),
         )
       )
     end
@@ -47,38 +51,6 @@ module GovDelivery
         body,
         content_type: "application/xml",
       )
-    end
-
-    def create_topic_xml(name)
-      Nokogiri::XML::Builder.new { |xml|
-        xml.topic {
-          xml.name name
-          xml.send(:'short-name', name)
-          xml.visibility 'Unlisted'
-          xml.send(:'pagewatch-enabled', "false", type: :boolean)
-          xml.send(:'rss-feed-url', nil: :true)
-          xml.send(:'rss-feed-title', nil: :true)
-          xml.send(:'rss-feed-description', nil: :true)
-        }
-      }.to_xml
-    end
-
-    def send_bulletin_xml(topic_ids, subject, body)
-      Nokogiri::XML::Builder.new { |xml|
-        xml.bulletin {
-          xml.subject subject
-          xml.body {
-            xml.cdata body
-          }
-          xml.topics(type: 'array') {
-            topic_ids.each { |id|
-              xml.topic {
-                xml.code id
-              }
-            }
-          }
-        }
-      }.to_xml
     end
 
     def parse_topic_response(response)
