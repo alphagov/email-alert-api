@@ -83,7 +83,7 @@ module GovDelivery
                     else UnknownError
                     end
 
-      raise error_class.new, parsed_response.error
+      raise error_class.new, "#{parsed_response.code}: #{parsed_response.error}"
     end
   end
 end
