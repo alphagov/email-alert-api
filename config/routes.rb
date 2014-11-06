@@ -3,4 +3,6 @@ Rails.application.routes.draw do
   get "/subscriber-lists", to: "subscriber_lists#show"
 
   resources :notifications, only: [:create]
+
+  get "/healthcheck", to: "healthcheck#check"
 end
