@@ -20,6 +20,10 @@ group :test do
   gem 'webmock'
 end
 
+group :development do
+  gem "foreman", "0.75.0"
+end
+
 group :development, :test do
   gem 'byebug'
   gem 'rspec-rails', '3.1.0'
