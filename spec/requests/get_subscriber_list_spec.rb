@@ -5,17 +5,17 @@ RSpec.describe "Getting a subscriber list", type: :request do
 
   context "when present" do
     before do
-      FactoryGirl.create(:subscriber_list, tags: {topics: ["oil-and-gas/licensing"]})
+      FactoryGirl.create(:subscriber_list, tags: {topics: ["oil-and-gas/licensing", "drug-device-alert"]})
     end
 
     it "returns a 200" do
-      get_subscriber_list(topics: ["oil-and-gas/licensing"])
+      get_subscriber_list(topics: ["drug-device-alert", "oil-and-gas/licensing"])
 
       expect(response.status).to eq(200)
     end
 
     it "returns the matching subscriber list" do
-      get_subscriber_list(topics: ["oil-and-gas/licensing"])
+      get_subscriber_list(topics: ["drug-device-alert", "oil-and-gas/licensing"])
 
       response_hash = JSON.parse(response.body)
 
@@ -33,7 +33,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
 
       expect(subscriber_list).to include(
         "tags" => {
-          "topics" => ["oil-and-gas/licensing"]
+          "topics" => ["oil-and-gas/licensing", "drug-device-alert"]
         }
       )
     end

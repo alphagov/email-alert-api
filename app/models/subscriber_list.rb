@@ -17,7 +17,8 @@ class SubscriberList < ActiveRecord::Base
   def self.where_tags_equal(tags)
     lists_with_all_matching_keys(tags).select do |list|
       list.tags.all? do |tag_type, tag_array|
-        tags[tag_type] == tag_array
+        next if tags[tag_type].nil?
+        tags[tag_type].sort == tag_array.sort
       end
     end
   end
