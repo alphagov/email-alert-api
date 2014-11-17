@@ -1,6 +1,6 @@
 development:
-  username: govdelivery@example.com
-  password: nottherealpassword
+  username: <%= ENV['GOV_DELIVERY_USERNAME'] || "email@example.com" %>
+  password: <%= ENV['GOV_DELIVERY_PASSWORD'] || "nottherealpassword" %>
   account_code: UKGOVUK
   protocol: https
   hostname: stage-api.govdelivery.com
