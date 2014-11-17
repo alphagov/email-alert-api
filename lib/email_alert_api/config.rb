@@ -11,7 +11,11 @@ module EmailAlertAPI
     end
 
     def gov_delivery
-      all_configs = YAML.load(File.open(app_root+"config/gov_delivery.yml"))
+      all_configs = YAML.load(
+        ERB.new(
+          File.read(app_root+"config/gov_delivery.yml.erb")
+        ).result
+      )
       environment_config = all_configs.fetch(@environment)
 
       @gov_delivery ||= environment_config.symbolize_keys.freeze
