@@ -14,7 +14,7 @@ class SubscriberListsController < ApplicationController
   end
 
   def create
-    list = create_or_sync_subscriber_list
+    list = create_or_fetch_subscriber_list
 
     if list.save
       render json: list.to_json, status: 201
@@ -24,7 +24,7 @@ class SubscriberListsController < ApplicationController
   end
 
 private
-  def create_or_sync_subscriber_list
+  def create_or_fetch_subscriber_list
     gov_delivery = EmailAlertAPI.services(:gov_delivery)
 
     begin
