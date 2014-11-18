@@ -52,6 +52,13 @@ Run `./startup.sh`.
 
 GovDelivery client code is stored in `app/services/gov_delivery`.
 
+To connect to the real GovDelivery, provide the credentials as environment
+variables, i.e.:
+
+`GOVDELIVERY_USERNAME=govdelivery@example.com GOVDELIVERY_PASSWORD=nottherealpassword rails s`
+
+or export them using dotenv or similar.
+
 ## Available endpoints
 
 * `GET /subscriber-lists?tags[organisation]=cabinet-office` - gets a stored
