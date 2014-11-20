@@ -11,10 +11,12 @@ module GovDelivery
       # GovDelivery documentation for this endpoint:
       # http://knowledge.govdelivery.com/display/API/Create+Topic
       parse_topic_response(
-        post_xml(
-          "topics.xml",
-          RequestBuilder.create_topic_xml(name),
-        )
+        EmailAlertAPI.statsd.time('topics.create') do
+          post_xml(
+            "topics.xml",
+            RequestBuilder.create_topic_xml(name),
+          )
+        end
       )
     end
 
@@ -22,7 +24,7 @@ module GovDelivery
       # GovDelivery documentation for this endpoint:
       # https://knowledge.govdelivery.com/display/API/List+Topic
       parse_topic_list_response(
-        http_client.get("topics.xml"),
+        EmailAlertAPI.statsd.time('topics.list') { http_client.get("topics.xml") },
         name,
       )
     end
@@ -31,10 +33,12 @@ module GovDelivery
       # GovDelivery documentation for this endpoint:
       # http://knowledge.govdelivery.com/display/API/Create+and+Send+Bulletin
       parse_topic_response(
-        post_xml(
-          "bulletins/send_now.xml",
-          RequestBuilder.send_bulletin_xml(topic_ids, subject, body),
-        )
+        EmailAlertAPI.statsd.time('bulletin.send') do
+          post_xml(
+            "bulletins/send_now.xml",
+            RequestBuilder.send_bulletin_xml(topic_ids, subject, body),
+          )
+        end
       )
     end
 
@@ -65,6 +69,8 @@ module GovDelivery
     end
 
     def parse_topic_response(response)
+      EmailAlertAPI.statsd.increment("responses.#{response.status}")
+
       ResponseParser.new(response.body).parse.tap do |parsed_response|
         raise_correct_error(parsed_response) if parsed_response.respond_to? :error
       end
