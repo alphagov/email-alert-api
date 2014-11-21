@@ -30,6 +30,7 @@ module EmailAlertAPI
   end
 
   cattr_accessor :config
+  cattr_accessor :statsd
 end
 
 require_relative "../lib/email_alert_api/config"
