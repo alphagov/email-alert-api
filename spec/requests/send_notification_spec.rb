@@ -44,6 +44,17 @@ RSpec.describe "Sending a notification", type: :request do
       )
   end
 
+  it "doesn't send notifications for if there's no lists" do
+    send_notification(
+      topics: ["oil-and-gas/licensing"],
+      organisations: ["environment-agency", "hm-revenue-customs"]
+    )
+
+    NotificationWorker.drain
+
+    expect(@gov_delivery).not_to have_received(:send_bulletin)
+  end
+
   def create_many_lists
     all_match = FactoryGirl.create(:subscriber_list, tags: {
       topics: ["oil-and-gas/licensing"],
