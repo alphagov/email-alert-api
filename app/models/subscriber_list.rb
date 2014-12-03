@@ -14,6 +14,14 @@ class SubscriberList < ActiveRecord::Base
     end
   end
 
+  def self.with_at_least_one_topic_value(value)
+    lists_with_key(:topics).each_with_object([]) do |subscription_list, results|
+      if subscription_list.tags[:topics].include?(value)
+        results << subscription_list
+      end
+    end
+  end
+
   def self.where_tags_equal(tags)
     lists_with_all_matching_keys(tags).select do |list|
       list.tags.all? do |tag_type, tag_array|
@@ -73,5 +81,11 @@ private
     # This uses the `?&` hstore operator, which returns true only if the hstore
     # contains all the specified keys.
     where("tags ?& Array[:tag_keys]", tag_keys: tags.keys)
+  end
+
+  def self.lists_with_key(key)
+    # This uses the `?` hstore operator, which returns true only if the hstore
+    # contains the specified key.
+    where("tags ? :key", key: key)
   end
 end
