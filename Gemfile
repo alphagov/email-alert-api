@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.6'
+gem 'rails', '4.1.7.1'
 gem 'pg', '0.17.1'
 
 gem 'faraday', '0.9.0'
