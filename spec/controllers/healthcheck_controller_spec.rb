@@ -18,20 +18,47 @@ RSpec.describe HealthcheckController, type: :controller do
       expect(data['status']).to eq('ok')
     end
 
-    it "includes queue length in the response" do
+    it "includes queue length check in the response" do
       allow_any_instance_of(HealthcheckController).to receive(:queue_size).and_return(13)
       get :check
 
       data = JSON.parse(response.body)
-      expect(data['checks']['queue_size']).to eq(13)
+      expect(data['checks']).to include('queue_size')
     end
 
-    it "includes queue age in the response" do
+    it "returns ok for small queue sizes" do
+      allow_any_instance_of(HealthcheckController).to receive(:queue_size).and_return(1)
+
+      get :check
+
+      data = JSON.parse(response.body)
+      expect(data['checks']['queue_size']['status']).to eq('ok')
+    end
+
+    it "returns warning for medium queue sizes" do
+      allow_any_instance_of(HealthcheckController).to receive(:queue_size).and_return(4)
+
+      get :check
+
+      data = JSON.parse(response.body)
+      expect(data['checks']['queue_size']['status']).to eq('warning')
+    end
+
+    it "returns critical for large queue sizes" do
+      allow_any_instance_of(HealthcheckController).to receive(:queue_size).and_return(10)
+
+      get :check
+
+      data = JSON.parse(response.body)
+      expect(data['checks']['queue_size']['status']).to eq('critical')
+    end
+
+    it "includes queue age check in the response" do
       allow_any_instance_of(HealthcheckController).to receive(:queue_age).and_return(3600.5)
       get :check
 
       data = JSON.parse(response.body)
-      expect(data['checks']['queue_age']).to eq(3600.5)
+      expect(data['checks']).to include('queue_age')
     end
   end
 end
