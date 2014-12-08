@@ -1,6 +1,28 @@
 require "rails_helper"
 
 RSpec.describe SubscriberList, type: :model do
+
+  describe "scopes" do
+
+    before do
+      @list1 = FactoryGirl.create(:subscriber_list, tags: {
+        format: ["raib_report"],
+      })
+      @list2 = FactoryGirl.create(:subscriber_list, tags: {
+        topics: ["environmental-management/boating"],
+      })
+      @list3 = FactoryGirl.create(:subscriber_list, tags: {
+        topics: ["environmental-management/boating", "environmental-management/sailing" , "environmental-management/swimming"],
+      })
+    end
+
+    describe ".with_at_least_one_topic_value" do
+      it "finds lists where at least one value is in the topic tags" do
+        expect(SubscriberList.with_at_least_one_topic_value('environmental-management/boating')).to eq [@list2, @list3]
+      end
+    end
+  end
+
   describe ".find_with_at_least_one_tag_of_each_type" do
     before do
       @list1 = FactoryGirl.create(:subscriber_list, tags: {
