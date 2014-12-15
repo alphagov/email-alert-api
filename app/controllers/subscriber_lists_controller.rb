@@ -27,11 +27,7 @@ private
   def create_or_fetch_subscriber_list
     gov_delivery = EmailAlertAPI.services(:gov_delivery)
 
-    begin
-      response = gov_delivery.create_topic(params[:title])
-    rescue GovDelivery::Client::TopicAlreadyExistsError
-      response = gov_delivery.read_topic_by_name(params[:title])
-    end
+    response = gov_delivery.create_topic(params[:title])
 
     SubscriberList.new(
       title: params[:title],
