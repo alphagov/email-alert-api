@@ -171,6 +171,43 @@ RSpec.describe GovDelivery::Client do
       end
     end
 
+    it "POSTs the bulletin with extra parameters if present to the send_now endpoint" do
+      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
+
+      client.send_bulletin(topic_ids, subject, body, {
+        from_address_id: 12345,
+        urgent: true,
+        header: "<h1>Foo</h1>",
+        footer: "<p>bar</p>"
+      })
+
+      assert_requested(:post, @base_url) do |req|
+        expect(req.body).to be_equivalent_to(
+          %{
+            <bulletin>
+              <subject>a subject line</subject>
+              <body><![CDATA[a body]]></body>
+              <topics type="array">
+                <topic>
+                  <code>UKGOVUK_123</code>
+                </topic>
+                <topic>
+                  <code>UKGOVUK_124</code>
+                </topic>
+                <topic>
+                  <code>UKGOVUK_125</code>
+                </topic>
+              </topics>
+              <from_address_id>12345</from_address_id>
+              <urgent>true</urgent>
+              <header><![CDATA[<h1>Foo</h1>]]></header>
+              <footer><![CDATA[<p>bar</p>]]></footer>
+            </bulletin>
+          }
+        )
+      end
+    end
+
     it "returns an object that encapsulates the parsed response" do
       stub_request(:post, @base_url).to_return(body: @govdelivery_response)
 

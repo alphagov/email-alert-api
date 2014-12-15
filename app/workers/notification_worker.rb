@@ -15,10 +15,13 @@ class NotificationWorker
       Rails.logger.info "notification_json: #{notification_json}"
       Rails.logger.info "--- End email to GovDelivery ---"
 
+      options = notification.slice(:from_address_id, :urgent, :header, :footer)
+
       EmailAlertAPI.services(:gov_delivery).send_bulletin(
         lists.map(&:gov_delivery_id),
         notification[:subject],
-        notification[:body]
+        notification[:body],
+        options
       )
       Rails.logger.info "Email '#{notification[:subject]}' sent"
     else
