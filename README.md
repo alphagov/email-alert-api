@@ -8,47 +8,50 @@ Currently supports only [GovDelivery](http://www.govdelivery.com/).
 Given a tagged publication event it sends email alerts for subscribers to those
 tags via the external services.
 
-## Dependencies
+## Nomenclature
+
+- **Subscriber list**:
+ * An email subscriber list (the actual email addresses are stored on
+  GovDelivery's servers)
+ * Associated tags indicate what the subscribers for that list are interested in
+  and what updates they should receive
+
+- **Topic**:
+ * GovDelivery terminology for a subscriber list
+ * Topics have tags
+ * Subscribers receive emails when you "send a bulletin" to that topic
+
+- **Bulletin**:
+ * GovDelivery terminology for an email notification
+
+## Technical documentation
+
+### Dependencies
 
 * Postgres database (9.1 or higher - requires `hstore`)
 * Redis (for [sidekiq](http://sidekiq.org/))
 * GovDelivery API login and account (see
   [`gov_delivery.yml`](config/gov_delivery.yml) for required fields)
 
-## Nomenclature
-
-### Subscriber list
-
-* An email subscriber list (the actual email addresses are stored on
-  GovDelivery's servers)
-* Associated tags indicate what the subscribers for that list are interested in
-  and what updates they should receive
-
-### Topic
-
-* GovDelivery terminology for a subscriber list
-* Topics have tags
-* Subscribers receive emails when you "send a bulletin" to that topic
-
-### Bulletin
-
-* GovDelivery terminology for an email notification
-
-## Initial setup
+### Initial setup
 
 * Check that the configuration in `config/database.yml` is right
 * Run `bundle exec rake db:setup` to load the database
 
-## Running the test suite
+
+### Running the application
+
+`./startup.sh`
+
+email-alert-api runs on port 3088
+sidekiq-monitoring for email-alert-api uses 3089
+
+### Running the test suite
 
 * Run `RAILS_ENV=test bundle exec rake db:setup` to load the database
 * Run `bundle exec rspec` to run the tests
 
-## Running the application
-
-Run `./startup.sh`.
-
-## GovDelivery interaction
+### GovDelivery interaction
 
 GovDelivery client code is stored in `app/services/gov_delivery`.
 
@@ -60,6 +63,8 @@ variables, i.e.:
 or export them using dotenv or similar.
 
 ## Available endpoints
+
+### application API
 
 * `GET /subscriber-lists?tags[organisation]=cabinet-office` - gets a stored
   subscriber list that's relevant to just the `cabinet-office` organisation, in
@@ -106,3 +111,24 @@ and it will respond with the JSON response for the `GET` call above.
 
 and it will respond with `202 Accepted` (the call is queued to prevent slowness
 in the external notifications API).
+
+### healthcheck API
+
+A queue health check endpoint is available at /healthcheck
+```json
+{
+  "checks": {
+    "queue_size": {
+      "status": "ok"
+    },
+    "queue_age": {
+      "status": "ok"
+    }
+  },
+  "status": "ok"
+ }
+```
+
+## Licence
+
+[MIT License](LICENCE)
