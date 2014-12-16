@@ -14,7 +14,7 @@ module GovDelivery
       }.to_xml
     end
 
-    def self.send_bulletin_xml(topic_ids, subject, body)
+    def self.send_bulletin_xml(topic_ids, subject, body, options = {})
       Nokogiri::XML::Builder.new { |xml|
         xml.bulletin {
           xml.subject subject
@@ -28,6 +28,14 @@ module GovDelivery
               }
             }
           }
+          xml.from_address_id(options[:from_address_id]) if options[:from_address_id]
+          xml.urgent(options[:urgent]) if options[:urgent]
+          xml.header {
+            xml.cdata options[:header]
+          } if options[:header]
+          xml.footer {
+            xml.cdata options[:footer]
+          } if options[:footer]
         }
       }.to_xml
     end

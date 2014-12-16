@@ -15,7 +15,7 @@ RSpec.describe "Sending a notification", type: :request do
   end
 
   it "returns a 202" do
-    send_notification(topics: ["oil-and-gas/licensing"])
+    send_notification({ topics: ["oil-and-gas/licensing"] })
 
     expect(response.status).to eq(202)
   end
@@ -29,10 +29,10 @@ RSpec.describe "Sending a notification", type: :request do
   it "sends notifications for the right subscriber lists" do
     relevant_list_ids, irrelevant_list_ids = create_many_lists
 
-    send_notification(
+    send_notification({
       topics: ["oil-and-gas/licensing"],
       organisations: ["environment-agency", "hm-revenue-customs"]
-    )
+    })
 
     NotificationWorker.drain
 
@@ -40,15 +40,46 @@ RSpec.describe "Sending a notification", type: :request do
       .with(
         relevant_list_ids,
         "This is a sample subject",
-        "Here is some body copy"
+        "Here is some body copy",
+        {},
+      )
+  end
+
+  it "sends notifications with options if given" do
+    relevant_list_ids, irrelevant_list_ids = create_many_lists
+
+    send_notification({
+      topics: ["oil-and-gas/licensing"],
+      organisations: ["environment-agency", "hm-revenue-customs"]
+    },
+    {
+      from_address_id: "12345",
+      urgent: true,
+      header: "foo",
+      footer: "bar",
+    })
+
+    NotificationWorker.drain
+
+    expect(@gov_delivery).to have_received(:send_bulletin)
+      .with(
+        relevant_list_ids,
+        "This is a sample subject",
+        "Here is some body copy",
+        {
+          "from_address_id" => "12345",
+          "urgent" => true,
+          "header" => "foo",
+          "footer" => "bar"
+        }
       )
   end
 
   it "doesn't send notifications for if there's no lists" do
-    send_notification(
+    send_notification({
       topics: ["oil-and-gas/licensing"],
       organisations: ["environment-agency", "hm-revenue-customs"]
-    )
+    })
 
     NotificationWorker.drain
 
@@ -98,11 +129,13 @@ RSpec.describe "Sending a notification", type: :request do
     ]
   end
 
-  def send_notification(tags)
-    post "/notifications", {
+  def send_notification(tags, options = {})
+    request_body = JSON.dump({
       subject: "This is a sample subject",
       body: "Here is some body copy",
-      tags: tags
-    }
+      tags: tags,
+    }.merge(options))
+
+    post "/notifications", request_body, "CONTENT_TYPE" => "application/json"
   end
 end

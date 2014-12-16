@@ -29,14 +29,14 @@ module GovDelivery
       )
     end
 
-    def send_bulletin(topic_ids, subject, body)
+    def send_bulletin(topic_ids, subject, body, options = {})
       # GovDelivery documentation for this endpoint:
       # http://knowledge.govdelivery.com/display/API/Create+and+Send+Bulletin
       parse_topic_response(
         EmailAlertAPI.statsd.time('bulletin.send') do
           post_xml(
             "bulletins/send_now.xml",
-            RequestBuilder.send_bulletin_xml(topic_ids, subject, body),
+            RequestBuilder.send_bulletin_xml(topic_ids, subject, body, options),
           )
         end
       )

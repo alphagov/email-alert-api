@@ -8,6 +8,6 @@ class NotificationsController < ApplicationController
 private
 
   def notification_params
-    params.slice(:subject, :body, :tags)
+    params.slice(:subject, :body, :tags, :from_address_id, :urgent, :header, :footer)
   end
 end
