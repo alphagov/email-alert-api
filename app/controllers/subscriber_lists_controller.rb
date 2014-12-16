@@ -7,9 +7,13 @@ class SubscriberListsController < ApplicationController
     subscriber_list = SubscriberList.where_tags_equal(params[:tags]).first
 
     if subscriber_list
-      render json: subscriber_list.to_json
+      respond_to do |format|
+        format.json { render json: subscriber_list.to_json }
+      end
     else
-      render json: {message: "Could not find the subscriber list"}, status: 404
+      respond_to do |format|
+        format.json { render json: {message: "Could not find the subscriber list"}, status: 404 }
+      end
     end
   end
 
@@ -17,9 +21,13 @@ class SubscriberListsController < ApplicationController
     list = create_or_fetch_subscriber_list
 
     if list.save
-      render json: list.to_json, status: 201
+      respond_to do |format|
+        format.json { render json: list.to_json, status: 201 }
+      end
     else
-      render json: {message: "Couldn't create the subscriber list"}, status: 422
+      respond_to do |format|
+        format.json { render json: {message: "Couldn't create the subscriber list"}, status: 422 }
+      end
     end
   end
 
