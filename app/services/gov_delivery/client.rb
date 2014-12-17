@@ -9,7 +9,7 @@ module GovDelivery
 
     def create_topic(name)
       # GovDelivery documentation for this endpoint:
-      # http://knowledge.govdelivery.com/display/API/Create+Topic
+      # http://developer.govdelivery.com/api_docs/comm_cloud_v1/#API/Comm Cloud V1/API_CommCloudV1_Topics_CreateTopic.htm
       parse_topic_response(
         EmailAlertAPI.statsd.time('topics.create') do
           post_xml(
@@ -22,7 +22,9 @@ module GovDelivery
 
     def read_topic_by_name(name)
       # GovDelivery documentation for this endpoint:
-      # https://knowledge.govdelivery.com/display/API/List+Topic
+      # http://developer.govdelivery.com/api_docs/comm_cloud_v1/#API/Comm Cloud V1/API_CommCloudV1_Topics_ListTopics.htm
+      # Warning: This currently takes unnacceptably long (40 seconds on staging), so is not used
+      # See https://github.com/alphagov/email-alert-api/pull/61
       parse_topic_list_response(
         EmailAlertAPI.statsd.time('topics.list') { http_client.get("topics.xml") },
         name,
@@ -31,7 +33,7 @@ module GovDelivery
 
     def send_bulletin(topic_ids, subject, body, options = {})
       # GovDelivery documentation for this endpoint:
-      # http://knowledge.govdelivery.com/display/API/Create+and+Send+Bulletin
+      # http://developer.govdelivery.com/api_docs/comm_cloud_v1/#API/Comm Cloud V1/API_CommCloudV1_Bulletins_CreateandSendBulletin.htm
       parse_topic_response(
         EmailAlertAPI.statsd.time('bulletin.send') do
           post_xml(
