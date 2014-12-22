@@ -48,6 +48,6 @@ RSpec.describe "Getting a subscriber list", type: :request do
   end
 
   def get_subscriber_list(tags)
-    get "/subscriber-lists", tags: tags
+    get "/subscriber-lists", { tags: tags }, json_headers
   end
 end

@@ -2,18 +2,22 @@ require 'sidekiq/api'
 
 class HealthcheckController < ActionController::Base
   def check
-    render json: {
-      checks: {
-        queue_size: {
-          status: queue_size_status
-        },
-        queue_age:  {
-          status: queue_age_status
+    respond_to do |format|
+      format.json {
+        render json: {
+          checks: {
+            queue_size: {
+              status: queue_size_status
+            },
+            queue_age:  {
+              status: queue_age_status
+            }
+          },
+          status: 'ok' #FIXME: probably need to pin this on DB connectivity and
+                       #Redis connectivity
         }
-      },
-      status: 'ok' #FIXME: probably need to pin this on DB connectivity and
-                   #Redis connectivity
-    }
+      }
+    end
   end
 
 private

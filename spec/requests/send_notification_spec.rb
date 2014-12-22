@@ -136,6 +136,6 @@ RSpec.describe "Sending a notification", type: :request do
       tags: tags,
     }.merge(options))
 
-    post "/notifications", request_body, "CONTENT_TYPE" => "application/json"
+    post "/notifications", request_body, json_headers
   end
 end

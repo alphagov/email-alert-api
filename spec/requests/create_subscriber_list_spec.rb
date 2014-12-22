@@ -44,10 +44,12 @@ RSpec.describe "Creating a subscriber list", type: :request do
   end
 
   def create_subscriber_list(tags)
-    post "/subscriber-lists", {
+    request_body = JSON.dump({
       title: "This is a sample title",
       gov_delivery_id: "UKGOVUK_1234",
       tags: tags
-    }
+    })
+
+    post "/subscriber-lists", request_body, json_headers
   end
 end

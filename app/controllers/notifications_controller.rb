@@ -2,7 +2,9 @@ class NotificationsController < ApplicationController
   def create
     NotificationWorker.perform_async(notification_params.to_json)
 
-    render json: {message: "Notification queued for sending"}, status: 202
+    respond_to do |format|
+      format.json { render json: {message: "Notification queued for sending"}, status: 202 }
+    end
   end
 
 private
