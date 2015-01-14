@@ -49,6 +49,21 @@ module GovDelivery
   private
     attr_reader :options
 
+    def logger
+      unless @logger
+        @logger = Logger.new(File.join(Rails.root, "log/govdelivery.log"))
+        @logger.formatter = proc do |severity, datetime, progname, msg|
+          {
+            "@fields.application" => "email-alert-api",
+            "@timestamp" => datetime.iso8601,
+            "@tags" => "govdelivery",
+            "@message" => msg
+          }.to_json + "\n"
+        end
+      end
+      @logger
+    end
+
     def base_url
       "#{options.fetch(:protocol)}://#{options.fetch(:hostname)}/api/account/#{options.fetch(:account_code)}"
     end
@@ -65,6 +80,7 @@ module GovDelivery
     end
 
     def post_xml(path, body)
+      logger.info("XML sent to GovDelivery: #{body}")
       http_client.post(
         path,
         body,
