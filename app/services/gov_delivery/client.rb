@@ -2,6 +2,7 @@ module GovDelivery
   class Client
     class UnknownError < StandardError; end
     class TopicAlreadyExistsError < UnknownError; end
+    class ZeroSubscriberError < UnknownError; end
 
     def initialize(options = {})
       @options = options
@@ -42,6 +43,7 @@ module GovDelivery
           )
         end
       )
+    rescue ZeroSubscriberError
     end
 
   private
@@ -86,10 +88,13 @@ module GovDelivery
     end
 
     def raise_correct_error(parsed_response)
-      error_class = case parsed_response.code
-                    when "GD-14004" then TopicAlreadyExistsError
-                    else UnknownError
-                    end
+      if parsed_response.code == "GD-14004"
+        error_class = TopicAlreadyExistsError
+      elsif parsed_response.code == "GD-12004" && parsed_response.error == "To send a bulletin you must select at least one topic or category that has subscribers"
+        error_class = ZeroSubscriberError
+      else
+        error_class = UnknownError
+      end
 
       raise error_class.new, "#{parsed_response.code}: #{parsed_response.error}"
     end

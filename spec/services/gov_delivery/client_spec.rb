@@ -171,6 +171,32 @@ RSpec.describe GovDelivery::Client do
       end
     end
 
+    it "fails silently on zero subscriber error from govdelivery" do
+      @govdelivery_response = %{
+        <?xml version="1.0" encoding="UTF-8"?>
+        <errors>
+          <code>GD-12004</code>
+          <error>To send a bulletin you must select at least one topic or category that has subscribers</error>
+        </errors>
+      }
+      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
+
+      expect { client.send_bulletin(topic_ids, subject, body) }.not_to raise_error
+    end
+
+    it "raises error on any other error from govdelivery" do
+      @govdelivery_response = %{
+        <?xml version="1.0" encoding="UTF-8"?>
+        <errors>
+          <code>GD-12004</code>
+          <error>Invalid bulletin</error>
+        </errors>
+      }
+      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
+
+      expect { client.send_bulletin(topic_ids, subject, body) }.to raise_error
+    end
+
     it "POSTs the bulletin with extra parameters if present to the send_now endpoint" do
       stub_request(:post, @base_url).to_return(body: @govdelivery_response)
 
