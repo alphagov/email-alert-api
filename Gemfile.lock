@@ -147,6 +147,8 @@ GEM
       json
       redis (>= 3.0.6)
       redis-namespace (>= 1.3.1)
+    sidekiq-logging-json (0.0.14)
+      sidekiq (~> 3)
     slop (3.6.0)
     sprockets (2.12.3)
       hike (~> 1.2)
@@ -195,6 +197,7 @@ DEPENDENCIES
   rails (= 4.1.7.1)
   rspec-rails (= 3.1.0)
   sidekiq (= 3.2.6)
+  sidekiq-logging-json (= 0.0.14)
   statsd-ruby (= 1.2.1)
   unicorn (= 4.8.3)
   webmock
