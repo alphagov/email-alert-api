@@ -1,6 +1,6 @@
 ---
 :verbose: true
 :concurrency:  2
-:logfile: ./log/sidekiq.log
+:logfile: ./log/sidekiq.json.log
 :queues:
   - default

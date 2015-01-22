@@ -6,3 +6,6 @@ end
 Sidekiq.configure_client do |config|
   config.redis = EmailAlertAPI.config.redis_config
 end
+
+require 'sidekiq/logging/json'
+Sidekiq.logger.formatter = Sidekiq::Logging::Json::Logger.new
