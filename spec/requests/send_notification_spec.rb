@@ -75,7 +75,7 @@ RSpec.describe "Sending a notification", type: :request do
       )
   end
 
-  it "doesn't send notifications for if there's no lists" do
+  it "doesn't send notifications if there's no lists" do
     send_notification({
       topics: ["oil-and-gas/licensing"],
       organisations: ["environment-agency", "hm-revenue-customs"]
