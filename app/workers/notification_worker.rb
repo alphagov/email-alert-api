@@ -18,7 +18,7 @@ class NotificationWorker
       options = notification.slice(:from_address_id, :urgent, :header, :footer)
 
       EmailAlertAPI.services(:gov_delivery).send_bulletin(
-        lists.map(&:gov_delivery_id),
+        lists.map(&:gov_delivery_id).uniq,
         notification[:subject],
         notification[:body],
         options

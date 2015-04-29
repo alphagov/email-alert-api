@@ -75,7 +75,7 @@ RSpec.describe "Sending a notification", type: :request do
       )
   end
 
-  it "doesn't send notifications for if there's no lists" do
+  it "doesn't send notifications if there's no lists" do
     send_notification({
       topics: ["oil-and-gas/licensing"],
       organisations: ["environment-agency", "hm-revenue-customs"]
@@ -87,20 +87,28 @@ RSpec.describe "Sending a notification", type: :request do
   end
 
   def create_many_lists
-    all_match = FactoryGirl.create(:subscriber_list, tags: {
-      topics: ["oil-and-gas/licensing"],
-      organisations: ["environment-agency", "hm-revenue-customs"]
-    })
+    duplicate_topic_id = "UKGOVUK_DUPLICATE"
+
+    all_match = FactoryGirl.create(:subscriber_list,
+      gov_delivery_id: duplicate_topic_id,
+      tags: {
+        topics: ["oil-and-gas/licensing"],
+        organisations: ["environment-agency", "hm-revenue-customs"]
+      }
+    )
 
     partial_type_match = FactoryGirl.create(:subscriber_list, tags: {
       topics: ["oil-and-gas/licensing"],
       browse_pages: ["tax/vat"]
     })
 
-    full_type_partial_tag_match = FactoryGirl.create(:subscriber_list, tags: {
-      topics: ["oil-and-gas/licensing"],
-      organisations: ["environment-agency"]
-    })
+    full_type_partial_tag_match = FactoryGirl.create(:subscriber_list,
+      gov_delivery_id: duplicate_topic_id,
+      tags: {
+        topics: ["oil-and-gas/licensing"],
+        organisations: ["environment-agency"]
+      }
+    )
 
     full_type_no_tag_match = FactoryGirl.create(:subscriber_list, tags: {
       topics: ["schools-colleges/administration-finance"],
@@ -124,8 +132,8 @@ RSpec.describe "Sending a notification", type: :request do
     ]
 
     return [
-      relevant_lists.map(&:gov_delivery_id),
-      irrelevant_lists.map(&:gov_delivery_id)
+      relevant_lists.map(&:gov_delivery_id).uniq,
+      irrelevant_lists.map(&:gov_delivery_id).uniq
     ]
   end
 
