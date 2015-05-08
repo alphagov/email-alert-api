@@ -37,6 +37,11 @@ class SubscriberList < ActiveRecord::Base
     end
   end
 
+  def reload
+    @_tags = nil
+    super
+  end
+
   def subscription_url
     gov_delivery_config.fetch(:protocol) +
     "://" +
