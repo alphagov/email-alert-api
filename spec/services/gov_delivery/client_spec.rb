@@ -184,6 +184,12 @@ RSpec.describe GovDelivery::Client do
       expect { client.send_bulletin(topic_ids, subject, body) }.not_to raise_error
     end
 
+    it "raises a helpful error for empty responses from govdelivery" do
+      stub_request(:post, @base_url).to_return(body: "")
+
+      expect { client.send_bulletin(topic_ids, subject, body) }.to raise_error(GovDelivery::Client::UnexpectedResponseBodyError)
+    end
+
     it "raises error on any other error from govdelivery" do
       @govdelivery_response = %{
         <?xml version="1.0" encoding="UTF-8"?>

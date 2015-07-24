@@ -3,6 +3,7 @@ module GovDelivery
     class UnknownError < StandardError; end
     class TopicAlreadyExistsError < UnknownError; end
     class ZeroSubscriberError < UnknownError; end
+    class UnexpectedResponseBodyError < UnknownError; end
 
     def initialize(options = {})
       @options = options
@@ -91,8 +92,13 @@ module GovDelivery
     def parse_topic_response(response)
       EmailAlertAPI.statsd.increment("responses.#{response.status}")
 
-      ResponseParser.new(response.body).parse.tap do |parsed_response|
-        raise_correct_error(parsed_response) if parsed_response.respond_to? :error
+      response_parser = ResponseParser.new(response.body)
+      if response_parser.xml?
+        response_parser.parse.tap do |parsed_response|
+          raise_correct_error(parsed_response) if parsed_response.respond_to? :error
+        end
+      else
+        raise UnexpectedResponseBodyError.new("Unexpected response from govdelivery: HTTP status code: #{response.status} body: #{response.body}")
       end
     end
 
