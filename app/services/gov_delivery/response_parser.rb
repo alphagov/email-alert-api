@@ -9,6 +9,10 @@ module GovDelivery
       Struct.new(*keys).new(*values)
     end
 
+    def xml?
+      xml_tree.root.present?
+    end
+
   private
 
     attr_reader(
