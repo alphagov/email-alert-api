@@ -1,5 +1,3 @@
-require "config/initializers/services"
-
 module GovDeliveryHelpers
   def stub_gov_delivery_topic_creation
     config = EmailAlertAPI.config.gov_delivery

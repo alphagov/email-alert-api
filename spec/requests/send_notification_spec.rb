@@ -4,14 +4,12 @@ require 'sidekiq/testing'
 RSpec.describe "Sending a notification", type: :request do
   before do
     Sidekiq::Testing.fake!
-    @original_gov_delivery = EmailAlertAPI.services(:gov_delivery)
     @gov_delivery = double(:gov_delivery, send_bulletin: nil)
-    EmailAlertAPI.services(:gov_delivery, @gov_delivery)
+    allow(Services).to receive(:gov_delivery).and_return(@gov_delivery)
   end
 
   after do
     Sidekiq::Worker.clear_all
-    EmailAlertAPI.services(:gov_delivery, @original_gov_delivery)
   end
 
   it "returns a 202" do
