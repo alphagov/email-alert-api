@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150508081921) do
+ActiveRecord::Schema.define(version: 20150930130825) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20150508081921) do
     t.hstore   "tags"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "content_id"
   end
 
   add_index "subscriber_lists", ["tags"], name: "index_subscriber_lists_on_tags", using: :gin

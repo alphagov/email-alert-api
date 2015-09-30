@@ -3,6 +3,15 @@ require 'json'
 class SubscriberList < ActiveRecord::Base
   self.include_root_in_json = true
 
+  def self.build_from(params:, gov_delivery_id:)
+    new(
+      title: params[:title],
+      gov_delivery_id: gov_delivery_id,
+      tags: params[:tags],
+      content_id: params[:content_id]
+    )
+  end
+
   # Find all lists in which all the tags present have at least one match in the
   # supplied list of tags.  Note - does not require that all the tags supplied
   # have any matches.

@@ -18,8 +18,7 @@ class SubscriberListsController < ApplicationController
   end
 
   def create
-    list = create_or_fetch_subscriber_list
-
+    list = build_subscriber_list
     if list.save
       respond_to do |format|
         format.json { render json: list.to_json, status: 201 }
@@ -32,16 +31,9 @@ class SubscriberListsController < ApplicationController
   end
 
 private
-  def create_or_fetch_subscriber_list
-    gov_delivery = Services.gov_delivery
-
-    response = gov_delivery.create_topic(params[:title])
-
-    SubscriberList.new(
-      title: params[:title],
-      gov_delivery_id: response.to_param,
-      tags: params[:tags]
-    )
+  def build_subscriber_list
+    gov_delivery_response = Services.gov_delivery.create_topic(params[:title])
+    SubscriberList.build_from(params: params, gov_delivery_id: gov_delivery_response.to_param)
   end
 
   def validate_request
