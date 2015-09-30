@@ -5,13 +5,13 @@ RSpec.describe SubscriberList, type: :model do
   describe "scopes" do
 
     before do
-      @list1 = FactoryGirl.create(:subscriber_list, tags: {
+      @list1 = create(:subscriber_list, tags: {
         format: ["raib_report"],
       })
-      @list2 = FactoryGirl.create(:subscriber_list, tags: {
+      @list2 = create(:subscriber_list, tags: {
         topics: ["environmental-management/boating"],
       })
-      @list3 = FactoryGirl.create(:subscriber_list, tags: {
+      @list3 = create(:subscriber_list, tags: {
         topics: ["environmental-management/boating", "environmental-management/sailing" , "environmental-management/swimming"],
       })
     end
@@ -25,16 +25,16 @@ RSpec.describe SubscriberList, type: :model do
 
   describe ".find_with_at_least_one_tag_of_each_type" do
     before do
-      @list1 = FactoryGirl.create(:subscriber_list, tags: {
+      @list1 = create(:subscriber_list, tags: {
         topics: ["oil-and-gas/licensing"],
         organisations: ["environment-agency", "hm-revenue-customs"]
       })
 
-      @list2 = FactoryGirl.create(:subscriber_list, tags: {
+      @list2 = create(:subscriber_list, tags: {
         topics: ["business-tax/vat", "oil-and-gas/licensing"]
       })
 
-      FactoryGirl.create(:subscriber_list, tags: {
+      create(:subscriber_list, tags: {
         topics: ["environmental-management/boating"],
       })
     end
@@ -82,7 +82,7 @@ RSpec.describe SubscriberList, type: :model do
 
   describe ".where_tags_equal(tag_hash)" do
     before do
-      @list = FactoryGirl.create(:subscriber_list, tags: {
+      @list = create(:subscriber_list, tags: {
         topics: ["oil-and-gas/licensing"],
         organisations: ["environment-agency", "hm-revenue-customs"]
       })
@@ -108,7 +108,7 @@ RSpec.describe SubscriberList, type: :model do
 
   describe "#tags" do
     it "deserializes the tag arrays" do
-      list = FactoryGirl.create(:subscriber_list, tags: {
+      list = create(:subscriber_list, tags: {
         topics: ["environmental-management/boating"],
       })
 
