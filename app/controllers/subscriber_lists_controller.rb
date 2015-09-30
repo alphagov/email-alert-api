@@ -33,7 +33,7 @@ class SubscriberListsController < ApplicationController
 
 private
   def create_or_fetch_subscriber_list
-    gov_delivery = EmailAlertAPI.services(:gov_delivery)
+    gov_delivery = Services.gov_delivery
 
     response = gov_delivery.create_topic(params[:title])
 
