@@ -15,21 +15,22 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
   it "returns the created subscriber list" do
     create_subscriber_list(topics: ["oil-and-gas/licensing"])
-
     response_hash = JSON.parse(response.body)
-
     subscriber_list = response_hash["subscriber_list"]
 
-    expect(subscriber_list.keys.to_set).to eq([
-      "id",
-      "title",
-      "subscription_url",
-      "gov_delivery_id",
-      "created_at",
-      "updated_at",
-      "tags"
-    ].to_set)
-
+    expect(subscriber_list.keys.to_set).to eq(
+      %w{
+        id
+        title
+        subscription_url
+        gov_delivery_id
+        created_at
+        updated_at
+        tags
+        content_id
+      }.to_set
+    )
+    expect(subscriber_list["content_id"]).to eq "8383db"
     expect(subscriber_list).to include(
       "tags" => {
         "topics" => ["oil-and-gas/licensing"]
@@ -47,7 +48,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
     request_body = JSON.dump({
       title: "This is a sample title",
       gov_delivery_id: "UKGOVUK_1234",
-      tags: tags
+      tags: tags,
+      content_id: "8383db"
     })
 
     post "/subscriber-lists", request_body, json_headers

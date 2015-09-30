@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe DataHygiene::TagChanger, "#update_records_tags" do
 
   it "creates a new record with an updated topic tag" do
-    subscriber_list = FactoryGirl.create(:subscriber_list, tags: {
+    subscriber_list = create(:subscriber_list, tags: {
       topics: ["environmental-management/boating"],
     })
     tag_changer = DataHygiene::TagChanger.new(
@@ -29,7 +29,7 @@ RSpec.describe DataHygiene::TagChanger, "#update_records_tags" do
   end
 
   it "preserves additional tags" do
-    subscriber_list = FactoryGirl.create(:subscriber_list, tags: {
+    subscriber_list = create(:subscriber_list, tags: {
       topics: ["environmental-management/agency"],
       organisations: ["Environment Agency"]
     })
@@ -49,11 +49,11 @@ RSpec.describe DataHygiene::TagChanger, "#update_records_tags" do
   end
 
   it "preserves additional topics" do
-    subscriber_list = FactoryGirl.create(:subscriber_list, tags: {
+    subscriber_list = create(:subscriber_list, tags: {
       topics: ["environmental-management/agency", "environmental-management/littering"],
       organisations: ["Environment Agency"]
     })
-    subscriber_list2 = FactoryGirl.create(:subscriber_list, tags: {
+    subscriber_list2 = create(:subscriber_list, tags: {
       topics: ["environmental-management/123agency"],
       organisations: ["Environment Agency"]
     })
