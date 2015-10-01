@@ -1,6 +1,21 @@
 require "rails_helper"
 
 RSpec.describe SubscriberList, type: :model do
+  describe ".build_from(params:, gov_delivery_id:)" do
+    it "builds a new SubscriberList" do
+      params = {
+        title: "Ronnie Pickering",
+        tags: { topics: ["motoring/road_rage"] },
+        links: { topics: ["uuid-888"] },
+      }
+      gov_delivery_id = "GOVUK_888"
+      list = SubscriberList.build_from(params: params, gov_delivery_id: gov_delivery_id)
+      expect(list.title).to eq "Ronnie Pickering"
+      expect(list.tags).to eq({:topics=>["motoring/road_rage"]})
+      expect(list.links).to eq({:topics=>["uuid-888"]})
+      expect(list.gov_delivery_id).to eq "GOVUK_888"
+    end
+  end
 
   describe "scopes" do
 

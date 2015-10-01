@@ -21,15 +21,18 @@ RSpec.describe "Getting a subscriber list", type: :request do
 
       subscriber_list = response_hash["subscriber_list"]
 
-      expect(subscriber_list.keys.to_set).to eq([
-        "id",
-        "title",
-        "subscription_url",
-        "gov_delivery_id",
-        "created_at",
-        "updated_at",
-        "tags"
-      ].to_set)
+      expect(subscriber_list.keys.to_set).to eq(
+        %w{
+          id
+          title
+          subscription_url
+          gov_delivery_id
+          created_at
+          updated_at
+          tags
+          links
+        }.to_set
+      )
 
       expect(subscriber_list).to include(
         "tags" => {

@@ -3,6 +3,18 @@ require 'json'
 class SubscriberList < ActiveRecord::Base
   self.include_root_in_json = true
 
+  validate :tag_values_are_valid
+  validate :link_values_are_valid
+
+  def self.build_from(params:, gov_delivery_id:)
+    new(
+      title: params[:title],
+      tags:  params[:tags],
+      links: params[:links],
+      gov_delivery_id: gov_delivery_id,
+    )
+  end
+
   # Find all lists in which all the tags present have at least one match in the
   # supplied list of tags.  Note - does not require that all the tags supplied
   # have any matches.
@@ -32,13 +44,16 @@ class SubscriberList < ActiveRecord::Base
   end
 
   def tags
-    @_tags ||= super.inject({}) do |hash, (tag_type, tags_json)|
-      hash.merge(tag_type.to_sym => JSON.parse(tags_json))
-    end
+    @_tags ||= parsed_hstore(super)
+  end
+
+  def links
+    @_links ||= parsed_hstore(super)
   end
 
   def reload
-    @_tags = nil
+    @_tags  = nil
+    @_links = nil
     super
   end
 
@@ -57,6 +72,27 @@ class SubscriberList < ActiveRecord::Base
   end
 
 private
+  def tag_values_are_valid
+    self[:tags].each do |key, value|
+      unless value.match(/^\[(.)*\]$/)
+        self.errors.add(:tags, "All tag values must be sent as Arrays")
+      end
+    end
+  end
+
+  def link_values_are_valid
+    self[:links].each do |key, value|
+      unless value.match(/^\[(.)*\]$/)
+        self.errors.add(:links, "All link values must be sent as Arrays")
+      end
+    end
+  end
+
+  def parsed_hstore(field)
+    Hash(field).inject({}) do |hash, (key, json_value)|
+      hash.merge(key.to_sym => JSON.parse(json_value))
+    end
+  end
 
   def gov_delivery_config
     EmailAlertAPI.config.gov_delivery
