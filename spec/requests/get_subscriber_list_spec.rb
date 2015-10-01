@@ -5,7 +5,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
 
   context "when present" do
     before do
-      FactoryGirl.create(:subscriber_list, tags: {topics: ["oil-and-gas/licensing", "drug-device-alert"]})
+      create(:subscriber_list, tags: {topics: ["oil-and-gas/licensing", "drug-device-alert"]})
     end
 
     it "returns a 200" do

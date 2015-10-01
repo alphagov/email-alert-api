@@ -87,7 +87,7 @@ RSpec.describe "Sending a notification", type: :request do
   def create_many_lists
     duplicate_topic_id = "UKGOVUK_DUPLICATE"
 
-    all_match = FactoryGirl.create(:subscriber_list,
+    all_match = create(:subscriber_list,
       gov_delivery_id: duplicate_topic_id,
       tags: {
         topics: ["oil-and-gas/licensing"],
@@ -95,12 +95,12 @@ RSpec.describe "Sending a notification", type: :request do
       }
     )
 
-    partial_type_match = FactoryGirl.create(:subscriber_list, tags: {
+    partial_type_match = create(:subscriber_list, tags: {
       topics: ["oil-and-gas/licensing"],
       browse_pages: ["tax/vat"]
     })
 
-    full_type_partial_tag_match = FactoryGirl.create(:subscriber_list,
+    full_type_partial_tag_match = create(:subscriber_list,
       gov_delivery_id: duplicate_topic_id,
       tags: {
         topics: ["oil-and-gas/licensing"],
@@ -108,12 +108,12 @@ RSpec.describe "Sending a notification", type: :request do
       }
     )
 
-    full_type_no_tag_match = FactoryGirl.create(:subscriber_list, tags: {
+    full_type_no_tag_match = create(:subscriber_list, tags: {
       topics: ["schools-colleges/administration-finance"],
       organisations: ["department-for-education"]
     })
 
-    full_type_but_empty = FactoryGirl.create(:subscriber_list, tags: {
+    full_type_but_empty = create(:subscriber_list, tags: {
       topics: [],
       organisations: ["environment-agency", "hm-revenue-customs"]
     })
