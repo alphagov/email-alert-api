@@ -6,7 +6,7 @@ class NotificationWorker
   def perform(notification_json)
     notification = JSON.parse(notification_json).with_indifferent_access
 
-    lists = SubscriberList.with_at_least_one_tag_of_each_type(tags: notification[:tags])
+    lists = SubscriberListQuery.at_least_one_tag_of_each_type(tags: notification[:tags])
     if lists.any?
       Rails.logger.info "--- Sending email to GovDelivery ---"
       Rails.logger.info "subject: '#{notification[:subject]}'"

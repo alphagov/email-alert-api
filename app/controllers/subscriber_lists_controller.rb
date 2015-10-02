@@ -2,7 +2,7 @@ require "gov_delivery/client"
 
 class SubscriberListsController < ApplicationController
   def show
-    subscriber_list = SubscriberList.where_tags_equal(params[:tags]).first
+    subscriber_list = SubscriberListQuery.where_tags_equal(params[:tags]).first
 
     if subscriber_list
       respond_to do |format|
