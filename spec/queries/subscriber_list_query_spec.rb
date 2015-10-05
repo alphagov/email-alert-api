@@ -78,36 +78,47 @@ RSpec.describe SubscriberListQuery do
     end
   end
 
-  describe ".where_tags_equal(tags)" do
+  describe "#find_exact_match_with(links:, tags:)" do
     before do
-      @list = create(:subscriber_list, tags: {
+      @list_with_tags = create(:subscriber_list, tags: {
         topics: ["oil-and-gas/licensing"],
         organisations: ["environment-agency", "hm-revenue-customs"]
       })
     end
 
     it "requires all tag types in the document to be present in the list" do
-      found_lists = SubscriberListQuery.where_tags_equal({
-        topics: ["oil-and-gas/licensing"],
-      })
+      found_lists = SubscriberListQuery.new(query_field: :tags)
+        .find_exact_match_with({ topics: ["oil-and-gas/licensing"] })
       expect(found_lists).to eq([])
     end
 
     it "requires all tag types in the list to be present in the document" do
-      found_lists = SubscriberListQuery.where_tags_equal({
-        topics: ["oil-and-gas/licensing"],
-        organisations: ["environment-agency", "hm-revenue-customs"],
-        foo: ["bar"]
-      })
+      found_lists = SubscriberListQuery.new(query_field: :tags)
+        .find_exact_match_with({
+          topics: ["oil-and-gas/licensing"],
+          organisations: ["environment-agency", "hm-revenue-customs"],
+          foo: ["bar"]
+        })
       expect(found_lists).to eq([])
     end
 
     it "requires all tag types in the list to be present in the document" do
-      found_lists = SubscriberListQuery.where_tags_equal({
-        topics: ["oil-and-gas/licensing"],
-        organisations: ["environment-agency", "hm-revenue-customs"]
-      })
-      expect(found_lists).to eq([@list])
+      list_with_links = create(:subscriber_list, links: { topics: ["uuid-888"] })
+
+      found_by_tags = SubscriberListQuery.new(query_field: :tags)
+        .find_exact_match_with({
+          topics: ["oil-and-gas/licensing"],
+          organisations: ["environment-agency", "hm-revenue-customs"]
+        })
+
+      expect(found_by_tags).to eq([@list_with_tags])
+
+      found_by_links = SubscriberListQuery.new(query_field: :links)
+        .find_exact_match_with({
+          topics: ["uuid-888"]
+        })
+
+      expect(found_by_links).to eq([list_with_links])
     end
   end
 end

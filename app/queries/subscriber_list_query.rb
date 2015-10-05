@@ -1,4 +1,8 @@
 class SubscriberListQuery
+  def initialize(query_field: :tags)
+    @query_field = query_field
+  end
+
   # Find all lists in which all the tags present have at least one match in the
   # supplied list of tags.  Note - does not require that all the tags supplied
   # have any matches.
@@ -18,11 +22,11 @@ class SubscriberListQuery
     end
   end
 
-  def self.where_tags_equal(tags)
-    lists_with_all_matching_keys(tags).select do |list|
-      list.tags.all? do |tag_type, tag_array|
-        next if tags[tag_type].nil?
-        tags[tag_type].sort == tag_array.sort
+  def find_exact_match_with(metadata_hash)
+    subscriber_lists_with_all_matching_keys(metadata_hash).select do |list|
+      list.send(@query_field).all? do |descriptor, array_of_values|
+        next if metadata_hash[descriptor].nil?
+        metadata_hash[descriptor].sort == array_of_values.sort
       end
     end
   end
@@ -48,10 +52,10 @@ private
   #
   # then this returns all lists which have any "topics" AND "organisations"
   # tags.
-  def self.lists_with_all_matching_keys(tags)
+  def subscriber_lists_with_all_matching_keys(metadata_hash)
     # This uses the `?&` hstore operator, which returns true only if the hstore
     # contains all the specified keys.
-    SubscriberList.where("tags ?& Array[:tag_keys]", tag_keys: tags.keys)
+    SubscriberList.where("#{@query_field} ?& Array[:keys]", keys: metadata_hash.keys)
   end
 
   def self.lists_with_key(key)
