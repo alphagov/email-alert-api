@@ -1,6 +1,7 @@
 class NotificationsController < ApplicationController
   def create
-    NotificationWorker.perform_async(notification_params.to_json)
+    query_field = notification_params[:links].present? ? :links : :tags
+    NotificationWorker.perform_async(notification_params.to_json, query_field)
 
     respond_to do |format|
       format.json { render json: {message: "Notification queued for sending"}, status: 202 }

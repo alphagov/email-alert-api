@@ -3,13 +3,13 @@ class SubscriberListQuery
     @query_field = query_field
   end
 
-  # Find all lists in which all the tags present have at least one match in the
-  # supplied list of tags.  Note - does not require that all the tags supplied
+  # Find all lists in which all the links present have at least one match in the
+  # supplied list of links.  Note - does not require that all the links supplied
   # have any matches.
-  def self.at_least_one_tag_of_each_type(tags:)
-    lists_with_matching_keys(tags).select do |list|
-      list.tags.all? do |tag_type, tag_array|
-        (tags[tag_type] & tag_array).count > 0
+  def where_all_links_match_at_least_one_value_in(query_hash)
+    lists_with_keys_matching(query_hash).select do |list|
+      list.send(@query_field).all? do |descriptor, array_of_values|
+        (Array(query_hash[descriptor]) & array_of_values).count > 0
       end
     end
   end
@@ -22,40 +22,42 @@ class SubscriberListQuery
     end
   end
 
-  def find_exact_match_with(metadata_hash)
-    subscriber_lists_with_all_matching_keys(metadata_hash).select do |list|
+  def find_exact_match_with(query_hash)
+    subscriber_lists_with_all_matching_keys(query_hash).select do |list|
       list.send(@query_field).all? do |descriptor, array_of_values|
-        next if metadata_hash[descriptor].nil?
-        metadata_hash[descriptor].sort == array_of_values.sort
+        next if query_hash[descriptor].nil?
+        query_hash[descriptor].sort == array_of_values.sort
       end
     end
   end
 
 private
-  # Return all SubscriberLists which are marked with any of the same tag types
-  # as those requested.  For example, if `tags` is:
+  # Return all SubscriberLists which are marked with any of the same link types
+  # as those requested.  For example, if `links` is:
   #
   #     {"topics": [...], "organisations": [...]}
   #
   # then this returns all lists which have any "topics" or "organisations"
-  # tags.
-  def self.lists_with_matching_keys(tags)
-    # This uses the `@>` hstore operator, which returns true if and only
-    # if its left operand contains its right one.
-    SubscriberList.where("Array[:tag_keys] @> akeys(tags)", tag_keys: tags.keys)
+  # links.
+  def lists_with_keys_matching(query_hash)
+    # This uses the `&&` hstore operator, which returns true if the left and
+    # right operand have any overlapping elements
+    SubscriberList.where(
+      "Array[:keys] && akeys(#{@query_field})", keys: query_hash.keys
+    )
   end
 
-  # Return all SubscriberLists which are marked with all of the same tag types
-  # as those requested.  For example, if `tags` is:
+  # Return all SubscriberLists which are marked with all of the same link types
+  # as those requested.  For example, if `links` is:
   #
   #     {"topics": [...], "organisations": [...]}
   #
   # then this returns all lists which have any "topics" AND "organisations"
-  # tags.
-  def subscriber_lists_with_all_matching_keys(metadata_hash)
+  # links.
+  def subscriber_lists_with_all_matching_keys(query_hash)
     # This uses the `?&` hstore operator, which returns true only if the hstore
     # contains all the specified keys.
-    SubscriberList.where("#{@query_field} ?& Array[:keys]", keys: metadata_hash.keys)
+    SubscriberList.where("#{@query_field} ?& Array[:keys]", keys: query_hash.keys)
   end
 
   def self.lists_with_key(key)
