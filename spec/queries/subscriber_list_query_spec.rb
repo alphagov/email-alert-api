@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe SubscriberListQuery do
-  describe ".at_least_one_topic_value" do
+  describe ".at_least_one_topic_value_matches" do
     before do
       @list1 = create(:subscriber_list, tags: { format: ["raib_report"], })
       @list2 = create(:subscriber_list, tags: { topics: ["environmental-management/boating"], })
@@ -15,7 +15,7 @@ RSpec.describe SubscriberListQuery do
     end
 
     it "finds lists where at least one value is in the topic tags" do
-      expect(SubscriberListQuery.at_least_one_topic_value(
+      expect(SubscriberListQuery.new.at_least_one_topic_value_matches(
         'environmental-management/boating'
       )).to eq [@list2, @list3]
     end
