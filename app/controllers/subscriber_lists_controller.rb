@@ -43,6 +43,8 @@ private
   end
 
   def subscriber_list_params
-    params.slice(:title, :tags, :links)
+    params.slice(:title)
+      .merge(tags: params.fetch(:tags, {}))
+      .merge(links: params.fetch(:links, {}))
   end
 end

@@ -7,6 +7,7 @@ class SubscriberListQuery
   # supplied list of links.  Note - does not require that all the links supplied
   # have any matches.
   def where_all_links_match_at_least_one_value_in(query_hash)
+    return [] unless query_hash.present?
     lists_with_keys_matching(query_hash).select do |list|
       list.send(@query_field).all? do |descriptor, array_of_values|
         (Array(query_hash[descriptor]) & array_of_values).count > 0
@@ -23,6 +24,7 @@ class SubscriberListQuery
   end
 
   def find_exact_match_with(query_hash)
+    return [] unless query_hash.present?
     subscriber_lists_with_all_matching_keys(query_hash).select do |list|
       list.send(@query_field).all? do |descriptor, array_of_values|
         next if query_hash[descriptor].nil?
