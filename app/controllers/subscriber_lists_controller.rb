@@ -37,11 +37,9 @@ private
   end
 
   def find_subscriber_list
-    if params[:links].present?
-      SubscriberListQuery.new(query_field: :links).find_exact_match_with(params[:links]).first
-    else
-      SubscriberListQuery.new(query_field: :tags).find_exact_match_with(params[:tags]).first
-    end
+    match = SubscriberListQuery.new(query_field: :links).find_exact_match_with(subscriber_list_params[:links]).first
+    return match if match.present?
+    return SubscriberListQuery.new(query_field: :tags).find_exact_match_with(subscriber_list_params[:tags]).first
   end
 
   def subscriber_list_params
