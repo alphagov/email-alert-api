@@ -13,7 +13,9 @@ RSpec.describe NotificationsController, type: :controller do
     }
 
     it "serializes the tags and passes them to the NotificationWorker" do
-      expect(NotificationWorker).to receive(:perform_async).with(notification_params.to_json, :tags)
+      expect(NotificationWorker).to receive(:perform_async).with(
+        notification_params.merge(links: {})
+      )
 
       post :create, notification_params.merge(format: :json)
     end
