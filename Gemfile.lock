@@ -84,6 +84,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-byebug (3.0.1)
+      byebug (~> 3.4)
+      pry (~> 0.10)
     rack (1.5.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -158,7 +161,6 @@ PLATFORMS
 
 DEPENDENCIES
   airbrake (= 4.1.0)
-  byebug
   equivalent-xml
   factory_girl_rails
   faraday (= 0.9.0)
@@ -167,7 +169,7 @@ DEPENDENCIES
   nokogiri (= 1.6.3.1)
   pg (= 0.17.1)
   plek (= 1.9.0)
-  pry
+  pry-byebug
   rails (= 4.1.11)
   rspec-rails (= 3.1.0)
   sidekiq (= 3.2.6)
