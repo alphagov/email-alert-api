@@ -2,8 +2,7 @@ require "gov_delivery/client"
 
 class SubscriberListsController < ApplicationController
   def show
-    subscriber_list = SubscriberList.where_tags_equal(params[:tags]).first
-
+    subscriber_list = find_subscriber_list
     if subscriber_list
       respond_to do |format|
         format.json { render json: subscriber_list.to_json }
@@ -16,14 +15,14 @@ class SubscriberListsController < ApplicationController
   end
 
   def create
-    list = build_subscriber_list
-    if list.save
+    subscriber_list = build_subscriber_list
+    if subscriber_list.save
       respond_to do |format|
-        format.json { render json: list.to_json, status: 201 }
+        format.json { render json: subscriber_list.to_json, status: 201 }
       end
     else
       respond_to do |format|
-        format.json { render json: {message: list.errors.full_messages.to_sentence}, status: 422 }
+        format.json { render json: {message: subscriber_list.errors.full_messages.to_sentence}, status: 422 }
       end
     end
   end
@@ -37,7 +36,15 @@ private
     )
   end
 
+  def find_subscriber_list
+    match = SubscriberListQuery.new(query_field: :links).find_exact_match_with(subscriber_list_params[:links]).first
+    return match if match.present?
+    return SubscriberListQuery.new(query_field: :tags).find_exact_match_with(subscriber_list_params[:tags]).first
+  end
+
   def subscriber_list_params
-    params.slice(:title, :tags, :links)
+    params.slice(:title)
+      .merge(tags: params.fetch(:tags, {}))
+      .merge(links: params.fetch(:links, {}))
   end
 end

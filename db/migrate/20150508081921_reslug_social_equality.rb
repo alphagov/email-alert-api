@@ -1,6 +1,6 @@
 class ReslugSocialEquality < ActiveRecord::Migration
   def up
-    list = SubscriberList.where_tags_equal(policies: ["social-equality"]).first
+    list = SubscriberListQuery.where_tags_equal(policies: ["social-equality"]).first
 
     if list
       list.update(tags: {
@@ -14,7 +14,7 @@ class ReslugSocialEquality < ActiveRecord::Migration
   end
 
   def down
-    list = SubscriberList.where_tags_equal(policies: ["equality"]).first
+    list = SubscriberListQuery.where_tags_equal(policies: ["equality"]).first
 
     if list
       list.update(tags: {
