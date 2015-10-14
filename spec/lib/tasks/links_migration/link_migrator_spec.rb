@@ -18,6 +18,13 @@ RSpec.describe LinkMigrator do
     allow(Services).to receive(:content_store).and_return(FakeContentStore.new)
   end
 
+  around do |example|
+    the_real_stdout = $stdout
+    $stdout = StringIO.new
+    example.run
+    $stdout = the_real_stdout
+  end
+
   describe "#populate_topic_links" do
     it "copies content IDs for appropriate topic tag matches" do
       subscriber_list1 = create(:subscriber_list, tags: {topics: ["oil-and-gas/something"]})
