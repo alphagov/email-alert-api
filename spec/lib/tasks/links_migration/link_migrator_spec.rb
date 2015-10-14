@@ -1,7 +1,7 @@
 require "rails_helper"
 require "tasks/links_migration/link_migrator"
 
-RSpec.describe LinkMigrator do
+RSpec.describe Tasks::LinksMigration::LinkMigrator do
   class FakeContentStore
     require "rspec/mocks/standalone"
 
@@ -31,7 +31,7 @@ RSpec.describe LinkMigrator do
       subscriber_list2 = create(:subscriber_list, tags: {topics: ["benefits/some-other-thing"]})
       subscriber_list3 = create(:subscriber_list, tags: {policies: ["foobars"]})
 
-      LinkMigrator.new.populate_topic_links
+      Tasks::LinksMigration::LinkMigrator.new.populate_topic_links
       [subscriber_list1, subscriber_list2, subscriber_list3].each { |s| s.reload }
 
       expect(subscriber_list1.links).to eq(topics: ["uuid-888"])
@@ -45,7 +45,7 @@ RSpec.describe LinkMigrator do
       subscriber_list = create(:subscriber_list, tags: {topics: ["oil-and-gas/something"]})
       create(:subscriber_list, tags: {topics: ["benefits/some-other-thing"]})
 
-      LinkMigrator.new.destroy_non_matching_subscriber_lists
+      Tasks::LinksMigration::LinkMigrator.new.destroy_non_matching_subscriber_lists
 
       expect(SubscriberList.count).to eq 1
       expect(SubscriberList.first).to eq subscriber_list
