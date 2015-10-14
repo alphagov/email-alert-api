@@ -33,6 +33,12 @@ class SubscriberListQuery
     end
   end
 
+  def subscriber_lists_with_key(key)
+    # This uses the `?` hstore operator, which returns true only if the hstore
+    # contains the specified key.
+    SubscriberList.where("tags ? :key", key: key)
+  end
+
 private
   # Return all SubscriberLists which are marked with any of the same link types
   # as those requested.  For example, if `links` is:
@@ -60,11 +66,5 @@ private
     # This uses the `?&` hstore operator, which returns true only if the hstore
     # contains all the specified keys.
     SubscriberList.where("#{@query_field} ?& Array[:keys]", keys: query_hash.keys)
-  end
-
-  def subscriber_lists_with_key(key)
-    # This uses the `?` hstore operator, which returns true only if the hstore
-    # contains the specified key.
-    SubscriberList.where("tags ? :key", key: key)
   end
 end
