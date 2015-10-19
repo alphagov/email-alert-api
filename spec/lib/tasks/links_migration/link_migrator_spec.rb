@@ -5,12 +5,23 @@ RSpec.describe Tasks::LinksMigration::LinkMigrator do
   class FakeContentStore
     require "rspec/mocks/standalone"
 
-    def mock_content_item
-      double("content_item", content_id: "uuid-888")
+    def mock_content_item1
+      double("content_item1", content_id: "uuid-888")
+    end
+
+    def mock_content_item2
+      double("content_item2", content_id: nil)
     end
 
     def content_item(path)
-      path == "/topic/oil-and-gas/something" ? mock_content_item : nil
+      case path
+      when "/topic/oil-and-gas/something"
+        mock_content_item1
+      when "benefits/some-other-thing"
+        mock_content_item2
+      else
+        nil
+      end
     end
   end
 
@@ -25,30 +36,30 @@ RSpec.describe Tasks::LinksMigration::LinkMigrator do
     $stdout = the_real_stdout
   end
 
-  describe "#populate_topic_links" do
+  describe "#populate_topic_links", focus: true do
     it "copies content IDs for appropriate topic tag matches" do
-      subscriber_list1 = create(:subscriber_list, tags: {topics: ["oil-and-gas/something"]})
-      subscriber_list2 = create(:subscriber_list, tags: {topics: ["benefits/some-other-thing"]})
-      subscriber_list3 = create(:subscriber_list, tags: {policies: ["foobars"]})
+      subscriber_list = create(:subscriber_list, tags: {topics: ["oil-and-gas/something"]})
 
       Tasks::LinksMigration::LinkMigrator.new.populate_topic_links
-      [subscriber_list1, subscriber_list2, subscriber_list3].each { |s| s.reload }
+      subscriber_list.reload
 
-      expect(subscriber_list1.links).to eq(topics: ["uuid-888"])
-      expect(subscriber_list2.links).to eq({})
-      expect(subscriber_list3.links).to eq({})
+      expect(subscriber_list.links).to eq(topics: ["uuid-888"])
     end
-  end
 
-  describe "#destroy_non_matching_subscriber_lists" do
-    it "destroys subscriber lists with no match in the content store" do
-      subscriber_list = create(:subscriber_list, tags: {topics: ["oil-and-gas/something"]})
+    it "raises an exception if the content item has no ID" do
       create(:subscriber_list, tags: {topics: ["benefits/some-other-thing"]})
 
-      Tasks::LinksMigration::LinkMigrator.new.destroy_non_matching_subscriber_lists
+      expect {Tasks::LinksMigration::LinkMigrator.new.populate_topic_links}.to raise_error(
+        Tasks::LinksMigration::LinkMigrator::DodgyBasePathError
+      )
+    end
 
-      expect(SubscriberList.count).to eq 1
-      expect(SubscriberList.first).to eq subscriber_list
+    it "raises an exception if no content item is returned" do
+      create(:subscriber_list, tags: {topics: ["foobars"]})
+
+      expect {Tasks::LinksMigration::LinkMigrator.new.populate_topic_links}.to raise_error(
+        Tasks::LinksMigration::LinkMigrator::DodgyBasePathError
+      )
     end
   end
 end
