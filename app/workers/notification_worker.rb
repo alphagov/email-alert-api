@@ -2,7 +2,9 @@ class NotificationWorker
   include Sidekiq::Worker
 
   def perform(notification_params)
-    notification_params = notification_params.with_indifferent_access
+    # The worker params are a serialized hash, hence the call to JSON.parse
+    notification_params = JSON.parse(notification_params).with_indifferent_access
+
     @tags_hash  = Hash(notification_params[:tags])
     @links_hash = Hash(notification_params[:links])
     lists = (lists_matched_on_links + lists_matched_on_tags).uniq { |l| l.id }

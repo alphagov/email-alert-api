@@ -11,6 +11,10 @@ RSpec.describe NotificationWorker do
       { subject: "Test subject", body: "Test body copy" }
     end
 
+    def make_it_perform
+      NotificationWorker.new.perform(notification_params.to_json)
+    end
+
     context "given a subscriber list matched on tags" do
       before do
         create(:subscriber_list, gov_delivery_id: 'gov123', tags: {topics: ['foo/bar']})
@@ -18,7 +22,7 @@ RSpec.describe NotificationWorker do
       end
 
       it "sends a bulletin with the correct IDs" do
-        NotificationWorker.new.perform(notification_params)
+        make_it_perform
 
         expect(@gov_delivery).to have_received(:send_bulletin)
           .with(
@@ -42,7 +46,7 @@ RSpec.describe NotificationWorker do
       end
 
       it "sends a bulletin with the correct IDs" do
-        NotificationWorker.new.perform(notification_params)
+        make_it_perform
 
         expect(@gov_delivery).to have_received(:send_bulletin)
           .with(
@@ -66,7 +70,7 @@ RSpec.describe NotificationWorker do
       end
 
       it "does not send a bulletin" do
-        NotificationWorker.new.perform(notification_params)
+        make_it_perform
 
         expect(@gov_delivery).to_not have_received(:send_bulletin)
       end
