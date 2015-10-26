@@ -1,8 +1,6 @@
 class NotificationsController < ApplicationController
   def create
-    # Ensure the Sidekiq worker receives a simple data type as its argument -
-    # in this case a JSON string (rather than a Ruby hash).
-    NotificationWorker.perform_async(notification_params.to_json)
+    NotificationWorker.perform_async(notification_params)
 
     respond_to do |format|
       format.json { render json: {message: "Notification queued for sending"}, status: 202 }

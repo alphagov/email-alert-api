@@ -2,8 +2,25 @@ class NotificationWorker
   include Sidekiq::Worker
 
   def perform(notification_params)
-    # The worker params are a serialized hash, hence the call to JSON.parse
-    notification_params = JSON.parse(notification_params).with_indifferent_access
+    # FIXME:
+    # tl;dr - remove the check on String below after 15th Nov 2015.
+    #
+    # The parameter to this worker was previously being encoded as JSON at the
+    # point of being enqueued (in NotificationsController). Sidekiq was calling
+    # JSON.dump on this, resulting in worker args that were JSON encoded twice.
+    # When this worker was changed to expect notification_params to be a simple
+    # Ruby hash (after being deserialized by Sidekiq), it began breaking in
+    # production due to old, previously-failing jobs re-trying one of their 25,
+    # exponentially backed off retries. The check below ensures that
+    # notification_params are correctly handled, irrespective of whether they
+    # were passed in already-encoded or not. This is a bandaid which should be
+    # removed after an appropriate length of time - 15th Nov 2015 should be
+    # sufficient.
+    notification_params = if notification_params.is_a?(String)
+                            JSON.parse(notification_params).with_indifferent_access
+                          else
+                            notification_params.with_indifferent_access
+                          end
 
     @tags_hash  = Hash(notification_params[:tags])
     @links_hash = Hash(notification_params[:links])

@@ -12,7 +12,7 @@ RSpec.describe NotificationWorker do
     end
 
     def make_it_perform
-      NotificationWorker.new.perform(notification_params.to_json)
+      NotificationWorker.new.perform(notification_params)
     end
 
     context "given a subscriber list matched on tags" do
@@ -23,6 +23,19 @@ RSpec.describe NotificationWorker do
 
       it "sends a bulletin with the correct IDs" do
         make_it_perform
+
+        expect(@gov_delivery).to have_received(:send_bulletin)
+          .with(
+            ['gov123'],
+            "Test subject",
+            "Test body copy",
+            {}
+          )
+      end
+
+      # FIXME: temporary test, see comment in NotificationWorker.perform
+      it "handles params correctly if they are passed in already-encoded" do
+        NotificationWorker.new.perform(notification_params.to_json)
 
         expect(@gov_delivery).to have_received(:send_bulletin)
           .with(
