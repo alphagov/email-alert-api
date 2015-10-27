@@ -1,3 +1,5 @@
+require "tasks/links_migration/policy_link_migrator"
+
 namespace :links_migration do
   namespace :for_policies do
 
@@ -34,5 +36,15 @@ namespace :links_migration do
       puts
     end
 
+    desc "Print out a report of policy subscriber lists with no obvious content ID match in the content store"
+    task report_non_matching: [:environment] do
+      Tasks::LinksMigration::PolicyLinkMigrator.new.report_non_matching_subscriber_lists
+    end
+
+    desc "Populate empty links fields with policies, based on SubscriberList#tags"
+    task populate_links: [:environment] do
+      Tasks::LinksMigration::PolicyLinkMigrator.new.populate_topic_links
+    end
   end
+
 end
