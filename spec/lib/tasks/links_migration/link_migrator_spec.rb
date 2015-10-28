@@ -1,7 +1,8 @@
 require "rails_helper"
-require "tasks/links_migration/link_migrator"
+require "tasks/links_migration/topic_link_migrator"
+require "tasks/links_migration/policy_link_migrator"
 
-RSpec.describe Tasks::LinksMigration::LinkMigrator do
+RSpec.describe "Links Migration" do
   class FakeContentStore
     require "rspec/mocks/standalone"
 
@@ -10,15 +11,23 @@ RSpec.describe Tasks::LinksMigration::LinkMigrator do
     end
 
     def mock_content_item2
-      double("content_item2", content_id: nil)
+      double("content_item2", content_id: "uuid-999")
+    end
+
+    def mock_content_item_no_content_id
+      double("content_item_no_content_id", content_id: nil)
     end
 
     def content_item(path)
       case path
       when "/topic/oil-and-gas/something"
         mock_content_item1
-      when "benefits/some-other-thing"
+      when "/government/policies/tax-credits"
         mock_content_item2
+      when "topic/benefits/some-other-thing"
+        mock_content_item_no_content_id
+      when "goverment/policies/some-other-thing"
+        mock_content_item_no_content_id
       else
         nil
       end
@@ -36,30 +45,65 @@ RSpec.describe Tasks::LinksMigration::LinkMigrator do
     $stdout = the_real_stdout
   end
 
-  describe "#populate_topic_links", focus: true do
-    it "copies content IDs for appropriate topic tag matches" do
-      subscriber_list = create(:subscriber_list, tags: {topics: ["oil-and-gas/something"]})
+  describe Tasks::LinksMigration::TopicLinkMigrator do
+    describe "#populate_topic_links" do
+      let(:subject) { Tasks::LinksMigration::TopicLinkMigrator.new }
 
-      Tasks::LinksMigration::LinkMigrator.new.populate_topic_links
-      subscriber_list.reload
+      it "copies content IDs for appropriate topic tag matches" do
+        subscriber_list = create(:subscriber_list, tags: {topics: ["oil-and-gas/something"]})
 
-      expect(subscriber_list.links).to eq(topics: ["uuid-888"])
+        subject.populate_topic_links
+        subscriber_list.reload
+
+        expect(subscriber_list.links).to eq(topics: ["uuid-888"])
+      end
+
+      it "raises an exception if the content item has no ID" do
+        create(:subscriber_list, tags: {topics: ["benefits/some-other-thing"]})
+
+        expect {subject.populate_topic_links}.to raise_error(
+          Tasks::LinksMigration::TopicLinkMigrator::DodgyBasePathError
+        )
+      end
+
+      it "raises an exception if no content item is returned" do
+        create(:subscriber_list, tags: {topics: ["no-match"]})
+
+        expect {subject.populate_topic_links}.to raise_error(
+          Tasks::LinksMigration::TopicLinkMigrator::DodgyBasePathError
+        )
+      end
     end
+  end
 
-    it "raises an exception if the content item has no ID" do
-      create(:subscriber_list, tags: {topics: ["benefits/some-other-thing"]})
+  describe Tasks::LinksMigration::PolicyLinkMigrator do
+    let(:subject) { Tasks::LinksMigration::PolicyLinkMigrator.new }
 
-      expect {Tasks::LinksMigration::LinkMigrator.new.populate_topic_links}.to raise_error(
-        Tasks::LinksMigration::LinkMigrator::DodgyBasePathError
-      )
-    end
+    describe "#populate_policy_links" do
+      it "copies content IDs for appropriate policy tag matches" do
+        subscriber_list = create(:subscriber_list, tags: {policy: ["tax-credits"]})
 
-    it "raises an exception if no content item is returned" do
-      create(:subscriber_list, tags: {topics: ["foobars"]})
+        subject.populate_policy_links
+        subscriber_list.reload
 
-      expect {Tasks::LinksMigration::LinkMigrator.new.populate_topic_links}.to raise_error(
-        Tasks::LinksMigration::LinkMigrator::DodgyBasePathError
-      )
+        expect(subscriber_list.links).to eq(policy: ["uuid-999"])
+      end
+
+      it "raises an exception if the content item has no ID" do
+        create(:subscriber_list, tags: {policy: ["some-other-thing"]})
+
+        expect {subject.populate_policy_links}.to raise_error(
+          Tasks::LinksMigration::PolicyLinkMigrator::DodgyBasePathError
+        )
+      end
+
+      it "raises an exception if no content item is returned" do
+        create(:subscriber_list, tags: {policy: ["no-match"]})
+
+        expect {subject.populate_policy_links}.to raise_error(
+          Tasks::LinksMigration::PolicyLinkMigrator::DodgyBasePathError
+        )
+      end
     end
   end
 end

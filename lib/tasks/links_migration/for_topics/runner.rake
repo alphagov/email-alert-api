@@ -1,4 +1,4 @@
-require "tasks/links_migration/link_migrator"
+require "tasks/links_migration/topic_link_migrator"
 
 namespace :links_migration do
   namespace :for_topics do

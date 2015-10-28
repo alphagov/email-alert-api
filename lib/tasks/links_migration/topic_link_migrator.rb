@@ -1,6 +1,6 @@
 module Tasks
   module LinksMigration
-    class LinkMigrator
+    class TopicLinkMigrator
       class DodgyBasePathError < StandardError; end
 
       def populate_topic_links
@@ -10,16 +10,16 @@ module Tasks
           if content_item.blank?
             raise DodgyBasePathError, <<-ERROR.strip_heredoc
               No content item found for #{base_path_from(list)},
-              run `bundle exec rake links_migration:report_non_matching`
-              and fix these cases before continuing migration.
+              run the report_non_matching rake task and fix these
+              cases before continuing migration.
             ERROR
           end
 
           if content_item.content_id.blank?
             raise DodgyBasePathError, <<-ERROR.strip_heredoc
-              No content ID found for #{base_path_from(list)},
-              run `bundle exec rake links_migration:report_non_matching`
-              and fix these cases before continuing migration.
+              No content item found for #{base_path_from(list)},
+              run the report_non_matching rake task and fix these
+              cases before continuing migration.
             ERROR
           end
 
