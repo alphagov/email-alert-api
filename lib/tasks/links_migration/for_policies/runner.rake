@@ -43,7 +43,7 @@ namespace :links_migration do
 
     desc "Populate empty links fields with policies, based on SubscriberList#tags"
     task populate_links: [:environment] do
-      Tasks::LinksMigration::PolicyLinkMigrator.new.populate_topic_links
+      Tasks::LinksMigration::PolicyLinkMigrator.new.populate_policy_links
     end
   end
 
