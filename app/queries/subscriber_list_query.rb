@@ -36,7 +36,7 @@ class SubscriberListQuery
   def subscriber_lists_with_key(key)
     # This uses the `?` hstore operator, which returns true only if the hstore
     # contains the specified key.
-    SubscriberList.where("tags ? :key", key: key)
+    SubscriberList.where("#{@query_field} ? :key", key: key)
   end
 
 private

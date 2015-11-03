@@ -24,7 +24,7 @@ module Tasks
           end
 
           puts "Updating links in SubscriberList #{list.id}"
-          list.update(links: {policy: [content_item.content_id]})
+          list.update(links: {parent: [content_item.content_id]})
         end
       end
 

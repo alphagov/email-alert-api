@@ -86,7 +86,7 @@ RSpec.describe "Links Migration" do
         subject.populate_policy_links
         subscriber_list.reload
 
-        expect(subscriber_list.links).to eq(policy: ["uuid-999"])
+        expect(subscriber_list.links).to eq(parent: ["uuid-999"])
       end
 
       it "raises an exception if the content item has no ID" do
