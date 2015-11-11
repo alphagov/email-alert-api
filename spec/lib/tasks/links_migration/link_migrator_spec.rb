@@ -46,13 +46,13 @@ RSpec.describe "Links Migration" do
   end
 
   describe Tasks::LinksMigration::TopicLinkMigrator do
-    describe "#populate_topic_links" do
+    describe "#populate_links" do
       let(:subject) { Tasks::LinksMigration::TopicLinkMigrator.new }
 
       it "copies content IDs for appropriate topic tag matches" do
         subscriber_list = create(:subscriber_list, tags: {topics: ["oil-and-gas/something"]})
 
-        subject.populate_topic_links
+        subject.populate_links
         subscriber_list.reload
 
         expect(subscriber_list.links).to eq(topics: ["uuid-888"])
@@ -61,7 +61,7 @@ RSpec.describe "Links Migration" do
       it "raises an exception if the content item has no ID" do
         create(:subscriber_list, tags: {topics: ["benefits/some-other-thing"]})
 
-        expect {subject.populate_topic_links}.to raise_error(
+        expect {subject.populate_links}.to raise_error(
           Tasks::LinksMigration::TopicLinkMigrator::DodgyBasePathError
         )
       end
@@ -69,7 +69,7 @@ RSpec.describe "Links Migration" do
       it "raises an exception if no content item is returned" do
         create(:subscriber_list, tags: {topics: ["no-match"]})
 
-        expect {subject.populate_topic_links}.to raise_error(
+        expect {subject.populate_links}.to raise_error(
           Tasks::LinksMigration::TopicLinkMigrator::DodgyBasePathError
         )
       end
@@ -86,7 +86,7 @@ RSpec.describe "Links Migration" do
         subject.populate_policy_links
         subscriber_list.reload
 
-        expect(subscriber_list.links).to eq(parent: ["uuid-999"])
+        expect(subscriber_list.links).to eq(policies: ["uuid-999"])
       end
 
       it "raises an exception if the content item has no ID" do

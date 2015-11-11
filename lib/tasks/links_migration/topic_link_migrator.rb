@@ -3,7 +3,7 @@ module Tasks
     class TopicLinkMigrator
       class DodgyBasePathError < StandardError; end
 
-      def populate_topic_links
+      def populate_links
         relevant_subscriber_lists.each do |list|
           content_item = Services.content_store.content_item(base_path_from(list))
 
