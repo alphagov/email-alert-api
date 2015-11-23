@@ -17,13 +17,13 @@ ActiveRecord::Schema.define(version: 20151023151545) do
   enable_extension "plpgsql"
   enable_extension "hstore"
 
-  create_table "subscriber_lists", force: true do |t|
-    t.string   "title"
-    t.string   "gov_delivery_id"
-    t.hstore   "tags",            default: {}, null: false
+  create_table "subscriber_lists", force: :cascade do |t|
+    t.string   "title",           limit: 255
+    t.string   "gov_delivery_id", limit: 255
+    t.hstore   "tags",                        default: {}, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.hstore   "links",           default: {}, null: false
+    t.hstore   "links",                       default: {}, null: false
   end
 
   add_index "subscriber_lists", ["links"], name: "index_subscriber_lists_on_links", using: :gin
