@@ -7,14 +7,18 @@ class HealthcheckController < ActionController::Base
         render json: {
           checks: {
             queue_size: {
+              queues: sidekiq_queues,
               status: queue_size_status
             },
             queue_age:  {
+              queues: queue_latencies,
               status: queue_age_status
-            }
+            },
+            queue_retry_size: {
+              status: queue_retry_size_status
+            },
           },
-          status: 'ok' #FIXME: probably need to pin this on DB connectivity and
-                       #Redis connectivity
+          status: status
         }
       }
     end
@@ -22,35 +26,59 @@ class HealthcheckController < ActionController::Base
 
 private
 
-  def queue_size_status
-    queue_size_count = queue_size
+  def status
+    ActiveRecord::Base.connected? &&
+      Sidekiq.redis { |conn| conn.info } ? 'ok' : 'critical'
+  end
+
+  def queue_retry_size_status
+    sidekiq_retry_size = sidekiq_stats.retry_size
     case
-    when queue_size_count < 2
-      'ok'
-    when queue_size_count < 5
+    when sidekiq_retry_size >= ENV.fetch('SIDEKIQ_RETRY_SIZE_CRITICAL').to_i
+      'critical'
+    when sidekiq_retry_size >= ENV.fetch('SIDEKIQ_RETRY_SIZE_WARNING').to_i
       'warning'
     else
+      'ok'
+    end
+  end
+
+  def queue_size_status
+    queues = sidekiq_queues
+    case
+    when queues.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_SIZE_CRITICAL').to_i }
       'critical'
+    when queues.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_SIZE_WARNING').to_i }
+      'warning'
+    else
+      'ok'
     end
   end
 
   def queue_age_status
-    queue_age_seconds = queue_age
+    queue_age = queue_latencies
     case
-    when queue_age_seconds <= 30
-      'ok'
-    when queue_age_seconds <= 60
+    when queue_age.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_LATENCY_CRITICAL').to_i }
+      'critical'
+    when queue_age.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_LATENCY_WARNING').to_i }
       'warning'
     else
-      'critical'
+      'ok'
     end
   end
 
-  def queue_size
-    Sidekiq::Queue.new('default').size
+  def sidekiq_stats
+    Sidekiq::Stats.new
   end
 
-  def queue_age
-    Sidekiq::Queue.new('default').latency
+  def sidekiq_queues
+    sidekiq_stats.queues
+  end
+
+  def queue_latencies
+    sidekiq_queues.keys.inject({}) do |memo, queue|
+      memo[queue] = Sidekiq::Queue.new(queue).latency
+      memo
+    end
   end
 end
