@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.5'
+gem 'rails', '4.2.5.1'
 gem 'pg', '0.17.1'
 
 gem 'faraday', '0.9.0'
-gem 'nokogiri', '1.6.3.1'
+gem 'nokogiri', '1.6.7.2'
 gem 'sidekiq', '3.2.6'
 gem 'plek', '1.9.0'
 gem 'airbrake', '4.1.0'
