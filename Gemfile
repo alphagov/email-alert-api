@@ -13,6 +13,7 @@ gem 'logstasher', '0.4.8'
 gem 'sidekiq-logging-json', '0.0.14'
 gem 'statsd-ruby', '1.2.1'
 gem 'gds-api-adapters'
+gem 'sidekiq-statsd', '0.1.5'
 
 group :test do
   gem 'equivalent-xml'
