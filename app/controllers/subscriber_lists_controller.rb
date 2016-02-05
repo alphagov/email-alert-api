@@ -46,5 +46,6 @@ private
     params.slice(:title)
       .merge(tags: params.fetch(:tags, {}))
       .merge(links: params.fetch(:links, {}))
+      .merge(document_type: params.fetch(:document_type, ""))
   end
 end
