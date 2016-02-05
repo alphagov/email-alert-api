@@ -71,6 +71,50 @@ RSpec.describe NotificationWorker do
       end
     end
 
+    context "filtering on document_type" do
+      context "when the optional document_type is set in the subscriber list" do
+        before do
+          create(:subscriber_list, document_type: 'travel-advice', tags: {topics: ['foo/bar']})
+          notification_params.merge!(tags: {topics: ['foo/bar']})
+        end
+
+        it "sends a bulletin when document_type matches" do
+          notification_params[:document_type] = 'travel-advice'
+          make_it_perform
+          expect(@gov_delivery).to have_received(:send_bulletin)
+        end
+
+        it "does not send a bulletin when document_type does not match" do
+          notification_params[:document_type] = 'not-travel-advice'
+          make_it_perform
+          expect(@gov_delivery).not_to have_received(:send_bulletin)
+        end
+
+        it "does not send a bulletin when content item has no document_type" do
+          make_it_perform
+          expect(@gov_delivery).not_to have_received(:send_bulletin)
+        end
+      end
+
+      context "when the optional document_type is absent from the subscriber list" do
+        before do
+          create(:subscriber_list, tags: {topics: ['foo/bar']})
+          notification_params.merge!(tags: {topics: ['foo/bar']})
+        end
+
+        it "sends a bulletin when content item has a document_type" do
+          notification_params[:document_type] = 'travel-advice'
+          make_it_perform
+          expect(@gov_delivery).to have_received(:send_bulletin)
+        end
+
+        it "send a bulletin when content item has no document_type" do
+          make_it_perform
+          expect(@gov_delivery).to have_received(:send_bulletin)
+        end
+      end
+    end
+
     context "given a non-matching subscriber list" do
       before do
         create(

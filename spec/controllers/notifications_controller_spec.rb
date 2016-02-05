@@ -19,5 +19,14 @@ RSpec.describe NotificationsController, type: :controller do
 
       post :create, notification_params.merge(format: :json)
     end
+
+    it "allows an optional document_type parameter" do
+      notification_params[:document_type] = "travel_advice"
+      expect(NotificationWorker).to receive(:perform_async).with(
+        notification_params.merge(links: {})
+      )
+
+      post :create, notification_params.merge(format: :json)
+    end
   end
 end
