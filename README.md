@@ -15,6 +15,11 @@ tags via the external services.
   GovDelivery's servers)
  * Associated tags indicate what the subscribers for that list are interested in
   and what updates they should receive
+ * An optional document_type indicates the types of notifications that will be
+  matched for subscribers. If the list has a document_type set, only
+  notifications with a matching document_type will be sent; if the list has
+  no document_type, messages will be sent whether or not the notification has
+  a document_type.
 
 - **Topic**:
  * GovDelivery terminology for a subscriber list
@@ -77,6 +82,7 @@ or export them using dotenv or similar.
     "title": "Title of topic",
     "subscription_url": "https://public-url/subscribe-here?topic_id=123",
     "gov_delivery_id": "123",
+    "document_type": "",
     "created_at": "20141010T12:00:00",
     "updated_at": "20141010T12:00:00",
     "tags": {

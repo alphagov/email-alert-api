@@ -17,6 +17,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
         %w{
           id
           title
+          document_type
           subscription_url
           gov_delivery_id
           created_at
@@ -54,6 +55,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
           id
           title
           subscription_url
+          document_type
           gov_delivery_id
           created_at
           updated_at

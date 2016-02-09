@@ -24,7 +24,7 @@ class NotificationWorker
 
     @tags_hash  = Hash(notification_params[:tags])
     @links_hash = Hash(notification_params[:links])
-    lists = (lists_matched_on_links + lists_matched_on_tags).uniq { |l| l.id }
+    @document_type = notification_params[:document_type]
     delivery_ids = lists.map(&:gov_delivery_id)
 
     if lists.any?
@@ -63,5 +63,17 @@ private
   def lists_matched_on_links
     @lists_matched_on_links ||= SubscriberListQuery.new(query_field: :links)
       .where_all_links_match_at_least_one_value_in(@links_hash)
+  end
+
+  def filter_by_document_type(matching_lists)
+    matching_lists.select { |l| l.document_type.blank? || l.document_type == @document_type }
+  end
+
+  def matching_lists
+    (lists_matched_on_links + lists_matched_on_tags).uniq { |l| l.id }
+  end
+
+  def lists
+    @lists ||= filter_by_document_type(matching_lists)
   end
 end
