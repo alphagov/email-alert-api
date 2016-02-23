@@ -29,6 +29,46 @@ RSpec.describe SubscriberList, type: :model do
     end
   end
 
+  describe "validations" do
+    subject { FactoryGirl.build(:subscriber_list) }
+
+    it "is valid for the default factory" do
+      expect(subject).to be_valid
+    end
+
+    it "is invalid without either a document_type, tags or links" do
+      subject.document_type = ""
+      subject.tags = {}
+      subject.links = {}
+
+      expect(subject).to be_invalid
+    end
+
+    it "is valid with a document type but no tags or links" do
+      subject.document_type = "document-type"
+      subject.tags = {}
+      subject.links = {}
+
+      expect(subject).to be_valid
+    end
+
+    it "is valid with tags but no document_type or links" do
+      subject.document_type = ""
+      subject.tags = { foo: ["bar"] }
+      subject.links = {}
+
+      expect(subject).to be_valid
+    end
+
+    it "is valid with links but no document_type or tags" do
+      subject.document_type = ""
+      subject.tags = {}
+      subject.links = { foo: ["bar"] }
+
+      expect(subject).to be_valid
+    end
+  end
+
   describe "#tags" do
     it "deserializes the tag arrays" do
       list = create(:subscriber_list, tags: { topics: ["environmental-management/boating"] })
