@@ -5,6 +5,7 @@ RSpec.describe NotificationWorker do
     before do
       @gov_delivery = double(:gov_delivery, send_bulletin: nil)
       allow(Services).to receive(:gov_delivery).and_return(@gov_delivery)
+      allow(Rails.logger).to receive(:info)
     end
 
     let(:notification_params) do
@@ -117,6 +118,52 @@ RSpec.describe NotificationWorker do
         notification_params[:document_type] = 'not-travel-advice'
         make_it_perform
         expect(@gov_delivery).not_to have_received(:send_bulletin)
+      end
+
+      context "and the notification has some tags" do
+        before do
+          notification_params.merge!(tags: { countries: ['andorra'] })
+        end
+
+        it "sends a bulletin when document_type matches" do
+          notification_params[:document_type] = 'travel-advice'
+          make_it_perform
+          expect(@gov_delivery).to have_received(:send_bulletin)
+          expect(Rails.logger).to have_received(:info).with(/matched 1 list/)
+        end
+
+        it "does not send a bulletin when document_type does not match" do
+          notification_params[:document_type] = 'not-travel-advice'
+          make_it_perform
+          expect(@gov_delivery).not_to have_received(:send_bulletin)
+          expect(Rails.logger).not_to have_received(:info).with(/matched/)
+        end
+
+        context "and the notification matches another list on tags" do
+          before do
+            create(
+              :subscriber_list,
+              document_type: 'travel-advice',
+              tags: { countries: ['andorra'] },
+            )
+
+          end
+
+          it "sends a bulletin when document_type matches" do
+            notification_params[:document_type] = 'travel-advice'
+            make_it_perform
+
+            expect(@gov_delivery).to have_received(:send_bulletin).once
+            expect(Rails.logger).to have_received(:info).with(/matched 2 lists/)
+          end
+
+          it "does not send a bulletin when document_type does not match" do
+            notification_params[:document_type] = 'not-travel-advice'
+            make_it_perform
+            expect(@gov_delivery).not_to have_received(:send_bulletin)
+            expect(Rails.logger).not_to have_received(:info).with(/matched/)
+          end
+        end
       end
     end
 
