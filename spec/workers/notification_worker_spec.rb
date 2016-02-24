@@ -102,6 +102,24 @@ RSpec.describe NotificationWorker do
       end
     end
 
+    context "when the subscriber list has no tags or links" do
+      before do
+        create(:subscriber_list, document_type: 'travel-advice', tags: {}, links: {})
+      end
+
+      it "sends a bulletin when document_type matches" do
+        notification_params[:document_type] = 'travel-advice'
+        make_it_perform
+        expect(@gov_delivery).to have_received(:send_bulletin)
+      end
+
+      it "does not send a bulletin when document_type does not match" do
+        notification_params[:document_type] = 'not-travel-advice'
+        make_it_perform
+        expect(@gov_delivery).not_to have_received(:send_bulletin)
+      end
+    end
+
     context "given a non-matching subscriber list" do
       before do
         create(

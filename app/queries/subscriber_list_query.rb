@@ -15,6 +15,10 @@ class SubscriberListQuery
     end
   end
 
+  def where_only_document_type_matches(document_type)
+    subscriber_lists_without_tags_or_links.where(document_type: document_type)
+  end
+
   def at_least_one_topic_value_matches(value)
     subscriber_lists_with_key(:topics).each_with_object([]) do |subscriber_list, results|
       if subscriber_list.send(@query_field)[:topics].include?(value)
@@ -66,5 +70,9 @@ private
     # This uses the `?&` hstore operator, which returns true only if the hstore
     # contains all the specified keys.
     SubscriberList.where("#{@query_field} ?& Array[:keys]", keys: query_hash.keys)
+  end
+
+  def subscriber_lists_without_tags_or_links
+    SubscriberList.where(tags: "", links: "")
   end
 end
