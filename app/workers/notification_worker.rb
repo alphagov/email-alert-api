@@ -47,12 +47,21 @@ private
       .where_all_links_match_at_least_one_value_in(@links_hash)
   end
 
+  def lists_matched_on_document_type_only
+    @lists_matched_on_document_type_only ||= SubscriberListQuery.new(query_field: :neither)
+      .where_only_document_type_matches(@document_type)
+  end
+
   def filter_by_document_type(matching_lists)
     matching_lists.select { |l| l.document_type.blank? || l.document_type == @document_type }
   end
 
   def matching_lists
-    (lists_matched_on_links + lists_matched_on_tags).uniq { |l| l.id }
+    (
+      lists_matched_on_links +
+      lists_matched_on_tags +
+      lists_matched_on_document_type_only
+    ).uniq { |l| l.id }
   end
 
   def lists
