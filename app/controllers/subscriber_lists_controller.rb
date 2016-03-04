@@ -37,9 +37,13 @@ private
   end
 
   def find_subscriber_list
-    match = SubscriberListQuery.new(query_field: :links).find_exact_match_with(subscriber_list_params[:links]).first
-    return match if match.present?
-    return SubscriberListQuery.new(query_field: :tags).find_exact_match_with(subscriber_list_params[:tags]).first
+    links_query = SubscriberListQuery.new(query_field: :links)
+    tags_query = SubscriberListQuery.new(query_field: :tags)
+    document_type_query = SubscriberListQuery.new(query_field: :neither)
+
+    links_query.find_exact_match_with(links, document_type).first ||
+      tags_query.find_exact_match_with(tags, document_type).first ||
+      document_type_query.where_only_document_type_matches(document_type).first
   end
 
   def subscriber_list_params
@@ -47,5 +51,17 @@ private
       .merge(tags: params.fetch(:tags, {}))
       .merge(links: params.fetch(:links, {}))
       .merge(document_type: params.fetch(:document_type, ""))
+  end
+
+  def links
+    subscriber_list_params[:links]
+  end
+
+  def tags
+    subscriber_list_params[:tags]
+  end
+
+  def document_type
+    subscriber_list_params[:document_type]
   end
 end

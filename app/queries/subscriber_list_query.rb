@@ -27,9 +27,13 @@ class SubscriberListQuery
     end
   end
 
-  def find_exact_match_with(query_hash)
+  def find_exact_match_with(query_hash, document_type)
     return [] unless query_hash.present?
-    subscriber_lists_with_all_matching_keys(query_hash).select do |list|
+
+    subscriber_lists = subscriber_lists_with_all_matching_keys(query_hash)
+    subscriber_lists = subscriber_lists.where(document_type: document_type)
+
+    subscriber_lists.select do |list|
       list.send(@query_field).all? do |descriptor, array_of_values|
         next if query_hash[descriptor].nil?
         query_hash[descriptor].sort == array_of_values.sort
