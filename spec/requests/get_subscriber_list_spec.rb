@@ -3,80 +3,160 @@ require "rails_helper"
 RSpec.describe "Getting a subscriber list", type: :request do
   include GovDeliveryHelpers
 
-  context "when link match present" do
-    before do
-      create(:subscriber_list, links: {topics: ["oil-and-gas/licensing", "drug-device-alert"]})
-    end
-
-    it "returns the matching subscriber list" do
-      get_subscriber_list(links: {topics: ["drug-device-alert", "oil-and-gas/licensing"]})
-
-      response_hash = JSON.parse(response.body)
-      subscriber_list = response_hash["subscriber_list"]
-      expect(subscriber_list.keys.to_set).to eq(
-        %w{
-          id
-          title
-          document_type
-          subscription_url
-          gov_delivery_id
-          created_at
-          updated_at
-          tags
-          links
-        }.to_set
-      )
-      expect(subscriber_list).to include(
-        "links" => {
-          "topics" => ["oil-and-gas/licensing", "drug-device-alert"]
-        }
-      )
-    end
+  let!(:subscriber_list_links_only) do
+    FactoryGirl.create(
+      :subscriber_list,
+      links: {
+        topics: ["oil-and-gas/licensing", "drug-device-alert"]
+      },
+      tags: {},
+      document_type: "",
+    )
   end
 
-  context "when tag match present" do
-    before do
-      create(:subscriber_list, tags: {topics: ["oil-and-gas/licensing", "drug-device-alert"]})
-    end
-
-    it "returns a 200" do
-      get_subscriber_list(tags: {topics: ["drug-device-alert", "oil-and-gas/licensing"]})
-
-      expect(response.status).to eq(200)
-    end
-
-    it "returns the matching subscriber list" do
-      get_subscriber_list(tags: {topics: ["drug-device-alert", "oil-and-gas/licensing"]})
-
-      response_hash = JSON.parse(response.body)
-      subscriber_list = response_hash["subscriber_list"]
-      expect(subscriber_list.keys.to_set).to eq(
-        %w{
-          id
-          title
-          subscription_url
-          document_type
-          gov_delivery_id
-          created_at
-          updated_at
-          tags
-          links
-        }.to_set
-      )
-      expect(subscriber_list).to include(
-        "tags" => {
-          "topics" => ["oil-and-gas/licensing", "drug-device-alert"]
-        }
-      )
-    end
+  let!(:subscriber_list_tags_only) do
+    FactoryGirl.create(
+      :subscriber_list,
+      links: {},
+      tags: {
+        topics: ["oil-and-gas/licensing", "drug-device-alert"]
+      },
+      document_type: "",
+    )
   end
 
-  context "when no match present" do
-    it "404s" do
-      get_subscriber_list(topics: ["oil-and-gas/licensing"])
+  let!(:subscriber_list_document_type_only) do
+    FactoryGirl.create(
+      :subscriber_list,
+      links: {},
+      tags: {},
+      document_type: "travel_advice",
+    )
+  end
 
-      expect(response.status).to eq(404)
-    end
+  let!(:subscriber_list_links_and_document_type) do
+    FactoryGirl.create(
+      :subscriber_list,
+      links: {
+        topics: ["vat-rates"],
+      },
+      tags: {},
+      document_type: "tax",
+    )
+  end
+
+  let!(:subscriber_list_tags_and_document_type) do
+    FactoryGirl.create(
+      :subscriber_list,
+      links: {},
+      tags: {
+        topics: ["vat-rates"],
+      },
+      document_type: "tax",
+    )
+  end
+
+  it "responds with the matching subscriber list" do
+    get_subscriber_list(links: { topics: ["drug-device-alert", "oil-and-gas/licensing"] })
+
+    database_subscriber_list = subscriber_list_links_only
+    response_subscriber_list = JSON.parse(response.body).fetch("subscriber_list").deep_symbolize_keys
+
+    expect(response_subscriber_list).to include(
+      id: database_subscriber_list.id,
+      links: database_subscriber_list.links,
+      tags: database_subscriber_list.tags,
+      document_type: database_subscriber_list.document_type,
+      gov_delivery_id: database_subscriber_list.gov_delivery_id,
+      subscription_url: database_subscriber_list.subscription_url,
+      title: database_subscriber_list.title,
+    )
+  end
+
+  it "finds subscriber lists that match all of the links" do
+    get_subscriber_list(links: { topics: ["drug-device-alert", "oil-and-gas/licensing"] })
+    expect(response.status).to eq(200)
+
+    subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
+    expect(subscriber_list.fetch("id")).to eq(subscriber_list_links_only.id)
+  end
+
+  it "finds subscriber lists that match all of the tags" do
+    get_subscriber_list(tags: { topics: ["drug-device-alert", "oil-and-gas/licensing"] })
+    expect(response.status).to eq(200)
+
+    subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
+    expect(subscriber_list.fetch("id")).to eq(subscriber_list_tags_only.id)
+  end
+
+  it "finds subscriber lists that match document type only" do
+    get_subscriber_list(document_type: "travel_advice")
+    expect(response.status).to eq(200)
+
+    subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
+    expect(subscriber_list.fetch("id")).to eq(subscriber_list_document_type_only.id)
+  end
+
+  it "finds subscriber lists that match links and document type" do
+    get_subscriber_list(
+      links: { topics: ["vat-rates"] },
+      document_type: "tax",
+    )
+    expect(response.status).to eq(200)
+
+    subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
+    expect(subscriber_list.fetch("id")).to eq(subscriber_list_links_and_document_type.id)
+  end
+
+  it "finds subscriber lists that match tags and document type" do
+    get_subscriber_list(
+      tags: { topics: ["vat-rates"] },
+      document_type: "tax",
+    )
+    expect(response.status).to eq(200)
+
+    subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
+    expect(subscriber_list.fetch("id")).to eq(subscriber_list_tags_and_document_type.id)
+  end
+
+  it "does not find subscriber lists that match some of the links" do
+    get_subscriber_list(links: { topics: ["drug-device-alert"] })
+    expect(response.status).to eq(404)
+  end
+
+  it "does not find subscriber lists that match some of the tags" do
+    get_subscriber_list(tags: { topics: ["drug-device-alert"] })
+    expect(response.status).to eq(404)
+  end
+
+  it "does not find subscriber lists that with a different document type" do
+    get_subscriber_list(document_type: "something_else")
+    expect(response.status).to eq(404)
+  end
+
+  it "does not find subscriber lists that match links but not document type" do
+    get_subscriber_list(links: { topics: ["vat-rates"] })
+    expect(response.status).to eq(404)
+  end
+
+  it "does not find subscriber lists that match document type but not links" do
+    get_subscriber_list(document_type: "tax")
+    expect(response.status).to eq(404)
+  end
+
+  it "does not find subscriber lists that match tags but not document type" do
+    get_subscriber_list(tags: { topics: ["vat-rates"] })
+    expect(response.status).to eq(404)
+  end
+
+  it "does not find subscriber lists that match document type but not tags" do
+    get_subscriber_list(document_type: "tax")
+    expect(response.status).to eq(404)
+  end
+
+  it "does not find subscriber lists when no query keys are provided" do
+    get_subscriber_list({})
+    expect(response.status).to eq(404)
   end
 
   def get_subscriber_list(query_payload)
