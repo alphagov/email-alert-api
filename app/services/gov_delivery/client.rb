@@ -22,6 +22,10 @@ module GovDelivery
       )
     end
 
+    def ping
+      http_client.get("categories.xml")
+    end
+
     def read_topic_by_name(name)
       # GovDelivery documentation for this endpoint:
       # http://developer.govdelivery.com/api_docs/comm_cloud_v1/#API/Comm Cloud V1/API_CommCloudV1_Topics_ListTopics.htm
