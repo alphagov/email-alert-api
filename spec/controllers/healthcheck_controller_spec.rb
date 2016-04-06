@@ -11,6 +11,11 @@ ENV['SIDEKIQ_RETRY_SIZE_CRITICAL'] = '10'
 
 RSpec.describe HealthcheckController, type: :controller do
   describe "#check" do
+    before do
+      stub_request(:get, "http://test%40example.com:test123@govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
+        to_return(status: 200)
+    end
+
     it "responds with JSON" do
       get :check, format: :json
 
@@ -105,8 +110,26 @@ RSpec.describe HealthcheckController, type: :controller do
 
       data = JSON.parse(response.body)
       expect(data['checks']['queue_age']['status']).to eq('critical')
-
     end
 
+    it "returns critical if govdelivery isn't healthy" do
+      stub_request(:get, "http://test%40example.com:test123@govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
+        to_return(status: 400)
+
+      get :check, format: :json
+
+      data = JSON.parse(response.body)
+      expect(data['checks']['govdelivery']['status']).to eq('critical')
+    end
+
+    it "returns okay if govdelivery is happy" do
+      stub_request(:get, "http://test%40example.com:test123@govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
+        to_return(status: 200)
+
+      get :check, format: :json
+
+      data = JSON.parse(response.body)
+      expect(data['checks']['govdelivery']['status']).to eq('ok')
+    end
   end
 end

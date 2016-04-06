@@ -17,6 +17,9 @@ class HealthcheckController < ActionController::Base
             queue_retry_size: {
               status: queue_retry_size_status
             },
+            govdelivery: {
+              status: govdelivery_status
+            },
           },
           status: status
         }
@@ -29,6 +32,14 @@ private
   def status
     ActiveRecord::Base.connected? &&
       Sidekiq.redis { |conn| conn.info } ? 'ok' : 'critical'
+  end
+
+  def govdelivery_status
+    if Services.gov_delivery.ping.status == 200
+      'ok'
+    else
+      'critical'
+    end
   end
 
   def queue_retry_size_status
