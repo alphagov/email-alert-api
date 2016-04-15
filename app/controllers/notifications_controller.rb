@@ -10,8 +10,13 @@ class NotificationsController < ApplicationController
 private
 
   def notification_params
-    params.slice(:subject, :body, :from_address_id, :urgent, :header, :footer, :document_type)
+    params.slice(:subject, :from_address_id, :urgent, :header, :footer, :document_type)
       .merge(tags: params.fetch(:tags, {}))
       .merge(links: params.fetch(:links, {}))
+      .merge(body: notification_body)
+  end
+
+  def notification_body
+    GovukRequestId.insert(params[:body])
   end
 end
