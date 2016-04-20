@@ -2,19 +2,43 @@ require "rails_helper"
 
 RSpec.describe NotificationsController, type: :controller do
   describe "#create" do
+    let(:body) {
+      <<-BODY.strip_heredoc
+        <div>
+          <div>Travel advice</div>
+        </div>
+      BODY
+    }
+    let(:expected_body) {
+      <<-BODY.strip_heredoc
+        <div>
+          <div>Travel advice</div>
+        </div>
+
+        <!-- govuk_request_id: 12345-67890 -->
+      BODY
+    }
     let(:notification_params) {
       {
         subject: "This is a subject",
-        body: "This is a body",
+        body: body,
         tags: {
           topics: ["oil-and-gas/licensing"]
         }
       }
     }
+    let(:expected_notification_params) {
+      notification_params.merge(links: {}).merge(body: expected_body)
+    }
+
+    before do
+      allow(GdsApi::GovukHeaders).to receive(:headers)
+        .and_return(govuk_request_id: "12345-67890")
+    end
 
     it "serializes the tags and passes them to the NotificationWorker" do
       expect(NotificationWorker).to receive(:perform_async).with(
-        notification_params.merge(links: {})
+        expected_notification_params
       )
 
       post :create, notification_params.merge(format: :json)
@@ -23,7 +47,7 @@ RSpec.describe NotificationsController, type: :controller do
     it "allows an optional document_type parameter" do
       notification_params[:document_type] = "travel_advice"
       expect(NotificationWorker).to receive(:perform_async).with(
-        notification_params.merge(links: {})
+        expected_notification_params
       )
 
       post :create, notification_params.merge(format: :json)
