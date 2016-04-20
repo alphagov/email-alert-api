@@ -29,7 +29,7 @@ RSpec.describe GovukRequestId, :insert do
   context "when the body is html" do
     let(:body) { "<p><span>Some body content</span></p>" }
     let(:expected_body) do
-      %Q(<p><span>Some body content</span></p>\n<!-- govuk_request_id: 12345-67890 -->\n)
+      %Q(<p><span>Some body content</span></p><span data-govuk-request-id="12345-67890"></span>)
     end
 
     it "adds a data attribute to the first child element" do
