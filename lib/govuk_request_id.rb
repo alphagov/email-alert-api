@@ -3,11 +3,7 @@ class GovukRequestId
     def insert(body)
       return body unless body.present?
 
-      if body =~ /^</
-        body += govuk_request_id_html
-      end
-
-      body
+      body + govuk_request_id_html
     end
 
   private

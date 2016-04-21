@@ -19,14 +19,7 @@ RSpec.describe GovukRequestId, :insert do
     end
   end
 
-  context "when the body doesn't contain html" do
-    let(:body) { "Some email content" }
-    it "doesn't do anything" do
-      expect(described_class.insert(body)).to eq(body)
-    end
-  end
-
-  context "when the body is html" do
+  context "when the body is not empty" do
     let(:body) { "<p><span>Some body content</span></p>" }
     let(:expected_body) do
       %Q(<p><span>Some body content</span></p><span data-govuk-request-id="12345-67890"></span>)
