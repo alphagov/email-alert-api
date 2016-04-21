@@ -38,7 +38,7 @@ RSpec.describe "Sending a notification", type: :request do
       .with(
         relevant_list_ids,
         "This is a sample subject",
-        "Here is some body copy",
+        "Here is some body copy<span data-govuk-request-id=\"\"></span>",
         {},
       )
   end
@@ -63,7 +63,7 @@ RSpec.describe "Sending a notification", type: :request do
       .with(
         relevant_list_ids,
         "This is a sample subject",
-        "Here is some body copy",
+        "Here is some body copy<span data-govuk-request-id=\"\"></span>",
         {
           "from_address_id" => "12345",
           "urgent" => true,
