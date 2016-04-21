@@ -14,8 +14,7 @@ RSpec.describe NotificationsController, type: :controller do
         <div>
           <div>Travel advice</div>
         </div>
-
-        <!-- govuk_request_id: 12345-67890 -->
+        <span data-govuk-request-id="12345-67890"></span>
       BODY
     }
     let(:notification_params) {
@@ -28,7 +27,7 @@ RSpec.describe NotificationsController, type: :controller do
       }
     }
     let(:expected_notification_params) {
-      notification_params.merge(links: {}).merge(body: expected_body)
+      notification_params.merge(links: {}).merge(body: expected_body.strip)
     }
 
     before do
