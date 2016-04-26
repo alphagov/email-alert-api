@@ -24,7 +24,12 @@ module EmailAlertAPI
 
       all_configs.fetch(@environment).tap do |env_config|
         env_config.merge!(environment_credentials) if ENV["GOVDELIVERY_USERNAME"]
+        env_config.merge!(govdelivery_account_code) if ENV["GOVDELIVERY_ACCOUNT_CODE"]
       end
+    end
+
+    def govdelivery_account_code
+      { account_code: ENV['GOVDELIVERY_ACCOUNT_CODE'] }
     end
 
     def environment_credentials
