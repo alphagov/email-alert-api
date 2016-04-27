@@ -252,4 +252,134 @@ RSpec.describe GovDelivery::Client do
       ))
     end
   end
+
+  describe "fetch_bulletins" do
+    let(:bulletins_response) do
+      <<-XML.strip_heredoc
+      <?xml version="1.0" encoding="UTF-8"?>
+      <bulletins>
+        <bulletin>
+          <subject>Australia travel advice</subject>
+          <bulletin-uri>/api/account/UKGOVUK/bulletins/12791099.xml</bulletin-uri>
+          <to-param>1928</to-param>
+        </bulletin>
+        <bulletin>
+          <subject>Belgium travel advice</subject>
+          <bulletin-uri>/api/account/UKGOVUK/bulletins/12791019.xml</bulletin-uri>
+          <to-param>1019</to-param>
+        </bulletin>
+      </bulletins>
+      XML
+    end
+
+    let(:bulletins_hash) do
+      {
+        "bulletins" => {
+          "bulletin" => [
+            {
+              "subject" => "Australia travel advice",
+              "bulletin_uri" => "/api/account/UKGOVUK/bulletins/12791099.xml",
+              "to_param" => "1928"
+            },
+            {
+              "subject" => "Belgium travel advice",
+              "bulletin_uri" => "/api/account/UKGOVUK/bulletins/12791019.xml",
+              "to_param" => "1019"
+            },
+          ]
+        }
+      }
+    end
+
+    context "with no start_at param" do
+      before do
+        stub_request(:get, %r{^.*?/api/account/UKGOVUK/bulletins/sent\.xml$})
+          .to_return(status: 200, body: bulletins_response)
+      end
+
+      it "returns the response received from govdelivery" do
+        expect(client.fetch_bulletins).to eq(bulletins_hash)
+      end
+    end
+
+    context "with a start_at param" do
+      let(:uri_regex) { %r{^.*?/api/account/UKGOVUK/bulletins/sent\.xml\?start_at=1928$} }
+
+      before do
+        stub_request(:get, uri_regex)
+          .to_return(status: 200, body: bulletins_response)
+      end
+
+      it "returns the response received from govdelivery" do
+        expect(client.fetch_bulletins("1928")).to eq(bulletins_hash)
+      end
+
+      it "includes the start_at param in the govdelivery request" do
+        client.fetch_bulletins("1928")
+        expect(WebMock).to have_requested(:get, uri_regex)
+      end
+    end
+
+    context "GovDelivery responds with an error" do
+      it "returns the error response without raising" do
+        govdelivery_response = %{
+          <?xml version="1.0" encoding="UTF-8"?>
+          <errors>
+            <code>GD-12015</code>
+            <error>Resource not available.</error>
+          </errors>
+        }
+        stub_request(:get, %r{^.*?/api/account/UKGOVUK/bulletins/sent\.xml$})
+          .to_return(status: 403, body: govdelivery_response)
+
+        expect(client.fetch_bulletins).to eq(
+          "errors" => {"code"=>"GD-12015", "error"=>"Resource not available."}
+        )
+      end
+    end
+  end
+
+  describe "fetch_bulletin" do
+    let(:bulletin_response) do
+      <<-XML.strip_heredoc
+      <?xml version="1.0" encoding="UTF-8"?>
+      <bulletin>
+        <subject>Australia travel advice</subject>
+        <body>Some body text</body>
+      </bulletin>
+      XML
+    end
+
+    before do
+      stub_request(:get, %r{^.*?/api/account/UKGOVUK/bulletins/12345.xml$})
+        .to_return(status: 200, body: bulletin_response)
+    end
+
+    it "returns the response received from govdelivery" do
+      expect(client.fetch_bulletin("12345")).to eq({
+        "bulletin" => {
+          "subject" => "Australia travel advice",
+          "body" => "Some body text",
+        }
+      })
+    end
+
+    context "GovDelivery responds with an error" do
+      it "returns the error response without raising" do
+        govdelivery_response = %{
+          <?xml version="1.0" encoding="UTF-8"?>
+          <errors>
+            <code>GD-12002</code>
+            <error>Bulletin not found.</error>
+          </errors>
+        }
+        stub_request(:get, %r{^.*?/api/account/UKGOVUK/bulletins/sent\.xml$})
+          .to_return(status: 402, body: govdelivery_response)
+
+        expect(client.fetch_bulletins).to eq(
+          "errors" => {"code"=>"GD-12002", "error"=>"Bulletin not found."}
+        )
+      end
+    end
+  end
 end
