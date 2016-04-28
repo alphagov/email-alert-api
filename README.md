@@ -141,6 +141,24 @@ A queue health check endpoint is available at /healthcheck
  }
 ```
 
+### Manually retrying failed notification jobs
+
+In the event of a GovDelivery outage the Email Alert API will enqueue failed notification jobs
+in the Sidekiq retry queue.
+The retry queue size can be viewed via Sidekiq monitoring or by issuing the following command in a rails console:
+
+```
+Sidekiq::RetrySet.new.size
+```
+
+To manually retry all jobs in the retry queue:
+
+```
+Sidekiq::RetrySet.new.retry_all
+```
+
+See the [Sidekiq docs](https://github.com/mperham/sidekiq/wiki/API) for more information.
+
 ## Licence
 
 [MIT License](LICENCE)
