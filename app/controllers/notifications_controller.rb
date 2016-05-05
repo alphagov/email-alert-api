@@ -7,6 +7,14 @@ class NotificationsController < ApplicationController
     end
   end
 
+  def index
+    render json: Services.gov_delivery.fetch_bulletins(params[:start_at])
+  end
+
+  def show
+    render json: Services.gov_delivery.fetch_bulletin(params[:id])
+  end
+
 private
 
   def notification_params
