@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(version: 20160718090427) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "hstore"
 
   create_table "subscriber_lists", force: :cascade do |t|
     t.string   "title",           limit: 255
