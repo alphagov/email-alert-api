@@ -5,5 +5,5 @@ export RAILS_ENV=test
 
 git clean -fdx
 bundle install --path "${HOME}/bundles/${JOB_NAME}" --deployment
-bundle exec rake db:drop db:create db:schema:load
+bundle exec rake db:schema:load
 bundle exec rspec
