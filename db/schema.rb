@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160224152054) do
+ActiveRecord::Schema.define(version: 20160718090427) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,8 @@ ActiveRecord::Schema.define(version: 20160224152054) do
     t.datetime "updated_at"
     t.hstore   "links",                       default: {}, null: false
     t.string   "document_type",               default: "", null: false
+    t.json     "tags_json",                   default: {}, null: false
+    t.json     "links_json",                  default: {}, null: false
   end
 
   add_index "subscriber_lists", ["links"], name: "index_subscriber_lists_on_links", using: :gin

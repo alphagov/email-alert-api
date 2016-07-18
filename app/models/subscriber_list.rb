@@ -1,6 +1,9 @@
 require 'json'
+require_relative "extensions/symbolize_json"
 
 class SubscriberList < ActiveRecord::Base
+  include SymbolizeJSON
+
   self.include_root_in_json = true
 
   validate :tag_values_are_valid
@@ -28,6 +31,16 @@ class SubscriberList < ActiveRecord::Base
   def reload
     @_tags  = nil
     @_links = nil
+    super
+  end
+
+  def tags=(hash)
+    self.tags_json = hash
+    super
+  end
+
+  def links=(hash)
+    self.links_json = hash
     super
   end
 
