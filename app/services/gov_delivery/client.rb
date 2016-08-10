@@ -22,6 +22,12 @@ module GovDelivery
       )
     end
 
+    def delete_topic(topic_id)
+      # GovDelivery documentation for this endpoint:
+      # http://developer.govdelivery.com/api/comm_cloud_v1/Default.htm#API/Comm Cloud V1/API_CommCloudV1_Topics_DeleteTopic.htm
+      http_client.delete("topics/#{topic_id}.xml")
+    end
+
     def ping
       http_client.get("categories.xml")
     end
@@ -64,6 +70,13 @@ module GovDelivery
       # GovDelivery documentation for this endpoint:
       # http://developer.govdelivery.com/api/comm_cloud_v1/Default.htm#API/Comm Cloud V1/API_CommCloudV1_Bulletins_ReadBulletin.htm
       response = http_client.get("bulletins/#{id}.xml")
+      Hash.from_xml(response.body)
+    end
+
+    def fetch_topics
+      # GovDelivery documentation for this endpoint:
+      # http://developer.govdelivery.com/api/comm_cloud_v1/Default.htm#API/Comm Cloud V1/API_CommCloudV1_Topics_ListTopics.htm
+      response = http_client.get("topics.xml")
       Hash.from_xml(response.body)
     end
 
