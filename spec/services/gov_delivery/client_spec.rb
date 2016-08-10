@@ -1,4 +1,4 @@
-require "spec_helper"
+require "rails_helper" # These tests use #strip_heredoc which is in ActiveSupport
 
 require "app/services/gov_delivery/client"
 require "app/services/gov_delivery/request_builder"
@@ -380,6 +380,87 @@ RSpec.describe GovDelivery::Client do
           "errors" => {"code"=>"GD-12002", "error"=>"Bulletin not found."}
         )
       end
+    end
+  end
+
+  describe "fetch_topics" do
+    let(:topics_response) do
+      <<-XML.strip_heredoc
+      <?xml version="1.0" encoding="UTF-8"?>
+      <topics type="array">
+        <topic>
+          <code>TOPIC_123</code>
+          <description nil="true">Topic description 1</description>
+          <name>Topic name 1</name>
+          <short-name>Topic short name 1</short-name>
+          <wireless-enabled type="boolean">false</wireless-enabled>
+          <visibility>Listed</visibility>
+          <link rel="self" href="/api/account/ACCOUNT_CODE/topics/TOPIC_123"/>
+        </topic>
+        <topic>
+          <code>TOPIC_456</code>
+          <description nil="true">Topic description 2</description>
+          <name>Topic name 2</name>
+          <short-name>Topic short name 2</short-name>
+          <wireless-enabled type="boolean">false</wireless-enabled>
+          <visibility>Listed</visibility>
+          <link rel="self" href="/api/account/ACCOUNT_CODE/topics/TOPIC_456"/>
+        </topic>
+      </topics>
+      XML
+    end
+
+    let(:topics_hash) do
+      {
+        "topics" => [
+          {
+            "code" => "TOPIC_123",
+            "description" => "Topic description 1",
+            "name" => "Topic name 1",
+            "short_name" => "Topic short name 1",
+            "wireless_enabled" => false,
+            "visibility" => "Listed",
+            "link" => {
+              "rel" => "self",
+              "href"=>"/api/account/ACCOUNT_CODE/topics/TOPIC_123"
+            },
+          },
+          {
+            "code" => "TOPIC_456",
+            "description" => "Topic description 2",
+            "name" => "Topic name 2",
+            "short_name" => "Topic short name 2",
+            "wireless_enabled" => false,
+            "visibility" => "Listed",
+            "link" => {
+              "rel" => "self",
+              "href"=>"/api/account/ACCOUNT_CODE/topics/TOPIC_456"
+            },
+          },
+        ]
+      }
+    end
+
+    before do
+      stub_request(:get, %r{^.*?/api/account/UKGOVUK/topics\.xml$})
+        .to_return(status: 200, body: topics_response)
+    end
+
+    it "returns the response received from govdelivery" do
+      expect(client.fetch_topics).to eq(topics_hash)
+    end
+  end
+
+  describe "delete_topic(topic_id)" do
+    let(:topic_id) { "UKGOVUK_123" }
+
+    before do
+      stub_request(:delete, %r{^.*?/api/account/UKGOVUK/topics/.*$})
+    end
+
+    it "sends a DELETE to the appropriate topic URL" do
+      client.delete_topic(topic_id)
+      expect(WebMock).to have_requested(:delete, %r{^.*?/api/account/UKGOVUK/topics/#{topic_id}\.xml$})
     end
   end
 end
