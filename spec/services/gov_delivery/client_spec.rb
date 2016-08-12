@@ -23,11 +23,11 @@ RSpec.describe GovDelivery::Client do
           <link rel="self" href="/api/account/UKGOVUK/topics/UKGOVUK_1234"/>
         </topic>
       }
+
+      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
     end
 
     it "POSTs the topic creation request XML to the topics endpoint" do
-      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
-
       client.create_topic(@topic_name)
 
       assert_requested(:post, @base_url) do |req|
@@ -46,8 +46,6 @@ RSpec.describe GovDelivery::Client do
     end
 
     it "returns an object that encapsulates the parsed response" do
-      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
-
       response = client.create_topic(@topic_name)
 
       expect(response).to be_equivalent_to(Struct.new(
@@ -72,6 +70,28 @@ RSpec.describe GovDelivery::Client do
       end
     end
 
+    context "when a topic ID is provided" do
+      let(:topic_id) { "UKGOVUK_PROVIDED_CODE" }
+
+      it "sends the ID as the 'code'" do
+        client.create_topic(@topic_name, topic_id)
+
+        assert_requested(:post, @base_url) do |req|
+          expect(req.body).to be_equivalent_to(%{
+            <topic>
+              <code>#{topic_id}</code>
+              <name>#{@topic_name}</name>
+              <short-name>#{@topic_name}</short-name>
+              <visibility>Unlisted</visibility>
+              <pagewatch-enabled type="boolean">false</pagewatch-enabled>
+              <rss-feed-url nil="true"/>
+              <rss-feed-title nil="true"/>
+              <rss-feed-description nil="true"/>
+            </topic>
+          })
+        end
+      end
+    end
   end
 
   describe "#read_topic_by_name" do

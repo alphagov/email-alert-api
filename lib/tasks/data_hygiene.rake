@@ -18,44 +18,21 @@ task duplicate_record_for_tag: :environment do
   puts 'FINISHED'
 end
 
-desc "Sync topic mappings from govdelivery, DO NOT USE IN PRODUCTION"
-task sync_topic_mappings: :environment do
-  puts "Fetching topics.."
-  topics = Services.gov_delivery.fetch_topics["topics"]
+desc "Sync topic mappings to govdelivery, DO NOT USE IN PRODUCTION"
+task sync_govdelivery_topic_mappings: :environment do
+  unless ENV["ALLOW_GOVDELIVERY_SYNC"] == "allow"
+    puts "Syncing GovDelivery has not been configured for this environment."
+    puts "Running this against production GovDelivery would be a really bad idea."
+    puts "If you're sure you want to run this, export ALLOW_GOVDELIVERY_SYNC='allow'"
 
-  if topics.blank?
-    puts "No topics found."
     exit
   end
 
-  gov_delivery_ids = []
+  unless EmailAlertAPI.config.gov_delivery[:account_code] == "UKGOVUKDUP"
+    puts "It looks like you're running this sync with a non-staging GovDelivery configuration."
+    puts "Running this against production GovDelivery would be a really bad idea."
+    puts "If the GovDelivery staging account code has changed, please update this applciation and try again."
 
-  puts "Updating local topics.."
-  topics.each do |topic|
-    list = SubscriberList.find_by(title: topic["name"])
-
-    if list
-      puts "-- Updating #{topic["name"]} (#{list.gov_delivery_id} -> #{topic["code"]})"
-      list.update_columns(gov_delivery_id: topic["code"])
-    else
-      puts "-- Missing local copy of #{topic["name"]} (#{topic["code"]})"
-    end
-
-    gov_delivery_ids << topic["code"]
-  end
-
-  extra_lists = SubscriberList.where.not(gov_delivery_id: gov_delivery_ids)
-  puts "Deleting #{extra_lists.count} local subscriber lists not found in govdelivery.."
-  extra_lists.delete_all
-end
-
-desc "Delete topics from govdelivery where title starts with string, DO NOT USE IN PRODUCTION"
-task :delete_matching_topics, [:string] => :environment do |_, args|
-  string = args[:string]
-
-  if string.blank?
-    puts "Provide a string to match"
-    puts "rake delete_matching_topics['string to match']"
     exit
   end
 
@@ -67,10 +44,15 @@ task :delete_matching_topics, [:string] => :environment do |_, args|
     exit
   end
 
+  puts "Deleting all remote topics.."
   topics.each do |topic|
-    if topic["name"].starts_with?(string)
-      puts "Deleting #{topic["name"]} (#{topic["code"]})"
-      Services.gov_delivery.delete_topic(topic["code"])
-    end
+    puts "-- Deleting #{topic["name"]} (#{topic["code"]})"
+    Services.gov_delivery.delete_topic(topic["code"])
+  end
+
+  puts "Creating remote topics to match local topics.."
+  SubscriberList.find_each do |list|
+    puts "-- Creating #{list.title} (#{list.gov_delivery_id}) in GovDelivery"
+    Services.gov_delivery.create_topic(list.title, list.gov_delivery_id)
   end
 end
