@@ -28,10 +28,10 @@ task sync_govdelivery_topic_mappings: :environment do
     exit
   end
 
-  unless EmailAlertAPI.config.gov_delivery[:account_code] == "UKGOVUKDUP"
+  unless EmailAlertAPI.config.gov_delivery[:hostname] == "stage-api.govdelivery.com"
     puts "It looks like you're running this sync with a non-staging GovDelivery configuration."
     puts "Running this against production GovDelivery would be a really bad idea."
-    puts "If the GovDelivery staging account code has changed, please update this applciation and try again."
+    puts "If the GovDelivery staging hostname has changed, please update this applciation and try again."
 
     exit
   end
