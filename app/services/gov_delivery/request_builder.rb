@@ -1,8 +1,9 @@
 module GovDelivery
   module RequestBuilder
-    def self.create_topic_xml(name)
+    def self.create_topic_xml(name, topic_id = nil)
       Nokogiri::XML::Builder.new { |xml|
         xml.topic {
+          xml.code(topic_id) if topic_id
           xml.name name
           xml.send(:'short-name', name)
           xml.visibility 'Unlisted'
