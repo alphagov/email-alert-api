@@ -40,17 +40,32 @@ task sync_govdelivery_topic_mappings: :environment do
   topics = Services.gov_delivery.fetch_topics["topics"]
 
   if topics.blank?
-    puts "No topics found."
-    exit
+    puts "No topics found in GovDelivery."
+  else
+    puts "Deleting all remote topics.."
+    topics.each do |topic|
+      puts "-- Deleting #{topic["name"]} (#{topic["code"]})"
+      Services.gov_delivery.delete_topic(topic["code"])
+    end
+
+    # GovDelivery delete topics asynchronously and/or are only eventually
+    # consistent on deletes.  We have to wait until all the deletes take effect
+    # or we'll get conflicts when trying to recreate them.
+    attempts = 0
+    while Services.gov_delivery.fetch_topics["topics"].count > 0
+      sleep 1
+
+      if attempts >= 15
+        puts "Attempted to delete all topics and it doesn't seem to have worked."
+        puts "Trying again may work."
+        exit
+      else
+        attempts += 1
+      end
+    end
   end
 
-  puts "Deleting all remote topics.."
-  topics.each do |topic|
-    puts "-- Deleting #{topic["name"]} (#{topic["code"]})"
-    Services.gov_delivery.delete_topic(topic["code"])
-  end
-
-  puts "Creating remote topics to match local topics.."
+  puts "Creating remote topics to match the #{SubscriberList.count} local topics.."
   SubscriberList.find_each do |list|
     puts "-- Creating #{list.title} (#{list.gov_delivery_id}) in GovDelivery"
     Services.gov_delivery.create_topic(list.title, list.gov_delivery_id)
