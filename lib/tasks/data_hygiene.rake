@@ -66,8 +66,14 @@ task sync_govdelivery_topic_mappings: :environment do
   end
 
   puts "Creating remote topics to match the #{SubscriberList.count} local topics.."
+  created = {}
   SubscriberList.find_each do |list|
+    next if created.has_key?(list.gov_delivery_id)
+
     puts "-- Creating #{list.title} (#{list.gov_delivery_id}) in GovDelivery"
-    Services.gov_delivery.create_topic(list.title, list.gov_delivery_id)
+    title = list.title || "MISSING TITLE #{list.gov_delivery_id}"
+    Services.gov_delivery.create_topic(title, list.gov_delivery_id)
+
+    created[list.gov_delivery_id] = true
   end
 end
