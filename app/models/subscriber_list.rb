@@ -9,6 +9,7 @@ class SubscriberList < ActiveRecord::Base
   validate :tag_values_are_valid
   validate :link_values_are_valid
   validate :either_document_type_tags_or_links_present
+  validates :gov_delivery_id, uniqueness: true
 
   def self.build_from(params:, gov_delivery_id:)
     new(
