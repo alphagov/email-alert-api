@@ -52,7 +52,7 @@ task sync_govdelivery_topic_mappings: :environment do
     # consistent on deletes.  We have to wait until all the deletes take effect
     # or we'll get conflicts when trying to recreate them.
     attempts = 0
-    while Services.gov_delivery.fetch_topics["topics"].count > 0
+    while Array(Services.gov_delivery.fetch_topics["topics"]).count > 0
       sleep 1
 
       if attempts >= 15
@@ -70,8 +70,8 @@ task sync_govdelivery_topic_mappings: :environment do
   SubscriberList.find_each do |list|
     next if created.has_key?(list.gov_delivery_id)
 
-    puts "-- Creating #{list.title} (#{list.gov_delivery_id}) in GovDelivery"
     title = list.title || "MISSING TITLE #{list.gov_delivery_id}"
+    puts "-- Creating #{title} (#{list.gov_delivery_id}) in GovDelivery"
     Services.gov_delivery.create_topic(title, list.gov_delivery_id)
 
     created[list.gov_delivery_id] = true
