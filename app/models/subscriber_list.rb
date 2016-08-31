@@ -21,11 +21,11 @@ class SubscriberList < ActiveRecord::Base
   end
 
   def tags
-    @_tags ||= parsed_hstore(super)
+    @_tags ||= tags_json
   end
 
   def links
-    @_links ||= parsed_hstore(super)
+    @_links ||= links_json
   end
 
   def reload

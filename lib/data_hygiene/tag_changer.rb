@@ -21,13 +21,17 @@ private
       log "Duplicating SubscriberList id: #{record.id} replacing #{from_topic_tag} with #{to_topic_tag}"
 
       new_record = record.dup
-      topics = JSON.parse(record[:tags]["topics"])
+      [:tags, :tags_json].each do |field|
+        topics = record[field]["topics"]
+        topics = JSON.parse(topics) if field == :tags
 
-      topics.map! do |topic|
-        topic == from_topic_tag ? to_topic_tag : topic
+        topics.map! do |topic|
+          topic == from_topic_tag ? to_topic_tag : topic
+        end
+
+        new_record[field]["topics"] = topics
+        new_record[field]["topics"] = new_record[field]["topics"].to_json if field == :tags
       end
-
-      new_record[:tags]["topics"] = topics.to_json
       new_record.save
     end
   end
