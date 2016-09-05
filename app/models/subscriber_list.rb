@@ -60,18 +60,20 @@ class SubscriberList < ActiveRecord::Base
 
 private
   def tag_values_are_valid
-    self[:tags].each do |key, value|
-      unless value.match(/^\[(.)*\]$/)
-        self.errors.add(:tags, "All tag values must be sent as Arrays")
-      end
+    json_tags_valid = self[:tags_json].all? { |_, v| v.is_a?(Array) }
+    hstore_tags_valid = self[:tags].all? { |_, v| v.match(/^\[(.)*\]$/) }
+
+    unless json_tags_valid && hstore_tags_valid
+      self.errors.add(:tags, "All tag values must be sent as Arrays")
     end
   end
 
   def link_values_are_valid
-    self[:links].each do |key, value|
-      unless value.match(/^\[(.)*\]$/)
-        self.errors.add(:links, "All link values must be sent as Arrays")
-      end
+    json_links_valid = self[:links_json].all? { |_, v| v.is_a?(Array) }
+    hstore_links_valid = self[:links].all? { |_, v| v.match(/^\[(.)*\]$/) }
+
+    unless json_links_valid && hstore_links_valid
+      self.errors.add(:links, "All link values must be sent as Arrays")
     end
   end
 
