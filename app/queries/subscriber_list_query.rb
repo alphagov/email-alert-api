@@ -1,6 +1,9 @@
 class SubscriberListQuery
   def initialize(query_field: :tags)
-    @query_field = query_field
+    raise ArgumentError.new("query_field must be `:tags`, `:links`, or `:neither`") unless %i{tags links neither}.include?(query_field)
+
+    # Query against temporary JSON fields
+    @query_field = "#{query_field}_json".to_sym
   end
 
   # Find all lists in which all the links present have at least one match in the
@@ -42,9 +45,9 @@ class SubscriberListQuery
   end
 
   def subscriber_lists_with_key(key)
-    # This uses the `?` hstore operator, which returns true only if the hstore
-    # contains the specified key.
-    SubscriberList.where("#{@query_field} ? :key", key: key)
+    # This uses the `->` JSON operator to select lists only if the field's keys
+    # contain the specified key.
+    SubscriberList.where("(#{@query_field} -> :key) IS NOT NULL", key: key)
   end
 
 private
@@ -56,10 +59,10 @@ private
   # then this returns all lists which have any "topics" or "organisations"
   # links.
   def subscriber_lists_with_keys_overlapping(query_hash)
-    # This uses the `&&` hstore operator, which returns true if the left and
+    # This uses the `&&` array operator, which returns true if the left and
     # right operand have any overlapping elements
-    SubscriberList.where(
-      "Array[:keys] && akeys(#{@query_field})", keys: query_hash.keys
+    SubscriberList.where("ARRAY(SELECT json_object_keys(#{@query_field})) && Array[:keys]",
+      keys: query_hash.keys,
     )
   end
 
@@ -71,12 +74,14 @@ private
   # then this returns all lists which have any "topics" AND "organisations"
   # links.
   def subscriber_lists_with_all_matching_keys(query_hash)
-    # This uses the `?&` hstore operator, which returns true only if the hstore
+    # This uses array equality to check if the JSON object
     # contains all the specified keys.
-    SubscriberList.where("#{@query_field} ?& Array[:keys]", keys: query_hash.keys)
+    SubscriberList.where("ARRAY(SELECT json_object_keys(#{@query_field})) = Array[:keys]",
+      keys: query_hash.keys,
+    )
   end
 
   def subscriber_lists_without_tags_or_links
-    SubscriberList.where(tags: "", links: "")
+    SubscriberList.where("tags_json::text = '{}'::text AND links_json::text = '{}'::text")
   end
 end
