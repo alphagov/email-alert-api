@@ -2,8 +2,7 @@ class SubscriberListQuery
   def initialize(query_field: :tags)
     raise ArgumentError.new("query_field must be `:tags`, `:links`, or `:neither`") unless %i{tags links neither}.include?(query_field)
 
-    # Query against temporary JSON fields
-    @query_field = "#{query_field}_json".to_sym
+    @query_field = query_field.to_sym
   end
 
   # Find all lists in which all the links present have at least one match in the
@@ -82,6 +81,6 @@ private
   end
 
   def subscriber_lists_without_tags_or_links
-    SubscriberList.where("tags_json::text = '{}'::text AND links_json::text = '{}'::text")
+    SubscriberList.where("tags::text = '{}'::text AND links::text = '{}'::text")
   end
 end
