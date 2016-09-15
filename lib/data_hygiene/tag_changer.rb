@@ -23,7 +23,7 @@ private
       new_record = record.dup
       [:tags, :tags_json].each do |field|
         topics = record[field]["topics"]
-        topics = JSON.parse(topics) if field == :tags
+        topics = JSON.parse(topics) if topics.is_a?(String)
 
         topics.map! do |topic|
           topic == from_topic_tag ? to_topic_tag : topic
