@@ -7,10 +7,10 @@ task duplicate_record_for_tag: :environment do
 
   if from_topic_tag.blank?
     $stderr.puts "A from_topic_tag must be supplied"
-    exit 1
+    abort
   elsif to_topic_tag.blank?
     $stderr.puts "A to_topic_tag must be supplied"
-    exit 1
+    abort
   end
 
   puts 'STARTING'
@@ -25,7 +25,7 @@ task sync_govdelivery_topic_mappings: :environment do
     puts "Running this against production GovDelivery would be a really bad idea."
     puts "If you're sure you want to run this, export ALLOW_GOVDELIVERY_SYNC='allow'"
 
-    exit
+    abort
   end
 
   unless EmailAlertAPI.config.gov_delivery[:hostname] == "stage-api.govdelivery.com"
@@ -33,7 +33,7 @@ task sync_govdelivery_topic_mappings: :environment do
     puts "Running this against production GovDelivery would be a really bad idea."
     puts "If the GovDelivery staging hostname has changed, please update this applciation and try again."
 
-    exit
+    abort
   end
 
   puts "Fetching topics.."
@@ -58,7 +58,7 @@ task sync_govdelivery_topic_mappings: :environment do
       if attempts >= 15
         puts "Attempted to delete all topics and it doesn't seem to have worked."
         puts "Trying again may work."
-        exit
+        abort
       else
         attempts += 1
       end
