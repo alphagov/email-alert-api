@@ -36,6 +36,19 @@ task sync_govdelivery_topic_mappings: :environment do
     abort
   end
 
+  production_account_code = "UKGOVUK"
+  environment_account_code = EmailAlertAPI.config.gov_delivery[:account_code]
+
+  unless environment_account_code == production_account_code
+    puts "Updating topics in subscriber lists so that prefixes match account id for this environment..."
+
+    SubscriberList.update_all(
+      "gov_delivery_id = replace(gov_delivery_id, '#{production_account_code}_', '#{environment_account_code}_')"
+    )
+
+    puts "Done."
+  end
+
   puts "Fetching topics.."
   topics = Services.gov_delivery.fetch_topics["topics"]
 
