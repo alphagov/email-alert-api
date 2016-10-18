@@ -159,6 +159,10 @@ Sidekiq::RetrySet.new.retry_all
 
 See the [Sidekiq docs](https://github.com/mperham/sidekiq/wiki/API) for more information.
 
+## Integration & Staging Environments
+
+- [Overview of the Integration & Staging Synchronisation Process](doc/integration-staging-sync.md)
+
 ## Licence
 
 [MIT License](LICENCE)
