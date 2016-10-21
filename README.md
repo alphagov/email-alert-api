@@ -118,12 +118,6 @@ and it will respond with the JSON response for the `GET` call above.
 and it will respond with `202 Accepted` (the call is queued to prevent slowness
 in the external notifications API).
 
-### GOVUK request id
-
-Email body text is appended with an html element with a data attribute containing the originating request id.
-This element is an empty span and will not be visible to the recipient.
-Plain text emails will not contain this element as their content is stripped of any html.
-
 ### healthcheck API
 
 A queue health check endpoint is available at /healthcheck
@@ -140,6 +134,12 @@ A queue health check endpoint is available at /healthcheck
   "status": "ok"
  }
 ```
+
+## GOVUK request id
+
+Email body text is appended with an html element with a data attribute containing the originating request id.
+This element is an empty span and will not be visible to the recipient.
+Plain text emails will not contain this element as their content is stripped of any html.
 
 ### Manually retrying failed notification jobs
 
@@ -158,6 +158,10 @@ Sidekiq::RetrySet.new.retry_all
 ```
 
 See the [Sidekiq docs](https://github.com/mperham/sidekiq/wiki/API) for more information.
+
+## Integration & Staging Environments
+
+- [Overview of the Integration & Staging Synchronisation Process](doc/integration-staging-sync.md)
 
 ## Licence
 
