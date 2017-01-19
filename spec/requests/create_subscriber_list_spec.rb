@@ -25,6 +25,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
       %w{
         id
         title
+        short_name
+        description
         document_type
         subscription_url
         gov_delivery_id
@@ -102,6 +104,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
   def create_subscriber_list(tags: {}, links: {}, document_type: nil)
     payload = {
       title: "This is a sample title",
+      short_name: "This is a short name",
+      description: "This is a description.",
       gov_delivery_id: "UKGOVUK_1234",
       tags: tags,
       links: links,

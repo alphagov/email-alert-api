@@ -9,14 +9,14 @@ module GovDelivery
       @options = options
     end
 
-    def create_topic(name, topic_id = nil)
+    def create_topic(name, short_name, description, topic_id = nil)
       # GovDelivery documentation for this endpoint:
       # http://developer.govdelivery.com/api/comm_cloud_v1/Default.htm#API/Comm Cloud V1/API_CommCloudV1_Topics_CreateTopic.htm
       parse_topic_response(
         EmailAlertAPI.statsd.time('topics.create') do
           post_xml(
             "topics.xml",
-            RequestBuilder.create_topic_xml(name, topic_id),
+            RequestBuilder.create_topic_xml(name, short_name, description, topic_id),
           )
         end
       )

@@ -16,6 +16,8 @@ RSpec.describe GovDelivery::Client do
     before do
       @base_url = "http://#{config.fetch(:username)}:#{config.fetch(:password)}@#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/topics.xml"
       @topic_name = "Test topic"
+      @topic_short_name = "Test"
+      @topic_description = "This is a test."
       @govdelivery_response = %{<?xml version="1.0" encoding="UTF-8"?>
         <topic>
           <to-param>UKGOVUK_1234</to-param>
@@ -28,13 +30,14 @@ RSpec.describe GovDelivery::Client do
     end
 
     it "POSTs the topic creation request XML to the topics endpoint" do
-      client.create_topic(@topic_name)
+      client.create_topic(@topic_name, @topic_short_name, @topic_description)
 
       assert_requested(:post, @base_url) do |req|
         expect(req.body).to be_equivalent_to(%{
           <topic>
             <name>#{@topic_name}</name>
-            <short-name>#{@topic_name}</short-name>
+            <short-name>#{@topic_short_name}</short-name>
+            <description>#{@topic_description}</description>
             <visibility>Unlisted</visibility>
             <pagewatch-enabled type="boolean">false</pagewatch-enabled>
             <rss-feed-url nil="true"/>
@@ -46,7 +49,7 @@ RSpec.describe GovDelivery::Client do
     end
 
     it "returns an object that encapsulates the parsed response" do
-      response = client.create_topic(@topic_name)
+      response = client.create_topic(@topic_name, @topic_short_name, @topic_description)
 
       expect(response).to be_equivalent_to(Struct.new(
         :to_param, :topic_uri, :link
@@ -66,7 +69,7 @@ RSpec.describe GovDelivery::Client do
       end
 
       it "raises a TopicAlreadyExistsError" do
-        expect { client.create_topic(@topic_name) }.to raise_error(GovDelivery::Client::TopicAlreadyExistsError)
+        expect { client.create_topic(@topic_name, @topic_short_name, @topic_description) }.to raise_error(GovDelivery::Client::TopicAlreadyExistsError)
       end
     end
 
@@ -74,14 +77,15 @@ RSpec.describe GovDelivery::Client do
       let(:topic_id) { "UKGOVUK_PROVIDED_CODE" }
 
       it "sends the ID as the 'code'" do
-        client.create_topic(@topic_name, topic_id)
+        client.create_topic(@topic_name, @topic_short_name, @topic_description, topic_id)
 
         assert_requested(:post, @base_url) do |req|
           expect(req.body).to be_equivalent_to(%{
             <topic>
               <code>#{topic_id}</code>
               <name>#{@topic_name}</name>
-              <short-name>#{@topic_name}</short-name>
+              <short-name>#{@topic_short_name}</short-name>
+              <description>#{@topic_description}</description>
               <visibility>Unlisted</visibility>
               <pagewatch-enabled type="boolean">false</pagewatch-enabled>
               <rss-feed-url nil="true"/>
