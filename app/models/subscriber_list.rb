@@ -79,12 +79,6 @@ private
     self.errors.add(:base, "Must have either a document_type, tags or links")
   end
 
-  def parsed_hstore(field)
-    Hash(field).inject({}) do |hash, (key, json_value)|
-      hash.merge(key.to_sym => JSON.parse(json_value))
-    end
-  end
-
   def gov_delivery_config
     EmailAlertAPI.config.gov_delivery
   end
