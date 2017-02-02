@@ -33,7 +33,7 @@ tags via the external services.
 
 ### Dependencies
 
-* Postgres database (9.1 or higher - requires `hstore`)
+* Postgres database (9.3 or higher - requires `json` with `json_object_keys` method)
 * Redis (for [sidekiq](http://sidekiq.org/))
 * GovDelivery API login and account (see
   [`gov_delivery.yml`](config/gov_delivery.yml) for required fields)

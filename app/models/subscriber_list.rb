@@ -20,20 +20,6 @@ class SubscriberList < ActiveRecord::Base
     )
   end
 
-  def tags
-    @_tags ||= tags_json
-  end
-
-  def links
-    @_links ||= links_json
-  end
-
-  def reload
-    @_tags  = nil
-    @_links = nil
-    super
-  end
-
   def tags=(hash)
     self.tags_json = hash
     super
@@ -60,13 +46,13 @@ class SubscriberList < ActiveRecord::Base
 
 private
   def tag_values_are_valid
-    unless self[:tags_json].all? { |_, v| v.is_a?(Array) }
+    unless self[:tags].all? { |_, v| v.is_a?(Array) }
       self.errors.add(:tags, "All tag values must be sent as Arrays")
     end
   end
 
   def link_values_are_valid
-    unless self[:links_json].all? { |_, v| v.is_a?(Array) }
+    unless self[:links].all? { |_, v| v.is_a?(Array) }
       self.errors.add(:links, "All link values must be sent as Arrays")
     end
   end
@@ -77,12 +63,6 @@ private
     return if self[:links].present?
 
     self.errors.add(:base, "Must have either a document_type, tags or links")
-  end
-
-  def parsed_hstore(field)
-    Hash(field).inject({}) do |hash, (key, json_value)|
-      hash.merge(key.to_sym => JSON.parse(json_value))
-    end
   end
 
   def gov_delivery_config
