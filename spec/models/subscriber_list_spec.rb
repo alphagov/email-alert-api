@@ -5,6 +5,8 @@ RSpec.describe SubscriberList, type: :model do
     let(:params) {
       {
         title: "Ronnie Pickering",
+        short_name: "Ronnie",
+        description: "Don't you know who I am?",
         tags: { topics: ["motoring/road_rage"] },
         links: { topics: ["uuid-888"] },
       }
@@ -17,6 +19,8 @@ RSpec.describe SubscriberList, type: :model do
 
     it "builds a new SubscriberList without a format" do
       expect(list.title).to eq "Ronnie Pickering"
+      expect(list.short_name).to eq "Ronnie"
+      expect(list.description).to eq "Don't you know who I am?"
       expect(list.tags).to eq({:topics=>["motoring/road_rage"]})
       expect(list.links).to eq({:topics=>["uuid-888"]})
       expect(list.gov_delivery_id).to eq "GOVUK_888"

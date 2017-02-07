@@ -13,6 +13,8 @@ class SubscriberList < ActiveRecord::Base
   def self.build_from(params:, gov_delivery_id:)
     new(
       title: params[:title],
+      short_name: params[:short_name],
+      description: params[:description],
       tags:  params[:tags],
       links: params[:links],
       document_type: params[:document_type],
