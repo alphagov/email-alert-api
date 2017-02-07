@@ -87,18 +87,4 @@ RSpec.describe SubscriberList, type: :model do
       )
     end
   end
-
-  describe "#tags=" do
-    it "inserts into both json fields during transition" do
-      subject.tags = { foo: ["bar"] }
-      expect(subject.tags_json).to eq(subject.tags)
-    end
-  end
-
-  describe "#links=" do
-    it "inserts into both json fields during transition" do
-      subject.links = { foo: ["bar"] }
-      expect(subject.links_json).to eq(subject.links)
-    end
-  end
 end

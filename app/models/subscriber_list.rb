@@ -20,16 +20,6 @@ class SubscriberList < ActiveRecord::Base
     )
   end
 
-  def tags=(hash)
-    self.tags_json = hash
-    super
-  end
-
-  def links=(hash)
-    self.links_json = hash
-    super
-  end
-
   def subscription_url
     gov_delivery_config.fetch(:protocol) +
     "://" +
