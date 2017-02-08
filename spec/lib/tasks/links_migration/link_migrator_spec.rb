@@ -3,39 +3,31 @@ require "tasks/links_migration/topic_link_migrator"
 require "tasks/links_migration/policy_link_migrator"
 
 RSpec.describe "Links Migration" do
-  class FakeContentStore
-    require "rspec/mocks/standalone"
+  let(:mock_content_item1) { double("content_item1", content_id: "uuid-888") }
+  let(:mock_content_item2) { double("content_item2", content_id: "uuid-999") }
+  let(:mock_content_item_no_content_id) { double("content_item_no_content_id", content_id: nil) }
 
-    def mock_content_item1
-      double("content_item1", content_id: "uuid-888")
-    end
-
-    def mock_content_item2
-      double("content_item2", content_id: "uuid-999")
-    end
-
-    def mock_content_item_no_content_id
-      double("content_item_no_content_id", content_id: nil)
-    end
-
-    def content_item(path)
-      case path
-      when "/topic/oil-and-gas/something"
-        mock_content_item1
-      when "/government/policies/tax-credits"
-        mock_content_item2
-      when "topic/benefits/some-other-thing"
-        mock_content_item_no_content_id
-      when "goverment/policies/some-other-thing"
-        mock_content_item_no_content_id
-      else
-        nil
+  let(:fake_content_store) do
+    double('FakeContentStore').tap do |fake_content_store|
+      allow(fake_content_store).to receive(:content_item) do |path|
+        case path
+        when "/topic/oil-and-gas/something"
+          mock_content_item1
+        when "/government/policies/tax-credits"
+          mock_content_item2
+        when "topic/benefits/some-other-thing"
+          mock_content_item_no_content_id
+        when "goverment/policies/some-other-thing"
+          mock_content_item_no_content_id
+        else
+          nil
+        end
       end
     end
   end
 
   before do
-    allow(Services).to receive(:content_store).and_return(FakeContentStore.new)
+    allow(Services).to receive(:content_store).and_return(fake_content_store)
   end
 
   around do |example|
