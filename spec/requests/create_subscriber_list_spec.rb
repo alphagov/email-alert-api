@@ -32,8 +32,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
         updated_at
         tags
         links
-        tags_json
-        links_json
       }.to_set
     )
     expect(subscriber_list).to include(
