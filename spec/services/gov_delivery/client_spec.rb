@@ -94,6 +94,81 @@ RSpec.describe GovDelivery::Client do
     end
   end
 
+  describe '#fetch_topic' do
+    let(:topic_code) { "UKGOV_1234" }
+    let(:base_url) { @base_url = "http://#{config.fetch(:username)}:#{config.fetch(:password)}@#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/topics/#{topic_code}.xml" }
+    before do
+      stub_request(:get, base_url).to_return(body: govdelivery_response)
+    end
+
+    context 'when topic exists' do
+      let(:govdelivery_response) do
+        <<~XML
+          <?xml version="1.0" encoding="UTF-8"?>
+          <topic>
+            <name>Topic name</name>
+            <short-name>Topic short name</short-name>
+            <code>#{topic_code}</code>
+            <pagewatch-enabled type="boolean">false</pagewatch-enabled>
+            <lock-version type="integer">0</lock-version>
+            <description nil="true"/>
+            <watch-tagged-content type="boolean">false</watch-tagged-content>
+            <pagewatch-autosend type="boolean">false</pagewatch-autosend>
+            <default-pagewatch-results type="integer" nil="true"/>
+            <pagewatch-suspended type="boolean">true</pagewatch-suspended>
+            <rss-feed-title nil="true"/>
+            <rss-feed-url>https://www.gov.uk/government</rss-feed-url>
+            <rss-feed-description nil="true"/>
+            <subscribers-count type="integer">0</subscribers-count>
+            <wireless-enabled type="boolean">false</wireless-enabled>
+            <pagewatch-type type="integer" nil="true"/>
+            <pages type="array"/>
+            <visibility>Unlisted</visibility>
+          </topic>
+        XML
+      end
+
+      it 'returns a hash representation of the topic' do
+        expect(client.fetch_topic(topic_code)).to eq(
+          'name' => 'Topic name',
+          'short_name' => 'Topic short name',
+          'code' => 'UKGOV_1234',
+          'pagewatch_enabled' => false,
+          'lock_version' => 0,
+          'description' => nil,
+          'watch_tagged_content' => false,
+          'pagewatch_autosend' => false,
+          'default_pagewatch_results' => nil,
+          'pagewatch_suspended' => true,
+          'rss_feed_title' => nil,
+          'rss_feed_url' => 'https://www.gov.uk/government',
+          'rss_feed_description' => nil,
+          'subscribers_count' => 0,
+          'wireless_enabled' => false,
+          'pagewatch_type' => nil,
+          'pages' => [],
+          'visibility' => 'Unlisted'
+        )
+      end
+    end
+
+    context 'when topic does not exist' do
+      let(:govdelivery_response) do
+        <<~XML
+          <?xml version="1.0" encoding="UTF-8"?>
+          <errors>
+            <code>GD-14002</code>
+            <error>Topic not found</error>
+          </errors>
+        XML
+      end
+
+      it 'returns nil' do
+        expect(client.fetch_topic(topic_code)).to be_nil
+      end
+    end
+  end
+
   describe "#read_topic_by_name" do
     before do
       @topic_name = "Test topic"
@@ -220,7 +295,7 @@ RSpec.describe GovDelivery::Client do
       }
       stub_request(:post, @base_url).to_return(body: @govdelivery_response)
 
-      expect { client.send_bulletin(topic_ids, subject, body) }.to raise_error
+      expect { client.send_bulletin(topic_ids, subject, body) }.to raise_error(StandardError)
     end
 
     it "POSTs the bulletin with extra parameters if present to the send_now endpoint" do
