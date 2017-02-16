@@ -103,7 +103,7 @@ RSpec.describe GovDelivery::Client do
 
     context 'when topic exists' do
       let(:govdelivery_response) do
-        <<~XML
+        <<-XML.strip_heredoc
           <?xml version="1.0" encoding="UTF-8"?>
           <topic>
             <name>Topic name</name>
@@ -154,7 +154,7 @@ RSpec.describe GovDelivery::Client do
 
     context 'when topic does not exist' do
       let(:govdelivery_response) do
-        <<~XML
+        <<-XML.strip_heredoc
           <?xml version="1.0" encoding="UTF-8"?>
           <errors>
             <code>GD-14002</code>
