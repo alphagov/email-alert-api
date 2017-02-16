@@ -243,26 +243,26 @@ RSpec.describe GovDelivery::Client do
 
       client.send_bulletin(topic_ids, subject, body)
 
+      expected_xml = <<-XML.strip_heredoc
+        <bulletin>
+          <subject>a subject line</subject>
+          <body><![CDATA[a body]]></body>
+          <topics type="array">
+            <topic>
+              <code>UKGOVUK_123</code>
+            </topic>
+            <topic>
+              <code>UKGOVUK_124</code>
+            </topic>
+            <topic>
+              <code>UKGOVUK_125</code>
+            </topic>
+          </topics>
+          <footer><![CDATA[#{GovDelivery::RequestBuilder.default_footer}]]></footer>
+        </bulletin>
+      XML
       assert_requested(:post, @base_url) do |req|
-        expect(req.body).to be_equivalent_to(
-          %{
-            <bulletin>
-              <subject>a subject line</subject>
-              <body><![CDATA[a body]]></body>
-              <topics type="array">
-                <topic>
-                  <code>UKGOVUK_123</code>
-                </topic>
-                <topic>
-                  <code>UKGOVUK_124</code>
-                </topic>
-                <topic>
-                  <code>UKGOVUK_125</code>
-                </topic>
-              </topics>
-            </bulletin>
-          }
-        )
+        expect(req.body).to be_equivalent_to(expected_xml)
       end
     end
 
@@ -310,30 +310,29 @@ RSpec.describe GovDelivery::Client do
         footer: "<p>bar</p>"
       })
 
+      expected_xml = <<-XML.strip_heredoc
+        <bulletin>
+          <subject>a subject line</subject>
+          <body><![CDATA[a body]]></body>
+          <topics type="array">
+            <topic>
+              <code>UKGOVUK_123</code>
+            </topic>
+            <topic>
+              <code>UKGOVUK_124</code>
+            </topic>
+            <topic>
+              <code>UKGOVUK_125</code>
+            </topic>
+          </topics>
+          <from_address_id>12345</from_address_id>
+          <urgent>true</urgent>
+          <header><![CDATA[<h1>Foo</h1>]]></header>
+          <footer><![CDATA[<p>bar</p>]]></footer>
+        </bulletin>
+      XML
       assert_requested(:post, @base_url) do |req|
-        expect(req.body).to be_equivalent_to(
-          %{
-            <bulletin>
-              <subject>a subject line</subject>
-              <body><![CDATA[a body]]></body>
-              <topics type="array">
-                <topic>
-                  <code>UKGOVUK_123</code>
-                </topic>
-                <topic>
-                  <code>UKGOVUK_124</code>
-                </topic>
-                <topic>
-                  <code>UKGOVUK_125</code>
-                </topic>
-              </topics>
-              <from_address_id>12345</from_address_id>
-              <urgent>true</urgent>
-              <header><![CDATA[<h1>Foo</h1>]]></header>
-              <footer><![CDATA[<p>bar</p>]]></footer>
-            </bulletin>
-          }
-        )
+        expect(req.body).to be_equivalent_to(expected_xml)
       end
     end
 
