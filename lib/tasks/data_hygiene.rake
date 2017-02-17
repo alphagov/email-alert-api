@@ -59,42 +59,65 @@ task sync_govdelivery_topic_mappings: :environment do
 
   puts "Fetching topics.."
   topics = Services.gov_delivery.fetch_topics["topics"]
+  topics = topics.map { |topic| [topic["name"], topic["code"]] }
+  subscriber_lists = SubscriberList.where.not(gov_delivery_id: nil)
+                                   .pluck(:title, :gov_delivery_id)
+                                   .map { |title, gov_delivery_id| [(title || gov_delivery_id).strip, gov_delivery_id] }
 
-  if topics.blank?
-    puts "No topics found in GovDelivery."
+  matching = topics & subscriber_lists
+  to_be_deleted = topics - subscriber_lists
+  to_be_created = subscriber_lists - topics
+
+  if to_be_deleted.blank?
+    puts "No topics to be deleted in GovDelivery."
   else
-    puts "Deleting all remote topics.."
-    topics.each do |topic|
-      puts "-- Deleting #{topic["name"]} (#{topic["code"]})"
-      Services.gov_delivery.delete_topic(topic["code"])
+    puts "Deleting remote topics.."
+    threads = to_be_deleted.each_slice(DataHygiene::BATCH_SIZE).map do |batch|
+      Thread.new do
+        batch.each do |name, code|
+          puts "-- Deleting #{name} (#{code})"
+          Services.gov_delivery.delete_topic(code)
+        end
+      end
     end
+    threads.each(&:join)
 
     # GovDelivery delete topics asynchronously and/or are only eventually
     # consistent on deletes.  We have to wait until all the deletes take effect
     # or we'll get conflicts when trying to recreate them.
-    attempts = 0
-    while Array(Services.gov_delivery.fetch_topics["topics"]).count > 0
+    puts 'Wainting for 30 seconds for topics to be asynchronously deleted'
+    30.times do
       sleep 1
-
-      if attempts >= 15
-        puts "Attempted to delete all topics and it doesn't seem to have worked."
-        puts "Trying again may work."
-        abort
-      else
-        attempts += 1
-      end
+      print '.'
     end
   end
 
-  puts "Creating remote topics to match the #{SubscriberList.count} local topics.."
-  created = {}
-  SubscriberList.find_each do |list|
-    next if created.has_key?(list.gov_delivery_id)
+  3.times.each do |i|
+    puts "Attempting to create subscriber lists: Attempt #{i}"
+    to_be_created = DataHygiene.create_topics(to_be_created)
+    return if to_be_created.empty?
+    sleep 2
+  end
 
-    title = list.title || "MISSING TITLE #{list.gov_delivery_id}"
-    puts "-- Creating #{title} (#{list.gov_delivery_id}) in GovDelivery"
-    Services.gov_delivery.create_topic(title, list.gov_delivery_id)
+  puts 'Failed to create all topics'
+end
 
-    created[list.gov_delivery_id] = true
+module DataHygiene
+  # will hopefully limit delete runtime to 1 per sec * 300 / 60 =~ 5 minutes
+  # a maximum thread count of 16000 / 300 =~ 54
+  BATCH_SIZE = 300
+
+  def self.create_topics(list)
+    list.each do |gov_delivery_id, title|
+      title = title || "MISSING TITLE #{gov_delivery_id}"
+      puts "-- Creating #{title} (#{gov_delivery_id}) in GovDelivery"
+      begin
+        Services.gov_delivery.create_topic(title, gov_delivery_id)
+      rescue TopicAlreadyExistsError
+        retry_create << [gov_delivery_id, title]
+        puts "-- Error Creating #{title} (#{gov_delivery_id}) in GovDelivery as delete has not completed"
+      end
+    end
+    retry_create
   end
 end
