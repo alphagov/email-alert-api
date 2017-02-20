@@ -34,8 +34,7 @@ RSpec.describe HealthcheckController, type: :controller do
 
     it "includes queue length check in the response" do
       queues = {
-        "scheduled_publishing"=>0,
-        "panopticon"=>1
+        "scheduled_publishing"=>0
       }
 
       allow_any_instance_of(HealthcheckController).to receive(:sidekiq_queues).and_return(queues)
@@ -47,8 +46,7 @@ RSpec.describe HealthcheckController, type: :controller do
 
     it "returns ok for small queue sizes" do
       queues = {
-        "scheduled_publishing"=>0,
-        "panopticon"=>1
+        "scheduled_publishing"=>0
       }
 
       allow_any_instance_of(HealthcheckController).to receive(:sidekiq_queues).and_return(queues)
@@ -62,7 +60,6 @@ RSpec.describe HealthcheckController, type: :controller do
     it "returns warning for medium queue sizes" do
       queues = {
         "scheduled_publishing"=>0,
-        "panopticon"=>1,
         "foo"=>3
       }
 
@@ -77,7 +74,6 @@ RSpec.describe HealthcheckController, type: :controller do
     it "returns critical for large queue sizes" do
       queues = {
         "scheduled_publishing"=>0,
-        "panopticon"=>1,
         "foo"=>10
       }
 
