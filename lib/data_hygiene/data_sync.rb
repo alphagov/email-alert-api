@@ -5,8 +5,8 @@ module DataHygiene
 
     attr_reader :logger
 
-    def initialize(logger, delete_wait=30)
-      @logger ||= logger || Logger.new(STDOUT)
+    def initialize(logger = Logger.new(STDOUT), delete_wait = 30)
+      @logger ||= logger
       @delete_wait = delete_wait
     end
 
