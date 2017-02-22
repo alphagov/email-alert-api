@@ -4,6 +4,7 @@ module GovDelivery
     class TopicAlreadyExistsError < UnknownError; end
     class ZeroSubscriberError < UnknownError; end
     class UnexpectedResponseBodyError < UnknownError; end
+    class TopicNotFound < UnknownError; end
 
     def initialize(options = {})
       @options = options
@@ -25,8 +26,7 @@ module GovDelivery
     def fetch_topic(code)
       # GovDelivery documentation for this endpoint:
       # http://developer.govdelivery.com/api/comm_cloud_v1/Default.htm#API/Comm Cloud V1/API_CommCloudV1_Topics_ReadTopic.htm
-      response = http_client.get("topics/#{code}.xml")
-      Hash.from_xml(response.body)['topic']
+      parse_topic_response(http_client.get("topics/#{code}.xml"))
     end
 
     def delete_topic(topic_id)
@@ -154,6 +154,8 @@ module GovDelivery
         error_class = TopicAlreadyExistsError
       elsif parsed_response.code == "GD-12004" && parsed_response.error == "To send a bulletin you must select at least one topic or category that has subscribers"
         error_class = ZeroSubscriberError
+      elsif parsed_response.code == "GD-14002" && parsed_response.error == "Topic not found"
+        error_class = TopicNotFound
       else
         error_class = UnknownError
       end

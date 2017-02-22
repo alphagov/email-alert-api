@@ -15,6 +15,11 @@ module DataHygiene
     def call
       puts "#{with_zero_subscribers.count} subscriber lists without subscribers"
       with_zero_subscribers.each { |sl| puts "#{sl.gov_delivery_id} - #{sl.title}"}
+      if with_missing_topic.count > 0
+        puts ''
+        puts "#{with_missing_topic.count} subscriber lists don't exist in GovDelivery"
+        with_missing_topic.each { |sl| puts "#{sl.gov_delivery_id} - #{sl.title}"}
+      end
       if with_gov_delivery_error.count > 0
         puts ''
         puts "#{with_gov_delivery_error.count} subscriber lists with errors - THESE ARE NOT BEING DELETED"
@@ -22,11 +27,12 @@ module DataHygiene
       end
 
       puts ''
-      puts "#{with_zero_subscribers.count} subscriber lists without subscribers, enter `delete` to delete from database and GovDelivery: "
+      puts "#{with_zero_subscribers.count} subscriber lists without subscribers and #{with_missing_topic.count} subscriber lists don't exist in GovDelivery, enter `delete` to delete from database and GovDelivery: "
       command = gets
 
       if command.chomp == 'delete'
-        with_zero_subscribers.each do |subscriber_list|
+        to_delete = with_zero_subscribers + with_missing_topic
+        to_delete.each do |subscriber_list|
           delete_topic(subscriber_list)
         end
       end
@@ -38,13 +44,19 @@ module DataHygiene
 
     def with_zero_subscribers
       @with_zero_subscribers ||= subscriber_lists
-        .select { |c, s| c&.zero? }
+        .select { |c, s| c == '0' }
+        .map(&:last)
+    end
+
+    def with_missing_topic
+      @with_missing_topic ||= subscriber_lists
+        .select { |c, s| c == :topic_not_found }
         .map(&:last)
     end
 
     def with_gov_delivery_error
       @with_gov_delivery_error ||= subscriber_lists
-        .select { |c, s| c.nil? }
+        .select { |c, s| c == :unknown_error }
         .map(&:last)
     end
 
@@ -52,20 +64,27 @@ module DataHygiene
 
     def subscriber_count(gov_delivery_id)
       topic = client.fetch_topic(gov_delivery_id)
-      topic && topic['subscribers_count']
+      topic.subscribers_count
+    rescue GovDelivery::Client::TopicNotFound
+      :topic_not_found
     rescue GovDelivery::Client::UnknownError
-      nil
+      :unknown_error
     end
 
     def delete_topic(subscriber_list)
       subscribers = subscriber_count(subscriber_list.gov_delivery_id)
 
-      if subscribers.nil?
-        puts "Skipping #{subscriber_list.gov_delivery_id} as it does not appear on GovDelivery"
-      elsif subscribers.zero?
+      case subscribers
+      when '0'
         puts "Deleting: #{subscriber_list.gov_delivery_id}"
-        delete_topic_with_error_catching(subscriber_list.gov_delivery_id)
+        if delete_topic_with_error_catching(subscriber_list.gov_delivery_id)
+          SubscriberList.where(gov_delivery_id: subscriber_list.gov_delivery_id).delete_all
+        end
+      when :topic_not_found
+        puts "Deleting: #{subscriber_list.gov_delivery_id}"
         SubscriberList.where(gov_delivery_id: subscriber_list.gov_delivery_id).delete_all
+      when :unknown_error
+        puts "Skipping #{subscriber_list.gov_delivery_id} as it does not appear on GovDelivery"
       else
         puts "Skipping #{subscriber_list.gov_delivery_id} as it now has #{subscribers} subscribers"
       end
@@ -73,8 +92,10 @@ module DataHygiene
 
     def delete_topic_with_error_catching(gov_delivery_id)
       client.delete_topic(gov_delivery_id)
+      true
     rescue GovDelivery::Client::UnknownError
       puts "---- Error deleting: #{gov_delivery_id}"
+      false
     end
 
     class ThreadedSubscriberCountRetriever
@@ -115,9 +136,11 @@ module DataHygiene
 
       def subscriber_count(gov_delivery_id)
         topic = client.fetch_topic(gov_delivery_id)
-        topic && topic['subscribers_count']
+        topic.subscribers_count
+      rescue GovDelivery::Client::TopicNotFound
+        :topic_not_found
       rescue GovDelivery::Client::UnknownError
-        nil
+        :unknown_error
       end
     end
   end
