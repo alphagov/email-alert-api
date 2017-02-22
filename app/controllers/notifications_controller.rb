@@ -18,10 +18,12 @@ class NotificationsController < ApplicationController
 private
 
   def notification_params
-    params.slice(:subject, :from_address_id, :urgent, :header, :footer, :document_type)
+    params.slice(:subject, :from_address_id, :urgent, :header, :footer, :document_type,
+      :content_id, :public_updated_at, :publishing_app)
       .merge(tags: params.fetch(:tags, {}))
       .merge(links: params.fetch(:links, {}))
       .merge(body: notification_body)
+      .merge(govuk_request_id: GovukRequestId.govuk_request_id)
   end
 
   def notification_body

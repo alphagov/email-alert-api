@@ -27,7 +27,10 @@ RSpec.describe NotificationsController, type: :controller do
       }
     }
     let(:expected_notification_params) {
-      notification_params.merge(links: {}).merge(body: expected_body.strip)
+      notification_params
+        .merge(links: {})
+        .merge(body: expected_body.strip)
+        .merge(govuk_request_id: '12345-67890')
     }
 
     before do
