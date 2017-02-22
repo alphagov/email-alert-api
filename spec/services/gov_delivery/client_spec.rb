@@ -295,7 +295,9 @@ RSpec.describe GovDelivery::Client do
       }
       stub_request(:post, @base_url).to_return(body: @govdelivery_response)
 
-      expect { client.send_bulletin(topic_ids, subject, body) }.to raise_error(StandardError)
+      expect do
+        client.send_bulletin(topic_ids, subject, body)
+      end.to raise_error(GovDelivery::Client::UnknownError)
     end
 
     it "POSTs the bulletin with extra parameters if present to the send_now endpoint" do

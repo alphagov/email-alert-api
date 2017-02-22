@@ -1,7 +1,7 @@
 development:
   username: govdelivery@example.com
   password: nottherealpassword
-  account_code: UKGOVUK
+  account_code: UKGOVUKDUP
   protocol: https
   hostname: stage-api.govdelivery.com
   public_hostname: stage-public.govdelivery.com
