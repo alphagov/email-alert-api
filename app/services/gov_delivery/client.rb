@@ -22,6 +22,13 @@ module GovDelivery
       )
     end
 
+    def fetch_topic(code)
+      # GovDelivery documentation for this endpoint:
+      # http://developer.govdelivery.com/api/comm_cloud_v1/Default.htm#API/Comm Cloud V1/API_CommCloudV1_Topics_ReadTopic.htm
+      response = http_client.get("topics/#{code}.xml")
+      Hash.from_xml(response.body)['topic']
+    end
+
     def delete_topic(topic_id)
       # GovDelivery documentation for this endpoint:
       # http://developer.govdelivery.com/api/comm_cloud_v1/Default.htm#API/Comm Cloud V1/API_CommCloudV1_Topics_DeleteTopic.htm

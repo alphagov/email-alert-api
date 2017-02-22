@@ -1,3 +1,11 @@
+desc "Delete subscriber lists without subscribers"
+task delete_topics_without_subscribers: :environment do
+  require "data_hygiene/delete_topics_without_subscribers"
+
+  DataHygiene::DeleteTopicsWithoutSubscribers.new.call
+  puts 'FINISHED'
+end
+
 desc "Create duplicate record for new tags"
 task duplicate_record_for_tag: :environment do
   require "data_hygiene/tag_changer"
