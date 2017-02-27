@@ -1,7 +1,7 @@
 require 'thread'
 
 module DataHygiene
-  class DeleteTopicsWithoutSubscribers
+  class DeleteUnneededTopics
     attr_reader :client
     delegate :puts, to: :@output
     delegate :gets, to: :@input

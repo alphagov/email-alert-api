@@ -1,8 +1,8 @@
-desc "Delete subscriber lists without subscribers"
-task delete_topics_without_subscribers: :environment do
-  require "data_hygiene/delete_topics_without_subscribers"
+desc "Delete subscriber lists without subscribers and ones which don't exist in GovDelivery"
+task delete_unneeded_topics: :environment do
+  require "data_hygiene/delete_unneeded_topics"
 
-  DataHygiene::DeleteTopicsWithoutSubscribers.new.call
+  DataHygiene::DeleteUnneededTopics.new.call
   puts 'FINISHED'
 end
 
