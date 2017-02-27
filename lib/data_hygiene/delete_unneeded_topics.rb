@@ -26,15 +26,19 @@ module DataHygiene
         with_gov_delivery_error.each { |sl| puts "#{sl.gov_delivery_id} - #{sl.title}"}
       end
 
-      puts ''
-      puts "#{with_zero_subscribers.count} subscriber lists without subscribers and #{with_missing_topic.count} subscriber lists don't exist in GovDelivery, enter `delete` to delete from database and GovDelivery: "
-      command = gets
+      to_delete = with_zero_subscribers + with_missing_topic
+      if to_delete.count > 0
+        puts ''
+        puts "#{with_zero_subscribers.count} subscriber lists without subscribers and #{with_missing_topic.count} subscriber lists don't exist in GovDelivery, enter `delete` to delete from database and GovDelivery: "
+        command = gets
 
-      if command.chomp == 'delete'
-        to_delete = with_zero_subscribers + with_missing_topic
-        to_delete.each do |subscriber_list|
-          delete_topic(subscriber_list)
+        if command.chomp == 'delete'
+          to_delete.each do |subscriber_list|
+            delete_topic(subscriber_list)
+          end
         end
+      else
+        puts 'Nothing to delete'
       end
     end
 
