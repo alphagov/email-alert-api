@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170221141514) do
+ActiveRecord::Schema.define(version: 20170302162543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,9 +38,10 @@ ActiveRecord::Schema.define(version: 20170221141514) do
     t.string   "gov_delivery_id", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "document_type",               default: "", null: false
-    t.json     "tags",                        default: {}, null: false
-    t.json     "links",                       default: {}, null: false
+    t.string   "document_type",               default: "",   null: false
+    t.json     "tags",                        default: {},   null: false
+    t.json     "links",                       default: {},   null: false
+    t.boolean  "enabled",                     default: true, null: false
   end
 
 end
