@@ -9,7 +9,9 @@ RSpec.describe NotificationLogsController, type: :controller do
       document_type: 'guidence',
       emailing_app: 'email_alert_api',
       publishing_app: 'Whitehall',
-      gov_delivery_ids: ['Topic 2', 'Topic 1']
+      gov_delivery_ids: ['Topic 4', 'Topic 3', 'Topic 2', 'Topic 1'],
+      enabled_gov_delivery_ids: ['Topic 4', 'Topic 2'],
+      disabled_gov_delivery_ids: ['Topic 3', 'Topic 1'],
     }
   end
 
@@ -23,7 +25,9 @@ RSpec.describe NotificationLogsController, type: :controller do
       document_type: 'guidence',
       emailing_app: 'email_alert_api',
       publishing_app: 'Whitehall',
-      gov_delivery_ids: ['Topic 1', 'Topic 2']
+      gov_delivery_ids: ['Topic 1', 'Topic 2', 'Topic 3', 'Topic 4'],
+      enabled_gov_delivery_ids: ['Topic 2', 'Topic 4'],
+      disabled_gov_delivery_ids: ['Topic 1', 'Topic 3'],
     )
   end
 

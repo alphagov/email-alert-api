@@ -17,7 +17,9 @@ private
       :document_type,
       :emailing_app,
       :publishing_app,
-      gov_delivery_ids: []
+      gov_delivery_ids: [],
+      enabled_gov_delivery_ids: [],
+      disabled_gov_delivery_ids: [],
     )
   end
 end

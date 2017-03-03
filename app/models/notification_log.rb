@@ -11,4 +11,12 @@ class NotificationLog < ActiveRecord::Base
   def gov_delivery_ids=(vals)
     super vals.sort
   end
+
+  def enabled_gov_delivery_ids=(vals)
+    super vals.sort
+  end
+
+  def disabled_gov_delivery_ids=(vals)
+    super vals.sort
+  end
 end
