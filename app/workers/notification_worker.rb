@@ -9,6 +9,11 @@ class NotificationWorker
     @document_type = notification_params[:document_type]
     delivery_ids = lists.map(&:gov_delivery_id)
 
+    log_notification(
+      notification_params,
+      gov_delivery_ids: delivery_ids,
+    )
+
     if lists.any?
       Rails.logger.info "--- Sending email to GovDelivery ---"
       Rails.logger.info "subject: '#{notification_params[:subject]}'"
@@ -34,7 +39,11 @@ class NotificationWorker
           tags: #{@tags_hash}
       LOG
     end
+  end
 
+private
+
+  def log_notification(notification_params, gov_delivery_ids:)
     NotificationLog.create(
       govuk_request_id: notification_params[:govuk_request_id],
       content_id: notification_params[:content_id],
@@ -43,12 +52,14 @@ class NotificationWorker
       tags: @tags_hash,
       document_type: @document_type,
       emailing_app: 'email_alert_api',
-      gov_delivery_ids: delivery_ids,
+      gov_delivery_ids: gov_delivery_ids,
       publishing_app: notification_params[:publishing_app]
     )
+  rescue Exception
+    # rescue any exception here as logging should not delay the email process
+    # and more importantly should not result in multiple emails being sent.
   end
 
-private
   def lists_matched_on_tags
     @lists_matched_on_tags ||= SubscriberListQuery.new(query_field: :tags)
       .where_all_links_match_at_least_one_value_in(@tags_hash)
