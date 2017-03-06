@@ -34,6 +34,18 @@ class NotificationWorker
           tags: #{@tags_hash}
       LOG
     end
+
+    NotificationLog.create(
+      govuk_request_id: notification_params[:govuk_request_id],
+      content_id: notification_params[:content_id],
+      public_updated_at: notification_params[:public_updated_at],
+      links: @links_hash,
+      tags: @tags_hash,
+      document_type: @document_type,
+      emailing_app: 'email_alert_api',
+      gov_delivery_ids: delivery_ids,
+      publishing_app: notification_params[:publishing_app]
+    )
   end
 
 private

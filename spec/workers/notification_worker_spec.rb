@@ -9,7 +9,13 @@ RSpec.describe NotificationWorker do
     end
 
     let(:notification_params) do
-      { subject: "Test subject", body: "Test body copy" }
+      {
+        subject: "Test subject",
+        body: "Test body copy",
+        content_id: "111111-aaaaaa",
+        public_updated_at: "2017-02-21T14:58:45+00:00",
+        govuk_request_id: 'AAAAAA',
+      }
     end
 
     def make_it_perform
@@ -32,6 +38,21 @@ RSpec.describe NotificationWorker do
             "Test body copy",
             {}
           )
+      end
+
+      it 'creates a delivery log record' do
+        expect { make_it_perform }.to change { NotificationLog.count }.by(1)
+
+        expect(NotificationLog.last).to have_attributes(
+          govuk_request_id: 'AAAAAA',
+          content_id: "111111-aaaaaa",
+          public_updated_at: Time.parse("2017-02-21T14:58:45+00:00"),
+          links: {},
+          tags: { 'topics' => ['foo/bar'] },
+          document_type: nil,
+          emailing_app: 'email_alert_api',
+          gov_delivery_ids: ['gov123']
+        )
       end
     end
 
@@ -175,13 +196,28 @@ RSpec.describe NotificationWorker do
           tags:   {topics: ['coal/environment']},
           links:  {topics: ['uuid']}
         )
-        notification_params.merge!(tag: {topics: ['foo/bar']}, links: {topics: ['uuid-888']})
+        notification_params.merge!(tags: {topics: ['foo/bar']}, links: {topics: ['uuid-888']})
       end
 
       it "does not send a bulletin" do
         make_it_perform
 
         expect(@gov_delivery).to_not have_received(:send_bulletin)
+      end
+
+      it 'creates a delivery log record' do
+        expect { make_it_perform }.to change { NotificationLog.count }.by(1)
+
+        expect(NotificationLog.last).to have_attributes(
+          govuk_request_id: 'AAAAAA',
+          content_id: "111111-aaaaaa",
+          public_updated_at: Time.parse("2017-02-21T14:58:45+00:00"),
+          links: { 'topics' => ['uuid-888'] },
+          tags: { 'topics' => ['foo/bar'] },
+          document_type: nil,
+          emailing_app: 'email_alert_api',
+          gov_delivery_ids: []
+        )
       end
     end
   end
