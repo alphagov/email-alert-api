@@ -129,24 +129,24 @@ RSpec.describe GovDelivery::Client do
       end
 
       it 'returns a hash representation of the topic' do
-        expect(client.fetch_topic(topic_code)).to eq(
+        expect(client.fetch_topic(topic_code)).to have_attributes(
           'name' => 'Topic name',
           'short_name' => 'Topic short name',
           'code' => 'UKGOV_1234',
-          'pagewatch_enabled' => false,
-          'lock_version' => 0,
-          'description' => nil,
-          'watch_tagged_content' => false,
-          'pagewatch_autosend' => false,
-          'default_pagewatch_results' => nil,
-          'pagewatch_suspended' => true,
-          'rss_feed_title' => nil,
+          'pagewatch_enabled' => 'false',
+          'lock_version' => '0',
+          'description' => '',
+          'watch_tagged_content' => 'false',
+          'pagewatch_autosend' => 'false',
+          'default_pagewatch_results' => '',
+          'pagewatch_suspended' => 'true',
+          'rss_feed_title' => '',
           'rss_feed_url' => 'https://www.gov.uk/government',
-          'rss_feed_description' => nil,
-          'subscribers_count' => 0,
-          'wireless_enabled' => false,
-          'pagewatch_type' => nil,
-          'pages' => [],
+          'rss_feed_description' => '',
+          'subscribers_count' => '0',
+          'wireless_enabled' => 'false',
+          'pagewatch_type' => '',
+          'pages' => '',
           'visibility' => 'Unlisted'
         )
       end
@@ -163,8 +163,8 @@ RSpec.describe GovDelivery::Client do
         XML
       end
 
-      it 'returns nil' do
-        expect(client.fetch_topic(topic_code)).to be_nil
+      it 'raises a TopicNotFound error' do
+        expect { client.fetch_topic(topic_code) }.to raise_error(GovDelivery::Client::TopicNotFound)
       end
     end
   end

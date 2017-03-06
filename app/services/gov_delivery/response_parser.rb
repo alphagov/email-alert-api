@@ -28,6 +28,8 @@ module GovDelivery
     end
 
     def values
+      # This returns all values as strings rather than observing the `type`s
+      # in the XML, so beware of comparisons like 0 == '0'
       first_level_element_nodes.map(&:text)
     end
 
