@@ -78,6 +78,22 @@ RSpec.describe NotificationWorker do
             {}
           )
       end
+
+      context "Logging of the notification creates an unexpected exception" do
+        before do
+          expect(NotificationLog).to receive(:create).and_raise(Exception)
+        end
+
+        it "the process ends without an exception" do
+          expect { make_it_perform }.not_to raise_error
+        end
+
+        it "the bulletin is still sent" do
+          make_it_perform
+
+          expect(@gov_delivery).to have_received(:send_bulletin)
+        end
+      end
     end
 
     context "filtering on document_type" do
