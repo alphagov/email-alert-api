@@ -35,7 +35,7 @@ module GovDelivery
             xml.cdata options[:header]
           } if options[:header]
           xml.footer {
-            xml.cdata options[:footer] || default_footer
+            xml.cdata default_footer
           }
         }
       }.to_xml

@@ -300,7 +300,7 @@ RSpec.describe GovDelivery::Client do
       end.to raise_error(GovDelivery::Client::UnknownError)
     end
 
-    it "POSTs the bulletin with extra parameters if present to the send_now endpoint" do
+    it "POSTs the bulletin with extra parameters (EXCEPT FOOTER) if present to the send_now endpoint" do
       stub_request(:post, @base_url).to_return(body: @govdelivery_response)
 
       client.send_bulletin(topic_ids, subject, body, {
@@ -328,7 +328,7 @@ RSpec.describe GovDelivery::Client do
           <from_address_id>12345</from_address_id>
           <urgent>true</urgent>
           <header><![CDATA[<h1>Foo</h1>]]></header>
-          <footer><![CDATA[<p>bar</p>]]></footer>
+          <footer><![CDATA[#{GovDelivery::RequestBuilder.default_footer}]]></footer>
         </bulletin>
       XML
       assert_requested(:post, @base_url) do |req|
