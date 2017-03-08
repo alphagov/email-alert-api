@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "Getting a subscriber list", type: :request do
-  include GovDeliveryHelpers
-
   let!(:subscriber_list_links_only) do
     FactoryGirl.create(
       :subscriber_list,
