@@ -79,12 +79,12 @@ private
 
   def lists_matched_on_tags
     @lists_matched_on_tags ||= SubscriberListQuery.new(query_field: :tags)
-      .where_all_links_match_at_least_one_value_in(@tags_hash)
+      .with_one_matching_value_for_each_key(@tags_hash)
   end
 
   def lists_matched_on_links
     @lists_matched_on_links ||= SubscriberListQuery.new(query_field: :links)
-      .where_all_links_match_at_least_one_value_in(@links_hash)
+      .with_one_matching_value_for_each_key(@links_hash)
   end
 
   def lists_matched_on_document_type_only

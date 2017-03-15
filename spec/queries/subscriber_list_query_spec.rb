@@ -21,7 +21,7 @@ RSpec.describe SubscriberListQuery do
     end
   end
 
-  describe "#where_all_links_match_at_least_one_value_in(query_hash)" do
+  describe "#with_one_matching_value_for_each_key(query_hash)" do
     before do
       @list1 = create(:subscriber_list, tags: {
         topics: ["oil-and-gas/licensing"], organisations: ["environment-agency", "hm-revenue-customs"]
@@ -42,7 +42,7 @@ RSpec.describe SubscriberListQuery do
     end
 
     def execute_query(field:, query_hash:)
-      SubscriberListQuery.new(query_field: field).where_all_links_match_at_least_one_value_in(query_hash)
+      SubscriberListQuery.new(query_field: field).with_one_matching_value_for_each_key(query_hash)
     end
 
     it "finds subscriber lists where at least one value of each link in the subscription is present in the query_hash" do
