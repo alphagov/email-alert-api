@@ -26,14 +26,7 @@ class NotificationWorker
       Rails.logger.info "notification_json: #{notification_params.to_json}"
       Rails.logger.info "--- End email to GovDelivery ---"
 
-      options = notification_params.slice(:from_address_id, :urgent, :header, :footer)
-      Services.gov_delivery.send_bulletin(
-        enabled_gov_delivery_ids.uniq,
-        notification_params[:subject],
-        notification_params[:body],
-        options
-      )
-      Rails.logger.info "Email '#{notification_params[:subject]}' sent"
+      send_email(enabled_gov_delivery_ids.uniq, notification_params)
     else
       Rails.logger.info <<-LOG.strip_heredoc
         No matching lists in GovDelivery, not sending email.
@@ -45,6 +38,25 @@ class NotificationWorker
   end
 
 private
+
+  def send_email(gov_delivery_ids, params)
+    Services.gov_delivery.send_bulletin(
+      gov_delivery_ids,
+      params[:subject],
+      params[:body],
+      params.slice(:from_address_id, :urgent, :header, :footer)
+    )
+    Rails.logger.info "Email '#{params[:subject]}' sent"
+  rescue GovDelivery::Client::UnknownError => e
+    # We want to to be notified when trying to send to a topic without
+    # any subscribers (GD-12004), however we want to swallow the error
+    # as otherwise the sidekiq job continue to retry, with the same error.
+    if e.message =~ /GD-12004/
+      Airbrake.notify(e)
+    else
+      raise
+    end
+  end
 
   def log_notification(notification_params, enabled_gov_delivery_ids:, disabled_gov_delivery_ids:)
     NotificationLog.create(

@@ -185,7 +185,6 @@ RSpec.describe NotificationWorker do
               document_type: 'travel-advice',
               tags: { countries: ['andorra'] },
             )
-
           end
 
           it "sends a bulletin when document_type matches" do
@@ -203,6 +202,52 @@ RSpec.describe NotificationWorker do
             expect(Rails.logger).not_to have_received(:info).with(/matched/)
           end
         end
+      end
+    end
+
+    context "given the subscriber list has no subscribers - GovDelivery raises a GD-12004" do
+      before do
+        create(
+          :subscriber_list,
+          tags: {topics: ['foo/bar']},
+          links: {},
+        )
+        notification_params.merge!(tags: {topics: ['foo/bar']})
+
+        expect(@gov_delivery).to receive(:send_bulletin).and_raise(
+          GovDelivery::Client::UnknownError,
+          'GD-12004: To send a bulletin you must select at least one topic or category that has subscribers.'
+        )
+      end
+
+      it "does not raise an error" do
+        expect { make_it_perform }.not_to raise_error
+      end
+
+      it "sends an Airbrake notification" do
+        expect(Airbrake).to receive(:notify)
+        make_it_perform
+      end
+
+    end
+
+    context "given GovDelivery raises an error other than GD-12004" do
+      before do
+        create(
+          :subscriber_list,
+          tags: {topics: ['foo/bar']},
+          links: {},
+        )
+        notification_params.merge!(tags: {topics: ['foo/bar']})
+
+        expect(@gov_delivery).to receive(:send_bulletin).and_raise(
+          GovDelivery::Client::UnknownError,
+          'GD-22222',
+        )
+      end
+
+      it "raises an error" do
+        expect { make_it_perform }.to raise_error(GovDelivery::Client::UnknownError)
       end
     end
 
