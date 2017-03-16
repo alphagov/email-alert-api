@@ -7,25 +7,28 @@ class NotificationWorker
     @tags_hash  = Hash(notification_params[:tags])
     @links_hash = Hash(notification_params[:links])
     @document_type = notification_params[:document_type]
-    delivery_ids = lists.map(&:gov_delivery_id)
+
+    enabled_lists, disabled_lists = lists.partition(&:enabled?)
+    enabled_gov_delivery_ids = enabled_lists.map(&:gov_delivery_id)
 
     log_notification(
       notification_params,
-      gov_delivery_ids: delivery_ids,
+      enabled_gov_delivery_ids: enabled_gov_delivery_ids,
+      disabled_gov_delivery_ids: disabled_lists.map(&:gov_delivery_id),
     )
 
-    if lists.any?
+    if enabled_lists.any?
       Rails.logger.info "--- Sending email to GovDelivery ---"
       Rails.logger.info "subject: '#{notification_params[:subject]}'"
       Rails.logger.info "links: '#{@links_hash}'"
       Rails.logger.info "tags: '#{@tags_hash}'"
-      Rails.logger.info "matched #{lists.count} lists in GovDelivery: [#{delivery_ids.join(', ')}]"
+      Rails.logger.info "matched #{enabled_lists.count} lists in GovDelivery: [#{enabled_gov_delivery_ids.join(', ')}]"
       Rails.logger.info "notification_json: #{notification_params.to_json}"
       Rails.logger.info "--- End email to GovDelivery ---"
 
       options = notification_params.slice(:from_address_id, :urgent, :header, :footer)
       Services.gov_delivery.send_bulletin(
-        delivery_ids.uniq,
+        enabled_gov_delivery_ids.uniq,
         notification_params[:subject],
         notification_params[:body],
         options
@@ -43,7 +46,7 @@ class NotificationWorker
 
 private
 
-  def log_notification(notification_params, gov_delivery_ids:)
+  def log_notification(notification_params, enabled_gov_delivery_ids:, disabled_gov_delivery_ids:)
     NotificationLog.create(
       govuk_request_id: notification_params[:govuk_request_id],
       content_id: notification_params[:content_id],
@@ -52,8 +55,10 @@ private
       tags: @tags_hash,
       document_type: @document_type,
       emailing_app: 'email_alert_api',
-      gov_delivery_ids: gov_delivery_ids,
-      publishing_app: notification_params[:publishing_app]
+      gov_delivery_ids: enabled_gov_delivery_ids + disabled_gov_delivery_ids,
+      enabled_gov_delivery_ids: enabled_gov_delivery_ids,
+      disabled_gov_delivery_ids: disabled_gov_delivery_ids,
+      publishing_app: notification_params[:publishing_app],
     )
   rescue Exception
     # rescue any exception here as logging should not delay the email process
