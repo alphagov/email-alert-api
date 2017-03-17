@@ -1,10 +1,47 @@
 require "rails_helper"
 
 RSpec.describe "Creating a subscriber list", type: :request do
-  include GovDeliveryHelpers
+  let(:base_url) do
+    config = EmailAlertAPI.config.gov_delivery
+    "http://#{config.fetch(:username)}:#{config.fetch(:password)}@#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}"
+  end
 
   before do
-    stub_gov_delivery_topic_creation
+    stub_request(:post, base_url + "/topics.xml")
+      .with(body: /This is a sample title/)
+      .to_return(body: %{
+        <?xml version="1.0" encoding="UTF-8"?>
+        <topic>
+          <to-param>UKGOVUK_1234</to-param>
+          <topic-uri>/api/account/UKGOVUK/topics/UKGOVUK_1234.xml</topic-uri>
+          <link rel="self" href="/api/account/UKGOVUK/topics/UKGOVUK_1234"/>
+        </topic>
+      })
+  end
+
+  it "creates the topic on gov delivery" do
+    create_subscriber_list(tags: {topics: ["oil-and-gas/licensing"]})
+
+    body = <<-XML.strip_heredoc
+      <?xml version="1.0"?>
+      <topic>
+        <name>This is a sample title</name>
+        <short-name>This is a sample title</short-name>
+        <visibility>Unlisted</visibility>
+        <pagewatch-enabled type="boolean">false</pagewatch-enabled>
+        <rss-feed-url nil="true"/>
+        <rss-feed-title nil="true"/>
+        <rss-feed-description nil="true"/>
+      </topic>
+    XML
+
+    assert_requested(
+      :post,
+      base_url + "/topics.xml",
+      headers: {'Content-Type' => 'application/xml'},
+      body: body,
+      times: 1
+    )
   end
 
   it "returns a 201" do
@@ -98,16 +135,14 @@ RSpec.describe "Creating a subscriber list", type: :request do
     end
   end
 
-  def create_subscriber_list(tags: {}, links: {}, document_type: nil)
-    payload = {
+  def create_subscriber_list(payload = {})
+    defaults = {
       title: "This is a sample title",
-      gov_delivery_id: "UKGOVUK_1234",
-      tags: tags,
-      links: links,
+      tags: {},
+      links: {},
     }
 
-    payload.merge!(document_type: document_type) if document_type
-    request_body = JSON.dump(payload)
+    request_body = JSON.dump(defaults.merge(payload))
 
     post "/subscriber-lists", request_body, json_headers
   end
