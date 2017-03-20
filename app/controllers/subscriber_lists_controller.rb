@@ -37,13 +37,9 @@ private
   end
 
   def find_subscriber_list
-    links_query = SubscriberListQuery.new(query_field: :links)
-    tags_query = SubscriberListQuery.new(query_field: :tags)
-    document_type_query = SubscriberListQuery.new(query_field: :neither)
-
-    links_query.find_exact_match_with(links, document_type).first ||
-      tags_query.find_exact_match_with(tags, document_type).first ||
-      document_type_query.where_only_document_type_matches(document_type).first
+    FindExactMatch.new(query_field: :links).call(links, document_type).first ||
+      FindExactMatch.new(query_field: :tags).call(tags, document_type).first ||
+      WhereOnlyDocumentTypeMatches.new.call(document_type).first
   end
 
   def subscriber_list_params
