@@ -135,13 +135,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
     end
 
-    context "and no document_type is provided" do
-      it "returns a 422" do
-        create_subscriber_list
 
-        expect(response.status).to eq(422);
-        expect(response.body).to match(/Must have either a document_type, tags or links/)
-      end
     end
   end
 
