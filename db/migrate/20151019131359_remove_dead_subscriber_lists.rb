@@ -10,7 +10,7 @@ class RemoveDeadSubscriberLists < ActiveRecord::Migration
       # not present in content store
       'pharmaceutical-industry/advertising-medicines',
     ].each do |topic_path|
-      list = SubscriberListQuery.new.find_exact_match_with(topics: [topic_path]).first
+      list = FindExactMatch.new.call(topics: [topic_path]).first
       if list.present?
         list.destroy!
       end

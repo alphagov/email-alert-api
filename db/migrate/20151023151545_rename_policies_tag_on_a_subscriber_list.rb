@@ -1,6 +1,6 @@
 class RenamePoliciesTagOnASubscriberList < ActiveRecord::Migration
   def up
-    target_list = SubscriberListQuery.new.find_exact_match_with(
+    target_list = FindExactMatch.new.call(
       { policies: ["inspections-of-schools-colleges-and-children-s-services"] }
     ).first
 

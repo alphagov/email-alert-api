@@ -13,7 +13,7 @@ private
   attr_reader :from_topic_tag, :to_topic_tag
 
   def subscriber_records_with_tags
-    SubscriberListQuery.new.at_least_one_topic_value_matches(from_topic_tag)
+    FindByTopic.new.call(topic: from_topic_tag)
   end
 
   def commit_update
