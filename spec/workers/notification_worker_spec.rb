@@ -50,6 +50,8 @@ RSpec.describe NotificationWorker do
           links: {},
           tags: { 'topics' => ['foo/bar'] },
           document_type: nil,
+          email_document_supertype: nil,
+          government_document_supertype: nil,
           emailing_app: 'email_alert_api',
           gov_delivery_ids: ['gov123'],
           enabled_gov_delivery_ids: ['gov123'],
@@ -145,6 +147,8 @@ RSpec.describe NotificationWorker do
     context "when the subscriber list has no tags or links" do
       before do
         create(:subscriber_list, document_type: 'travel-advice', tags: {}, links: {})
+        create(:subscriber_list, email_document_supertype: 'publications', tags: {}, links: {})
+        create(:subscriber_list, government_document_supertype: 'new-stories', tags: {}, links: {})
       end
 
       it "sends a bulletin when document_type matches" do
@@ -153,8 +157,32 @@ RSpec.describe NotificationWorker do
         expect(@gov_delivery).to have_received(:send_bulletin)
       end
 
+      it "sends a bulletin when email_document_supertype matches" do
+        notification_params[:email_document_supertype] = 'publications'
+        make_it_perform
+        expect(@gov_delivery).to have_received(:send_bulletin)
+      end
+
+      it "sends a bulletin when government_document_supertype matches" do
+        notification_params[:government_document_supertype] = 'new-stories'
+        make_it_perform
+        expect(@gov_delivery).to have_received(:send_bulletin)
+      end
+
       it "does not send a bulletin when document_type does not match" do
         notification_params[:document_type] = 'not-travel-advice'
+        make_it_perform
+        expect(@gov_delivery).not_to have_received(:send_bulletin)
+      end
+
+      it "does not sends a bulletin when email_document_supertype does not match" do
+        notification_params[:email_document_supertype] = 'not-publications'
+        make_it_perform
+        expect(@gov_delivery).not_to have_received(:send_bulletin)
+      end
+
+      it "does not sends a bulletin when government_document_supertype does not match" do
+        notification_params[:government_document_supertype] = 'not-new-stories'
         make_it_perform
         expect(@gov_delivery).not_to have_received(:send_bulletin)
       end

@@ -1,21 +1,21 @@
 class FindExactMatch
-  def initialize(query_field: :tags)
+  def initialize(query_field: :tags, scope: SubscriberList)
     raise ArgumentError.new("query_field must be `:tags` or `:links`") unless %i{tags links}.include?(query_field)
 
     @query_field = query_field.to_sym
+    @scope = scope
   end
 
 
-  def call(query_hash, document_type)
+  def call(query_hash)
     return [] unless query_hash.present?
 
     subscriber_lists = subscriber_lists_where_all_keys_present(query_hash)
-    subscriber_lists = subscriber_lists.where(document_type: document_type)
 
     subscriber_lists.select do |list|
       list.send(@query_field).all? do |descriptor, array_of_values|
-        next if query_hash[descriptor].nil?
-        query_hash[descriptor].sort == array_of_values.sort
+        query_hash[descriptor].present? &&
+          query_hash[descriptor].sort == array_of_values.sort
       end
     end
   end
@@ -32,7 +32,7 @@ private
   def subscriber_lists_where_all_keys_present(query_hash)
     # This uses array equality to check if the JSON object
     # contains all the specified keys.
-    SubscriberList.where("ARRAY(SELECT json_object_keys(#{@query_field})) = Array[:keys]",
+    @scope.where("ARRAY(SELECT json_object_keys(#{@query_field})) = Array[:keys]",
       keys: query_hash.keys,
     )
   end

@@ -44,28 +44,18 @@ private
   end
 
   def find_subscriber_list
-    FindExactMatch.new(query_field: :links).call(links, document_type).first ||
-      FindExactMatch.new(query_field: :tags).call(tags, document_type).first ||
-      WhereOnlyDocumentTypeMatches.new.call(document_type).first
+    FindExactQuery.new(subscriber_list_params.except(:title, :enabled)).exact_match
   end
 
   def subscriber_list_params
-    params.slice(:title)
-      .merge(tags: params.fetch(:tags, {}))
-      .merge(links: params.fetch(:links, {}))
-      .merge(document_type: params.fetch(:document_type, ""))
-      .merge(enabled: params[:gov_delivery_id].blank?)
-  end
-
-  def links
-    subscriber_list_params[:links]
-  end
-
-  def tags
-    subscriber_list_params[:tags]
-  end
-
-  def document_type
-    subscriber_list_params[:document_type]
+    {
+      title: params[:title],
+      tags: params.fetch(:tags, {}),
+      links: params.fetch(:links, {}),
+      document_type: params.fetch(:document_type, ""),
+      enabled: params[:gov_delivery_id].blank?,
+      email_document_supertype: params.fetch(:email_document_supertype, ""),
+      government_document_supertype: params.fetch(:government_document_supertype, "")
+    }
   end
 end

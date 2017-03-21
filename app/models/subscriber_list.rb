@@ -16,6 +16,8 @@ class SubscriberList < ActiveRecord::Base
       links: params[:links],
       enabled: params[:enabled],
       document_type: params[:document_type],
+      email_document_supertype: params[:email_document_supertype],
+      government_document_supertype: params[:government_document_supertype],
       gov_delivery_id: gov_delivery_id,
     )
   end

@@ -19,7 +19,8 @@ private
 
   def notification_params
     params.slice(:subject, :from_address_id, :urgent, :header, :footer, :document_type,
-      :content_id, :public_updated_at, :publishing_app)
+      :content_id, :public_updated_at, :publishing_app, :email_document_supertype,
+      :government_document_supertype)
       .merge(tags: params.fetch(:tags, {}))
       .merge(links: params.fetch(:links, {}))
       .merge(body: notification_body)
