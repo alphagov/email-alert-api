@@ -28,11 +28,18 @@ class SubscriberListsController < ApplicationController
   end
 
 private
+
   def build_subscriber_list
-    gov_delivery_response = Services.gov_delivery.create_topic(params[:title])
+    gov_delivery_id = if params[:gov_delivery_id].present?
+      params[:gov_delivery_id]
+    else
+      gov_delivery_response = Services.gov_delivery.create_topic(params[:title])
+      gov_delivery_response.to_param
+    end
+
     SubscriberList.build_from(
       params: subscriber_list_params,
-      gov_delivery_id: gov_delivery_response.to_param
+      gov_delivery_id: gov_delivery_id
     )
   end
 
@@ -47,6 +54,7 @@ private
       .merge(tags: params.fetch(:tags, {}))
       .merge(links: params.fetch(:links, {}))
       .merge(document_type: params.fetch(:document_type, ""))
+      .merge(enabled: params[:gov_delivery_id].blank?)
   end
 
   def links

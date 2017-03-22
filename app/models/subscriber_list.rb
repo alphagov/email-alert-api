@@ -15,6 +15,7 @@ class SubscriberList < ActiveRecord::Base
       title: params[:title],
       tags:  params[:tags],
       links: params[:links],
+      enabled: params[:enabled],
       document_type: params[:document_type],
       gov_delivery_id: gov_delivery_id,
     )

@@ -44,6 +44,16 @@ RSpec.describe "Creating a subscriber list", type: :request do
     )
   end
 
+   it "creates an enabled subscriber_list" do
+    create_subscriber_list(tags: {topics: ["oil-and-gas/licensing"]})
+
+    subscriber_list = SubscriberList.last
+    expect(subscriber_list).to have_attributes(
+      gov_delivery_id: 'UKGOVUK_1234',
+      enabled: true,
+    )
+  end
+
   it "returns a 201" do
     create_subscriber_list(tags: {topics: ["oil-and-gas/licensing"]})
 
@@ -132,6 +142,30 @@ RSpec.describe "Creating a subscriber list", type: :request do
         expect(response.status).to eq(422);
         expect(response.body).to match(/Must have either a document_type, tags or links/)
       end
+    end
+  end
+
+  context "when gov_delivery_id is passed in" do
+    it "does not attempt to create a new topic on gov delivery" do
+      create_subscriber_list(
+        gov_delivery_id: 'TOPIC_AAAA',
+        tags: {topics: ["oil-and-gas/licensing"]},
+      )
+
+      assert_not_requested(:post, base_url + '/topics.xml')
+    end
+
+    it "creates a disabled subscriber_list with the specified gov_delivery_id" do
+      create_subscriber_list(
+        gov_delivery_id: 'TOPIC_AAAA',
+        tags: {topics: ["oil-and-gas/licensing"]},
+      )
+
+      subscriber_list = SubscriberList.last
+      expect(subscriber_list).to have_attributes(
+        gov_delivery_id: 'TOPIC_AAAA',
+        enabled: false,
+      )
     end
   end
 
