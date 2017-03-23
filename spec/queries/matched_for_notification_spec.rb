@@ -69,6 +69,26 @@ RSpec.describe MatchedForNotification do
       end
     end
 
+    context "Specialist publisher edge case" do
+      let!(:subscriber_list) { create(:subscriber_list, tags: { format: ["employment_tribunal_decision"] }) }
+
+      it "finds the list when the criteria values is a string that is present in the subscriber list values for the field" do
+        lists = execute_query(field: :tags, query_hash: {
+          format: "employment_tribunal_decision",
+        })
+
+        expect(lists).to eq([subscriber_list])
+      end
+
+      it "does not find the list when the criteria values is a string that is not present in the subscriber list values for the field" do
+        lists = execute_query(field: :tags, query_hash: {
+          format: "drug_safety_update",
+        })
+
+        expect(lists).to eq([])
+      end
+    end
+
     it "doesn't return lists which have no tag types present in the document" do
       lists = execute_query(field: :tags, query_hash: {
         another_tag_thats_not_part_of_any_subscription: ["elephants"],
