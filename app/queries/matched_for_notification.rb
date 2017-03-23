@@ -20,7 +20,7 @@ class MatchedForNotification
 
       subscriber_list_tags_or_links.keys.all? do |key|
         (
-          content_item_tags_or_links[key] & subscriber_list_tags_or_links[key]
+          Array(content_item_tags_or_links[key]) & subscriber_list_tags_or_links[key]
         ).any?
       end
     end
