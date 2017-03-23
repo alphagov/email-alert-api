@@ -1,62 +1,109 @@
 require 'rails_helper'
 
 RSpec.describe FindExactMatch do
-  before do
-    @list_with_tags = create(
+  let!(:list_with_tags) do
+    create(
       :subscriber_list,
       tags: {
         topics: ["oil-and-gas/licensing"],
         organisations: ["environment-agency", "hm-revenue-customs"]
       },
+      links: {
+        topics: ["uuid-888"],
+        organisations: ["org-123", "org-555"]
+      },
       document_type: "policy",
     )
   end
 
-  it "requires all tag types in the document to be present in the list" do
-    found_lists = described_class.new(query_field: :tags)
-      .call({ topics: ["oil-and-gas/licensing"] }, "policy")
-    expect(found_lists).to eq([])
+  context 'when matching on tags' do
+    it "not matched when query contains less keys than the subscriber_list" do
+      found_lists = described_class.new(query_field: :tags)
+        .call({ topics: ["oil-and-gas/licensing"] })
+      expect(found_lists).to eq([])
+    end
+
+    it "not matched when query contains more keys than the subscriber_list" do
+      found_lists = described_class.new(query_field: :tags)
+        .call({
+          topics: ["oil-and-gas/licensing"],
+          organisations: ["environment-agency", "hm-revenue-customs"],
+          foo: ["bar"]
+        })
+      expect(found_lists).to eq([])
+    end
+
+    it "not matched when matching keys, but different values for each key" do
+      found_lists = described_class.new(query_field: :tags)
+        .call({
+          topics: ["oil-and-gas/conservation"],
+          organisations: ["environment-agency", "hm-revenue-customs"],
+        })
+      expect(found_lists).to eq([])
+    end
+
+    it "matched when matching keys with matching values" do
+      found_lists = described_class.new(query_field: :tags)
+        .call({
+          topics: ["oil-and-gas/licensing"],
+          organisations: ["environment-agency", "hm-revenue-customs"],
+        })
+      expect(found_lists).to eq([list_with_tags])
+    end
+
+    it "order of values for keys does not affect matching" do
+      found_lists = described_class.new(query_field: :tags)
+        .call({
+          topics: ["oil-and-gas/licensing"],
+          organisations: ["hm-revenue-customs", "environment-agency"],
+        })
+      expect(found_lists).to eq([list_with_tags])
+    end
   end
 
-  it "requires all tag types in the list to be present in the document" do
-    found_lists = described_class.new(query_field: :tags)
-      .call({
-        topics: ["oil-and-gas/licensing"],
-        organisations: ["environment-agency", "hm-revenue-customs"],
-        foo: ["bar"]
-      }, "policy")
-    expect(found_lists).to eq([])
-  end
+  context 'when matching on links' do
+    it "not matched when query contains less keys than the subscriber_list" do
+      found_lists = described_class.new(query_field: :links)
+        .call({ topics: ["uuid-888"] })
+      expect(found_lists).to eq([])
+    end
 
-  it "requires the a match on the document type" do
-    found_lists = described_class.new(query_field: :tags)
-      .call({
-        topics: ["oil-and-gas/licensing"],
-        organisations: ["environment-agency", "hm-revenue-customs"]
-      }, "something_else")
-    expect(found_lists).to eq([])
-  end
+    it "not matched when query contains more keys than the subscriber_list" do
+      found_lists = described_class.new(query_field: :links)
+        .call({
+          topics: ["uuid-888"],
+          organisations: ["org-123", "org-555"],
+          foo: ["bar"]
+        })
+      expect(found_lists).to eq([])
+    end
 
-  it "requires all tag types in the list to be present in the document" do
-    list_with_links = create(
-      :subscriber_list,
-      links: { topics: ["uuid-888"] },
-      document_type: "policy",
-    )
 
-    found_by_tags = described_class.new(query_field: :tags)
-      .call({
-        topics: ["oil-and-gas/licensing"],
-        organisations: ["environment-agency", "hm-revenue-customs"]
-      }, "policy")
+    it "not matched when matching keys, but different values for each key" do
+      found_lists = described_class.new(query_field: :links)
+        .call({
+          topics: ["oil-and-gas/conservation"],
+          organisations: ["org-123", "org-555"],
+        })
+      expect(found_lists).to eq([])
+    end
 
-    expect(found_by_tags).to eq([@list_with_tags])
+    it "matched when matching keys with matching values" do
+      found_lists = described_class.new(query_field: :links)
+        .call({
+          topics: ["uuid-888"],
+          organisations: ["org-123", "org-555"],
+        })
+      expect(found_lists).to eq([list_with_tags])
+    end
 
-    found_by_links = described_class.new(query_field: :links)
-      .call({
-        topics: ["uuid-888"]
-      }, "policy")
-
-    expect(found_by_links).to eq([list_with_links])
+    it "order of values for keys does not affect matching" do
+      found_lists = described_class.new(query_field: :links)
+        .call({
+          topics: ["uuid-888"],
+          organisations: ["org-555", "org-123"],
+        })
+      expect(found_lists).to eq([list_with_tags])
+    end
   end
 end

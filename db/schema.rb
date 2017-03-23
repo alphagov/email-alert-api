@@ -11,39 +11,43 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170302162818) do
+ActiveRecord::Schema.define(version: 20170320170223) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "notification_logs", force: :cascade do |t|
-    t.string   "govuk_request_id",          default: ""
-    t.string   "content_id",                default: ""
+    t.string   "govuk_request_id",              default: ""
+    t.string   "content_id",                    default: ""
     t.datetime "public_updated_at"
-    t.json     "links",                     default: {}
-    t.json     "tags",                      default: {}
-    t.string   "document_type",             default: ""
-    t.string   "emailing_app",              default: "", null: false
-    t.json     "gov_delivery_ids",          default: []
-    t.string   "publishing_app",            default: ""
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
-    t.json     "enabled_gov_delivery_ids",  default: []
-    t.json     "disabled_gov_delivery_ids", default: []
+    t.json     "links",                         default: {}
+    t.json     "tags",                          default: {}
+    t.string   "document_type",                 default: ""
+    t.string   "emailing_app",                  default: "", null: false
+    t.json     "gov_delivery_ids",              default: []
+    t.string   "publishing_app",                default: ""
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
+    t.json     "enabled_gov_delivery_ids",      default: []
+    t.json     "disabled_gov_delivery_ids",     default: []
+    t.string   "email_document_supertype",      default: ""
+    t.string   "government_document_supertype", default: ""
   end
 
   add_index "notification_logs", ["content_id", "public_updated_at"], name: "index_notification_logs_on_content_id_and_public_updated_at", using: :btree
   add_index "notification_logs", ["govuk_request_id"], name: "index_notification_logs_on_govuk_request_id", using: :btree
 
   create_table "subscriber_lists", force: :cascade do |t|
-    t.string   "title",           limit: 255
-    t.string   "gov_delivery_id", limit: 255
+    t.string   "title",                         limit: 255
+    t.string   "gov_delivery_id",               limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "document_type",               default: "",   null: false
-    t.json     "tags",                        default: {},   null: false
-    t.json     "links",                       default: {},   null: false
-    t.boolean  "enabled",                     default: true, null: false
+    t.string   "document_type",                             default: "",   null: false
+    t.json     "tags",                                      default: {},   null: false
+    t.json     "links",                                     default: {},   null: false
+    t.boolean  "enabled",                                   default: true, null: false
+    t.string   "email_document_supertype",                  default: "",   null: false
+    t.string   "government_document_supertype",             default: "",   null: false
   end
 
 end

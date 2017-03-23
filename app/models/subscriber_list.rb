@@ -8,7 +8,6 @@ class SubscriberList < ActiveRecord::Base
 
   validate :tag_values_are_valid
   validate :link_values_are_valid
-  validate :either_document_type_tags_or_links_present
 
   def self.build_from(params:, gov_delivery_id:)
     new(
@@ -17,6 +16,8 @@ class SubscriberList < ActiveRecord::Base
       links: params[:links],
       enabled: params[:enabled],
       document_type: params[:document_type],
+      email_document_supertype: params[:email_document_supertype],
+      government_document_supertype: params[:government_document_supertype],
       gov_delivery_id: gov_delivery_id,
     )
   end
@@ -46,14 +47,6 @@ private
     unless self[:links].all? { |_, v| v.is_a?(Array) }
       self.errors.add(:links, "All link values must be sent as Arrays")
     end
-  end
-
-  def either_document_type_tags_or_links_present
-    return if self[:document_type].present?
-    return if self[:tags].present?
-    return if self[:links].present?
-
-    self.errors.add(:base, "Must have either a document_type, tags or links")
   end
 
   def gov_delivery_config

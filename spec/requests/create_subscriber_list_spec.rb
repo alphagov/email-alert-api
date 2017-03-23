@@ -80,6 +80,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
         tags
         links
         enabled
+        email_document_supertype
+        government_document_supertype
       }.to_set
     )
     expect(subscriber_list).to include(
@@ -134,14 +136,21 @@ RSpec.describe "Creating a subscriber list", type: :request do
         expect(response.status).to eq(201)
       end
     end
+  end
 
-    context "and no document_type is provided" do
-      it "returns a 422" do
-        create_subscriber_list
+  context "when creating a subscriber list with 'email' and 'government' document supertypes" do
+    it "returns a 201" do
+      create_subscriber_list(
+        email_document_supertype: "publications",
+        government_document_supertype: "news_stories",
+      )
 
-        expect(response.status).to eq(422);
-        expect(response.body).to match(/Must have either a document_type, tags or links/)
-      end
+      expect(response.status).to eq(201)
+
+      expect(SubscriberList.last).to have_attributes(
+        email_document_supertype: "publications",
+        government_document_supertype: "news_stories",
+      )
     end
   end
 

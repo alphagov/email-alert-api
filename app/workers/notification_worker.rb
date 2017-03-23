@@ -6,12 +6,13 @@ class NotificationWorker
 
     tags_hash  = Hash(notification_params[:tags])
     links_hash = Hash(notification_params[:links])
-    document_type = notification_params[:document_type]
 
     query = SubscriberListQuery.new(
-      tags_hash,
-      links_hash,
-      document_type,
+      tags: tags_hash,
+      links: links_hash,
+      document_type: notification_params[:document_type],
+      email_document_supertype: notification_params[:email_document_supertype],
+      government_document_supertype: notification_params[:government_document_supertype],
     )
 
     enabled_lists, disabled_lists = query.lists.partition(&:enabled?)
@@ -23,7 +24,6 @@ class NotificationWorker
       disabled_gov_delivery_ids: disabled_lists.map(&:gov_delivery_id),
       tags_hash: tags_hash,
       links_hash: links_hash,
-      document_type: document_type,
     )
 
     if enabled_lists.any?
@@ -67,14 +67,16 @@ private
     end
   end
 
-  def log_notification(notification_params, enabled_gov_delivery_ids:, disabled_gov_delivery_ids:, links_hash:, tags_hash:, document_type:)
+  def log_notification(notification_params, enabled_gov_delivery_ids:, disabled_gov_delivery_ids:, links_hash:, tags_hash:)
     NotificationLog.create(
       govuk_request_id: notification_params[:govuk_request_id],
       content_id: notification_params[:content_id],
       public_updated_at: notification_params[:public_updated_at],
       links: links_hash,
       tags: tags_hash,
-      document_type: document_type,
+      document_type: notification_params[:document_type],
+      email_document_supertype: notification_params[:email_document_supertype],
+      government_document_supertype: notification_params[:government_document_supertype],
       emailing_app: 'email_alert_api',
       gov_delivery_ids: enabled_gov_delivery_ids + disabled_gov_delivery_ids,
       enabled_gov_delivery_ids: enabled_gov_delivery_ids,

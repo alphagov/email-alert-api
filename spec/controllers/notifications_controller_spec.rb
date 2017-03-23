@@ -54,5 +54,23 @@ RSpec.describe NotificationsController, type: :controller do
 
       post :create, notification_params.merge(format: :json)
     end
+
+    it "allows an optional email_document_supertype parameter" do
+      notification_params[:email_document_supertype] = "travel_advice"
+      expect(NotificationWorker).to receive(:perform_async).with(
+        expected_notification_params
+      )
+
+      post :create, notification_params.merge(format: :json)
+    end
+
+    it "allows an optional government_document_supertype parameter" do
+      notification_params[:government_document_supertype] = "travel_advice"
+      expect(NotificationWorker).to receive(:perform_async).with(
+        expected_notification_params
+      )
+
+      post :create, notification_params.merge(format: :json)
+    end
   end
 end
