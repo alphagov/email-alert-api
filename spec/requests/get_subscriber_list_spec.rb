@@ -157,6 +157,32 @@ RSpec.describe "Getting a subscriber list", type: :request do
     expect(response.status).to eq(404)
   end
 
+  context "when passing in gov_delivery_id" do
+    it "does not find a subscriber list of the gov_delivery_id does not match" do
+      get_subscriber_list(
+        tags: { topics: ["vat-rates"] },
+        document_type: "tax",
+        gov_delivery_id: "NEW-TOPIC"
+      )
+      expect(response.status).to eq(404)
+    end
+
+    it "finds the subscriber list if the gov_delivery_id matches" do
+      alpha = FactoryGirl.create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "alpha")
+      beta = FactoryGirl.create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "beta")
+      gamma = FactoryGirl.create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "gamma")
+
+      get_subscriber_list(
+        tags: { topics: ["vat-rates"] },
+        gov_delivery_id: "beta"
+      )
+      expect(response.status).to eq(200)
+
+      subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
+      expect(subscriber_list.fetch("id")).to eq(beta.id)
+    end
+  end
+
   def get_subscriber_list(query_payload)
     get "/subscriber-lists", query_payload, json_headers
   end
