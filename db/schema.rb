@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170320170223) do
+ActiveRecord::Schema.define(version: 20170327104203) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,12 +42,13 @@ ActiveRecord::Schema.define(version: 20170320170223) do
     t.string   "gov_delivery_id",               limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "document_type",                             default: "",   null: false
-    t.json     "tags",                                      default: {},   null: false
-    t.json     "links",                                     default: {},   null: false
-    t.boolean  "enabled",                                   default: true, null: false
-    t.string   "email_document_supertype",                  default: "",   null: false
-    t.string   "government_document_supertype",             default: "",   null: false
+    t.string   "document_type",                             default: "",    null: false
+    t.json     "tags",                                      default: {},    null: false
+    t.json     "links",                                     default: {},    null: false
+    t.boolean  "enabled",                                   default: true,  null: false
+    t.string   "email_document_supertype",                  default: "",    null: false
+    t.string   "government_document_supertype",             default: "",    null: false
+    t.boolean  "migrated_from_gov_uk_delivery",             default: false, null: false
   end
 
 end

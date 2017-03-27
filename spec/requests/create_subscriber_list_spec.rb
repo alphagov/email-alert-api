@@ -82,6 +82,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
         enabled
         email_document_supertype
         government_document_supertype
+        migrated_from_gov_uk_delivery
       }.to_set
     )
     expect(subscriber_list).to include(
@@ -174,6 +175,35 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(subscriber_list).to have_attributes(
         gov_delivery_id: 'TOPIC_AAAA',
         enabled: false,
+      )
+    end
+
+    it "records that the subscriber_list was migrated from gov_uk_delivery" do
+      create_subscriber_list(
+        gov_delivery_id: 'TOPIC_AAAA',
+        tags: {topics: ["oil-and-gas/licensing"]},
+      )
+
+      subscriber_list = SubscriberList.last
+      expect(subscriber_list).to have_attributes(
+        gov_delivery_id: 'TOPIC_AAAA',
+        migrated_from_gov_uk_delivery: true,
+      )
+    end
+  end
+
+  context "when created_at is passed in" do
+    let(:last_week) { Time.at(1.week.ago.to_i) } # round to nearest second
+
+    it "creates a subscriber_list with the specified created_at time" do
+      create_subscriber_list(
+        created_at: last_week,
+        tags: {topics: ["oil-and-gas/licensing"]},
+      )
+
+      subscriber_list = SubscriberList.last
+      expect(subscriber_list).to have_attributes(
+        created_at: last_week,
       )
     end
   end
