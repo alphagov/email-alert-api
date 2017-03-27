@@ -34,6 +34,9 @@ private
       title: params[:title],
       enabled: params[:gov_delivery_id].blank?,
       gov_delivery_id: gov_delivery_id,
+      # gov_uk_delivery migration fields. these can be removed once the migration is completed
+      migrated_from_gov_uk_delivery: params[:gov_delivery_id].present?,
+      created_at: params[:created_at],
     )
   end
 
