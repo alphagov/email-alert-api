@@ -103,7 +103,7 @@ RSpec.describe GovDelivery::Client do
 
     context 'when topic exists' do
       let(:govdelivery_response) do
-        <<~XML
+        <<-XML.strip_heredoc
           <?xml version="1.0" encoding="UTF-8"?>
           <topic>
             <name>Topic name</name>
@@ -154,7 +154,7 @@ RSpec.describe GovDelivery::Client do
 
     context 'when topic does not exist' do
       let(:govdelivery_response) do
-        <<~XML
+        <<-XML.strip_heredoc
           <?xml version="1.0" encoding="UTF-8"?>
           <errors>
             <code>GD-14002</code>
@@ -243,26 +243,26 @@ RSpec.describe GovDelivery::Client do
 
       client.send_bulletin(topic_ids, subject, body)
 
+      expected_xml = <<-XML.strip_heredoc
+        <bulletin>
+          <subject>a subject line</subject>
+          <body><![CDATA[a body]]></body>
+          <topics type="array">
+            <topic>
+              <code>UKGOVUK_123</code>
+            </topic>
+            <topic>
+              <code>UKGOVUK_124</code>
+            </topic>
+            <topic>
+              <code>UKGOVUK_125</code>
+            </topic>
+          </topics>
+          <footer><![CDATA[#{GovDelivery::RequestBuilder.default_footer}]]></footer>
+        </bulletin>
+      XML
       assert_requested(:post, @base_url) do |req|
-        expect(req.body).to be_equivalent_to(
-          %{
-            <bulletin>
-              <subject>a subject line</subject>
-              <body><![CDATA[a body]]></body>
-              <topics type="array">
-                <topic>
-                  <code>UKGOVUK_123</code>
-                </topic>
-                <topic>
-                  <code>UKGOVUK_124</code>
-                </topic>
-                <topic>
-                  <code>UKGOVUK_125</code>
-                </topic>
-              </topics>
-            </bulletin>
-          }
-        )
+        expect(req.body).to be_equivalent_to(expected_xml)
       end
     end
 
@@ -300,7 +300,7 @@ RSpec.describe GovDelivery::Client do
       end.to raise_error(GovDelivery::Client::UnknownError)
     end
 
-    it "POSTs the bulletin with extra parameters if present to the send_now endpoint" do
+    it "POSTs the bulletin with extra parameters (EXCEPT FOOTER) if present to the send_now endpoint" do
       stub_request(:post, @base_url).to_return(body: @govdelivery_response)
 
       client.send_bulletin(topic_ids, subject, body, {
@@ -310,30 +310,29 @@ RSpec.describe GovDelivery::Client do
         footer: "<p>bar</p>"
       })
 
+      expected_xml = <<-XML.strip_heredoc
+        <bulletin>
+          <subject>a subject line</subject>
+          <body><![CDATA[a body]]></body>
+          <topics type="array">
+            <topic>
+              <code>UKGOVUK_123</code>
+            </topic>
+            <topic>
+              <code>UKGOVUK_124</code>
+            </topic>
+            <topic>
+              <code>UKGOVUK_125</code>
+            </topic>
+          </topics>
+          <from_address_id>12345</from_address_id>
+          <urgent>true</urgent>
+          <header><![CDATA[<h1>Foo</h1>]]></header>
+          <footer><![CDATA[#{GovDelivery::RequestBuilder.default_footer}]]></footer>
+        </bulletin>
+      XML
       assert_requested(:post, @base_url) do |req|
-        expect(req.body).to be_equivalent_to(
-          %{
-            <bulletin>
-              <subject>a subject line</subject>
-              <body><![CDATA[a body]]></body>
-              <topics type="array">
-                <topic>
-                  <code>UKGOVUK_123</code>
-                </topic>
-                <topic>
-                  <code>UKGOVUK_124</code>
-                </topic>
-                <topic>
-                  <code>UKGOVUK_125</code>
-                </topic>
-              </topics>
-              <from_address_id>12345</from_address_id>
-              <urgent>true</urgent>
-              <header><![CDATA[<h1>Foo</h1>]]></header>
-              <footer><![CDATA[<p>bar</p>]]></footer>
-            </bulletin>
-          }
-        )
+        expect(req.body).to be_equivalent_to(expected_xml)
       end
     end
 

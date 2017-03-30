@@ -35,10 +35,14 @@ module GovDelivery
             xml.cdata options[:header]
           } if options[:header]
           xml.footer {
-            xml.cdata options[:footer]
-          } if options[:footer]
+            xml.cdata default_footer
+          }
         }
       }.to_xml
+    end
+
+    def self.default_footer
+      @default_footer ||= File.read(File.expand_path(File.join(__dir__, 'templates', 'default_footer.html')))
     end
   end
 end
