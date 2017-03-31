@@ -114,6 +114,18 @@ RSpec.describe FindExactQuery do
     expect(query.exact_match).to be_nil
   end
 
+  it "not matched when subscriber list does have a gov_delivery_id" do
+    query = build_query(email_document_supertype: 'publications')
+    subscriber_list = create_subscriber_list(email_document_supertype: 'publications', gov_delivery_id: nil)
+    expect(query.exact_match).not_to eq(subscriber_list)
+  end
+
+  it "not matched when subscriber list has a blank gov_delivery_id" do
+    query = build_query(email_document_supertype: 'publications')
+    subscriber_list = create_subscriber_list(email_document_supertype: 'publications', gov_delivery_id: '')
+    expect(query.exact_match).not_to eq(subscriber_list)
+  end
+
   def build_query(params={})
     defaults = {
       tags: {},
