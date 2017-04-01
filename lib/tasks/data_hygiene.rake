@@ -32,3 +32,10 @@ task sync_govdelivery_topic_mappings: :environment do
 
   DataHygiene::DataSync.new.run
 end
+
+desc "Fill in missing titles for subscriber lists from GovDelivery data"
+task fetch_titles: :environment do
+  require "data_hygiene/title_fetcher"
+
+  DataHygiene::TitleFetcher.new.run
+end
