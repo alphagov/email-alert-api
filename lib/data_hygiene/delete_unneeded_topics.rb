@@ -115,8 +115,8 @@ module DataHygiene
       end
 
       def call
-        group_size = [(SubscriberList.count.to_f / MAX_THREAD_COUNT).ceil, MIN_BATCH_SIZE].max
-        subscriber_list_sets = SubscriberList.all.each_slice(group_size)
+        group_size = [(subscriber_lists_to_consider.count.to_f / MAX_THREAD_COUNT).ceil, MIN_BATCH_SIZE].max
+        subscriber_list_sets = subscriber_lists_to_consider.each_slice(group_size)
 
         results = []
         semaphore = Mutex.new
@@ -129,6 +129,10 @@ module DataHygiene
         threads.each(&:join)
         puts ''
         results
+      end
+
+      def subscriber_lists_to_consider
+        SubscriberList.where('created_at < ?', 1.day.ago)
       end
 
       def add_count_of_subscribers(subscriber_lists)
