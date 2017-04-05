@@ -19,6 +19,14 @@ RSpec.describe DataHygiene::DeleteUnneededTopics do
       it 'is included in the list' do
         expect(subject.with_zero_subscribers).to include(subscriber_list)
       end
+
+      context 'when the subscriber list was created recently' do
+        let!(:subscriber_list) { create(:subscriber_list, title: 'Test', created_at: 1.hour.ago) }
+
+        it 'is not included in the list' do
+          expect(subject.with_zero_subscribers).not_to include(subscriber_list)
+        end
+      end
     end
 
     context 'when the topic has subscribers' do
@@ -91,6 +99,14 @@ RSpec.describe DataHygiene::DeleteUnneededTopics do
       it 'is included in the list' do
         expect(subject.with_missing_topic).to include(subscriber_list)
       end
+
+      context 'when the subscriber list was created recently' do
+        let!(:subscriber_list) { create(:subscriber_list, title: 'Test', created_at: 1.hour.ago) }
+
+        it 'is not included in the list' do
+          expect(subject.with_missing_topic).not_to include(subscriber_list)
+        end
+      end
     end
 
     context 'when fetching the topic raises another error' do
@@ -147,6 +163,14 @@ RSpec.describe DataHygiene::DeleteUnneededTopics do
 
       it 'is included in the list' do
         expect(subject.with_gov_delivery_error).to include(subscriber_list)
+      end
+
+      context 'when the subscriber list was created recently' do
+        let!(:subscriber_list) { create(:subscriber_list, title: 'Test', created_at: 1.hour.ago) }
+
+        it 'is not included in the list' do
+          expect(subject.with_gov_delivery_error).not_to include(subscriber_list)
+        end
       end
     end
   end
