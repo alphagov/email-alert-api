@@ -23,18 +23,16 @@ This rake task does three things:
 the topics matches the account id. This only has an effect in integration, where
 it changes all topics from UKGOVUK_XXXXX to UKGOVUKDUP_XXXXX.
 
-2) Get a list of all topics currently in GovDelivery and delete them.
+2) Get a list of all topics currently in the GovDelivery account for that
+environment and compare it to the ones in the database to find any extra and
+missing ones (matching on topic id and title).
 
-3) Recreate all of the topics in our subscriber lists, specifying both the title
-of the topic and its topic id.
+3) Add and delete topics in GovDelivery so that their data matches what's in our
+database.
 
-Sometimes the task does not run correctly – for example it may fail to find any
-existing topics and delete them. If this happens, it may then create the new
-topics with completely different topic IDs, ignoring the IDs being specified.
-Surprise!
-
-The rake task is safe to re-run at any time, but it does take a while to
-complete.
+The rake task is safe to re-run at any time and will usually have very little to
+do, but it does take a while to complete if a lot has changed in the database
+since the previous run.
 
 New topics that are created within an environment (e.g. when testing with new
 email signups in integration) will use the correct account id prefix for their
