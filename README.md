@@ -13,13 +13,10 @@ tags via the external services.
 - **Subscriber list**:
  * An email subscriber list (the actual email addresses are stored on
   GovDelivery's servers)
- * Associated tags indicate what the subscribers for that list are interested in
-  and what updates they should receive
- * An optional document_type indicates the types of notifications that will be
-  matched for subscribers. If the list has a document_type set, only
-  notifications with a matching document_type will be sent; if the list has
-  no document_type, messages will be sent whether or not the notification has
-  a document_type.
+ * Associated links/tags and document type and supertype fields indicate what
+  the subscribers for that list are interested in and what updates they should
+  receive. See the [documentation on matching content to subscriber lists](doc/matching-content-to-subscriber-lists.md)
+  for more details.
 
 - **Topic**:
  * GovDelivery terminology for a subscriber list
