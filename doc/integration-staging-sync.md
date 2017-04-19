@@ -13,9 +13,8 @@ GovDelivery topic ids have to be unique across the entire instance.
 
 To achieve the synchronisation we have a rake task
 (`sync_govdelivery_topic_mappings`) which is automatically triggered when the
-'Data Sync Complete' job runs in Jenkins on [integration](https://deploy.integra
-tion.publishing.service.gov.uk/job/Data_Sync_Complete/) and [staging](https://de
-ploy.staging.publishing.service.gov.uk/job/Data_Sync_Complete/).
+'Data Sync Complete' job runs in Jenkins on [integration](https://deploy.integration.publishing.service.gov.uk/job/Data_Sync_Complete/)
+and [staging](https://deploy.staging.publishing.service.gov.uk/job/Data_Sync_Complete/).
 
 This rake task does three things:
 
