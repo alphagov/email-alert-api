@@ -43,7 +43,7 @@ RSpec.describe NotificationsController, type: :controller do
         expected_notification_params
       )
 
-      post :create, notification_params.merge(format: :json)
+      post :create, params: notification_params.merge(format: :json)
     end
 
     it "allows an optional document_type parameter" do
@@ -52,7 +52,7 @@ RSpec.describe NotificationsController, type: :controller do
         expected_notification_params
       )
 
-      post :create, notification_params.merge(format: :json)
+      post :create, params: notification_params.merge(format: :json)
     end
 
     it "allows an optional email_document_supertype parameter" do
@@ -61,7 +61,7 @@ RSpec.describe NotificationsController, type: :controller do
         expected_notification_params
       )
 
-      post :create, notification_params.merge(format: :json)
+      post :create, params: notification_params.merge(format: :json)
     end
 
     it "allows an optional government_document_supertype parameter" do
@@ -70,7 +70,7 @@ RSpec.describe NotificationsController, type: :controller do
         expected_notification_params
       )
 
-      post :create, notification_params.merge(format: :json)
+      post :create, params: notification_params.merge(format: :json)
     end
   end
 end

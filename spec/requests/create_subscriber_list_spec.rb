@@ -1,13 +1,20 @@
 require "rails_helper"
+require "base64"
 
 RSpec.describe "Creating a subscriber list", type: :request do
   let(:base_url) do
     config = EmailAlertAPI.config.gov_delivery
-    "http://#{config.fetch(:username)}:#{config.fetch(:password)}@#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}"
+    "http://#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}"
+  end
+
+  let(:http_auth) do
+    config = EmailAlertAPI.config.gov_delivery
+    Base64.strict_encode64("#{config.fetch(:username)}:#{config.fetch(:password)}")
   end
 
   before do
     stub_request(:post, base_url + "/topics.xml")
+      .with(headers: { "Authorization" => "Basic #{http_auth}" })
       .with(body: /This is a sample title/)
       .to_return(body: %{
         <?xml version="1.0" encoding="UTF-8"?>
@@ -217,6 +224,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
     request_body = JSON.dump(defaults.merge(payload))
 
-    post "/subscriber-lists", request_body, json_headers
+    post "/subscriber-lists", params: request_body, headers: json_headers
   end
 end
