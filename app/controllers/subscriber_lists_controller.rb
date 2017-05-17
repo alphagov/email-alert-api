@@ -41,12 +41,13 @@ private
   end
 
   def find_exact_query_params
+    permitted_params = params.permit!.to_h
     {
-      tags: params.fetch(:tags, {}),
-      links: params.fetch(:links, {}),
-      document_type: params.fetch(:document_type, ""),
-      email_document_supertype: params.fetch(:email_document_supertype, ""),
-      government_document_supertype: params.fetch(:government_document_supertype, ""),
+      tags: permitted_params.fetch(:tags, {}),
+      links: permitted_params.fetch(:links, {}),
+      document_type: permitted_params.fetch(:document_type, ""),
+      email_document_supertype: permitted_params.fetch(:email_document_supertype, ""),
+      government_document_supertype: permitted_params.fetch(:government_document_supertype, ""),
       gov_delivery_id: params[:gov_delivery_id],
     }
   end
