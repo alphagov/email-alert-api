@@ -1,4 +1,4 @@
-class NotificationLog < ActiveRecord::Base
+class NotificationLog < ApplicationRecord
   validates :emailing_app, presence: true
 
   # As JSON fields don't offer a matching comparitor in postgres

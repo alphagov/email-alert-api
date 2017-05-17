@@ -1,7 +1,7 @@
 require 'json'
 require_relative "extensions/symbolize_json"
 
-class SubscriberList < ActiveRecord::Base
+class SubscriberList < ApplicationRecord
   include SymbolizeJSON
 
   self.include_root_in_json = true
