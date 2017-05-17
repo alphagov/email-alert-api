@@ -12,7 +12,8 @@ ENV['SIDEKIQ_RETRY_SIZE_CRITICAL'] = '10'
 RSpec.describe HealthcheckController, type: :controller do
   describe "#check" do
     before do
-      stub_request(:get, "http://test%40example.com:test123@govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
+      stub_request(:get, "http://govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
+        with(headers: { "Authorization" => "Basic #{HTTP_AUTH_CREDENTIALS}" }).
         to_return(status: 200)
     end
 
@@ -109,7 +110,8 @@ RSpec.describe HealthcheckController, type: :controller do
     end
 
     it "returns critical if govdelivery isn't healthy" do
-      stub_request(:get, "http://test%40example.com:test123@govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
+      stub_request(:get, "http://govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
+        with(headers: { "Authorization" => "Basic #{HTTP_AUTH_CREDENTIALS}" }).
         to_return(status: 400)
 
       get :check, format: :json
@@ -119,7 +121,8 @@ RSpec.describe HealthcheckController, type: :controller do
     end
 
     it "returns okay if govdelivery is happy" do
-      stub_request(:get, "http://test%40example.com:test123@govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
+      stub_request(:get, "http://govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
+        with(headers: { "Authorization" => "Basic #{HTTP_AUTH_CREDENTIALS}" }).
         to_return(status: 200)
 
       get :check, format: :json

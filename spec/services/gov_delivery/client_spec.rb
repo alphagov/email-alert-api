@@ -1,4 +1,5 @@
 require "rails_helper" # These tests use #strip_heredoc which is in ActiveSupport
+require "base64"
 
 require "app/services/gov_delivery/client"
 require "app/services/gov_delivery/request_builder"
@@ -14,7 +15,8 @@ RSpec.describe GovDelivery::Client do
 
   describe "#create_topic" do
     before do
-      @base_url = "http://#{config.fetch(:username)}:#{config.fetch(:password)}@#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/topics.xml"
+      @base_url = "http://#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/topics.xml"
+      @http_auth = Base64.strict_encode64("#{config.fetch(:username)}:#{config.fetch(:password)}")
       @topic_name = "Test topic"
       @govdelivery_response = %{<?xml version="1.0" encoding="UTF-8"?>
         <topic>
@@ -24,7 +26,9 @@ RSpec.describe GovDelivery::Client do
         </topic>
       }
 
-      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
+      stub_request(:post, @base_url).
+        with(headers: { "Authorization" => "Basic #{@http_auth}" }).
+        to_return(body: @govdelivery_response)
     end
 
     it "POSTs the topic creation request XML to the topics endpoint" do
@@ -57,7 +61,9 @@ RSpec.describe GovDelivery::Client do
 
     context "when the topic already exists" do
       before do
-        stub_request(:post, @base_url).to_return(body: %{<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+        stub_request(:post, @base_url).
+          with(headers: { "Authorization" => "Basic #{@http_auth}" }).
+          to_return(body: %{<?xml version=\"1.0\" encoding=\"UTF-8\"?>
           <errors>
             <code>GD-14004</code>
             <error>Name must be unique for an account</error>
@@ -96,9 +102,12 @@ RSpec.describe GovDelivery::Client do
 
   describe '#fetch_topic' do
     let(:topic_code) { "UKGOV_1234" }
-    let(:base_url) { @base_url = "http://#{config.fetch(:username)}:#{config.fetch(:password)}@#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/topics/#{topic_code}.xml" }
+    let(:base_url) { @base_url = "http://#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/topics/#{topic_code}.xml" }
+    let(:http_auth) { @http_auth = Base64.strict_encode64("#{config.fetch(:username)}:#{config.fetch(:password)}") }
     before do
-      stub_request(:get, base_url).to_return(body: govdelivery_response)
+      stub_request(:get, base_url).
+        with(headers: { "Authorization" => "Basic #{http_auth}" }).
+        to_return(body: govdelivery_response)
     end
 
     context 'when topic exists' do
@@ -172,7 +181,8 @@ RSpec.describe GovDelivery::Client do
   describe "#read_topic_by_name" do
     before do
       @topic_name = "Test topic"
-      @base_url = "http://#{config.fetch(:username)}:#{config.fetch(:password)}@#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/topics.xml"
+      @base_url = "http://#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/topics.xml"
+      @http_auth = Base64.strict_encode64("#{config.fetch(:username)}:#{config.fetch(:password)}")
 
       @govdelivery_response = %{
         <?xml version="1.0" encoding="UTF-8"?>
@@ -200,7 +210,9 @@ RSpec.describe GovDelivery::Client do
     end
 
     it "returns an object that represents the existing topic" do
-      stub_request(:get, @base_url).to_return(body: @govdelivery_response)
+      stub_request(:get, @base_url).
+        with(headers: { "Authorization" => "Basic #{@http_auth}" }).
+        to_return(body: @govdelivery_response)
 
       response = client.read_topic_by_name(@topic_name)
 
@@ -214,7 +226,8 @@ RSpec.describe GovDelivery::Client do
 
   describe "#send_bulletin" do
     before do
-      @base_url = "http://#{config.fetch(:username)}:#{config.fetch(:password)}@#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/bulletins/send_now.xml"
+      @base_url = "http://#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}/bulletins/send_now.xml"
+      @http_auth = Base64.strict_encode64("#{config.fetch(:username)}:#{config.fetch(:password)}")
       @topic_name = "Test topic"
       @govdelivery_response = %{<?xml version="1.0" encoding="UTF-8"?>
         <bulletin>
@@ -239,7 +252,9 @@ RSpec.describe GovDelivery::Client do
     let(:body) { "a body" }
 
     it "POSTs the bulletin XML to the send_now endpoint" do
-      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
+      stub_request(:post, @base_url).
+        with(headers: { "Authorization" => "Basic #{@http_auth}" }).
+        to_return(body: @govdelivery_response)
 
       client.send_bulletin(topic_ids, subject, body)
 
@@ -274,13 +289,17 @@ RSpec.describe GovDelivery::Client do
           <error>To send a bulletin you must select at least one topic or category that has subscribers</error>
         </errors>
       }
-      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
+      stub_request(:post, @base_url).
+        with(headers: { "Authorization" => "Basic #{@http_auth}" }).
+        to_return(body: @govdelivery_response)
 
       expect { client.send_bulletin(topic_ids, subject, body) }.not_to raise_error
     end
 
     it "raises a helpful error for empty responses from govdelivery" do
-      stub_request(:post, @base_url).to_return(body: "")
+      stub_request(:post, @base_url).
+        with(headers: { "Authorization" => "Basic #{@http_auth}" }).
+        to_return(body: "")
 
       expect { client.send_bulletin(topic_ids, subject, body) }.to raise_error(GovDelivery::Client::UnexpectedResponseBodyError)
     end
@@ -293,7 +312,9 @@ RSpec.describe GovDelivery::Client do
           <error>Invalid bulletin</error>
         </errors>
       }
-      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
+      stub_request(:post, @base_url).
+        with(headers: { "Authorization" => "Basic #{@http_auth}" }).
+        to_return(body: @govdelivery_response)
 
       expect do
         client.send_bulletin(topic_ids, subject, body)
@@ -301,7 +322,9 @@ RSpec.describe GovDelivery::Client do
     end
 
     it "POSTs the bulletin with extra parameters (EXCEPT FOOTER) if present to the send_now endpoint" do
-      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
+      stub_request(:post, @base_url).
+        with(headers: { "Authorization" => "Basic #{@http_auth}" }).
+        to_return(body: @govdelivery_response)
 
       client.send_bulletin(topic_ids, subject, body, {
         from_address_id: 12345,
@@ -337,7 +360,9 @@ RSpec.describe GovDelivery::Client do
     end
 
     it "returns an object that encapsulates the parsed response" do
-      stub_request(:post, @base_url).to_return(body: @govdelivery_response)
+      stub_request(:post, @base_url).
+        with(headers: { "Authorization" => "Basic #{@http_auth}" }).
+        to_return(body: @govdelivery_response)
 
       response = client.send_bulletin(topic_ids, subject, body)
 

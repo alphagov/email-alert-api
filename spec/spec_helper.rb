@@ -20,6 +20,9 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), '..')
 require 'webmock/rspec'
 WebMock.disable_net_connect!(allow_localhost: true)
 
+require 'base64'
+HTTP_AUTH_CREDENTIALS = Base64.strict_encode64('test@example.com:test123')
+
 RSpec.configure do |config|
   config.disable_monkey_patching!
   config.expose_dsl_globally = false

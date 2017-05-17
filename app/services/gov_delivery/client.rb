@@ -111,8 +111,7 @@ module GovDelivery
 
     def http_client
       @http_client ||= Faraday.new(url: base_url) do |connection|
-        connection.use(
-          Faraday::Request::BasicAuthentication,
+        connection.basic_auth(
           options.fetch(:username),
           options.fetch(:password),
         )
