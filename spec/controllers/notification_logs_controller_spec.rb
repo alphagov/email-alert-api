@@ -16,7 +16,7 @@ RSpec.describe NotificationLogsController, type: :controller do
   end
 
   it 'creates a delivery log record' do
-    expect { post :create, params.merge(format: :json) }.to change { NotificationLog.count }.by(1)
+    expect { post :create, params: params.merge(format: :json) }.to change { NotificationLog.count }.by(1)
 
     expect(NotificationLog.last).to have_attributes(
       govuk_request_id: 'aaaaaaa-111111',
@@ -32,7 +32,7 @@ RSpec.describe NotificationLogsController, type: :controller do
   end
 
   it 'returns a 202 success response' do
-    post :create, params.merge(format: :json)
+    post :create, params: params.merge(format: :json)
 
     expect(response.code).to eq('202')
   end

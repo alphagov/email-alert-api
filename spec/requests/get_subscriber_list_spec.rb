@@ -184,6 +184,6 @@ RSpec.describe "Getting a subscriber list", type: :request do
   end
 
   def get_subscriber_list(query_payload)
-    get "/subscriber-lists", query_payload, json_headers
+    get "/subscriber-lists", params: query_payload, headers: json_headers
   end
 end

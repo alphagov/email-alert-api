@@ -142,6 +142,6 @@ RSpec.describe "Sending a notification", type: :request do
       tags: tags,
     }.merge(options))
 
-    post "/notifications", request_body, json_headers
+    post "/notifications", params: request_body, headers: json_headers
   end
 end
