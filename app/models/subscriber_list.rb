@@ -36,6 +36,10 @@ class SubscriberList < ApplicationRecord
     super(methods: :subscription_url)
   end
 
+  def title=(title)
+    super(title && title[0..254])
+  end
+
 private
   def tag_values_are_valid
     unless self[:tags].all? { |_, v| v.is_a?(Array) }

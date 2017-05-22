@@ -28,12 +28,12 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
   it "creates the topic on gov delivery" do
     create_subscriber_list(tags: {topics: ["oil-and-gas/licensing"]})
-
+    subscriber_list_id = SubscriberList.last.id
     body = <<-XML.strip_heredoc
       <?xml version="1.0"?>
       <topic>
-        <name>This is a sample title</name>
-        <short-name>This is a sample title</short-name>
+        <name>This is a sample title (#{subscriber_list_id})</name>
+        <short-name>This is a sample title (#{subscriber_list_id})</short-name>
         <visibility>Unlisted</visibility>
         <pagewatch-enabled type="boolean">false</pagewatch-enabled>
         <rss-feed-url nil="true"/>

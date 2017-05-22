@@ -21,6 +21,7 @@ private
   def base_scope
     @base_scope ||= begin
       scope = SubscriberList
+        .where.not(gov_delivery_id: [nil, ''])
         .where(document_type: @document_type)
         .where(email_document_supertype: @email_document_supertype)
         .where(government_document_supertype: @government_document_supertype)
