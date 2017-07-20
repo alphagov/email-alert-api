@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170327104203) do
+ActiveRecord::Schema.define(version: 20170720135533) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 20170327104203) do
     t.string "email_document_supertype", default: "", null: false
     t.string "government_document_supertype", default: "", null: false
     t.boolean "migrated_from_gov_uk_delivery", default: false, null: false
+    t.integer "subscriber_count"
   end
 
 end
