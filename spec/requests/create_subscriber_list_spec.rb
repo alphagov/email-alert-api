@@ -80,6 +80,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
         id
         title
         document_type
+        subscriber_count
         subscription_url
         gov_delivery_id
         created_at
