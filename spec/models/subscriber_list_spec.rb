@@ -46,28 +46,30 @@ RSpec.describe SubscriberList, type: :model do
       expect(subject).to be_valid
     end
 
-    it "is invalid when tags 'hash' have values that are arrays" do
+    it "is valid when tags 'hash' has values that are arrays" do
       subject.tags = { foo: ["bar"] }
 
       expect(subject).to be_valid
     end
 
-    it "is invalid when tags 'hash' don't have values that are arrays" do
+    it "is invalid when tags 'hash' has values that are not arrays" do
       subject.tags = { foo: "bar" }
 
       expect(subject).to be_invalid
+      expect(subject.errors[:tags]).to include("All tag values must be sent as Arrays")
     end
 
-    it "is invalid when links 'hash' have values that are arrays" do
+    it "is valid when links 'hash' has values that are arrays" do
       subject.links = { foo: ["bar"] }
 
       expect(subject).to be_valid
     end
 
-    it "is invalid when links 'hash' don't have values that are arrays" do
+    it "is invalid when links 'hash' has values that are not arrays" do
       subject.links = { foo: "bar" }
 
       expect(subject).to be_invalid
+      expect(subject.errors[:links]).to include("All link values must be sent as Arrays")
     end
   end
 
