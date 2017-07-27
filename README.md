@@ -160,6 +160,19 @@ See the [Sidekiq docs](https://github.com/mperham/sidekiq/wiki/API) for more inf
 
 - [Overview of the Integration & Staging Synchronisation Process](doc/integration-staging-sync.md)
 
+## Retiring govuk-delivery
+
+There's another application called [govuk-delivery](http://github.com/alphagov/govuk-delivery)
+that does a similar job to email-alert-api but for Whitehall. We want to remove
+this and use email-alert-api for all email sending.
+
+There's a `./bin/report` task that produces a report to help with this. You can
+run it like so:
+
+```bash
+./bin/report --after 2017-06-01 --before 2017-07-01
+```
+
 ## Licence
 
 [MIT License](LICENCE)

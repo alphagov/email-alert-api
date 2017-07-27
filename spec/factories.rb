@@ -4,4 +4,15 @@ FactoryGirl.define do
     tags({ topics: ["motoring/road_rage"] })
     created_at { 1.year.ago }
   end
+
+  factory :notification_log do
+    sequence(:govuk_request_id) { |i| "request-id-#{i}" }
+    sequence(:content_id) { |i| "content-id-#{i}" }
+    public_updated_at Time.now.to_s
+    links {}
+    tags {}
+    document_type "announcement"
+    emailing_app "email_alert_api"
+    gov_delivery_ids %w(TOPIC_123 TOPIC_456)
+  end
 end
