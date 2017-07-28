@@ -31,7 +31,7 @@ private
 
   def status
     ActiveRecord::Base.connected? &&
-      Sidekiq.redis { |conn| conn.info } ? 'ok' : 'critical'
+      Sidekiq.redis_info ? 'ok' : 'critical'
   end
 
   def govdelivery_status
