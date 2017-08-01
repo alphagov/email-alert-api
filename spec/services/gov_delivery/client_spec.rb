@@ -53,9 +53,9 @@ RSpec.describe GovDelivery::Client do
       response = client.create_topic(@topic_name)
 
       expect(response).to be_equivalent_to(Struct.new(
-        :to_param, :topic_uri, :link
+        :to_param, :topic_uri
       ).new(
-        "UKGOVUK_1234", "/api/account/UKGOVUK/topics/UKGOVUK_1234.xml", ""
+        "UKGOVUK_1234", "/api/account/UKGOVUK/topics/UKGOVUK_1234.xml"
       ))
     end
 
@@ -367,9 +367,9 @@ RSpec.describe GovDelivery::Client do
       response = client.send_bulletin(topic_ids, subject, body)
 
       expect(response).to be_equivalent_to(Struct.new(
-        :to_param, :bulletin_uri, :link, :total_subscribers, :link
+        :to_param, :bulletin_uri, :total_subscribers
       ).new(
-        "7895129", "/api/account/UKGOVUK/bulletins/7895129.xml", "", "2", ""
+        "7895129", "/api/account/UKGOVUK/bulletins/7895129.xml", "2"
       ))
     end
   end
