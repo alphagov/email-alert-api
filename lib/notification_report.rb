@@ -115,6 +115,7 @@ private
       io.puts "    document_type: #{notification.document_type}"
       io.puts "    email_doc_supertype: #{notification.email_document_supertype}"
       io.puts "    govt_doc_supertype: #{notification.government_document_supertype}"
+      io.puts "    created_at: #{notification.created_at}"
 
       count_1 = entry.email_alert_api_notifications.count
       io.puts "  #{status(count_1 == 1)} #{count_1} notifications from email-alert-api"
