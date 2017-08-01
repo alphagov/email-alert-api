@@ -19,6 +19,9 @@ class NotificationReport
   def print
     entries.each { |entry| Printer.print(entry) }
 
+    puts "\nNumber of mismatched entries / number of total entries"
+    puts "#{total_mismatch_count}/#{entries.count}"
+
     puts "\nTop 10 topics that were only matched in email-alert-api"
     top_n(all_email_alert_api_topic_mismatches).each do |topic, count|
       puts "  #{topic}: #{count} times"
@@ -31,6 +34,14 @@ class NotificationReport
   end
 
 private
+
+  def total_mismatch_count
+    entries.count - matching_entries.count
+  end
+
+  def matching_entries
+    entries.select(&:all_ok?)
+  end
 
   def all_email_alert_api_topic_mismatches
     entries.flat_map(&:topics_matched_in_email_alert_api_only)
@@ -54,6 +65,19 @@ private
     def initialize(request_id, records)
       self.request_id = request_id
       self.records = records.order(:id)
+    end
+
+    def all_ok?
+      (
+        email_alert_api_notifications.count == 1 &&
+        email_alert_api_notifications_have_the_same_topics &&
+        gov_uk_delivery_notifications.count == 1 &&
+        gov_uk_delivery_notifications_have_the_same_topics &&
+        topics_matched_in_both_systems.count > 0 &&
+        topics_matched_in_email_alert_api_only.count == 0 &&
+        topics_matched_in_govuk_delivery_only.count == 0
+        ) ||
+      gov_uk_delivery_notifications.none?
     end
 
     def email_alert_api_notifications
@@ -142,10 +166,8 @@ private
       count_5 = entry.topics_matched_in_govuk_delivery_only.count
       io.puts "  #{status(count_5 == 0)} #{count_5} topics matched in govuk-delivery but not in email-alert-api"
 
-      all_ok = !io.string.include?(CROSS) || entry.gov_uk_delivery_notifications.none?
-
-      puts "#{status(all_ok)} request_id: #{entry.request_id}"
-      puts io.string unless all_ok
+      puts "#{status(entry.all_ok?)} request_id: #{entry.request_id}"
+      puts io.string unless entry.all_ok?
     end
 
     def self.info(topic)
