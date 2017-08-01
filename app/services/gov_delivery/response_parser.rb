@@ -34,7 +34,11 @@ module GovDelivery
     end
 
     def first_level_element_nodes
-      xml_tree.root.element_children
+      # Remove <link> tags since there are many of them, we don't use them,
+      # and they break the "no duplicates in a Struct" rule
+      xml_tree.root.element_children.reject do |node|
+        node.name == "link"
+      end
     end
 
     def xml_tree
