@@ -13,7 +13,7 @@ gem 'unicorn', '5.3.0'
 gem 'logstasher', '1.2.1'
 gem 'sidekiq-logging-json', '0.0.18'
 gem 'statsd-ruby', '1.4.0'
-gem 'gds-api-adapters', '45.0.0'
+gem 'gds-api-adapters', '47.5.0'
 gem 'sidekiq-statsd', '0.1.5'
 
 group :test do
