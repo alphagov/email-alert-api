@@ -10,3 +10,14 @@ task :notification_log_reporting, [:from, :to] => :environment do |_task, args|
   scope = NotificationLog.where(created_at: from..to)
   NotificationReport.new(scope).print
 end
+
+desc "CSV Report for notification logs with optional `from` and `to` date params (e.g. `rake notification_log_reporting[2015-01-01,2016-02-02]`)"
+task :notification_log_reporting_to_csv, [:from, :to] => :environment do |_task, args|
+  args.with_defaults(from: "2017-06-01", to: Time.now.to_s)
+
+  from = Time.parse(args.from)
+  to = Time.parse(args.to)
+
+  scope = NotificationLog.where(created_at: from..to)
+  NotificationReport.new(scope).export_csv
+end

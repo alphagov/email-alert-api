@@ -1,3 +1,5 @@
+require "csv"
+
 class NotificationReport
   def self.all
     new(NotificationLog.all)
@@ -31,6 +33,10 @@ class NotificationReport
     top_n(all_gov_uk_delivery_topic_mismatches).each do |topic, count|
       puts "  #{topic}: #{count} times"
     end
+  end
+
+  def export_csv
+    CsvExporter.call(entries)
   end
 
 private
@@ -122,6 +128,73 @@ private
         notification = gov_uk_delivery_notifications.last
         notification ? notification.gov_delivery_ids : []
       )
+    end
+  end
+
+  class CsvExporter
+    PATH = Rails.root.join("public", "data", "notification_report.csv")
+    HEADINGS = %w(
+      govuk_request_id
+      content_id
+      document_type
+      email_doc_supertype
+      govt_doc_supertype
+      created_at
+      all_ok?
+      email_alert_api_notifications.count
+      gov_uk_delivery_notifications.count
+      email_alert_api_notifications_have_the_same_topics
+      gov_uk_delivery_notifications_have_the_same_topics
+      topics_matched_in_both_systems
+      topics_matched_in_email_alert_api_only
+      topics_matched_in_govuk_delivery_only
+    ).freeze
+
+    def self.call(entries)
+      File.open(PATH, "w") do |file|
+        new(entries).export(file)
+      end
+    end
+
+    attr_reader :entries, :path
+
+    def initialize(entries)
+      @entries = entries
+    end
+
+    def export(io)
+      output = CSV.generate do |csv|
+        csv << HEADINGS
+        entries.each do |entry|
+          csv << format(entry)
+        end
+      end
+      io.write(output)
+    end
+
+  private
+
+    def format(entry)
+      [
+        entry.request_id,
+        notification_for(entry).content_id,
+        notification_for(entry).document_type,
+        notification_for(entry).email_document_supertype,
+        notification_for(entry).government_document_supertype,
+        notification_for(entry).created_at,
+        entry.all_ok?,
+        entry.email_alert_api_notifications.count,
+        entry.gov_uk_delivery_notifications.count,
+        entry.email_alert_api_notifications_have_the_same_topics,
+        entry.gov_uk_delivery_notifications_have_the_same_topics,
+        entry.topics_matched_in_both_systems.join(","),
+        entry.topics_matched_in_email_alert_api_only.join(","),
+        entry.topics_matched_in_govuk_delivery_only.join(","),
+      ]
+    end
+
+    def notification_for(entry)
+      entry.email_alert_api_notifications.last || entry.gov_uk_delivery_notifications.last
     end
   end
 
