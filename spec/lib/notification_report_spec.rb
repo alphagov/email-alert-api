@@ -26,6 +26,74 @@ RSpec.describe NotificationReport do
       expect(entry.gov_uk_delivery_notifications).to match_array [y, z]
     end
 
+    describe "#all_ok?" do
+      context "when everything matches" do
+        it "returns true" do
+          create(:notification_log, emailing_app: "email_alert_api", gov_delivery_ids: %w(a b c))
+          create(:notification_log, emailing_app: "gov_uk_delivery", gov_delivery_ids: %w(a b c))
+
+          expect(entry.all_ok?).to be_truthy
+        end
+      end
+
+      context "when no govuk delivery notifications exist" do
+        it "returns true" do
+          create(:notification_log, emailing_app: "email_alert_api", gov_delivery_ids: %w(a b c))
+
+          expect(entry.all_ok?).to be_truthy
+        end
+      end
+
+      context "when there are mismatches" do
+        context "there are multiple email alert api notifications" do
+          it "returns false" do
+            create(:notification_log, emailing_app: "email_alert_api", gov_delivery_ids: %w(a b c))
+            create(:notification_log, emailing_app: "email_alert_api", gov_delivery_ids: %w(a b c))
+            create(:notification_log, emailing_app: "gov_uk_delivery", gov_delivery_ids: %w(a b c))
+
+            expect(entry.all_ok?).to be_falsey
+          end
+        end
+
+        context "there are multiple govuk_delivery notifications" do
+          it "returns false" do
+            create(:notification_log, emailing_app: "email_alert_api", gov_delivery_ids: %w(a b c))
+            create(:notification_log, emailing_app: "gov_uk_delivery", gov_delivery_ids: %w(a b c))
+            create(:notification_log, emailing_app: "gov_uk_delivery", gov_delivery_ids: %w(a b c))
+
+            expect(entry.all_ok?).to be_falsey
+          end
+        end
+
+        context "when there are no topics matched in both systems" do
+          it "returns false" do
+            create(:notification_log, emailing_app: "email_alert_api", gov_delivery_ids: %w(a b c))
+            create(:notification_log, emailing_app: "gov_uk_delivery", gov_delivery_ids: %w(d e f))
+
+            expect(entry.all_ok?).to be_falsey
+          end
+        end
+
+        context "when there are topics only matched in email alert api" do
+          it "returns false" do
+            create(:notification_log, emailing_app: "email_alert_api", gov_delivery_ids: %w(a b c))
+            create(:notification_log, emailing_app: "gov_uk_delivery", gov_delivery_ids: %w(a))
+
+            expect(entry.all_ok?).to be_falsey
+          end
+        end
+
+        context "when there are topics only matched in govuk_delivery" do
+          it "returns false" do
+            create(:notification_log, emailing_app: "email_alert_api", gov_delivery_ids: %w(a))
+            create(:notification_log, emailing_app: "gov_uk_delivery", gov_delivery_ids: %w(a b c))
+
+            expect(entry.all_ok?).to be_falsey
+          end
+        end
+      end
+    end
+
     describe "#topics_matched_in_both_systems" do
       it "reports the intersection of gov_delivery_ids" do
         create(:notification_log, emailing_app: "email_alert_api", gov_delivery_ids: %w(a b c))
