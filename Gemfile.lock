@@ -68,7 +68,7 @@ GEM
     ffi (1.9.18)
     foreman (0.84.0)
       thor (~> 0.19.1)
-    gds-api-adapters (45.0.0)
+    gds-api-adapters (47.5.0)
       link_header
       lrucache (~> 0.1.1)
       null_logger
@@ -229,7 +229,7 @@ DEPENDENCIES
   factory_girl_rails
   faraday (= 0.12.1)
   foreman (= 0.84.0)
-  gds-api-adapters (= 45.0.0)
+  gds-api-adapters (= 47.5.0)
   listen (= 3.1.5)
   logstasher (= 1.2.1)
   nokogiri (= 1.7.2)
