@@ -217,4 +217,44 @@ RSpec.describe NotificationReport do
       end
     end
   end
+
+  describe NotificationReport::CsvExporter do
+    let(:entries) { NotificationReport.all.entries }
+    let(:exporter) { described_class.new(entries) }
+
+    before do
+      create(:notification_log, govuk_request_id: "1234-5678", content_id: "9876-5432", emailing_app: "email_alert_api", gov_delivery_ids: %w(a b c), created_at: "2017-08-02 01:00:00 UTC")
+      create(:notification_log, govuk_request_id: "1234-5678", content_id: "9876-5432", emailing_app: "gov_uk_delivery", gov_delivery_ids: %w(a b c), created_at: "2017-08-02 01:00:01 UTC")
+
+      create(:notification_log, govuk_request_id: "1111-2222", content_id: "3333-4444", emailing_app: "email_alert_api", gov_delivery_ids: %w(a b c), created_at: "2017-08-01 01:00:00 UTC")
+      create(:notification_log, govuk_request_id: "1111-2222", content_id: "3333-4444", emailing_app: "gov_uk_delivery", gov_delivery_ids: %w(c d e), created_at: "2017-08-01 01:00:01 UTC")
+    end
+
+    it "exports the report to CSV format with headings" do
+      expected_headers = "govuk_request_id,"\
+                         "content_id,"\
+                         "document_type,"\
+                         "email_doc_supertype,"\
+                         "govt_doc_supertype,"\
+                         "created_at,"\
+                         "all_ok?,"\
+                         "email_alert_api_notifications.count,"\
+                         "gov_uk_delivery_notifications.count,"\
+                         "email_alert_api_notifications_have_the_same_topics,"\
+                         "gov_uk_delivery_notifications_have_the_same_topics,"\
+                         "topics_matched_in_both_systems,"\
+                         "topics_matched_in_email_alert_api_only,"\
+                         "topics_matched_in_govuk_delivery_only\n"
+
+      expected_matched_row = "1234-5678,9876-5432,announcement,\"\",\"\",2017-08-02 01:00:00 UTC,true,1,1,true,true,\"a,b,c\",\"\",\"\"\n"
+      expected_mismatched_row = "1111-2222,3333-4444,announcement,\"\",\"\",2017-08-01 01:00:00 UTC,false,1,1,true,true,c,\"a,b\",\"d,e\"\n"
+
+      StringIO.open do |io|
+        exporter.export(io)
+        expect(io.string).to include(expected_headers)
+        expect(io.string).to include(expected_matched_row)
+        expect(io.string).to include(expected_mismatched_row)
+      end
+    end
+  end
 end
