@@ -61,7 +61,7 @@ private
     # any subscribers (GD-12004), however we want to swallow the error
     # as otherwise the sidekiq job continue to retry, with the same error.
     if e.message =~ /GD-12004/
-      Airbrake.notify(e)
+      GovukError.notify(e.message)
     else
       raise
     end
