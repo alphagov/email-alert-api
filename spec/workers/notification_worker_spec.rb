@@ -252,8 +252,8 @@ RSpec.describe NotificationWorker do
         expect { make_it_perform }.not_to raise_error
       end
 
-      it "sends an Airbrake notification" do
-        expect(Airbrake).to receive(:notify)
+      it "sends a GovukError notification" do
+        expect(GovukError).to receive(:notify)
         make_it_perform
       end
 
