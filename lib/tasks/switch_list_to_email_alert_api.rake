@@ -32,3 +32,20 @@ task switch_list_to_email_alert_api: [:environment] do |_, args|
     end
   end
 end
+
+desc "Switch all subscriber lists to email-alert-api from govuk-delivery"
+task switch_all_lists_to_email_alert_api: :environment do
+  SubscriberList.where(migrated_from_gov_uk_delivery: true).find_each do |list|
+    begin
+      Services.govuk_delivery.disable_list(list.gov_delivery_id)
+
+      list.enabled = true
+      list.save!
+
+      print "."
+    rescue => e
+      puts e.message
+      puts list.inspect
+    end
+  end
+end
