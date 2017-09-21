@@ -1,4 +1,5 @@
 require "yaml"
+require "erb"
 
 module EmailAlertAPI
   class Config
@@ -15,7 +16,7 @@ module EmailAlertAPI
     end
 
     def redis_config
-      YAML.load(File.open(app_root+"config/redis.yml")).symbolize_keys
+      YAML.load(ERB.new(File.read(app_root+"config/redis.yml")).result).symbolize_keys
     end
 
   private
