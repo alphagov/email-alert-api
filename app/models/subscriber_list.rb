@@ -14,7 +14,6 @@ class SubscriberList < ApplicationRecord
       title: params[:title],
       tags:  params[:tags],
       links: params[:links],
-      enabled: params[:enabled],
       document_type: params[:document_type],
       email_document_supertype: params[:email_document_supertype],
       government_document_supertype: params[:government_document_supertype],

@@ -12,7 +12,6 @@ FactoryGirl.define do
     links {}
     tags {}
     document_type "announcement"
-    emailing_app "email_alert_api"
     gov_delivery_ids %w(TOPIC_123 TOPIC_456)
   end
 end

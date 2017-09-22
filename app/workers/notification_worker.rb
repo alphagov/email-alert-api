@@ -15,27 +15,25 @@ class NotificationWorker
       government_document_supertype: notification_params[:government_document_supertype],
     )
 
-    enabled_lists, disabled_lists = query.lists.partition(&:enabled?)
-    enabled_gov_delivery_ids = enabled_lists.map(&:gov_delivery_id)
+    gov_delivery_ids = query.lists.map(&:gov_delivery_id)
 
     log_notification(
       notification_params,
-      enabled_gov_delivery_ids: enabled_gov_delivery_ids,
-      disabled_gov_delivery_ids: disabled_lists.map(&:gov_delivery_id),
+      gov_delivery_ids: gov_delivery_ids,
       tags_hash: tags_hash,
       links_hash: links_hash,
     )
 
-    if enabled_lists.any?
+    if gov_delivery_ids.any?
       Rails.logger.info "--- Sending email to GovDelivery ---"
       Rails.logger.info "subject: '#{notification_params[:subject]}'"
       Rails.logger.info "links: '#{links_hash}'"
       Rails.logger.info "tags: '#{tags_hash}'"
-      Rails.logger.info "matched #{enabled_lists.count} lists in GovDelivery: [#{enabled_gov_delivery_ids.join(', ')}]"
+      Rails.logger.info "matched #{gov_delivery_ids.count} lists in GovDelivery: [#{gov_delivery_ids.join(', ')}]"
       Rails.logger.info "notification_json: #{notification_params.to_json}"
       Rails.logger.info "--- End email to GovDelivery ---"
 
-      send_email(enabled_gov_delivery_ids.uniq, notification_params)
+      send_email(gov_delivery_ids.uniq, notification_params)
     else
       Rails.logger.info <<-LOG.strip_heredoc
         No matching lists in GovDelivery, not sending email.
@@ -67,7 +65,7 @@ private
     end
   end
 
-  def log_notification(notification_params, enabled_gov_delivery_ids:, disabled_gov_delivery_ids:, links_hash:, tags_hash:)
+  def log_notification(notification_params, gov_delivery_ids:, links_hash:, tags_hash:)
     NotificationLog.create(
       govuk_request_id: notification_params[:govuk_request_id],
       content_id: notification_params[:content_id],
@@ -77,10 +75,7 @@ private
       document_type: notification_params[:document_type],
       email_document_supertype: notification_params[:email_document_supertype],
       government_document_supertype: notification_params[:government_document_supertype],
-      emailing_app: 'email_alert_api',
-      gov_delivery_ids: enabled_gov_delivery_ids + disabled_gov_delivery_ids,
-      enabled_gov_delivery_ids: enabled_gov_delivery_ids,
-      disabled_gov_delivery_ids: disabled_gov_delivery_ids,
+      gov_delivery_ids: gov_delivery_ids,
       publishing_app: notification_params[:publishing_app],
     )
   rescue Exception
