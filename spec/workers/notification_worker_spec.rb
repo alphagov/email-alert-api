@@ -52,10 +52,7 @@ RSpec.describe NotificationWorker do
           document_type: nil,
           email_document_supertype: nil,
           government_document_supertype: nil,
-          emailing_app: 'email_alert_api',
           gov_delivery_ids: ['gov123'],
-          enabled_gov_delivery_ids: ['gov123'],
-          disabled_gov_delivery_ids: [],
         )
       end
     end
@@ -306,89 +303,7 @@ RSpec.describe NotificationWorker do
           links: { 'topics' => ['uuid-888'] },
           tags: { 'topics' => ['foo/bar'] },
           document_type: nil,
-          emailing_app: 'email_alert_api',
           gov_delivery_ids: [],
-          enabled_gov_delivery_ids: [],
-          disabled_gov_delivery_ids: [],
-        )
-      end
-    end
-
-    context 'given the matching subscriber list is disabled' do
-      before do
-        create(
-          :subscriber_list,
-          gov_delivery_id: 'dis123',
-          tags: {topics: ['foo/bar']},
-          enabled: false,
-        )
-        notification_params.merge!(tags: {topics: ['foo/bar']})
-      end
-
-      it "does not send a bulletin" do
-        make_it_perform
-
-        expect(@gov_delivery).to_not have_received(:send_bulletin)
-      end
-
-      it 'creates a notification log record' do
-        expect { make_it_perform }.to change { NotificationLog.count }.by(1)
-
-        expect(NotificationLog.last).to have_attributes(
-          govuk_request_id: 'AAAAAA',
-          content_id: "111111-aaaaaa",
-          public_updated_at: Time.parse("2017-02-21T14:58:45+00:00"),
-          links: {},
-          tags: { 'topics' => ['foo/bar'] },
-          document_type: nil,
-          emailing_app: 'email_alert_api',
-          gov_delivery_ids: ['dis123'],
-          enabled_gov_delivery_ids: [],
-          disabled_gov_delivery_ids: ['dis123'],
-        )
-      end
-    end
-
-    context 'given matching subscriber lists where one is enabled and one is disabled ' do
-      before do
-        create(
-          :subscriber_list,
-          gov_delivery_id: 'dis123',
-          tags: {topics: ['foo/bar']},
-          enabled: false,
-        )
-        create(
-          :subscriber_list,
-          gov_delivery_id: 'gov123',
-          tags: {topics: ['foo/bar']},
-          enabled: true,
-        )
-        notification_params.merge!(tags: {topics: ['foo/bar']})
-      end
-
-      it "sends a bulletin for the enabled subscriber lists" do
-        make_it_perform
-
-        expect(@gov_delivery).to have_received(:send_bulletin).with(
-          ['gov123'],
-          any_args
-        )
-      end
-
-      it 'creates a notification log record' do
-        expect { make_it_perform }.to change { NotificationLog.count }.by(1)
-
-        expect(NotificationLog.last).to have_attributes(
-          govuk_request_id: 'AAAAAA',
-          content_id: "111111-aaaaaa",
-          public_updated_at: Time.parse("2017-02-21T14:58:45+00:00"),
-          links: {},
-          tags: { 'topics' => ['foo/bar'] },
-          document_type: nil,
-          emailing_app: 'email_alert_api',
-          gov_delivery_ids: ['dis123', 'gov123'],
-          enabled_gov_delivery_ids: ['gov123'],
-          disabled_gov_delivery_ids: ['dis123'],
         )
       end
     end

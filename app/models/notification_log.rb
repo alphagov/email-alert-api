@@ -1,6 +1,4 @@
 class NotificationLog < ApplicationRecord
-  validates :emailing_app, presence: true
-
   # As JSON fields don't offer a matching comparitor in postgres
   # 9.3 we need to convert the fields to `text` in order to compare
   # them or use them in group clauses.
@@ -9,14 +7,6 @@ class NotificationLog < ApplicationRecord
   # as it's written in so that the text values can be correctly matched.
   # as '["aaaa","bbbb"]' != '["bbbb","aaaa"]'
   def gov_delivery_ids=(vals)
-    super vals.sort
-  end
-
-  def enabled_gov_delivery_ids=(vals)
-    super vals.sort
-  end
-
-  def disabled_gov_delivery_ids=(vals)
     super vals.sort
   end
 end
