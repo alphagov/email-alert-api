@@ -30,22 +30,7 @@ module EmailAlertAPI
     end
 
     def environment_config
-      all_configs = YAML.load(File.open(gov_delivery_config_path))
-
-      all_configs.fetch(@environment).tap do |env_config|
-        env_config.merge!(environment_credentials)
-      end
-    end
-
-    def environment_credentials
-      {
-        username: ENV["GOVDELIVERY_USERNAME"],
-        password: ENV["GOVDELIVERY_PASSWORD"],
-        account_code: ENV["GOVDELIVERY_ACCOUNT_CODE"],
-        protocol: ENV["GOVDELIVERY_PROTOCOL"],
-        hostname: ENV["GOVDELIVERY_HOSTNAME"],
-        public_hostname: ENV["GOVDELIVERY_PUBLIC_HOSTNAME"],
-      }.stringify_keys.compact
+      YAML.load(ERB.new(File.read(gov_delivery_config_path)).result).fetch(@environment)
     end
   end
 end
