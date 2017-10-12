@@ -38,12 +38,14 @@ module EmailAlertAPI
     end
 
     def environment_credentials
-      return {} unless ENV["GOVDELIVERY_USERNAME"]
-
       {
-        username: ENV.fetch("GOVDELIVERY_USERNAME"),
-        password: ENV.fetch("GOVDELIVERY_PASSWORD"),
-      }.stringify_keys
+        username: ENV["GOVDELIVERY_USERNAME"],
+        password: ENV["GOVDELIVERY_PASSWORD"],
+        account_code: ENV["GOVDELIVERY_ACCOUNT_CODE"],
+        protocol: ENV["GOVDELIVERY_PROTOCOL"],
+        hostname: ENV["GOVDELIVERY_HOSTNAME"],
+        public_hostname: ENV["GOVDELIVERY_PUBLIC_HOSTNAME"],
+      }.stringify_keys.compact
     end
   end
 end
