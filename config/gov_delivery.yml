@@ -13,3 +13,11 @@ test:
   protocol: http
   hostname: govdelivery-api.example.com
   public_hostname: govdelivery-public.example.com
+
+production:
+  username: <%= ENV['GOVDELIVERY_USERNAME'] %>
+  password: <%= ENV['GOVDELIVERY_PASSWORD'] %>
+  account_code: <%= ENV['GOVDELIVERY_ACCOUNT_CODE'] %>
+  protocol: <%= ENV['GOVDELIVERY_PROTOCOL'] %>
+  hostname: <%= ENV['GOVDELIVERY_HOSTNAME'] %>
+  public_hostname: <%= ENV['GOVDELIVERY_PUBLIC_HOSTNAME'] %>
