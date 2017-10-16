@@ -15,6 +15,7 @@ gem 'sidekiq-logging-json', '0.0.18'
 gem 'statsd-ruby', '1.4.0'
 gem 'gds-api-adapters', '~> 47.9.0'
 gem 'sidekiq-statsd', '0.1.5'
+gem 'notifications-ruby-client', '2.3.0'
 
 group :test do
   gem 'equivalent-xml'
