@@ -1,5 +1,6 @@
 require "gov_delivery/client"
 require 'gds_api/content_store'
+require "email_sender/notify_sender"
 
 module Services
   def self.gov_delivery
@@ -8,5 +9,9 @@ module Services
 
   def self.content_store
     @content_store ||= GdsApi::ContentStore.new(Plek.new.find('content-store'))
+  end
+
+  def self.email_sender
+    @email_sender ||= EmailSender::NotifySender.new
   end
 end
