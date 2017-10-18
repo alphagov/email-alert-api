@@ -1,7 +1,7 @@
 require "notifications/client"
 
 module EmailSender
-  class NotifySender
+  class Notify
     def call(address:, **keyword_args)
       send_to_notify(address: address, **keyword_args)
     end
