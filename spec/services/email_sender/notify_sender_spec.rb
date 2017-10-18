@@ -1,7 +1,7 @@
 require "rails_helper"
 require "notifications/client"
 
-RSpec.describe EmailSender::NotifySender do
+RSpec.describe EmailSender::Notify do
   describe "#call" do
     it "sends an email to the address passed in" do
       client = double
