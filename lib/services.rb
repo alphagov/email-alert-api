@@ -12,6 +12,6 @@ module Services
   end
 
   def self.email_sender
-    @email_sender ||= EmailSender::NotifySender.new
+    @email_sender ||= EmailSender::Notify.new
   end
 end
