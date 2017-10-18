@@ -19,6 +19,10 @@ module EmailAlertAPI
       YAML.load(ERB.new(File.read(redis_config_path)).result).symbolize_keys
     end
 
+    def notify
+      @notify ||= notify_environment_config.symbolize_keys.freeze
+    end
+
   private
 
     def redis_config_path
@@ -31,6 +35,14 @@ module EmailAlertAPI
 
     def environment_config
       YAML.load(ERB.new(File.read(gov_delivery_config_path)).result).fetch(@environment)
+    end
+
+    def notify_config_path
+      File.join(app_root, "config", "notify.yml")
+    end
+
+    def notify_environment_config
+      YAML.load(ERB.new(File.read(notify_config_path)).result).fetch(@environment)
     end
   end
 end
