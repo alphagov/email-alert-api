@@ -57,12 +57,8 @@ sidekiq-monitoring for email-alert-api uses 3089
 
 GovDelivery client code is stored in `app/services/gov_delivery`.
 
-To connect to the real GovDelivery, provide the credentials as environment
-variables, i.e.:
-
-`GOVDELIVERY_USERNAME=govdelivery@example.com GOVDELIVERY_PASSWORD=nottherealpassword rails s`
-
-or export them using dotenv or similar.
+To connect to the real GovDelivery, you should provide the credentials in
+[`gov_delivery.yml`](config/gov_delivery.yml).
 
 ## Available endpoints
 
