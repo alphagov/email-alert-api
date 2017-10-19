@@ -28,6 +28,7 @@ group :development do
 end
 
 group :development, :test do
+  gem 'govuk-lint'
   gem 'listen', '3.1.5'
   gem 'rspec-rails', '3.6.0'
   gem 'pry-byebug'
