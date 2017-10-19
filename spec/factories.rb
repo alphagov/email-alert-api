@@ -14,4 +14,7 @@ FactoryGirl.define do
     document_type "announcement"
     gov_delivery_ids %w(TOPIC_123 TOPIC_456)
   end
+
+  factory :subscriber do
+  end
 end
