@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe DataHygiene::DataSync do
   let(:logger) { double(:logger, info: true, warn: true) }
   let(:topics) do
-    [{ 'name' => 'Topic A', 'code' => 'TA' },{ 'name' => 'Topic B', 'code' => 'TB' }]
+    [{ 'name' => 'Topic A', 'code' => 'TA' }, { 'name' => 'Topic B', 'code' => 'TB' }]
   end
   let(:gov_delivery_client) { double(:gov_delivery_client, fetch_topics: { 'topics' => topics }) }
   subject { described_class.new(logger, 0) }

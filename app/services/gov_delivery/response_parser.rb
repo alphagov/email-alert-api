@@ -23,7 +23,7 @@ module GovDelivery
     def keys
       first_level_element_nodes
         .map(&:node_name)
-        .map { |k| k.gsub("-", "_") }
+        .map { |k| k.tr("-", "_") }
         .map(&:to_sym)
     end
 

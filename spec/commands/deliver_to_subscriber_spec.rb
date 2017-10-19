@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe DeliverToSubscriber do
   describe ".call" do
-    let(:email_sender){ double }
+    let(:email_sender) { double }
     before do
       allow(Services).to receive(:email_sender).and_return(
         email_sender
@@ -21,7 +21,7 @@ RSpec.describe DeliverToSubscriber do
     end
 
     it "requires subscriber" do
-      expect{
+      expect {
         DeliverToSubscriber.call(subscriber: nil)
       }.to raise_error(
         ArgumentError,

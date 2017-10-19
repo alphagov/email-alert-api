@@ -6,7 +6,6 @@ class FindExactMatch
     @scope = scope
   end
 
-
   def call(query_hash)
     return [] unless query_hash.present?
 
@@ -33,7 +32,6 @@ private
     # This uses array equality to check if the JSON object
     # contains all the specified keys.
     @scope.where("ARRAY(SELECT json_object_keys(#{@query_field})) = Array[:keys]",
-      keys: query_hash.keys,
-    )
+      keys: query_hash.keys,)
   end
 end

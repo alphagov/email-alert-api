@@ -1,6 +1,6 @@
 module DataHygiene
   class DataSync
-    PRODUCTION_ACCOUNT_CODE = "UKGOVUK"
+    PRODUCTION_ACCOUNT_CODE = "UKGOVUK".freeze
     THREAD_COUNT = 40
 
     attr_reader :logger
@@ -123,12 +123,12 @@ module DataHygiene
     def create_topics_on_gov_delivery(list)
       if list.empty?
         logger.info "No topics to be created"
-        return
+        nil
       else
         6.times.each do |i|
           logger.info "Attempting to create subscriber lists: Attempt #{i}"
           list = create_topics(list)
-          return if list.empty?
+          return if list.empty? # rubocop:disable Lint/NonLocalExitFromIterator
           sleep 2
         end
 
@@ -153,4 +153,3 @@ module DataHygiene
     end
   end
 end
-

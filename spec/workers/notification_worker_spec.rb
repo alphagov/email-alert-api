@@ -24,8 +24,8 @@ RSpec.describe NotificationWorker do
 
     context "given a subscriber list matched on tags" do
       before do
-        create(:subscriber_list, gov_delivery_id: 'gov123', tags: {topics: ['foo/bar']})
-        notification_params.merge!(tags: {topics: ['foo/bar']})
+        create(:subscriber_list, gov_delivery_id: 'gov123', tags: { topics: ['foo/bar'] })
+        notification_params.merge!(tags: { topics: ['foo/bar'] })
       end
 
       it "sends a bulletin with the correct IDs" do
@@ -62,10 +62,10 @@ RSpec.describe NotificationWorker do
         create(
           :subscriber_list,
           gov_delivery_id: 'gov123',
-          tags:   {topics: ['foo/bar']},
-          links:  {topics: ['uuid']},
+          tags:   { topics: ['foo/bar'] },
+          links:  { topics: ['uuid'] },
         )
-        notification_params.merge!(tag: {topics: ['foo/bar']}, links: {topics: ['uuid']})
+        notification_params.merge!(tag: { topics: ['foo/bar'] }, links: { topics: ['uuid'] })
       end
 
       it "sends a bulletin with the correct IDs" do
@@ -100,8 +100,8 @@ RSpec.describe NotificationWorker do
     context "filtering on document_type" do
       context "when the optional document_type is set in the subscriber list" do
         before do
-          create(:subscriber_list, document_type: 'travel-advice', tags: {topics: ['foo/bar']})
-          notification_params.merge!(tags: {topics: ['foo/bar']})
+          create(:subscriber_list, document_type: 'travel-advice', tags: { topics: ['foo/bar'] })
+          notification_params.merge!(tags: { topics: ['foo/bar'] })
         end
 
         it "sends a bulletin when document_type matches" do
@@ -124,8 +124,8 @@ RSpec.describe NotificationWorker do
 
       context "when the optional document_type is absent from the subscriber list" do
         before do
-          create(:subscriber_list, tags: {topics: ['foo/bar']})
-          notification_params.merge!(tags: {topics: ['foo/bar']})
+          create(:subscriber_list, tags: { topics: ['foo/bar'] })
+          notification_params.merge!(tags: { topics: ['foo/bar'] })
         end
 
         it "sends a bulletin when content item has a document_type" do
@@ -234,10 +234,10 @@ RSpec.describe NotificationWorker do
       before do
         create(
           :subscriber_list,
-          tags: {topics: ['foo/bar']},
+          tags: { topics: ['foo/bar'] },
           links: {},
         )
-        notification_params.merge!(tags: {topics: ['foo/bar']})
+        notification_params[:tags] = { topics: ['foo/bar'] }
 
         expect(@gov_delivery).to receive(:send_bulletin).and_raise(
           GovDelivery::Client::UnknownError,
@@ -253,17 +253,16 @@ RSpec.describe NotificationWorker do
         expect(GovukError).to receive(:notify)
         make_it_perform
       end
-
     end
 
     context "given GovDelivery raises an error other than GD-12004" do
       before do
         create(
           :subscriber_list,
-          tags: {topics: ['foo/bar']},
+          tags: { topics: ['foo/bar'] },
           links: {},
         )
-        notification_params.merge!(tags: {topics: ['foo/bar']})
+        notification_params[:tags] = { topics: ['foo/bar'] }
 
         expect(@gov_delivery).to receive(:send_bulletin).and_raise(
           GovDelivery::Client::UnknownError,
@@ -281,10 +280,10 @@ RSpec.describe NotificationWorker do
         create(
           :subscriber_list,
           gov_delivery_id: 'gov123',
-          tags:   {topics: ['coal/environment']},
-          links:  {topics: ['uuid']},
+          tags:   { topics: ['coal/environment'] },
+          links:  { topics: ['uuid'] },
         )
-        notification_params.merge!(tags: {topics: ['foo/bar']}, links: {topics: ['uuid-888']})
+        notification_params.merge!(tags: { topics: ['foo/bar'] }, links: { topics: ['uuid-888'] })
       end
 
       it "does not send a bulletin" do

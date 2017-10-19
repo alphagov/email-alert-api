@@ -16,7 +16,7 @@ module EmailAlertAPI
     end
 
     def redis_config
-      YAML.load(ERB.new(File.read(redis_config_path)).result).symbolize_keys
+      YAML.safe_load(ERB.new(File.read(redis_config_path)).result).symbolize_keys
     end
 
     def notify
@@ -34,7 +34,7 @@ module EmailAlertAPI
     end
 
     def environment_config
-      YAML.load(ERB.new(File.read(gov_delivery_config_path)).result).fetch(@environment)
+      YAML.safe_load(ERB.new(File.read(gov_delivery_config_path)).result).fetch(@environment)
     end
 
     def notify_config_path
@@ -42,7 +42,7 @@ module EmailAlertAPI
     end
 
     def notify_environment_config
-      YAML.load(ERB.new(File.read(notify_config_path)).result).fetch(@environment)
+      YAML.safe_load(ERB.new(File.read(notify_config_path)).result).fetch(@environment)
     end
   end
 end

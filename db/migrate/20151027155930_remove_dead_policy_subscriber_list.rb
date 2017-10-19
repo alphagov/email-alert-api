@@ -3,7 +3,7 @@ class RemoveDeadPolicySubscriberList < ActiveRecord::Migration
     # This list doesn't match anything except similarly named placeholders in
     # the Content Store.
     target_list = FindExactMatch.new.call(
-      { policy: ["inspections-of-schools-colleges-and-children-s-services"] }
+      policy: ["inspections-of-schools-colleges-and-children-s-services"]
     ).first
 
     if target_list.present?

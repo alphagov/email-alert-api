@@ -13,7 +13,7 @@ RSpec.describe "Sending a notification", type: :request do
   end
 
   it "returns a 202" do
-    send_notification({ topics: ["oil-and-gas/licensing"] })
+    send_notification(topics: ["oil-and-gas/licensing"])
 
     expect(response.status).to eq(202)
   end
@@ -21,16 +21,14 @@ RSpec.describe "Sending a notification", type: :request do
   it "kicks off a notification job" do
     expect {
       send_notification(topics: ["oil-and-gas/licensing"])
-    }.to change{NotificationWorker.jobs.count}.from(0).to(1)
+    }.to change { NotificationWorker.jobs.count }.from(0).to(1)
   end
 
   it "sends notifications for the right subscriber lists" do
-    relevant_list_ids, irrelevant_list_ids = create_many_lists
+    relevant_list_ids, _irrelevant_list_ids = create_many_lists
 
-    send_notification({
-      topics: ["oil-and-gas/licensing"],
-      organisations: ["environment-agency", "hm-revenue-customs"]
-    })
+    send_notification(topics: ["oil-and-gas/licensing"],
+      organisations: ["environment-agency", "hm-revenue-customs"])
 
     NotificationWorker.drain
 
@@ -44,18 +42,16 @@ RSpec.describe "Sending a notification", type: :request do
   end
 
   it "sends notifications with options if given" do
-    relevant_list_ids, irrelevant_list_ids = create_many_lists
+    relevant_list_ids, _irrelevant_list_ids = create_many_lists
 
     send_notification({
       topics: ["oil-and-gas/licensing"],
       organisations: ["environment-agency", "hm-revenue-customs"]
     },
-    {
-      from_address_id: "12345",
+          from_address_id: "12345",
       urgent: true,
       header: "foo",
-      footer: "bar",
-    })
+      footer: "bar")
 
     NotificationWorker.drain
 
@@ -64,20 +60,16 @@ RSpec.describe "Sending a notification", type: :request do
         relevant_list_ids,
         "This is a sample subject",
         "Here is some body copy<span data-govuk-request-id=\"\"></span>",
-        {
-          "from_address_id" => "12345",
+                  "from_address_id" => "12345",
           "urgent" => true,
           "header" => "foo",
           "footer" => "bar"
-        }
       )
   end
 
   it "doesn't send notifications if there's no lists" do
-    send_notification({
-      topics: ["oil-and-gas/licensing"],
-      organisations: ["environment-agency", "hm-revenue-customs"]
-    })
+    send_notification(topics: ["oil-and-gas/licensing"],
+      organisations: ["environment-agency", "hm-revenue-customs"])
 
     NotificationWorker.drain
 
@@ -92,8 +84,7 @@ RSpec.describe "Sending a notification", type: :request do
       tags: {
         topics: ["oil-and-gas/licensing"],
         organisations: ["environment-agency", "hm-revenue-customs"]
-      }
-    )
+      })
 
     partial_type_match = create(:subscriber_list, tags: {
       topics: ["oil-and-gas/licensing"],
@@ -105,8 +96,7 @@ RSpec.describe "Sending a notification", type: :request do
       tags: {
         topics: ["oil-and-gas/licensing"],
         organisations: ["environment-agency"]
-      }
-    )
+      })
 
     full_type_no_tag_match = create(:subscriber_list, tags: {
       topics: ["schools-colleges/administration-finance"],
@@ -129,7 +119,7 @@ RSpec.describe "Sending a notification", type: :request do
       full_type_but_empty
     ]
 
-    return [
+    [
       relevant_lists.map(&:gov_delivery_id).uniq,
       irrelevant_lists.map(&:gov_delivery_id).uniq
     ]

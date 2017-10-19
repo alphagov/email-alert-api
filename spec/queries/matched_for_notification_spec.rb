@@ -17,8 +17,7 @@ RSpec.describe MatchedForNotification do
         links: { topics: ["uuid-123"] },
         tags: {
           topics: ["environmental-management/boating"],
-        }
-      )
+        })
     end
 
     def execute_query(field:, query_hash:)
@@ -37,10 +36,10 @@ RSpec.describe MatchedForNotification do
       })
       expect(lists).to eq([@list1, @list2])
 
-      lists = execute_query(field: :links, query_hash: {topics: ["uuid-123"], policies: ["uuid-888"]})
+      lists = execute_query(field: :links, query_hash: { topics: ["uuid-123"], policies: ["uuid-888"] })
       expect(lists).to eq([@list3, @list4])
 
-      lists = execute_query(field: :links, query_hash: {topics: ["uuid-123"]})
+      lists = execute_query(field: :links, query_hash: { topics: ["uuid-123"] })
       expect(lists).to eq([@list4])
     end
 

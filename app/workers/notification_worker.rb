@@ -58,7 +58,7 @@ private
     # We want to to be notified when trying to send to a topic without
     # any subscribers (GD-12004), however we want to swallow the error
     # as otherwise the sidekiq job continue to retry, with the same error.
-    if e.message =~ /GD-12004/
+    if e.message.match?(/GD-12004/)
       GovukError.notify(e.message)
     else
       raise
@@ -78,8 +78,9 @@ private
       gov_delivery_ids: gov_delivery_ids,
       publishing_app: notification_params[:publishing_app],
     )
-  rescue Exception
+  rescue Exception # rubocop:disable Lint/RescueException
     # rescue any exception here as logging should not delay the email process
     # and more importantly should not result in multiple emails being sent.
+    nil
   end
 end

@@ -7,4 +7,3 @@ class FindWithoutLinksAndTags
     @scope.where("tags::text = '{}'::text AND links::text = '{}'::text")
   end
 end
-

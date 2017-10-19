@@ -9,7 +9,7 @@ class SubscriberListsController < ApplicationController
       end
     else
       respond_to do |format|
-        format.json { render json: {message: "Could not find the subscriber list"}, status: 404 }
+        format.json { render json: { message: "Could not find the subscriber list" }, status: 404 }
       end
     end
   end
@@ -22,7 +22,7 @@ class SubscriberListsController < ApplicationController
       end
     else
       respond_to do |format|
-        format.json { render json: {message: subscriber_list.errors.full_messages.to_sentence}, status: 422 }
+        format.json { render json: { message: subscriber_list.errors.full_messages.to_sentence }, status: 422 }
       end
     end
   end

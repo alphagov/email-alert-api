@@ -11,9 +11,13 @@ RSpec.describe DataHygiene::TitleFetcher do
       let!(:subscriber_list) { create(:subscriber_list, gov_delivery_id: 'ABC_123', title: nil) }
 
       it 'does not update the subscriber list' do
-        expect { subject.send(:update_title, subscriber_list, nil) }.to_not change { subscriber_list.title }
-        expect { subject.send(:update_title, subscriber_list, '') }.to_not change { subscriber_list.title }
-        expect(subject.stats).to eq({ not_found: 2 })
+        expect { subject.send(:update_title, subscriber_list, nil) }
+          .to_not change(subscriber_list, :title)
+
+        expect { subject.send(:update_title, subscriber_list, '') }
+          .to_not change(subscriber_list, :title)
+
+        expect(subject.stats).to eq(not_found: 2)
       end
     end
 
@@ -33,7 +37,7 @@ RSpec.describe DataHygiene::TitleFetcher do
           it 'logs the change' do
             expect(logger).to receive(:info).with("ABC_123: title updated to match GovDelivery topic")
             subject.send(:update_title, subscriber_list, new_title)
-            expect(subject.stats).to eq({ updated: 1 })
+            expect(subject.stats).to eq(updated: 1)
           end
         end
 
@@ -49,7 +53,7 @@ RSpec.describe DataHygiene::TitleFetcher do
           it 'logs the failure' do
             expect(logger).to receive(:warn).with("ABC_123: failed to update title")
             subject.send(:update_title, subscriber_list, 'Education')
-            expect(subject.stats).to eq({ update_failed: 1 })
+            expect(subject.stats).to eq(update_failed: 1)
           end
         end
       end
@@ -60,13 +64,13 @@ RSpec.describe DataHygiene::TitleFetcher do
 
         it "doesn't change the title" do
           expect { subject.send(:update_title, subscriber_list, title) }
-            .not_to change { subscriber_list.title }
+            .not_to change(subscriber_list, :title)
         end
 
         it 'logs it' do
           expect(logger).to receive(:info).with("ABC_123: already has matching title")
           subject.send(:update_title, subscriber_list, title)
-          expect(subject.stats).to eq({ already_matching: 1 })
+          expect(subject.stats).to eq(already_matching: 1)
         end
       end
 
@@ -76,7 +80,7 @@ RSpec.describe DataHygiene::TitleFetcher do
 
         it "doesn't change the title" do
           expect { subject.send(:update_title, subscriber_list, new_title) }
-            .not_to change { subscriber_list.title }
+            .not_to change(subscriber_list, :title)
         end
 
         it 'logs it' do
@@ -84,7 +88,7 @@ RSpec.describe DataHygiene::TitleFetcher do
             .to receive(:warn)
             .with("ABC_123: has GD name Education but EEA title Space; not overwriting existing title with name")
           subject.send(:update_title, subscriber_list, new_title)
-          expect(subject.stats).to eq({ different: 1 })
+          expect(subject.stats).to eq(different: 1)
         end
       end
     end
@@ -93,11 +97,11 @@ RSpec.describe DataHygiene::TitleFetcher do
   describe '#fetch_all_topics' do
     before do
       topics = [
-        {'code' => 'ABC_123', 'name' => 'Education'},
-        {'code' => 'XYZ_789', 'name' => 'Space'},
+        { 'code' => 'ABC_123', 'name' => 'Education' },
+        { 'code' => 'XYZ_789', 'name' => 'Space' },
       ]
       allow(client).to receive(:fetch_topics)
-        .and_return({'topics' => topics})
+        .and_return('topics' => topics)
     end
 
     it 'calls the API' do
@@ -123,13 +127,13 @@ RSpec.describe DataHygiene::TitleFetcher do
 
     before do
       topics = [
-        {'code' => missing_title_list.gov_delivery_id, 'name' => 'I have a name'},
-        {'code' => matching_title_list.gov_delivery_id, 'name' => 'Education'},
-        {'code' => different_title_list.gov_delivery_id, 'name' => 'Something else'},
-        {'code' => empty_govdelivery_name_list.gov_delivery_id, 'name' => ''},
+        { 'code' => missing_title_list.gov_delivery_id, 'name' => 'I have a name' },
+        { 'code' => matching_title_list.gov_delivery_id, 'name' => 'Education' },
+        { 'code' => different_title_list.gov_delivery_id, 'name' => 'Something else' },
+        { 'code' => empty_govdelivery_name_list.gov_delivery_id, 'name' => '' },
       ]
       allow(client).to receive(:fetch_topics)
-        .and_return({'topics' => topics})
+        .and_return('topics' => topics)
     end
 
     it 'fetches the topics from GovDelivery only once' do
@@ -149,7 +153,7 @@ RSpec.describe DataHygiene::TitleFetcher do
         different_title_list,
         not_on_govdelivery_list,
         empty_govdelivery_name_list
-      ].each { |subscriber_list| subscriber_list.reload }
+      ].each(&:reload)
 
       expect(matching_title_list.title).to eq('Education')
       expect(different_title_list.title).to eq('Space')
@@ -195,7 +199,7 @@ RSpec.describe DataHygiene::TitleFetcher do
       it 'explodes' do
         # If we can't fetch the topics then we can't do anything else useful, so
         # there's no point in catching the error
-        expect{ subject.run }.to raise_error(GovDeliveryTimeout)
+        expect { subject.run }.to raise_error(GovDeliveryTimeout)
       end
     end
   end

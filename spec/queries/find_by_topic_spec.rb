@@ -7,7 +7,7 @@ RSpec.describe FindByTopic do
     @list3 = create(:subscriber_list, tags: {
       topics: [
         "environmental-management/boating",
-        "environmental-management/sailing" ,
+        "environmental-management/sailing",
         "environmental-management/swimming"
       ],
     })

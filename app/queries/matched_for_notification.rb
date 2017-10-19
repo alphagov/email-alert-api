@@ -41,7 +41,6 @@ private
     @scope
       .where("#{@query_field}::text != '{}'")
       .where("ARRAY(SELECT json_object_keys(#{@query_field})) <@ Array[:keys]",
-        keys: keys,
-      )
+        keys: keys,)
   end
 end
