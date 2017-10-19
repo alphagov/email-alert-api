@@ -3,4 +3,5 @@
 :concurrency:  2
 :logfile: ./log/sidekiq.json.log
 :queues:
+  - high_priority
   - default
