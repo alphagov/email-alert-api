@@ -13,7 +13,7 @@ class SeedPolicySubscriptions < ActiveRecord::Migration
     CSV.foreach(csv_path) do |(slug, gov_delivery_id)|
       old_slug = slug.gsub(%r{^/}, '')
 
-      if new_slug = slug_mapping[old_slug]
+      if (new_slug = slug_mapping[old_slug])
         SubscriberList.create!(
           gov_delivery_id: gov_delivery_id,
           tags: {

@@ -1,8 +1,6 @@
 class RemovePolicySubscriberListsWithErroneousLinks < ActiveRecord::Migration
   def up
-    subscriber_lists_with_key(:policies).each do |sl|
-      sl.destroy!
-    end
+    subscriber_lists_with_key(:policies).each(&:destroy!)
   end
 
   def down

@@ -12,7 +12,7 @@ class SubscriberListQuery
       lists_matched_on_links +
       lists_matched_on_tags +
       lists_matched_on_document_type_only
-    ).uniq { |l| l.id }
+    ).uniq(&:id)
   end
 
 private

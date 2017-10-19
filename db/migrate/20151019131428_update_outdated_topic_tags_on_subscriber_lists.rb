@@ -32,9 +32,9 @@ class UpdateOutdatedTopicTagsOnSubscriberLists < ActiveRecord::Migration
     ]
 
     tag_mappings.each do |mapping|
-      list = FindExactMatch.new.call(topics: [ mapping[:from] ]).first
+      list = FindExactMatch.new.call(topics: [mapping[:from]]).first
       if list.present?
-        list.tags = {topics: [ mapping[:to] ] }
+        list.tags = { topics: [mapping[:to]] }
         list.save!
       end
     end

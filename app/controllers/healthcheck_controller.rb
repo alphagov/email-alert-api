@@ -30,8 +30,7 @@ class HealthcheckController < ActionController::Base
 private
 
   def status
-    ActiveRecord::Base.connected? &&
-      Sidekiq.redis_info ? 'ok' : 'critical'
+    ActiveRecord::Base.connected? && Sidekiq.redis_info ? 'ok' : 'critical'
   end
 
   def govdelivery_status
@@ -44,10 +43,9 @@ private
 
   def queue_retry_size_status
     sidekiq_retry_size = sidekiq_stats.retry_size
-    case
-    when sidekiq_retry_size >= ENV.fetch('SIDEKIQ_RETRY_SIZE_CRITICAL').to_i
+    if sidekiq_retry_size >= ENV.fetch('SIDEKIQ_RETRY_SIZE_CRITICAL').to_i
       'critical'
-    when sidekiq_retry_size >= ENV.fetch('SIDEKIQ_RETRY_SIZE_WARNING').to_i
+    elsif sidekiq_retry_size >= ENV.fetch('SIDEKIQ_RETRY_SIZE_WARNING').to_i
       'warning'
     else
       'ok'
@@ -56,10 +54,9 @@ private
 
   def queue_size_status
     queues = sidekiq_queues
-    case
-    when queues.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_SIZE_CRITICAL').to_i }
+    if queues.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_SIZE_CRITICAL').to_i }
       'critical'
-    when queues.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_SIZE_WARNING').to_i }
+    elsif queues.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_SIZE_WARNING').to_i }
       'warning'
     else
       'ok'
@@ -68,10 +65,9 @@ private
 
   def queue_age_status
     queue_age = queue_latencies
-    case
-    when queue_age.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_LATENCY_CRITICAL').to_i }
+    if queue_age.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_LATENCY_CRITICAL').to_i }
       'critical'
-    when queue_age.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_LATENCY_WARNING').to_i }
+    elsif queue_age.values.any? { |v| v >= ENV.fetch('SIDEKIQ_QUEUE_LATENCY_WARNING').to_i }
       'warning'
     else
       'ok'

@@ -17,8 +17,8 @@ RSpec.describe SubscriberList, type: :model do
 
     it "builds a new SubscriberList without a format" do
       expect(list.title).to eq "Ronnie Pickering"
-      expect(list.tags).to eq({:topics=>["motoring/road_rage"]})
-      expect(list.links).to eq({:topics=>["uuid-888"]})
+      expect(list.tags).to eq(topics: ["motoring/road_rage"])
+      expect(list.links).to eq(topics: ["uuid-888"])
       expect(list.gov_delivery_id).to eq "GOVUK_888"
       expect(list.document_type).to be_nil
     end

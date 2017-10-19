@@ -27,7 +27,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
   end
 
   it "creates the topic on gov delivery" do
-    create_subscriber_list(tags: {topics: ["oil-and-gas/licensing"]})
+    create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
 
     body = <<-XML.strip_heredoc
       <?xml version="1.0"?>
@@ -45,29 +45,29 @@ RSpec.describe "Creating a subscriber list", type: :request do
     assert_requested(
       :post,
       base_url + "/topics.xml",
-      headers: {'Content-Type' => 'application/xml'},
+      headers: { 'Content-Type' => 'application/xml' },
       body: body,
       times: 1
     )
   end
 
-   it "creates a subscriber_list" do
-    create_subscriber_list(tags: {topics: ["oil-and-gas/licensing"]})
+  it "creates a subscriber_list" do
+    create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
 
     subscriber_list = SubscriberList.last
     expect(subscriber_list).to have_attributes(gov_delivery_id: 'UKGOVUK_1234')
   end
 
   it "returns a 201" do
-    create_subscriber_list(tags: {topics: ["oil-and-gas/licensing"]})
+    create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
 
     expect(response.status).to eq(201)
   end
 
   it "returns the created subscriber list" do
     create_subscriber_list(
-      tags: {topics: ["oil-and-gas/licensing"]},
-      links: {topics: ["uuid-888"]}
+      tags: { topics: ["oil-and-gas/licensing"] },
+      links: { topics: ["uuid-888"] }
     )
     response_hash = JSON.parse(response.body)
     subscriber_list = response_hash["subscriber_list"]
@@ -100,7 +100,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
   it "returns an error if tag isn't an array" do
     create_subscriber_list(
-      tags: {topics: "oil-and-gas/licensing"},
+      tags: { topics: "oil-and-gas/licensing" },
     )
 
     expect(response.status).to eq(422)
@@ -108,7 +108,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
   it "returns an error if link isn't an array" do
     create_subscriber_list(
-      links: {topics: "uuid-888"},
+      links: { topics: "uuid-888" },
     )
 
     expect(response.status).to eq(422)

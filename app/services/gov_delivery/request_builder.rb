@@ -31,9 +31,11 @@ module GovDelivery
           }
           xml.from_address_id(options[:from_address_id]) if options[:from_address_id]
           xml.urgent(options[:urgent]) if options[:urgent]
-          xml.header {
-            xml.cdata options[:header]
-          } if options[:header]
+          if options[:header]
+            xml.header {
+              xml.cdata options[:header]
+            }
+          end
           xml.footer {
             xml.cdata default_footer
           }

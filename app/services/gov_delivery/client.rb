@@ -62,9 +62,10 @@ module GovDelivery
         end
       )
     rescue ZeroSubscriberError
+      nil
     end
 
-    def fetch_bulletins(start_at=nil)
+    def fetch_bulletins(start_at = nil)
       # GovDelivery documentation for this endpoint:
       # http://developer.govdelivery.com/api/comm_cloud_v1/Default.htm#API/Comm Cloud V1/API_CommCloudV1_Bulletins_ListSentBulletins.htm
       endpoint = "bulletins/sent.xml"
@@ -88,12 +89,13 @@ module GovDelivery
     end
 
   private
+
     attr_reader :options
 
     def logger
       unless @logger
         @logger = Logger.new(File.join(Rails.root, "log/govdelivery.log"))
-        @logger.formatter = proc do |severity, datetime, progname, msg|
+        @logger.formatter = proc do |_severity, datetime, _progname, msg|
           {
             "@fields.application" => "email-alert-api",
             "@timestamp" => datetime.iso8601,
@@ -149,15 +151,15 @@ module GovDelivery
     end
 
     def raise_correct_error(parsed_response)
-      if parsed_response.code == "GD-14004"
-        error_class = TopicAlreadyExistsError
-      elsif parsed_response.code == "GD-12004" && parsed_response.error == "To send a bulletin you must select at least one topic or category that has subscribers"
-        error_class = ZeroSubscriberError
-      elsif parsed_response.code == "GD-14002" && parsed_response.error == "Topic not found"
-        error_class = TopicNotFound
-      else
-        error_class = UnknownError
-      end
+      error_class = if parsed_response.code == "GD-14004"
+                      TopicAlreadyExistsError
+                    elsif parsed_response.code == "GD-12004" && parsed_response.error == "To send a bulletin you must select at least one topic or category that has subscribers"
+                      ZeroSubscriberError
+                    elsif parsed_response.code == "GD-14002" && parsed_response.error == "Topic not found"
+                      TopicNotFound
+                    else
+                      UnknownError
+                    end
 
       raise error_class.new, "#{parsed_response.code}: #{parsed_response.error}"
     end

@@ -14,20 +14,20 @@ module DataHygiene
 
     def call
       puts "#{with_zero_subscribers.count} subscriber lists without subscribers"
-      with_zero_subscribers.each { |sl| puts "#{sl.gov_delivery_id} - #{sl.title}"}
-      if with_missing_topic.count > 0
+      with_zero_subscribers.each { |sl| puts "#{sl.gov_delivery_id} - #{sl.title}" }
+      if with_missing_topic.count.positive?
         puts ''
         puts "#{with_missing_topic.count} subscriber lists don't exist in GovDelivery"
-        with_missing_topic.each { |sl| puts "#{sl.gov_delivery_id} - #{sl.title}"}
+        with_missing_topic.each { |sl| puts "#{sl.gov_delivery_id} - #{sl.title}" }
       end
-      if with_gov_delivery_error.count > 0
+      if with_gov_delivery_error.count.positive?
         puts ''
         puts "#{with_gov_delivery_error.count} subscriber lists with errors - THESE ARE NOT BEING DELETED"
-        with_gov_delivery_error.each { |sl| puts "#{sl.gov_delivery_id} - #{sl.title}"}
+        with_gov_delivery_error.each { |sl| puts "#{sl.gov_delivery_id} - #{sl.title}" }
       end
 
       to_delete = with_zero_subscribers + with_missing_topic
-      if to_delete.count > 0
+      if to_delete.count.positive?
         puts ''
         puts "#{with_zero_subscribers.count} subscriber lists without subscribers and #{with_missing_topic.count} subscriber lists don't exist in GovDelivery, enter `delete` to delete from database and GovDelivery: "
         command = gets
@@ -48,19 +48,19 @@ module DataHygiene
 
     def with_zero_subscribers
       @with_zero_subscribers ||= subscriber_lists
-        .select { |c, s| c == '0' }
+        .select { |c, _s| c == '0' }
         .map(&:last)
     end
 
     def with_missing_topic
       @with_missing_topic ||= subscriber_lists
-        .select { |c, s| c == :topic_not_found }
+        .select { |c, _s| c == :topic_not_found }
         .map(&:last)
     end
 
     def with_gov_delivery_error
       @with_gov_delivery_error ||= subscriber_lists
-        .select { |c, s| c == :unknown_error }
+        .select { |c, _s| c == :unknown_error }
         .map(&:last)
     end
 

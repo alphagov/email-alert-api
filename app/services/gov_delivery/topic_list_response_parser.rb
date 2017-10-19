@@ -12,9 +12,10 @@ module GovDelivery
     end
 
   private
+
     # Returning a struct with these keys matches the API of the ResponseParser
     def keys
-      [:to_param, :topic_uri, :link]
+      %i[to_param topic_uri link]
     end
 
     def values

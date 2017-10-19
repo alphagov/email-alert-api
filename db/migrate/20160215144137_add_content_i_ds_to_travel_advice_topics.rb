@@ -9,10 +9,10 @@ class AddContentIDsToTravelAdviceTopics < ActiveRecord::Migration
     s.destroy!
     puts "Destroyed erroneous topic"
 
-    CSV.foreach(csv_path, {:headers => true, :return_headers => false}) do |row|
+    CSV.foreach(csv_path, headers: true, return_headers: false) do |row|
       s = SubscriberList.find_by(gov_delivery_id: row["gov_delivery_id"])
       s.links = {
-        :countries => [row["content_id"]]
+        countries: [row["content_id"]]
       }
       s.save
       puts "Updated #{row['gov_delivery_id']}"

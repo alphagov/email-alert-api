@@ -13,7 +13,7 @@ class GovukRequestId
   private
 
     def govuk_request_id_html
-      %Q(<span data-govuk-request-id="#{govuk_request_id}"></span>)
+      %(<span data-govuk-request-id="#{govuk_request_id}"></span>)
     end
   end
 end

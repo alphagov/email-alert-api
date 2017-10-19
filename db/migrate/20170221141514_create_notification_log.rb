@@ -14,6 +14,6 @@ class CreateNotificationLog < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :notification_logs, [:content_id, :public_updated_at]
+    add_index :notification_logs, %i[content_id public_updated_at]
   end
 end

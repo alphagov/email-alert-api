@@ -10,7 +10,7 @@ RSpec.describe EmailSender::Notify do
         .and_return(client)
       expect(client)
         .to receive(:send_email)
-        .with(email_address: "email@address.com", template_id: anything())
+        .with(email_address: "email@address.com", template_id: anything)
 
       subject.call(address: "email@address.com")
     end

@@ -23,7 +23,7 @@ RSpec.describe HealthcheckController, type: :controller do
       expect(response.status).to eq(200)
       expect(response.content_type).to eq('application/json')
 
-      data = JSON.parse(response.body)
+      _data = JSON.parse(response.body)
     end
 
     it "responds with 'ok'" do
@@ -35,7 +35,7 @@ RSpec.describe HealthcheckController, type: :controller do
 
     it "includes queue length check in the response" do
       queues = {
-        "scheduled_publishing"=>0
+        "scheduled_publishing" => 0
       }
 
       allow_any_instance_of(HealthcheckController).to receive(:sidekiq_queues).and_return(queues)
@@ -47,7 +47,7 @@ RSpec.describe HealthcheckController, type: :controller do
 
     it "returns ok for small queue sizes" do
       queues = {
-        "scheduled_publishing"=>0
+        "scheduled_publishing" => 0
       }
 
       allow_any_instance_of(HealthcheckController).to receive(:sidekiq_queues).and_return(queues)
@@ -60,8 +60,8 @@ RSpec.describe HealthcheckController, type: :controller do
 
     it "returns warning for medium queue sizes" do
       queues = {
-        "scheduled_publishing"=>0,
-        "foo"=>3
+        "scheduled_publishing" => 0,
+        "foo" => 3
       }
 
       allow_any_instance_of(HealthcheckController).to receive(:sidekiq_queues).and_return(queues)
@@ -74,8 +74,8 @@ RSpec.describe HealthcheckController, type: :controller do
 
     it "returns critical for large queue sizes" do
       queues = {
-        "scheduled_publishing"=>0,
-        "foo"=>10
+        "scheduled_publishing" => 0,
+        "foo" => 10
       }
 
       allow_any_instance_of(HealthcheckController).to receive(:sidekiq_queues).and_return(queues)
@@ -96,9 +96,9 @@ RSpec.describe HealthcheckController, type: :controller do
 
     it "returns critical for large latencies" do
       latencies = {
-        "foo"=>1,
-        "bar"=>5,
-        "baz"=>10
+        "foo" => 1,
+        "bar" => 5,
+        "baz" => 10
       }
 
       allow_any_instance_of(HealthcheckController).to receive(:queue_latencies).and_return(latencies)

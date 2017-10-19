@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe FindExactQuery do
-
   context "when links are in the query" do
     it "matched when subscriber list has the same links" do
       query = build_query(links: { policies: ['aa-11'] })
@@ -23,25 +22,25 @@ RSpec.describe FindExactQuery do
 
     it "not matched when subscriber list has different links" do
       query = build_query(links: { policies: ['aa-11'] })
-      subscriber_list = create_subscriber_list(links: { policies: ['11-aa'] })
+      _subscriber_list = create_subscriber_list(links: { policies: ['11-aa'] })
       expect(query.exact_match).to be_nil
     end
 
     it "not matched when subscriber list has no links" do
       query = build_query(links: { policies: ['aa-11'] })
-      subscriber_list = create_subscriber_list
+      _subscriber_list = create_subscriber_list
       expect(query.exact_match).to be_nil
     end
 
     it "not matched on tags if unable to match links - even if it would match" do
       query = build_query(links: { policies: ['aa-11'] }, tags: { policies: ['apples'] })
-      subscriber_list = create_subscriber_list(tags: { policies: ['apples'] })
+      _subscriber_list = create_subscriber_list(tags: { policies: ['apples'] })
       expect(query.exact_match).to be_nil
     end
 
     it "not matched on document type - even if they match" do
       query = build_query(links: { policies: ['aa-11'] }, document_type: 'travel_advice')
-      subscriber_list = create_subscriber_list(document_type: 'travel_advice')
+      _subscriber_list = create_subscriber_list(document_type: 'travel_advice')
       expect(query.exact_match).to be_nil
     end
   end
@@ -67,19 +66,19 @@ RSpec.describe FindExactQuery do
 
     it "not matched when subscriber list has different tags" do
       query = build_query(tags: { policies: ['beer'] })
-      subscriber_list = create_subscriber_list(tags: { policies: ['cider'] })
+      _subscriber_list = create_subscriber_list(tags: { policies: ['cider'] })
       expect(query.exact_match).to be_nil
     end
 
     it "not matched when subscriber list has no tags" do
       query = build_query(tags: { policies: ['beer'] })
-      subscriber_list = create_subscriber_list
+      _subscriber_list = create_subscriber_list
       expect(query.exact_match).to be_nil
     end
 
     it "not matched on document type - even if they match" do
       query = build_query(tags: { policies: ['beer'] }, document_type: 'travel_advice')
-      subscriber_list = create_subscriber_list(document_type: 'travel_advice')
+      _subscriber_list = create_subscriber_list(document_type: 'travel_advice')
       expect(query.exact_match).to be_nil
     end
   end
@@ -92,7 +91,7 @@ RSpec.describe FindExactQuery do
 
   it "not matched on different document type" do
     query = build_query(tags: { policies: ['beer'] }, document_type: 'travel_advice')
-    subscriber_list = create_subscriber_list(document_type: 'other')
+    _subscriber_list = create_subscriber_list(document_type: 'other')
     expect(query.exact_match).to be_nil
   end
 
@@ -110,11 +109,11 @@ RSpec.describe FindExactQuery do
 
   it "not matched when email document supertype matched and government document supertype not matched" do
     query = build_query(email_document_supertype: 'publications', government_document_supertype: 'news_stories')
-    subscriber_list = create_subscriber_list(email_document_supertype: 'publications', government_document_supertype: 'other')
+    _subscriber_list = create_subscriber_list(email_document_supertype: 'publications', government_document_supertype: 'other')
     expect(query.exact_match).to be_nil
   end
 
-  def build_query(params={})
+  def build_query(params = {})
     defaults = {
       tags: {},
       links: {},
@@ -126,7 +125,7 @@ RSpec.describe FindExactQuery do
     described_class.new(defaults.merge(params))
   end
 
-  def create_subscriber_list(params={})
+  def create_subscriber_list(params = {})
     defaults = {
       tags: {},
       links: {},

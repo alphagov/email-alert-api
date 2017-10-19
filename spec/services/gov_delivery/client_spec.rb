@@ -241,11 +241,11 @@ RSpec.describe GovDelivery::Client do
     end
 
     let(:topic_ids) {
-      [
-        "UKGOVUK_123",
-        "UKGOVUK_124",
-        "UKGOVUK_125",
-      ]
+      %w[
+UKGOVUK_123
+UKGOVUK_124
+UKGOVUK_125
+]
     }
 
     let(:subject) { "a subject line" }
@@ -316,9 +316,8 @@ RSpec.describe GovDelivery::Client do
         with(headers: { "Authorization" => "Basic #{@http_auth}" }).
         to_return(body: @govdelivery_response)
 
-      expect do
-        client.send_bulletin(topic_ids, subject, body)
-      end.to raise_error(GovDelivery::Client::UnknownError)
+      expect { client.send_bulletin(topic_ids, subject, body) }
+        .to raise_error(GovDelivery::Client::UnknownError)
     end
 
     it "POSTs the bulletin with extra parameters (EXCEPT FOOTER) if present to the send_now endpoint" do
@@ -326,12 +325,10 @@ RSpec.describe GovDelivery::Client do
         with(headers: { "Authorization" => "Basic #{@http_auth}" }).
         to_return(body: @govdelivery_response)
 
-      client.send_bulletin(topic_ids, subject, body, {
-        from_address_id: 12345,
+      client.send_bulletin(topic_ids, subject, body, from_address_id: 12345,
         urgent: true,
         header: "<h1>Foo</h1>",
-        footer: "<p>bar</p>"
-      })
+        footer: "<p>bar</p>")
 
       expected_xml = <<-XML.strip_heredoc
         <bulletin>
@@ -454,7 +451,7 @@ RSpec.describe GovDelivery::Client do
           .to_return(status: 403, body: govdelivery_response)
 
         expect(client.fetch_bulletins).to eq(
-          "errors" => {"code"=>"GD-12015", "error"=>"Resource not available."}
+          "errors" => { "code" => "GD-12015", "error" => "Resource not available." }
         )
       end
     end
@@ -477,12 +474,10 @@ RSpec.describe GovDelivery::Client do
     end
 
     it "returns the response received from govdelivery" do
-      expect(client.fetch_bulletin("12345")).to eq({
-        "bulletin" => {
+      expect(client.fetch_bulletin("12345")).to eq("bulletin" => {
           "subject" => "Australia travel advice",
           "body" => "Some body text",
-        }
-      })
+        })
     end
 
     context "GovDelivery responds with an error" do
@@ -498,7 +493,7 @@ RSpec.describe GovDelivery::Client do
           .to_return(status: 402, body: govdelivery_response)
 
         expect(client.fetch_bulletins).to eq(
-          "errors" => {"code"=>"GD-12002", "error"=>"Bulletin not found."}
+          "errors" => { "code" => "GD-12002", "error" => "Bulletin not found." }
         )
       end
     end
@@ -543,7 +538,7 @@ RSpec.describe GovDelivery::Client do
             "visibility" => "Listed",
             "link" => {
               "rel" => "self",
-              "href"=>"/api/account/ACCOUNT_CODE/topics/TOPIC_123"
+              "href" => "/api/account/ACCOUNT_CODE/topics/TOPIC_123"
             },
           },
           {
@@ -555,7 +550,7 @@ RSpec.describe GovDelivery::Client do
             "visibility" => "Listed",
             "link" => {
               "rel" => "self",
-              "href"=>"/api/account/ACCOUNT_CODE/topics/TOPIC_456"
+              "href" => "/api/account/ACCOUNT_CODE/topics/TOPIC_456"
             },
           },
         ]

@@ -57,7 +57,7 @@ RSpec.describe SubscriberListQuery do
   end
 
   context 'when matching has tags fields' do
-    it_behaves_like "#links matching", { tags: { policies: ['eggs'] }, links: {} }
+    it_behaves_like "#links matching", tags: { policies: ['eggs'] }, links: {}
 
     it "excluded when non-matching tags" do
       subscriber_list = create_subscriber_list(tags: { policies: ['apples'] })
@@ -66,7 +66,7 @@ RSpec.describe SubscriberListQuery do
   end
 
   context 'when matching has links fields' do
-    it_behaves_like "#links matching", { links: { policies: ['11aa'] }, tags: {} }
+    it_behaves_like "#links matching", links: { policies: ['11aa'] }, tags: {}
 
     it "excluded when non-matching links" do
       subscriber_list = create_subscriber_list(links: { policies: ['aa11'] })
@@ -75,7 +75,7 @@ RSpec.describe SubscriberListQuery do
   end
 
   context 'when matching neither links or tags fields' do
-    it_behaves_like "#links matching", { links: {}, tags: {} }
+    it_behaves_like "#links matching", links: {}, tags: {}
   end
 
   def create_subscriber_list(options)

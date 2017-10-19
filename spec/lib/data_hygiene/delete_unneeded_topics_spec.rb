@@ -207,7 +207,6 @@ RSpec.describe DataHygiene::DeleteUnneededTopics do
         .and_raise(GovDelivery::Client::UnknownError)
 
       allow(client).to receive(:delete_topic)
-
     end
 
     context 'when the user enters the delete command' do
@@ -281,7 +280,7 @@ RSpec.describe DataHygiene::DeleteUnneededTopics do
       end
 
       it 'does not delete the record from the database' do
-        expect { subject.call }.not_to change { SubscriberList.count }
+        expect { subject.call }.not_to change(SubscriberList, :count)
       end
 
       it 'correctly logs the process' do
