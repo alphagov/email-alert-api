@@ -16,5 +16,6 @@ FactoryGirl.define do
   end
 
   factory :subscriber do
+    address "test@example.com"
   end
 end
