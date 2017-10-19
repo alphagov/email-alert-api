@@ -41,5 +41,12 @@ RSpec.describe Subscriber, type: :model do
 
       expect(subject).to be_invalid
     end
+
+    it "is invalid if an email address is already taken" do
+      FactoryGirl.create(:subscriber, address: "foo@bar.com")
+
+      subject.address = "foo@bar.com"
+      expect(subject).to be_invalid
+    end
   end
 end
