@@ -2,7 +2,7 @@ module Linter
   class << self
     def run
       status = system("govuk-lint-ruby #{ENV['FILE']}")
-      prompt_to_autofix unless status
+      status = prompt_to_autofix if !status && $stdout.isatty
 
       if rand < 0.5 && ENV["AUTOFIX"].nil?
         output("Top tip: You can set AUTOFIX=Y to skip the prompt", 36)
@@ -10,7 +10,7 @@ module Linter
         output("Top tip: You can set FILE=some/file.rb to lint one file", 36)
       end
 
-      exit status
+      status
     end
 
     def fix
@@ -22,16 +22,12 @@ module Linter
         output("Some lint errors couldn't be auto-fixed :-(", 31)
       end
 
-      puts "\n\n"
-
-      exit status
+      status
     end
 
   private
 
     def prompt_to_autofix
-      return unless $stdout.isatty
-
       output("Should I try auto-fixing lint errors? (Y/n)", 33)
       puts ENV["AUTOFIX"]
       input = (ENV["AUTOFIX"] || STDIN.gets).strip.upcase
