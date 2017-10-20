@@ -1,10 +1,49 @@
-require 'rails_helper'
 class NotificationHandler
-  def self.call(params)
-    notification = Notification.create(params)
+  attr_reader :params
+  def initialize(params:)
+    @params = params
+  end
 
-    email = Email.create(some_params)
+  def self.call(*args)
+    new(*args).call
+  end
 
-    (Matcher/Deliverer).perform_async(notification.id, email.id)
+  def call
+    notification = Notification.create!(
+      notification_params
+    )
+
+    Email.create_from_params!(
+      email_params.merge(notification_id: notification.id)
+    )
+  end
+
+private
+
+  def notification_params
+    {
+      content_id: params[:content_id],
+      title: params[:title],
+      change_note: params[:change_note],
+      description: params[:description],
+      base_path: params[:base_path],
+      links: params[:links],
+      tags: params[:tags],
+      public_updated_at: params[:public_updated_at],
+      email_document_supertype: params[:email_document_supertype],
+      government_document_supertype: params[:government_document_supertype],
+      govuk_request_id: params[:govuk_request_id],
+      document_type: params[:document_type],
+      publishing_app: params[:publishing_app],
+    }
+  end
+
+  def email_params
+    {
+      title: params[:title],
+      change_note: params[:change_note],
+      description: params[:description],
+      base_path: params[:base_path],
+    }
   end
 end
