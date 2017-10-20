@@ -73,6 +73,24 @@ RSpec.describe SubscriberList, type: :model do
     end
   end
 
+  context "with a subscription" do
+    subject { FactoryGirl.create(:subscriber_list) }
+
+    before do
+      FactoryGirl.create(:subscription, subscriber_list: subject)
+    end
+
+    it "can access the subscribers" do
+      expect(subject.subscribers.size).to eq(1)
+    end
+
+    it "cannot be deleted" do
+      expect {
+        subject.destroy
+      }.to raise_error(ActiveRecord::InvalidForeignKey)
+    end
+  end
+
   describe "#tags" do
     it "deserializes the tag arrays" do
       list = create(:subscriber_list, tags: { topics: ["environmental-management/boating"] })
