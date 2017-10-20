@@ -73,7 +73,7 @@ RSpec.describe SubscriberList, type: :model do
     end
   end
 
-  context "associations" do
+  context "with a subscription" do
     subject { FactoryGirl.create(:subscriber_list) }
 
     before do
@@ -82,6 +82,12 @@ RSpec.describe SubscriberList, type: :model do
 
     it "can access the subscribers" do
       expect(subject.subscribers.size).to eq(1)
+    end
+
+    it "cannot be deleted" do
+      expect {
+        subject.destroy
+      }.to raise_error(ActiveRecord::InvalidForeignKey)
     end
   end
 
