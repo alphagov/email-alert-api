@@ -1,0 +1,56 @@
+@startuml
+
+hide circle
+hide empty fields
+hide empty methods
+skinparam shadowing false
+
+package "How you subscribe" {
+	class Subscriber #yellow
+	class Subscription
+	class Preference
+	class DeliveryPreference
+
+	Subscriber *-down-> Subscription
+	Subscriber *-right-> Preference
+	Preference <|-down- DeliveryPreference
+	DeliveryPreference -left-> Subscription
+
+}
+
+package "What you can subscribe to" {
+	class MatchableContent #yellow
+	class LinkSet
+	class Link
+	class ContentItem
+	note bottom: We might need to\noffer subscriptions\nfor single pieces\nof content.
+
+	MatchableContent <|-down- LinkSet
+	LinkSet o-down-> Link
+	MatchableContent <|-down- ContentItem
+}
+
+package "Things that trigger emails" {
+	class NotableEvent #yellow
+	class ContentChange
+	class TaxonomyChange
+	note bottom: We might need to\nsend emails when\nthe taxonomy\nchanges.
+
+	NotableEvent <|-down- ContentChange
+	NotableEvent <|-down- TaxonomyChange
+}
+
+package "What we send" {
+	class Email #yellow
+	class DeliveryState
+
+	DeliveryState -left-> Email
+}
+
+
+Subscription -down-> MatchableContent
+Email o-down-> NotableEvent
+Email -down-> Subscriber
+Email o-down-> MatchableContent
+
+@enduml
