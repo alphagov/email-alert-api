@@ -9,6 +9,9 @@ class SubscriberList < ApplicationRecord
   validate :tag_values_are_valid
   validate :link_values_are_valid
 
+  has_many :subscriptions
+  has_many :subscribers, through: :subscriptions
+
   def self.build_from(params:, gov_delivery_id:)
     new(
       title: params[:title],
