@@ -23,7 +23,16 @@ RSpec.describe NotificationsController, type: :controller do
         body: body,
         tags: {
           topics: ["oil-and-gas/licensing"]
-        }
+        },
+        content_id: SecureRandom.uuid,
+        title: "Travel advice",
+        change_note: "This is a change note",
+        description: "This is a description",
+        public_updated_at: Time.now.to_s,
+        email_document_supertype: "email document supertype",
+        government_document_supertype: "government document supertype",
+        document_type: "document type",
+        publishing_app: "publishing app",
       }
     }
     let(:expected_notification_params) {
