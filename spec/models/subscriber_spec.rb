@@ -49,4 +49,16 @@ RSpec.describe Subscriber, type: :model do
       expect(subject).to be_invalid
     end
   end
+
+  context "associations" do
+    subject { FactoryGirl.create(:subscriber) }
+
+    before do
+      FactoryGirl.create(:subscription, subscriber: subject)
+    end
+
+    it "can access the subscriber lists" do
+      expect(subject.subscriber_lists.size).to eq(1)
+    end
+  end
 end
