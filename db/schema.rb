@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171020071004) do
+ActiveRecord::Schema.define(version: 20171020091213) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,24 @@ ActiveRecord::Schema.define(version: 20171020071004) do
     t.string "government_document_supertype", default: ""
     t.index ["content_id", "public_updated_at"], name: "index_notification_logs_on_content_id_and_public_updated_at"
     t.index ["govuk_request_id"], name: "index_notification_logs_on_govuk_request_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.uuid "content_id", null: false
+    t.text "title", null: false
+    t.text "base_path", null: false
+    t.text "change_note", null: false
+    t.text "description", null: false
+    t.json "links", default: {}, null: false
+    t.json "tags", default: {}, null: false
+    t.datetime "public_updated_at", null: false
+    t.string "email_document_supertype", null: false
+    t.string "government_document_supertype", null: false
+    t.string "govuk_request_id", null: false
+    t.string "document_type", null: false
+    t.string "publishing_app", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|

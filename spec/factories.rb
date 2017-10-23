@@ -23,4 +23,20 @@ FactoryGirl.define do
     subscriber
     subscriber_list
   end
+
+  factory :notification do
+    content_id { SecureRandom.uuid }
+    title "title"
+    base_path "government/base_path"
+    change_note "change note"
+    description "description"
+    links Hash.new
+    tags Hash.new
+    public_updated_at { Time.now.to_s }
+    email_document_supertype "email document supertype"
+    government_document_supertype "government document supertype"
+    sequence(:govuk_request_id) { |i| "request-id-#{i}" }
+    document_type "document type"
+    publishing_app "publishing app"
+  end
 end
