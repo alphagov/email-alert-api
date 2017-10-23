@@ -2,6 +2,8 @@ class NotificationsController < ApplicationController
   def create
     NotificationWorker.perform_async(notification_params)
 
+    Notification.build_from(params: notification_params.with_indifferent_access).save!
+
     respond_to do |format|
       format.json { render json: { message: "Notification queued for sending" }, status: 202 }
     end
@@ -21,7 +23,7 @@ private
     permitted_params = params.permit!.to_h
     permitted_params.slice(:subject, :from_address_id, :urgent, :header, :footer, :document_type,
       :content_id, :public_updated_at, :publishing_app, :email_document_supertype,
-      :government_document_supertype)
+      :government_document_supertype, :title, :change_note, :description)
       .merge(tags: permitted_params.fetch(:tags, {}))
       .merge(links: permitted_params.fetch(:links, {}))
       .merge(body: notification_body)
