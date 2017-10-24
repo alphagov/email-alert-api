@@ -2,33 +2,33 @@ require "notifications/client"
 
 module EmailSender
   class Notify
-    def call(address:, **keyword_args)
-      send_to_notify(address: address, **keyword_args)
+    def call(address:, subject:, body:)
+      client.send_email(
+        email_address: address,
+        template_id: template_id,
+        personalisation: {
+          subject: subject,
+          body: body,
+        },
+      )
     end
 
   private
 
-    def send_to_notify(address:, **keyword_args)
-      client.send_email(
-        email_address: address,
-        template_id: template_id(keyword_args)
-      )
-    end
-
     def client
-      @client ||= Notifications::Client.new(notify_api_key)
+      @client ||= Notifications::Client.new(api_key)
     end
 
-    def notify_config
+    def config
       EmailAlertAPI.config.notify
     end
 
-    def notify_api_key
-      notify_config.fetch(:api_key)
+    def api_key
+      config.fetch(:api_key)
     end
 
-    def template_id(template_id: nil, **_)
-      template_id || notify_config.fetch(:template_id)
+    def template_id
+      config.fetch(:template_id)
     end
   end
 end

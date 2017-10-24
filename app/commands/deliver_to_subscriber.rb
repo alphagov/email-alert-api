@@ -11,7 +11,7 @@ class DeliverToSubscriber
   end
 
   def call
-    email_sender.call(address: subscriber.address)
+    email_sender.call(address: subscriber.address, subject: "", body: "")
   end
 
 private

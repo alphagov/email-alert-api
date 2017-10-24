@@ -13,7 +13,7 @@ RSpec.describe DeliverToSubscriber do
       subscriber = double(address: "test@test.com")
 
       expect(email_sender).to receive(:call)
-        .with(address: "test@test.com")
+        .with(address: "test@test.com", subject: "", body: "")
 
       DeliverToSubscriber.call(
         subscriber: subscriber,
