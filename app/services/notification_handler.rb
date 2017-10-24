@@ -9,13 +9,17 @@ class NotificationHandler
   end
 
   def call
-    notification = Notification.create!(
-      notification_params
-    )
+    begin
+      notification = Notification.create!(
+        notification_params
+      )
 
-    Email.create_from_params!(
-      email_params.merge(notification_id: notification.id)
-    )
+      Email.create_from_params!(
+        email_params.merge(notification_id: notification.id)
+      )
+    rescue StandardError => ex
+      Raven.capture_exception(ex, tags: { version: 2 })
+    end
   end
 
 private

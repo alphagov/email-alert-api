@@ -66,5 +66,33 @@ RSpec.describe NotificationHandler do
 
       NotificationHandler.call(params: params)
     end
+
+    it "reports Notification errors to Sentry and swallows them" do
+      allow(Notification).to receive(:create!).and_raise(
+        ActiveRecord::RecordInvalid
+      )
+      expect(Raven).to receive(:capture_exception).with(
+        instance_of(ActiveRecord::RecordInvalid),
+        tags: { version: 2 }
+      )
+
+      expect {
+        NotificationHandler.call(params: params)
+      }.not_to raise_error
+    end
+
+    it "reports Email errors to Sentry and swallows them" do
+      allow(Email).to receive(:create_from_params!).and_raise(
+        ActiveRecord::RecordInvalid
+      )
+      expect(Raven).to receive(:capture_exception).with(
+        instance_of(ActiveRecord::RecordInvalid),
+        tags: { version: 2 }
+      )
+
+      expect {
+        NotificationHandler.call(params: params)
+      }.not_to raise_error
+    end
   end
 end
