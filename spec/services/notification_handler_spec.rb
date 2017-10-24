@@ -67,6 +67,17 @@ RSpec.describe NotificationHandler do
       NotificationHandler.call(params: params)
     end
 
+    it "sends the email to all subscribers" do
+      subscriber = create(:subscriber)
+
+      allow(DeliverToSubscriberWorker).to receive(:perform_async).with(
+        subscriber.id,
+        kind_of(Integer),
+      )
+
+      NotificationHandler.call(params: params)
+    end
+
     it "reports Notification errors to Sentry and swallows them" do
       allow(Notification).to receive(:create!).and_raise(
         ActiveRecord::RecordInvalid

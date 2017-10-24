@@ -14,15 +14,25 @@ class NotificationHandler
         notification_params
       )
 
-      Email.create_from_params!(
+      email = Email.create_from_params!(
         email_params.merge(notification_id: notification.id)
       )
+
+      deliver_to_all_subscribers(email)
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
     end
   end
 
 private
+
+  def deliver_to_all_subscribers(email)
+    Subscriber.all.each do |subscriber|
+      DeliverToSubscriberWorker.perform_async(
+        subscriber.id, email.id
+      )
+    end
+  end
 
   def notification_params
     {
