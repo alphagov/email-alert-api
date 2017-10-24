@@ -1,11 +1,11 @@
 development:
   api_key: <%= ENV['GOVUK_NOTIFY_API_KEY'] %>
-  template_id: <%= ENV['GOVUK_NOTIFY_TEMPLATE_ID'] || "a5583ad3-adab-4c76-b85d-f88bd4a3dc69" %>
+  template_id: <%= ENV['GOVUK_NOTIFY_TEMPLATE_ID'] || "cb633abc-6ae6-4843-ae6f-82ca500b6de2" %>
 
 test:
   api_key: <%= ENV['GOVUK_NOTIFY_API_KEY'] %>
-  template_id: <%= ENV['GOVUK_NOTIFY_TEMPLATE_ID'] || "a5583ad3-adab-4c76-b85d-f88bd4a3dc69" %>
+  template_id: <%= ENV['GOVUK_NOTIFY_TEMPLATE_ID'] || "cb633abc-6ae6-4843-ae6f-82ca500b6de2" %>
 
 production:
   api_key: <%= ENV['GOVUK_NOTIFY_API_KEY'] %>
-  template_id: <%= ENV['GOVUK_NOTIFY_TEMPLATE_ID'] || "a5583ad3-adab-4c76-b85d-f88bd4a3dc69" %>
+  template_id: <%= ENV['GOVUK_NOTIFY_TEMPLATE_ID'] || "cb633abc-6ae6-4843-ae6f-82ca500b6de2" %>
