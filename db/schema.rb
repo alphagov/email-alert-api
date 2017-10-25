@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171020091213) do
+ActiveRecord::Schema.define(version: 20171023094334) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "emails", force: :cascade do |t|
+    t.string "subject", null: false
+    t.text "body", null: false
+    t.bigint "notification_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["notification_id"], name: "index_emails_on_notification_id"
+  end
 
   create_table "notification_logs", id: :serial, force: :cascade do |t|
     t.string "govuk_request_id", default: ""
@@ -80,6 +89,7 @@ ActiveRecord::Schema.define(version: 20171020091213) do
     t.index ["subscriber_list_id"], name: "index_subscriptions_on_subscriber_list_id"
   end
 
+  add_foreign_key "emails", "notifications"
   add_foreign_key "subscriptions", "subscriber_lists"
   add_foreign_key "subscriptions", "subscribers", on_delete: :cascade
 end
