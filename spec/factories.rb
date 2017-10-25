@@ -39,4 +39,10 @@ FactoryGirl.define do
     document_type "document type"
     publishing_app "publishing app"
   end
+
+  factory :email do
+    subject "subject"
+    body "body"
+    notification
+  end
 end
