@@ -1,6 +1,7 @@
 require "gov_delivery/client"
 require 'gds_api/content_store'
 require "email_sender/notify"
+require "email_sender/pseudo"
 
 module Services
   def self.gov_delivery
@@ -12,6 +13,10 @@ module Services
   end
 
   def self.email_sender
-    @email_sender ||= EmailSender::Notify.new
+    if Rails.env.production?
+      @email_sender ||= EmailSender::Notify.new
+    else
+      @email_sender ||= EmailSender::Pseudo.new
+    end
   end
 end
