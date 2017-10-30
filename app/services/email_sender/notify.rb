@@ -3,14 +3,18 @@ require "notifications/client"
 module EmailSender
   class Notify
     def call(address:, subject:, body:)
-      client.send_email(
-        email_address: address,
-        template_id: template_id,
-        personalisation: {
-          subject: subject,
-          body: body,
-        },
-      )
+      begin
+        client.send_email(
+          email_address: address,
+          template_id: template_id,
+          personalisation: {
+            subject: subject,
+            body: body,
+          },
+        )
+      rescue Notifications::Client::RequestError => ex
+        raise unless ex.code == 429
+      end
     end
 
   private
