@@ -13,7 +13,7 @@ module EmailSender
           },
         )
       rescue Notifications::Client::RequestError => ex
-        raise unless ex.code == 429
+        raise unless ex.code.to_s == "429"
       end
     end
 
