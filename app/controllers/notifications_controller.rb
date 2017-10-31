@@ -23,7 +23,7 @@ private
     permitted_params = params.permit!.to_h
     permitted_params.slice(:subject, :from_address_id, :urgent, :header, :footer, :document_type,
       :content_id, :public_updated_at, :publishing_app, :email_document_supertype,
-      :government_document_supertype, :title, :description, :change_note, :base_path)
+      :government_document_supertype, :title, :description, :change_note, :base_path, :priority)
       .merge(tags: permitted_params.fetch(:tags, {}))
       .merge(links: permitted_params.fetch(:links, {}))
       .merge(body: notification_body)

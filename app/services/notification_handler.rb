@@ -28,8 +28,8 @@ private
 
   def deliver_to_all_subscribers(email)
     Subscriber.all.each do |subscriber|
-      DeliverToSubscriberWorker.perform_async(
-        subscriber.id, email.id
+      DeliverToSubscriberWorker.perform_async_with_priority(
+        subscriber.id, email.id, priority: priority
       )
     end
   end
@@ -59,5 +59,9 @@ private
       description: params[:description],
       base_path: params[:base_path],
     }
+  end
+
+  def priority
+    params.fetch(:priority, "low").to_sym
   end
 end
