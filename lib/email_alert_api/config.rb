@@ -23,6 +23,10 @@ module EmailAlertAPI
       @notify ||= notify_environment_config.symbolize_keys.freeze
     end
 
+    def email_service_provider
+      @email_service_provider ||= email_service_provider_config.fetch("provider").freeze
+    end
+
   private
 
     def redis_config_path
@@ -43,6 +47,14 @@ module EmailAlertAPI
 
     def notify_environment_config
       YAML.safe_load(ERB.new(File.read(notify_config_path)).result).fetch(@environment)
+    end
+
+    def email_service_provider_config_path
+      File.join(app_root, "config", "email_service_provider.yml")
+    end
+
+    def email_service_provider_config
+      YAML.safe_load(ERB.new(File.read(email_service_provider_config_path)).result).fetch(@environment)
     end
   end
 end

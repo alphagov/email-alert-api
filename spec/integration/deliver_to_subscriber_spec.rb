@@ -26,6 +26,12 @@ RSpec.describe DeliverToSubscriber do
   end
 
   context "when sending through Pseudo" do
+    before(:example) do
+      expect(Services)
+        .to receive(:email_sender)
+        .and_return(EmailSender::Pseudo.new)
+    end
+
     describe ".call" do
       it "should send an info message to the logger" do
         subscriber = create(:subscriber, address: "test@test.com")
@@ -34,7 +40,7 @@ RSpec.describe DeliverToSubscriber do
 
         allow(Logger)
           .to receive(:new)
-          .with("#{Rails.root}/log/pseudo_email.log")
+          .with("#{Rails.root}/log/pseudo_email.log", 5, 4194304)
           .and_return(fake_log)
 
         expect(fake_log)

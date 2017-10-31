@@ -10,8 +10,7 @@ Body: #{body}
   private
 
     def logger
-      @logger ||= Logger.new("#{Rails.root}/log/pseudo_email.log")
+      @logger ||= Logger.new("#{Rails.root}/log/pseudo_email.log", 5, 4194304)
     end
   end
 end
-
