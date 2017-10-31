@@ -18,7 +18,7 @@ class NotificationHandler
         email_params.merge(notification_id: notification.id)
       )
 
-      deliver_to_all_subscribers(email)
+      deliver_to_subscribers(notification, email)
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
     end
@@ -26,12 +26,30 @@ class NotificationHandler
 
 private
 
-  def deliver_to_all_subscribers(email)
-    Subscriber.all.each do |subscriber|
+  def deliver_to_subscribers(notification, email)
+    subscribers_for(notification: notification).find_each do |subscriber|
       DeliverToSubscriberWorker.perform_async_with_priority(
         subscriber.id, email.id, priority: priority
       )
     end
+  end
+
+  def subscribers_for(notification:)
+    Subscriber.joins(:subscriptions).where(
+      subscriptions: {
+        subscriber_list: subscriber_lists_for(notification: notification)
+      }
+    ).distinct
+  end
+
+  def subscriber_lists_for(notification:)
+    SubscriberListQuery.new(
+      tags: notification.tags,
+      links: notification.links,
+      document_type: notification.document_type,
+      email_document_supertype: notification.email_document_supertype,
+      government_document_supertype: notification.government_document_supertype,
+    ).lists
   end
 
   def notification_params

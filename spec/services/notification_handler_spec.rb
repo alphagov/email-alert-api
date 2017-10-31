@@ -27,9 +27,13 @@ RSpec.describe NotificationHandler do
     }
   }
 
+  let(:subscriber_list) do
+    create(:subscriber_list, tags: { topics: ["oil-and-gas/licensing"] })
+  end
+
   describe ".call" do
     it "calls create on Notification" do
-      expect(Notification).to receive(:create!).with(
+      notification_params = {
         content_id: params[:content_id],
         title: params[:title],
         change_note: params[:change_note],
@@ -43,7 +47,11 @@ RSpec.describe NotificationHandler do
         govuk_request_id: params[:govuk_request_id],
         document_type: params[:document_type],
         publishing_app: params[:publishing_app],
-      ).and_return(double(id: 1))
+      }
+
+      expect(Notification).to receive(:create!)
+        .with(notification_params)
+        .and_return(double(id: 1, **notification_params))
 
       allow(Email).to receive(:create_from_params!)
 
@@ -67,45 +75,57 @@ RSpec.describe NotificationHandler do
       NotificationHandler.call(params: params)
     end
 
-    it "sends the email to all subscribers" do
-      subscriber = create(:subscriber)
+    context "with a subscription" do
+      let(:subscriber) { create(:subscriber) }
 
-      expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
-        subscriber.id,
-        kind_of(Integer),
-        priority: :low,
-      )
-
-      NotificationHandler.call(params: params)
-    end
-
-    context "with a low priority" do
       before do
-        create(:subscriber)
-        params[:priority] = "low"
+        create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber)
       end
 
-      it "sends the email with a low priority" do
+      it "sends the email to all subscribers" do
         expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
-          kind_of(Integer), kind_of(Integer), priority: :low,
+          subscriber.id, kind_of(Integer), priority: :low,
         )
 
         NotificationHandler.call(params: params)
       end
-    end
 
-    context "with a high priority" do
-      before do
-        create(:subscriber)
-        params[:priority] = "high"
-      end
+      it "does not send an email to other subscribers" do
+        subscriber2 = create(:subscriber, address: "test2@test.com")
 
-      it "sends the email with a high priority" do
-        expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
-          kind_of(Integer), kind_of(Integer), priority: :high,
+        expect(DeliverToSubscriberWorker).to_not receive(:perform_async_with_priority).with(
+          subscriber2.id, kind_of(Integer), priority: :low,
         )
 
         NotificationHandler.call(params: params)
+      end
+
+      context "with a low priority" do
+        before do
+          params[:priority] = "low"
+        end
+
+        it "sends the email with a low priority" do
+          expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
+            subscriber.id, kind_of(Integer), priority: :low,
+          )
+
+          NotificationHandler.call(params: params)
+        end
+      end
+
+      context "with a high priority" do
+        before do
+          params[:priority] = "high"
+        end
+
+        it "sends the email with a high priority" do
+          expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
+            subscriber.id, kind_of(Integer), priority: :high,
+          )
+
+          NotificationHandler.call(params: params)
+        end
       end
     end
 
