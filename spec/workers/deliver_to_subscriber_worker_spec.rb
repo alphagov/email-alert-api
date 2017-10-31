@@ -26,4 +26,33 @@ RSpec.describe DeliverToSubscriberWorker do
       end
     end
   end
+
+  describe ".perform_async_with_priority" do
+    let(:subscriber) { FactoryGirl.create(:subscriber) }
+    let(:email) { double(id: 0) }
+    let(:priority) { nil }
+
+    before do
+      Sidekiq::Testing.fake!
+      described_class.perform_async_with_priority(
+        subscriber.id, email.id, priority: priority
+      )
+    end
+
+    context "with a low priority" do
+      let(:priority) { :low }
+
+      it "adds a worker to the low priority queue" do
+        expect(Sidekiq::Queues["default"].size).to eq(1)
+      end
+    end
+
+    context "with a high priority" do
+      let(:priority) { :high }
+
+      it "adds a worker to the high priority queue" do
+        expect(Sidekiq::Queues["high_priority"].size).to eq(1)
+      end
+    end
+  end
 end
