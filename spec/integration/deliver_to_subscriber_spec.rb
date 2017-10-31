@@ -6,7 +6,7 @@ RSpec.describe DeliverToSubscriber do
     before(:example) do
       expect(Services)
         .to receive(:email_sender)
-        .and_return(EmailSender::Notify.new)
+        .and_return(EmailSenderService::Notify.new)
     end
 
     describe ".call" do
@@ -29,7 +29,7 @@ RSpec.describe DeliverToSubscriber do
     before(:example) do
       expect(Services)
         .to receive(:email_sender)
-        .and_return(EmailSender::Pseudo.new)
+        .and_return(EmailSenderService::Pseudo.new)
     end
 
     describe ".call" do

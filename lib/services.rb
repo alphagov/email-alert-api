@@ -1,7 +1,7 @@
 require "gov_delivery/client"
 require 'gds_api/content_store'
-require "email_sender/notify"
-require "email_sender/pseudo"
+require "email_sender_service/notify"
+require "email_sender_service/pseudo"
 
 module Services
   def self.gov_delivery
