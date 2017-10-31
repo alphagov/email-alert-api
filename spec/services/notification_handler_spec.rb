@@ -70,12 +70,43 @@ RSpec.describe NotificationHandler do
     it "sends the email to all subscribers" do
       subscriber = create(:subscriber)
 
-      allow(DeliverToSubscriberWorker).to receive(:perform_async).with(
+      expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
         subscriber.id,
         kind_of(Integer),
+        priority: :low,
       )
 
       NotificationHandler.call(params: params)
+    end
+
+    context "with a low priority" do
+      before do
+        create(:subscriber)
+        params[:priority] = "low"
+      end
+
+      it "sends the email with a low priority" do
+        expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
+          kind_of(Integer), kind_of(Integer), priority: :low,
+        )
+
+        NotificationHandler.call(params: params)
+      end
+    end
+
+    context "with a high priority" do
+      before do
+        create(:subscriber)
+        params[:priority] = "high"
+      end
+
+      it "sends the email with a high priority" do
+        expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
+          kind_of(Integer), kind_of(Integer), priority: :high,
+        )
+
+        NotificationHandler.call(params: params)
+      end
     end
 
     it "reports Notification errors to Sentry and swallows them" do
