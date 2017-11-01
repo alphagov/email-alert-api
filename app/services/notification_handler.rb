@@ -19,6 +19,7 @@ class NotificationHandler
       )
 
       deliver_to_subscribers(notification, email)
+      deliver_to_courtesy_subscribers(email)
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
     end
@@ -28,6 +29,18 @@ private
 
   def deliver_to_subscribers(notification, email)
     subscribers_for(notification: notification).find_each do |subscriber|
+      DeliverToSubscriberWorker.perform_async_with_priority(
+        subscriber.id, email.id, priority: priority
+      )
+    end
+  end
+
+  def deliver_to_courtesy_subscribers(email)
+    addresses = [
+      "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk",
+    ]
+
+    Subscriber.where(address: addresses).find_each do |subscriber|
       DeliverToSubscriberWorker.perform_async_with_priority(
         subscriber.id, email.id, priority: priority
       )
