@@ -23,10 +23,6 @@ module EmailAlertAPI
       @notify ||= notify_environment_config.symbolize_keys.freeze
     end
 
-    def email_service_provider
-      @email_service_provider ||= email_service.fetch(:provider).freeze
-    end
-
     def email_service
       @email_service ||= email_service_config.symbolize_keys.freeze
     end

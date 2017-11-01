@@ -3,11 +3,7 @@ require "notifications/client"
 
 RSpec.describe DeliverToSubscriber do
   context "when sending through Notify" do
-    before(:example) do
-      expect(Services)
-        .to receive(:email_sender)
-        .and_return(EmailSenderService::Notify.new)
-    end
+    let(:email_sender) { EmailSenderService::EmailSender.clone }
 
     describe ".call" do
       it "makes a call to Notify to send an email" do
@@ -16,9 +12,13 @@ RSpec.describe DeliverToSubscriber do
         client = Notifications::Client.new("key")
         allow(Notifications::Client).to receive(:new).and_return(client)
 
+        expect(Services).to receive(:email_sender).and_return(email_sender.new)
+
         expect(client).to receive(:send_email).with(
           hash_including(email_address: "test@test.com")
         )
+
+        allow(EmailAlertAPI.config).to receive(:email_service).and_return(provider: "NOTIFY", email_address_override: nil)
 
         DeliverToSubscriber.call(subscriber: subscriber, email: email)
       end
@@ -26,17 +26,17 @@ RSpec.describe DeliverToSubscriber do
   end
 
   context "when sending through Pseudo" do
-    before(:example) do
-      expect(Services)
-        .to receive(:email_sender)
-        .and_return(EmailSenderService::Pseudo.new)
-    end
+    let(:email_sender) { EmailSenderService::EmailSender.clone }
 
     describe ".call" do
       it "should send an info message to the logger" do
         subscriber = create(:subscriber, address: "test@test.com")
         email = create(:email)
         fake_log = double
+
+        allow(EmailAlertAPI.config).to receive(:email_service).and_return(provider: "PSEUDO", email_address_override: nil)
+
+        expect(Services).to receive(:email_sender).and_return(email_sender.new)
 
         allow(Logger)
           .to receive(:new)
