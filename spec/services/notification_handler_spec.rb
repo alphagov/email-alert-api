@@ -75,6 +75,18 @@ RSpec.describe NotificationHandler do
       NotificationHandler.call(params: params)
     end
 
+    context "with a courtesy subscription" do
+      let(:subscriber) { create(:subscriber, address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk") }
+
+      it "sends the email to the subscriber" do
+        expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
+          subscriber.id, kind_of(Integer), priority: :low,
+        )
+
+        NotificationHandler.call(params: params)
+      end
+    end
+
     context "with a subscription" do
       let(:subscriber) { create(:subscriber) }
 
