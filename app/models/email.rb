@@ -11,10 +11,11 @@ class Email < ApplicationRecord
       instance.notification_id = params[:notification_id]
       instance.subject = params[:title]
       instance.body = <<~BODY
-        description: #{params[:description]}
-        change_note: #{params[:change_note]}
-        base_path: #{params[:base_path]}
-        updated: #{instance.format_date(params[:public_updated_at])}
+        There has been a change to *#{params[:title]}* on #{instance.format_date(params[:public_updated_at])}.
+
+        > #{params[:description]}
+
+        **#{params[:change_note]}**
       BODY
     end
   end

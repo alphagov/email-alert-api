@@ -41,10 +41,11 @@ RSpec.describe Email do
     it "sets body" do
       expect(email.body).to eq(
         <<~BODY
-          description: Description
-          change_note: Change note
-          base_path: /government/test
-          updated: 00:00 1 January 2017
+          There has been a change to *Title* on 00:00 1 January 2017.
+
+          > Description
+
+          **Change note**
         BODY
       )
     end
