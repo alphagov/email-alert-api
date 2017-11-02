@@ -1,4 +1,4 @@
-module EmailSender
+module EmailSenderService
   class Pseudo
     def call(address:, subject:, body:)
       logger.info(%(Sending email to #{address}
