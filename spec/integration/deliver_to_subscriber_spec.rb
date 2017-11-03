@@ -1,20 +1,22 @@
 require "rails_helper"
 require "notifications/client"
+require "app/services/email_sender/email_sender_service"
+require "app/services/email_sender/notify"
+require "app/services/email_sender/pseudo"
 
 RSpec.describe DeliverToSubscriber do
-  context "when sending through Notify" do
-    before(:example) do
-      expect(Services)
-        .to receive(:email_sender)
-        .and_return(EmailSenderService::Notify.new)
-    end
+  let(:email_sender) { EmailSenderService.clone }
 
+  context "when sending through Notify" do
     describe ".call" do
       it "makes a call to Notify to send an email" do
         subscriber = create(:subscriber, address: "test@test.com")
         email = create(:email)
         client = Notifications::Client.new("key")
         allow(Notifications::Client).to receive(:new).and_return(client)
+
+        config = { provider: "NOTIFY", email_address_override: nil }
+        expect(Services).to receive(:email_sender).and_return(email_sender.new(config))
 
         expect(client).to receive(:send_email).with(
           hash_including(email_address: "test@test.com")
@@ -26,17 +28,14 @@ RSpec.describe DeliverToSubscriber do
   end
 
   context "when sending through Pseudo" do
-    before(:example) do
-      expect(Services)
-        .to receive(:email_sender)
-        .and_return(EmailSenderService::Pseudo.new)
-    end
-
     describe ".call" do
       it "should send an info message to the logger" do
         subscriber = create(:subscriber, address: "test@test.com")
         email = create(:email)
         fake_log = double
+
+        config = { provider: "PSEUDO", email_address_override: nil }
+        expect(Services).to receive(:email_sender).and_return(email_sender.new(config))
 
         allow(Logger)
           .to receive(:new)
