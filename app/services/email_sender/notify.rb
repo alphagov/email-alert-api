@@ -1,6 +1,6 @@
 require "notifications/client"
 
-module EmailSender
+class EmailSenderService
   class Notify
     def call(address:, subject:, body:)
       begin

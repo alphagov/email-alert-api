@@ -10,7 +10,7 @@ RSpec.describe Services do
         .and_return("NOTIFY")
 
       expect(services.email_sender)
-        .to be_an_instance_of(EmailSender::Notify)
+        .to be_an_instance_of(EmailSenderService::Notify)
     end
   end
 
@@ -24,7 +24,7 @@ RSpec.describe Services do
         .and_return("PSEUDO")
 
       expect(services.email_sender)
-        .to be_an_instance_of(EmailSender::Pseudo)
+        .to be_an_instance_of(EmailSenderService::Pseudo)
     end
 
     context "when config returns `nil` as the email provider" do
@@ -37,7 +37,7 @@ RSpec.describe Services do
           .and_return(nil)
 
         expect(services.email_sender)
-          .to be_an_instance_of(EmailSender::Pseudo)
+          .to be_an_instance_of(EmailSenderService::Pseudo)
       end
     end
 

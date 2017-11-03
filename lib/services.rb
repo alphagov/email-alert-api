@@ -13,8 +13,8 @@ module Services
   end
 
   def self.email_sender
-    return @email_sender ||= EmailSender::Notify.new if EmailAlertAPI.config.email_service_provider == "NOTIFY"
-    return @email_sender ||= EmailSender::Pseudo.new if EmailAlertAPI.config.email_service_provider == "PSEUDO" || EmailAlertAPI.config.email_service_provider.nil?
+    return @email_sender ||= EmailSenderService::Notify.new if EmailAlertAPI.config.email_service_provider == "NOTIFY"
+    return @email_sender ||= EmailSenderService::Pseudo.new if EmailAlertAPI.config.email_service_provider == "PSEUDO" || EmailAlertAPI.config.email_service_provider.nil?
     raise "Email service provider #{EmailAlertAPI.config.email_service_provider} does not exist"
   end
 end
