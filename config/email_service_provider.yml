@@ -1,8 +1,0 @@
-development:
-  provider: <%= ENV["EMAIL_SERVICE_PROVIDER"] || "PSEUDO" %>
-
-test:
-  provider: <%= ENV["EMAIL_SERVICE_PROVIDER"] || "PSEUDO" %>
-
-production:
-  provider: <%= ENV["EMAIL_SERVICE_PROVIDER"] || "NOTIFY" %>
