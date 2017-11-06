@@ -16,7 +16,9 @@ RSpec.describe DeliverToSubscriber do
         allow(Notifications::Client).to receive(:new).and_return(client)
 
         config = { provider: "NOTIFY", email_address_override: nil }
-        expect(Services).to receive(:email_sender).and_return(email_sender.new(config))
+        expect(Services)
+          .to receive(:email_sender)
+          .and_return(email_sender.new(config, EmailSenderService::Notify.new))
 
         expect(client).to receive(:send_email).with(
           hash_including(email_address: "test@test.com")
@@ -35,7 +37,9 @@ RSpec.describe DeliverToSubscriber do
         fake_log = double
 
         config = { provider: "PSEUDO", email_address_override: nil }
-        expect(Services).to receive(:email_sender).and_return(email_sender.new(config))
+        expect(Services)
+          .to receive(:email_sender)
+          .and_return(email_sender.new(config, EmailSenderService::Pseudo.new))
 
         allow(Logger)
           .to receive(:new)
