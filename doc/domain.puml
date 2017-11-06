@@ -1,56 +1,70 @@
 @startuml
 
+title We attempt to send emails to subscribers when\n\
+content changes if they have a subscription for a\n\
+list that matches
+
 hide circle
-hide empty fields
 hide empty methods
 skinparam shadowing false
+skinparam dpi 300
 
-package "How you subscribe" {
-	class Subscriber #yellow
-	class Subscription
-	class Preference
-	class DeliveryPreference
-
-	Subscriber *-down-> Subscription
-	Subscriber *-right-> Preference
-	Preference <|-down- DeliveryPreference
-	DeliveryPreference -left-> Subscription
-
+package "When" {
+  class ContentChange {
+    [match criteria]
+    title
+    base_path
+    change_note
+  }
 }
 
-package "What you can subscribe to" {
-	class MatchableContent #yellow
-	class LinkSet
-	class Link
-	class ContentItem
-	note bottom: We might need to\noffer subscriptions\nfor single pieces\nof content.
-
-	MatchableContent <|-down- LinkSet
-	LinkSet o-down-> Link
-	MatchableContent <|-down- ContentItem
+package "Who" {
+  class Subscriber {
+    address
+  }
 }
 
-package "Things that trigger emails" {
-	class NotableEvent #yellow
-	class ContentChange
-	class TaxonomyChange
-	note bottom: We might need to\nsend emails when\nthe taxonomy\nchanges.
+package "Why" {
+  class SubscriberList {
+    [match criteria]
+    title
+  }
 
-	NotableEvent <|-down- ContentChange
-	NotableEvent <|-down- TaxonomyChange
+  class Subscription {
+    subscriber_id
+    frequency
+  }
 }
 
-package "What we send" {
-	class Email #yellow
-	class DeliveryState
+package "What" {
+  class EmailEntry {
+    email_id
+    content_change_id
+    subscription_id
+  }
 
-	DeliveryState -left-> Email
+  class Email {
+    subject
+    body
+    recipient
+  }
 }
 
+package "How" {
+  class DeliveryAttempt {
+    email_id
+    state
+    error_message
+  }
+}
 
-Subscription -down-> MatchableContent
-Email o-down-> NotableEvent
-Email -down-> Subscriber
-Email o-down-> MatchableContent
+Subscriber o-down-> Subscription
+Subscription -down-> SubscriberList
+
+EmailEntry -down-> ContentChange
+EmailEntry -down-> Subscription
+EmailEntry -up-> Email
+
+DeliveryAttempt -left-> Email
 
 @enduml
