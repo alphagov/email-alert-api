@@ -23,8 +23,8 @@ module EmailAlertAPI
       @notify ||= notify_environment_config.symbolize_keys.freeze
     end
 
-    def email_service_provider
-      @email_service_provider ||= email_service_provider_config.fetch("provider").freeze
+    def email_service
+      @email_service ||= email_service_config.symbolize_keys.freeze
     end
 
   private
@@ -49,12 +49,12 @@ module EmailAlertAPI
       YAML.safe_load(ERB.new(File.read(notify_config_path)).result).fetch(@environment)
     end
 
-    def email_service_provider_config_path
-      File.join(app_root, "config", "email_service_provider.yml")
+    def email_service_config_path
+      File.join(app_root, "config", "email_service.yml")
     end
 
-    def email_service_provider_config
-      YAML.safe_load(ERB.new(File.read(email_service_provider_config_path)).result).fetch(@environment)
+    def email_service_config
+      YAML.safe_load(ERB.new(File.read(email_service_config_path)).result).fetch(@environment)
     end
   end
 end

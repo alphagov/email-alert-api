@@ -1,5 +1,6 @@
 require "gov_delivery/client"
 require 'gds_api/content_store'
+require "email_sender/email_sender_service"
 require "email_sender/notify"
 require "email_sender/pseudo"
 
@@ -13,8 +14,13 @@ module Services
   end
 
   def self.email_sender
-    return @email_sender ||= EmailSender::Notify.new if EmailAlertAPI.config.email_service_provider == "NOTIFY"
-    return @email_sender ||= EmailSender::Pseudo.new if EmailAlertAPI.config.email_service_provider == "PSEUDO" || EmailAlertAPI.config.email_service_provider.nil?
-    raise "Email service provider #{EmailAlertAPI.config.email_service_provider} does not exist"
+    @email_sender ||= EmailSenderService.new(EmailAlertAPI.config.email_service, email_provider)
+  end
+
+  def self.email_provider
+    provider = EmailAlertAPI.config.email_service.fetch(:provider)
+    return EmailSenderService::Notify.new if provider == "NOTIFY"
+    return EmailSenderService::Pseudo.new if provider == "PSEUDO" || provider.nil?
+    raise "Email service provider #{provider} does not exist"
   end
 end
