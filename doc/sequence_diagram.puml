@@ -1,0 +1,91 @@
+@startuml
+
+skinparam dpi 300
+
+actor email_alert_service as "email-alert-service"
+participant controller as "ContentChangeController"
+database content_change as "ContentChange"
+participant subscription_fulfilment_worker as "SubscriptionFulfilmentWorker"
+participant subscription_matcher as "SubscriptionMatcher"
+database email_entry as "EmailEntry"
+participant email_builder_worker as "EmailBuilderWorker"
+control digest_timer as "DigestTimer"
+database email as "Email"
+participant email_presenter as "EmailPresenter"
+participant email_delivery_worker as "EmailDeliveryWorker"
+database delivery_attempt as "DeliveryAttempt"
+control delivery_monitor as "DeliveryMonitor"
+participant govuk_notify as "GOV.UK Notify" #orange
+
+email_alert_service -> controller : POST /create
+controller -> content_change : create
+content_change -> controller : id
+controller -> subscription_fulfilment_worker : enqueue with id
+controller -> email_alert_service : acknowledge
+
+group sidekiq
+  subscription_fulfilment_worker -> content_change : find by id
+  content_change -> subscription_fulfilment_worker : instance
+  subscription_fulfilment_worker -> subscription_matcher : content_change
+  subscription_matcher -> subscription_matcher : ... existing logic
+  subscription_matcher -> subscription_matcher : reject lower frequency
+  subscription_matcher -> subscription_fulfilment_worker : subscriptions
+  subscription_fulfilment_worker -> email_entry : create with content_change, subscription
+  subscription_fulfilment_worker -> email_builder_worker : enqueue with 'immediate'
+end group
+
+group daily timer
+  digest_timer -> email_builder_worker : enqueue with 'daily'
+end
+
+group weekly timer
+  digest_timer -> email_builder_worker : enqueue with 'weekly'
+end
+
+group sidekiq
+  email_builder_worker -> email_entry : find all by frequency, email_id=nil
+  email_entry -> email_builder_worker : email_entries
+  email_builder_worker -> email_builder_worker : group by subscription
+  email_builder_worker -> email : build with email_entries
+  email -> email_builder_worker : instance
+  email_builder_worker -> email_presenter : email
+  email_presenter -> email_builder_worker : subject, body
+  email_builder_worker -> email : set subject, body
+  email_builder_worker -> email : set recipient and save
+  email -> email_entry : (active record automatically sets email_id)
+  email -> email_builder_worker : id
+  email_builder_worker -> email_delivery_worker : enqueue with id
+end
+
+group sidekiq
+  email_delivery_worker -> email : find by id
+  email -> email_delivery_worker : instance
+  email_delivery_worker -> delivery_attempt : create with email, state=ready_to_send
+  delivery_attempt -> email_delivery_worker : instance
+  email_delivery_worker -> govuk_notify : send email
+  email_delivery_worker -> email_delivery_worker : set state=sent_to_notify
+end group
+
+group run continuously
+  delivery_monitor -> delivery_attempt : find by state=sent_to_notify
+  delivery_attempt -> delivery_monitor : instance
+  delivery_monitor -> govuk_notify : get status
+  govuk_notify -> delivery_monitor : status
+
+  group if success
+    delivery_monitor -> delivery_attempt : set success
+    delivery_monitor -> delivery_attempt : save
+  end group
+
+  group if failed
+    delivery_monitor -> delivery_attempt : set failed, error message
+    delivery_monitor -> delivery_attempt : save
+    delivery_monitor -> delivery_attempt : find others for email
+    delivery_attempt -> delivery_monitor : instances
+    delivery_monitor -> delivery_monitor : ... decide what to do\ne.g. retry in an hour\ne.g. blacklist subscriber
+  end group
+
+  delivery_monitor -> delivery_monitor : sleep 1
+end group
+
+@enduml
