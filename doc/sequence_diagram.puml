@@ -28,10 +28,10 @@ group sidekiq
   content_change -> subscription_fulfilment_worker : instance
   subscription_fulfilment_worker -> subscription_matcher : content_change
   subscription_matcher -> subscription_matcher : ... existing logic
-  subscription_matcher -> subscription_matcher : reject lower frequency
   subscription_matcher -> subscription_fulfilment_worker : subscriptions
   subscription_fulfilment_worker -> email_entry : create with content_change, subscription
   subscription_fulfilment_worker -> email_builder_worker : enqueue with 'immediate'
+  subscription_fulfilment_worker -> content_change : set processed_at and save
 end group
 
 group daily timer
@@ -55,6 +55,7 @@ group sidekiq
   email -> email_entry : (active record automatically sets email_id)
   email -> email_builder_worker : id
   email_builder_worker -> email_delivery_worker : enqueue with id
+  email_builder_worker -> email_entry : set processed_at and save
 end
 
 group sidekiq
@@ -64,6 +65,7 @@ group sidekiq
   delivery_attempt -> email_delivery_worker : instance
   email_delivery_worker -> govuk_notify : send email
   email_delivery_worker -> email_delivery_worker : set state=sent_to_notify
+  email_delivery_worker -> email : set processed_at and save
 end group
 
 group run continuously
