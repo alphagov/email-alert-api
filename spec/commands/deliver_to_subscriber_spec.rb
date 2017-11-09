@@ -9,9 +9,8 @@ RSpec.describe DeliverToSubscriber do
       )
     end
 
-    it "calls email_sender with address" do
-      subscriber = double(address: "test@test.com")
-      email = double(subject: "test subject", body: "test body")
+    it "calls email_sender with email" do
+      email = double(address: "test@test.com", subject: "test subject", body: "test body")
 
       expect(email_sender).to receive(:call)
         .with(
@@ -20,24 +19,12 @@ RSpec.describe DeliverToSubscriber do
           body: "test body",
         )
 
-      DeliverToSubscriber.call(
-        subscriber: subscriber,
-        email: email,
-      )
-    end
-
-    it "requires subscriber" do
-      expect {
-        DeliverToSubscriber.call(subscriber: nil, email: double)
-      }.to raise_error(
-        ArgumentError,
-        "subscriber cannot be nil"
-      )
+      DeliverToSubscriber.call(email: email)
     end
 
     it "requires email" do
       expect {
-        DeliverToSubscriber.call(subscriber: double, email: nil)
+        DeliverToSubscriber.call(email: nil)
       }.to raise_error(
         ArgumentError,
         "email cannot be nil"

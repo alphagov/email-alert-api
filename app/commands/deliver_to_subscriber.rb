@@ -1,11 +1,8 @@
 class DeliverToSubscriber
-  attr_reader :subscriber
   attr_reader :email
 
-  def initialize(subscriber:, email:)
-    @subscriber = subscriber
+  def initialize(email:)
     @email = email
-    raise ArgumentError, "subscriber cannot be nil" if subscriber.nil?
     raise ArgumentError, "email cannot be nil" if email.nil?
   end
 
@@ -15,7 +12,7 @@ class DeliverToSubscriber
 
   def call
     email_sender.call(
-      address: subscriber.address,
+      address: email.address,
       subject: email.subject,
       body: email.body,
     )
