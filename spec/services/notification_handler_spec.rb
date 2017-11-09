@@ -58,25 +58,25 @@ RSpec.describe NotificationHandler do
       NotificationHandler.call(params: params)
     end
 
-    it "calls create on Email" do
-      notification = create(:notification)
-      allow(Notification).to receive(:create!).and_return(
-        notification
-      )
-
-      expect(Email).to receive(:create_from_params!).with(
-        title: "Travel advice",
-        description: "This is a description",
-        change_note: "This is a change note",
-        base_path: "/government/things",
-        notification_id: notification.id,
-      )
-
-      NotificationHandler.call(params: params)
-    end
-
     context "with a courtesy subscription" do
-      let(:subscriber) { create(:subscriber, address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk") }
+      let!(:subscriber) { create(:subscriber, address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk") }
+
+      it "calls create on Email" do
+        notification = create(:notification)
+        allow(Notification).to receive(:create!).and_return(
+          notification
+        )
+
+        expect(Email).to receive(:create_from_params!).with(
+          title: "Travel advice",
+          description: "This is a description",
+          change_note: "This is a change note",
+          base_path: "/government/things",
+          notification_id: notification.id,
+        )
+
+        NotificationHandler.call(params: params)
+      end
 
       it "sends the email to the subscriber" do
         expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
@@ -139,24 +139,24 @@ RSpec.describe NotificationHandler do
           NotificationHandler.call(params: params)
         end
       end
+
+      it "reports Email errors to Sentry and swallows them" do
+        allow(Email).to receive(:create_from_params!).and_raise(
+          ActiveRecord::RecordInvalid
+        )
+        expect(Raven).to receive(:capture_exception).with(
+          instance_of(ActiveRecord::RecordInvalid),
+          tags: { version: 2 }
+        )
+
+        expect {
+          NotificationHandler.call(params: params)
+        }.not_to raise_error
+      end
     end
 
     it "reports Notification errors to Sentry and swallows them" do
       allow(Notification).to receive(:create!).and_raise(
-        ActiveRecord::RecordInvalid
-      )
-      expect(Raven).to receive(:capture_exception).with(
-        instance_of(ActiveRecord::RecordInvalid),
-        tags: { version: 2 }
-      )
-
-      expect {
-        NotificationHandler.call(params: params)
-      }.not_to raise_error
-    end
-
-    it "reports Email errors to Sentry and swallows them" do
-      allow(Email).to receive(:create_from_params!).and_raise(
         ActiveRecord::RecordInvalid
       )
       expect(Raven).to receive(:capture_exception).with(

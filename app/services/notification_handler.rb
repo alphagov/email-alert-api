@@ -10,16 +10,9 @@ class NotificationHandler
 
   def call
     begin
-      notification = Notification.create!(
-        notification_params
-      )
-
-      email = Email.create_from_params!(
-        email_params.merge(notification_id: notification.id)
-      )
-
-      deliver_to_subscribers(notification, email)
-      deliver_to_courtesy_subscribers(email)
+      notification = Notification.create!(notification_params)
+      deliver_to_subscribers(notification)
+      deliver_to_courtesy_subscribers(notification)
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
     end
@@ -27,20 +20,28 @@ class NotificationHandler
 
 private
 
-  def deliver_to_subscribers(notification, email)
+  def create_email(notification)
+    Email.create_from_params!(
+      email_params.merge(notification_id: notification.id)
+    )
+  end
+
+  def deliver_to_subscribers(notification)
     subscribers_for(notification: notification).find_each do |subscriber|
+      email = create_email(notification)
       DeliverToSubscriberWorker.perform_async_with_priority(
         subscriber.id, email.id, priority: priority
       )
     end
   end
 
-  def deliver_to_courtesy_subscribers(email)
+  def deliver_to_courtesy_subscribers(notification)
     addresses = [
       "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk",
     ]
 
     Subscriber.where(address: addresses).find_each do |subscriber|
+      email = create_email(notification)
       DeliverToSubscriberWorker.perform_async_with_priority(
         subscriber.id, email.id, priority: priority
       )
