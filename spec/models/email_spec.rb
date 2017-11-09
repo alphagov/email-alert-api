@@ -31,6 +31,7 @@ RSpec.describe Email do
         base_path: "/government/test",
         public_updated_at: DateTime.parse("1/1/2017"),
         notification_id: notification.id,
+        address: "test@example.com",
       )
     }
 

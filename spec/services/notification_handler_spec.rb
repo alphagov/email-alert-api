@@ -73,6 +73,7 @@ RSpec.describe NotificationHandler do
           change_note: "This is a change note",
           base_path: "/government/things",
           notification_id: notification.id,
+          address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk",
         )
 
         NotificationHandler.call(params: params)
