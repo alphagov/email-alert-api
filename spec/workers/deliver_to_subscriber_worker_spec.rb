@@ -9,8 +9,7 @@ RSpec.describe DeliverToSubscriberWorker do
   end
 
   describe ".perform" do
-    let(:subscriber) { FactoryGirl.create(:subscriber) }
-    let(:email) { FactoryGirl.create(:email) }
+    let(:email) { create(:email) }
 
     context "with an email and a subscriber" do
       it "should send the email to the subscriber" do
@@ -22,20 +21,19 @@ RSpec.describe DeliverToSubscriberWorker do
           )
 
         Sidekiq::Testing.inline!
-        described_class.perform_async(subscriber.id, email.id)
+        described_class.perform_async(email.id)
       end
     end
   end
 
   describe ".perform_async_with_priority" do
-    let(:subscriber) { FactoryGirl.create(:subscriber) }
     let(:email) { double(id: 0) }
     let(:priority) { nil }
 
     before do
       Sidekiq::Testing.fake!
       described_class.perform_async_with_priority(
-        subscriber.id, email.id, priority: priority
+        email.id, priority: priority
       )
     end
 

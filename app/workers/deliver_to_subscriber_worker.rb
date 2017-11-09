@@ -13,7 +13,7 @@ class DeliverToSubscriberWorker
 
   sidekiq_options retry: 3, queue: queue_for_priority(:low)
 
-  def perform(subscriber_id, email_id)
+  def perform(email_id)
     email = Email.find(email_id)
     DeliverToSubscriber.call(email: email)
   end

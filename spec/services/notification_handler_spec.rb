@@ -81,7 +81,7 @@ RSpec.describe NotificationHandler do
 
       it "sends the email to the subscriber" do
         expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
-          subscriber.id, kind_of(Integer), priority: :low,
+          kind_of(Integer), priority: :low,
         )
 
         NotificationHandler.call(params: params)
@@ -97,8 +97,8 @@ RSpec.describe NotificationHandler do
 
       it "sends the email to all subscribers" do
         expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
-          subscriber.id, kind_of(Integer), priority: :low,
-        )
+          kind_of(Integer), priority: :low,
+        ).once
 
         NotificationHandler.call(params: params)
       end
@@ -106,9 +106,7 @@ RSpec.describe NotificationHandler do
       it "does not send an email to other subscribers" do
         subscriber2 = create(:subscriber, address: "test2@test.com")
 
-        expect(DeliverToSubscriberWorker).to_not receive(:perform_async_with_priority).with(
-          subscriber2.id, kind_of(Integer), priority: :low,
-        )
+        expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).once
 
         NotificationHandler.call(params: params)
       end
@@ -120,7 +118,7 @@ RSpec.describe NotificationHandler do
 
         it "sends the email with a low priority" do
           expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
-            subscriber.id, kind_of(Integer), priority: :low,
+            kind_of(Integer), priority: :low,
           )
 
           NotificationHandler.call(params: params)
@@ -134,7 +132,7 @@ RSpec.describe NotificationHandler do
 
         it "sends the email with a high priority" do
           expect(DeliverToSubscriberWorker).to receive(:perform_async_with_priority).with(
-            subscriber.id, kind_of(Integer), priority: :high,
+            kind_of(Integer), priority: :high,
           )
 
           NotificationHandler.call(params: params)

@@ -30,7 +30,7 @@ private
     subscribers_for(notification: notification).find_each do |subscriber|
       email = create_email(notification, subscriber)
       DeliverToSubscriberWorker.perform_async_with_priority(
-        subscriber.id, email.id, priority: priority
+        email.id, priority: priority
       )
     end
   end
@@ -43,7 +43,7 @@ private
     Subscriber.where(address: addresses).find_each do |subscriber|
       email = create_email(notification, subscriber)
       DeliverToSubscriberWorker.perform_async_with_priority(
-        subscriber.id, email.id, priority: priority
+        email.id, priority: priority
       )
     end
   end
