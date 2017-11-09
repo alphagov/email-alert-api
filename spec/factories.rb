@@ -41,6 +41,7 @@ FactoryGirl.define do
   end
 
   factory :email do
+    address "test@example.com"
     subject "subject"
     body "body"
     notification

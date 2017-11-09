@@ -171,10 +171,6 @@ RSpec.describe "Sending a notification", type: :request do
         headers: json_headers.merge("HTTP_GOVUK_REQUEST_ID" => "request_id")
     end
 
-    it "creates an Email" do
-      expect(Email.count).to eq(1)
-    end
-
     it "creates a Notification" do
       expect(Notification.count).to eq(1)
     end
