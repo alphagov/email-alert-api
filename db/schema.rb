@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20171109091838) do
     t.bigint "notification_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "address", default: "", null: false
+    t.string "address", null: false
     t.index ["notification_id"], name: "index_emails_on_notification_id"
   end
 
