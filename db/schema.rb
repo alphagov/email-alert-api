@@ -15,6 +15,16 @@ ActiveRecord::Schema.define(version: 20171109091838) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "delivery_attempts", force: :cascade do |t|
+    t.bigint "email_id", null: false
+    t.integer "status", null: false
+    t.integer "provider", null: false
+    t.string "reference", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
+  end
+
   create_table "emails", force: :cascade do |t|
     t.string "subject", null: false
     t.text "body", null: false
@@ -90,6 +100,7 @@ ActiveRecord::Schema.define(version: 20171109091838) do
     t.index ["subscriber_list_id"], name: "index_subscriptions_on_subscriber_list_id"
   end
 
+  add_foreign_key "delivery_attempts", "emails"
   add_foreign_key "emails", "notifications"
   add_foreign_key "subscriptions", "subscriber_lists"
   add_foreign_key "subscriptions", "subscribers", on_delete: :cascade
