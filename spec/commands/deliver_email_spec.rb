@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe DeliverToSubscriber do
+RSpec.describe DeliverEmail do
   describe ".call" do
     let(:email_sender) { double }
     before do
@@ -19,12 +19,12 @@ RSpec.describe DeliverToSubscriber do
           body: "test body",
         )
 
-      DeliverToSubscriber.call(email: email)
+      DeliverEmail.call(email: email)
     end
 
     it "requires email" do
       expect {
-        DeliverToSubscriber.call(email: nil)
+        DeliverEmail.call(email: nil)
       }.to raise_error(
         ArgumentError,
         "email cannot be nil"

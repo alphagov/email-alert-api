@@ -4,7 +4,7 @@ require "app/services/email_sender/email_sender_service"
 require "app/services/email_sender/notify"
 require "app/services/email_sender/pseudo"
 
-RSpec.describe DeliverToSubscriber do
+RSpec.describe DeliverEmail do
   let(:email_sender) { EmailSenderService.clone }
   let(:email) { create(:email, address: "test@test.com") }
 
@@ -23,7 +23,7 @@ RSpec.describe DeliverToSubscriber do
           hash_including(email_address: "test@test.com")
         )
 
-        DeliverToSubscriber.call(email: email)
+        DeliverEmail.call(email: email)
       end
     end
   end
@@ -47,7 +47,7 @@ RSpec.describe DeliverToSubscriber do
           .to receive(:info)
           .with("Sending email to test@test.com\nSubject: subject\nBody: body\n")
 
-        DeliverToSubscriber.call(email: email)
+        DeliverEmail.call(email: email)
       end
     end
   end

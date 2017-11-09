@@ -1,4 +1,4 @@
-class DeliverToSubscriber
+class DeliverEmail
   attr_reader :email
 
   def initialize(email:)

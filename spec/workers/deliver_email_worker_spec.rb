@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe DeliverToSubscriberWorker do
+RSpec.describe DeliverEmailWorker do
   let(:email_sender) { double }
   before do
     allow(Services).to receive(:email_sender).and_return(
@@ -15,7 +15,7 @@ RSpec.describe DeliverToSubscriberWorker do
       it "should send the email to the subscriber" do
         expect(email_sender).to receive(:call)
           .with(
-            address: subscriber.address,
+            address: email.address,
             subject: email.subject,
             body: email.body
           )
