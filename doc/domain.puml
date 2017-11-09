@@ -2,7 +2,7 @@
 
 title We attempt to send emails to subscribers when\n\
 content changes if they have a subscription for a\n\
-list that matches
+subscribable that matches
 
 hide circle
 hide empty methods
@@ -25,7 +25,7 @@ package "Who" {
 }
 
 package "Why" {
-  class SubscriberList {
+  class Subscribable {
     [match criteria]
     title
   }
@@ -37,10 +37,10 @@ package "Why" {
 }
 
 package "What" {
-  class EmailEntry {
-    email_id
-    content_change_id
+  class SubscriptionContent {
     subscription_id
+    content_change_id
+    email_id
   }
 
   class Email {
@@ -59,11 +59,11 @@ package "How" {
 }
 
 Subscriber o-down-> Subscription
-Subscription -down-> SubscriberList
+Subscription -down-> Subscribable
 
-EmailEntry -down-> ContentChange
-EmailEntry -down-> Subscription
-EmailEntry -up-> Email
+SubscriptionContent -down-> Subscription
+SubscriptionContent -down-> ContentChange
+SubscriptionContent -up-> Email
 
 DeliveryAttempt -left-> Email
 
