@@ -6,7 +6,14 @@ RSpec.describe "Receiving a status update for an email", type: :request do
       :delivery_attempt,
       reference: "ref-123",
       status: "sending",
+      email: FactoryGirl.create(:email, address: "foo@bar.com"),
     )
+  end
+
+  let!(:subscriber) { FactoryGirl.create(:subscriber, address: "foo@bar.com") }
+
+  before do
+    FactoryGirl.create_list(:subscription, 3, subscriber: subscriber)
   end
 
   it "sets the delivery attempt's status via a worker" do
@@ -18,5 +25,26 @@ RSpec.describe "Receiving a status update for an email", type: :request do
 
     delivery_attempt.reload
     expect(delivery_attempt.status).to eq("delivered")
+  end
+
+  context "when the status is 'permanent-failure'" do
+    it "unsubscribes the subscriber" do
+      params = { reference: "ref-123", status: "permanent-failure" }
+      post "/status_updates", params: params
+
+      subscriber.reload
+
+      expect(subscriber.address).to be_nil
+      expect(subscriber.subscriptions).to be_empty
+    end
+
+    context "and the subscriber has already been unsubscribed" do
+      before { subscriber.unsubscribe! }
+
+      it "does not error" do
+        params = { reference: "ref-123", status: "permanent-failure" }
+        expect { post "/status_updates", params: params }.not_to raise_error
+      end
+    end
   end
 end
