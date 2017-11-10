@@ -4,7 +4,7 @@ class DeliveryAttempt < ApplicationRecord
   validates :email, :status, :provider, presence: true
 
   enum status: %i(sending delivered permanent_failure temporary_failure technical_failure)
-  enum provider: %i(psuedo notify)
+  enum provider: %i(pseudo notify)
 
   def failure?
     permanent_failure? || temporary_failure? || technical_failure?
