@@ -1,4 +1,13 @@
 class EmailSenderService
+  class ClientError < StandardError
+    def initialize(status, original_exception)
+      @status = status
+      @original_exception = original_exception
+    end
+
+    attr_reader :status, :original_exception
+  end
+
   def initialize(config, email_service_provider)
     @email_address_override = config[:email_address_override]
     @provider = email_service_provider
@@ -12,6 +21,8 @@ class EmailSenderService
       subject: subject,
       body: body
     )
+  rescue ClientError => ex
+    raise ex.original_exception unless ex.status == :technical_failure
   end
 
 private

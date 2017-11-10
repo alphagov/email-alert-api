@@ -22,7 +22,7 @@ RSpec.describe DeliverToSubscriber do
 
         expect(client).to receive(:send_email).with(
           hash_including(email_address: "test@test.com")
-        )
+        ).and_return(double(id: 0))
 
         DeliverToSubscriber.call(subscriber: subscriber, email: email)
       end

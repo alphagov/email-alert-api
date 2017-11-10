@@ -15,8 +15,9 @@ RSpec.describe EmailSenderService::Notify do
           personalisation: a_hash_including(subject: "subject", body: "body"),
           template_id: anything,
         )
+        .and_return(double(id: 0))
 
-      subject.call(address: "email@address.com", subject: "subject", body: "body")
+      expect(subject.call(address: "email@address.com", subject: "subject", body: "body")).to eq(0)
     end
   end
 end
