@@ -1,5 +1,9 @@
-class RemoveDeadPolicySubscriberList < ActiveRecord::Migration
+# rubocop:disable Lint/UnreachableCode
+
+class RemoveDeadPolicySubscriberList < ActiveRecord::Migration[4.2]
   def up
+    return
+
     # This list doesn't match anything except similarly named placeholders in
     # the Content Store.
     target_list = FindExactMatch.new.call(

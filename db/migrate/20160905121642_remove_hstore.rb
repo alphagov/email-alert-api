@@ -1,7 +1,7 @@
-class RemoveHstore < ActiveRecord::Migration
+class RemoveHstore < ActiveRecord::Migration[4.2]
   def up
-    remove_column :subscriber_lists, :tags
-    remove_column :subscriber_lists, :links
+    #remove_column :subscriber_lists, :tags
+    #remove_column :subscriber_lists, :links
     add_column :subscriber_lists, :tags, :json, default: {}, null: false
     add_column :subscriber_lists, :links, :json, default: {}, null: false
 

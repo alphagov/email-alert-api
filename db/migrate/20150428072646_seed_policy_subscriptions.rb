@@ -1,7 +1,11 @@
+# rubocop:disable Lint/UnreachableCode
+
 require 'csv'
 
-class SeedPolicySubscriptions < ActiveRecord::Migration
+class SeedPolicySubscriptions < ActiveRecord::Migration[4.2]
   def change
+    return
+
     slug_mapping = {}
     mapping_csv_path = File.join(File.dirname(__FILE__), "20150428072646_seed_policy_subscriptions_mapping.csv")
     CSV.foreach(mapping_csv_path, headers: true) do |mapping|

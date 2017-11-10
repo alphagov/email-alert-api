@@ -1,5 +1,9 @@
-class ReslugSocialEquality < ActiveRecord::Migration
+# rubocop:disable Lint/UnreachableCode
+
+class ReslugSocialEquality < ActiveRecord::Migration[4.2]
   def up
+    return
+
     list = SubscriberListQuery.where_tags_equal(policies: ["social-equality"]).first
 
     if list

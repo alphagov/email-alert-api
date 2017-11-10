@@ -1,7 +1,11 @@
+# rubocop:disable Lint/UnreachableCode
+
 require 'csv'
 
-class AddContentIDsToTravelAdviceTopics < ActiveRecord::Migration
+class AddContentIDsToTravelAdviceTopics < ActiveRecord::Migration[4.2]
   def change
+    return
+
     csv_path = File.join(File.dirname(__FILE__), "20160215144137_add_content_i_ds_to_travel_advice_topics.csv")
 
     # Clean up after last migration - delete the erroneous tags

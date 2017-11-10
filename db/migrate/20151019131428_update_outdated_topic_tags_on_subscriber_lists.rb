@@ -1,5 +1,9 @@
-class UpdateOutdatedTopicTagsOnSubscriberLists < ActiveRecord::Migration
+# rubocop:disable Lint/UnreachableCode
+
+class UpdateOutdatedTopicTagsOnSubscriberLists < ActiveRecord::Migration[4.2]
   def up
+    return
+
     tag_mappings = [
       {
         from: 'schools-colleges/behaviour-attendance',

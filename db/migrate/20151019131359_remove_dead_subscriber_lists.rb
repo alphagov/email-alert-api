@@ -1,5 +1,9 @@
-class RemoveDeadSubscriberLists < ActiveRecord::Migration
+# rubocop:disable Lint/UnreachableCode
+
+class RemoveDeadSubscriberLists < ActiveRecord::Migration[4.2]
   def up
+    return
+
     [
       # redirected to 'prisons-probation'
       'prisons-probation/researching-prisons',

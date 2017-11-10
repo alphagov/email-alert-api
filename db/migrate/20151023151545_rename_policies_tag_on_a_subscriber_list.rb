@@ -1,5 +1,9 @@
-class RenamePoliciesTagOnASubscriberList < ActiveRecord::Migration
+# rubocop:disable Lint/UnreachableCode
+
+class RenamePoliciesTagOnASubscriberList < ActiveRecord::Migration[4.2]
   def up
+    return
+
     target_list = FindExactMatch.new.call(
       policies: ["inspections-of-schools-colleges-and-children-s-services"]
     ).first

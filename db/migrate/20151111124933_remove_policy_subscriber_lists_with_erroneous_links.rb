@@ -1,5 +1,9 @@
-class RemovePolicySubscriberListsWithErroneousLinks < ActiveRecord::Migration
+# rubocop:disable Lint/UnreachableCode
+
+class RemovePolicySubscriberListsWithErroneousLinks < ActiveRecord::Migration[4.2]
   def up
+    return
+
     subscriber_lists_with_key(:policies).each(&:destroy!)
   end
 
