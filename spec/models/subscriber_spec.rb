@@ -83,4 +83,26 @@ RSpec.describe Subscriber, type: :model do
       expect(SubscriberList.all.size).to eq(1)
     end
   end
+
+  describe "#unsubscribe!" do
+    subject { FactoryGirl.create(:subscriber, address: "foo@bar.com") }
+
+    before do
+      FactoryGirl.create_list(:subscription, 3, subscriber: subject)
+    end
+
+    it "nullifies the subscriber's email address" do
+      expect { subject.unsubscribe! }
+        .to change { subject.reload.address }
+        .from("foo@bar.com")
+        .to(nil)
+    end
+
+    it "removes the subscriber's subscriptions" do
+      expect { subject.unsubscribe! }
+        .to change { subject.subscriptions.count }
+        .from(3)
+        .to(0)
+    end
+  end
 end
