@@ -1,4 +1,6 @@
 class EmailSenderService
+  class ClientError < StandardError; end
+
   def initialize(config, email_service_provider)
     @email_address_override = config[:email_address_override]
     @provider = email_service_provider
