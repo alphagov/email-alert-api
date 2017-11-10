@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe DeliverEmailWorker do
   let(:email_sender) { double }
   before do
+    allow(email_sender).to receive(:provider_name).and_return(:pseudo)
     allow(Services).to receive(:email_sender).and_return(
       email_sender
     )
@@ -18,7 +19,7 @@ RSpec.describe DeliverEmailWorker do
             address: email.address,
             subject: email.subject,
             body: email.body
-          )
+          ).and_return(double(id: 0))
 
         Sidekiq::Testing.inline!
         described_class.perform_async(email.id)

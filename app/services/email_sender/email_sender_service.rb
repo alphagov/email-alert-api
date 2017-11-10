@@ -16,6 +16,10 @@ class EmailSenderService
     )
   end
 
+  def provider_name
+    provider.class.name.demodulize.downcase.to_sym
+  end
+
 private
 
   attr_reader :provider, :email_address_override
