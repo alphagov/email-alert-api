@@ -1,5 +1,6 @@
 class Email < ApplicationRecord
   belongs_to :notification
+
   validates :address, :subject, :body, :notification, presence: true
 
   def self.create_from_params!(params)

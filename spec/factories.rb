@@ -46,4 +46,11 @@ FactoryGirl.define do
     body "body"
     notification
   end
+
+  factory :delivery_attempt do
+    email
+    status :sending
+    provider :notify
+    reference "reference"
+  end
 end
