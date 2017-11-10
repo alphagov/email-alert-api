@@ -40,6 +40,11 @@ FactoryGirl.define do
     publishing_app "publishing app"
   end
 
+  factory :subscription_content do
+    subscription
+    notification
+  end
+
   factory :email do
     address "test@example.com"
     subject "subject"
