@@ -30,9 +30,16 @@ RSpec.describe Subscriber, type: :model do
       end
     end
 
-    it "is invalid for a nil email address" do
+    it "is valid for a nil email address" do
       subject.address = nil
+      expect(subject).to be_valid
+    end
 
+    it "is invalid for an empty string email address" do
+      subject.address = ""
+      expect(subject).to be_invalid
+
+      subject.address = " "
       expect(subject).to be_invalid
     end
 
@@ -47,6 +54,13 @@ RSpec.describe Subscriber, type: :model do
 
       subject.address = "foo@bar.com"
       expect(subject).to be_invalid
+    end
+
+    it "is valid to have more than one nil email address" do
+      FactoryGirl.create(:subscriber, address: nil)
+
+      subject.address = nil
+      expect(subject).to be_valid
     end
   end
 
