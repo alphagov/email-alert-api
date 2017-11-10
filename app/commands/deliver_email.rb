@@ -41,6 +41,6 @@ private
   end
 
   def email_sender
-    Services.email_sender
+    @email_sender ||= Services.email_sender
   end
 end
