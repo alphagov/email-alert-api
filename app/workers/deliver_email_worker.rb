@@ -1,4 +1,4 @@
-class DeliverToSubscriberWorker
+class DeliverEmailWorker
   include Sidekiq::Worker
 
   def self.queue_for_priority(priority)
@@ -13,10 +13,9 @@ class DeliverToSubscriberWorker
 
   sidekiq_options retry: 3, queue: queue_for_priority(:low)
 
-  def perform(subscriber_id, email_id)
-    subscriber = Subscriber.find(subscriber_id)
+  def perform(email_id)
     email = Email.find(email_id)
-    DeliverToSubscriber.call(subscriber: subscriber, email: email)
+    DeliverEmail.call(email: email)
   end
 
   def self.perform_async_with_priority(*args, priority:)

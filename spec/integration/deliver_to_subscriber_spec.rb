@@ -4,14 +4,13 @@ require "app/services/email_sender/email_sender_service"
 require "app/services/email_sender/notify"
 require "app/services/email_sender/pseudo"
 
-RSpec.describe DeliverToSubscriber do
+RSpec.describe DeliverEmail do
   let(:email_sender) { EmailSenderService.clone }
+  let(:email) { create(:email, address: "test@test.com") }
 
   context "when sending through Notify" do
     describe ".call" do
       it "makes a call to Notify to send an email" do
-        subscriber = create(:subscriber, address: "test@test.com")
-        email = create(:email)
         client = Notifications::Client.new("key")
         allow(Notifications::Client).to receive(:new).and_return(client)
 
@@ -24,7 +23,7 @@ RSpec.describe DeliverToSubscriber do
           hash_including(email_address: "test@test.com")
         )
 
-        DeliverToSubscriber.call(subscriber: subscriber, email: email)
+        DeliverEmail.call(email: email)
       end
     end
   end
@@ -32,8 +31,6 @@ RSpec.describe DeliverToSubscriber do
   context "when sending through Pseudo" do
     describe ".call" do
       it "should send an info message to the logger" do
-        subscriber = create(:subscriber, address: "test@test.com")
-        email = create(:email)
         fake_log = double
 
         config = { provider: "PSEUDO", email_address_override: nil }
@@ -50,7 +47,7 @@ RSpec.describe DeliverToSubscriber do
           .to receive(:info)
           .with("Sending email to test@test.com\nSubject: subject\nBody: body\n")
 
-        DeliverToSubscriber.call(subscriber: subscriber, email: email)
+        DeliverEmail.call(email: email)
       end
     end
   end
