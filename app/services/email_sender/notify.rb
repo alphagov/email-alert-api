@@ -12,7 +12,7 @@ class EmailSenderService
         },
       )
       response.id
-    rescue Notifications::Client::RequestError => ex
+    rescue Notifications::Client::RequestError
       raise EmailSenderService::ClientError
     end
 
