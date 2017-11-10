@@ -3,7 +3,7 @@ class DeliveryAttempt < ApplicationRecord
 
   validates :email, :status, :provider, :reference, presence: true
 
-  enum status: %i(created sending delivered permanent_failure temporary_failure technical_failure internal_failure)
+  enum status: %i(sending delivered permanent_failure temporary_failure technical_failure internal_failure)
   enum provider: %i(psuedo notify)
 
   def failure?
