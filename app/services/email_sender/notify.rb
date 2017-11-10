@@ -13,7 +13,11 @@ class EmailSenderService
       )
       response.id
     rescue Notifications::Client::RequestError => ex
-      raise unless ex.code.to_s == "429"
+      if ex.code == 429
+        raise EmailSenderService::ClientError(:technical_failure, ex)
+      else
+        raise EmailSenderService::ClientError(:internal_failure, ex)
+      end
     end
 
   private
