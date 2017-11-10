@@ -1,4 +1,6 @@
 class EmailSenderService
+  class ClientError < StandardError; end
+
   def initialize(config, email_service_provider)
     @email_address_override = config[:email_address_override]
     @provider = email_service_provider
@@ -12,6 +14,10 @@ class EmailSenderService
       subject: subject,
       body: body
     )
+  end
+
+  def provider_name
+    provider.class.name.demodulize.downcase.to_sym
   end
 
 private

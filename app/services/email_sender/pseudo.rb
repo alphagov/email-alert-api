@@ -5,6 +5,7 @@ class EmailSenderService
 Subject: #{subject}
 Body: #{body}
 ))
+      "" # provider reference
     end
 
   private
