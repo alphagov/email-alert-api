@@ -71,8 +71,8 @@ ActiveRecord::Schema.define(version: 20171109091838) do
   end
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
-    t.string "title"
-    t.string "gov_delivery_id"
+    t.string "title", limit: 255
+    t.string "gov_delivery_id", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "document_type", default: "", null: false
