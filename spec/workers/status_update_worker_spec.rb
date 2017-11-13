@@ -10,34 +10,24 @@ RSpec.describe StatusUpdateWorker do
   end
 
   it "updates the delivery attempt's status" do
-    expect { subject.perform(args) }
+    expect { subject.perform(**args) }
       .to change { delivery_attempt.reload.status }
       .to("delivered")
   end
 
   it "underscores statuses" do
-    expect { subject.perform(args.merge(status: "temporary-failure")) }
+    expect { subject.perform(**args.merge(status: "temporary-failure")) }
       .to change { delivery_attempt.reload.status }
       .to("temporary_failure")
   end
 
-  it "requires a reference" do
-    expect { subject.perform(args.without(:reference)) }
-      .to raise_error(KeyError)
-  end
-
-  it "requires a status" do
-    expect { subject.perform(args.without(:status)) }
-      .to raise_error(KeyError)
-  end
-
   it "raises an error if the delivery attempt doesn't exist" do
-    expect { subject.perform(args.merge(reference: "missing")) }
+    expect { subject.perform(**args.merge(reference: "missing")) }
       .to raise_error(ActiveRecord::RecordNotFound)
   end
 
   it "raises an error if the status isn't recognised" do
-    expect { subject.perform(args.merge(status: "unknown")) }
+    expect { subject.perform(**args.merge(status: "unknown")) }
       .to raise_error(ArgumentError)
   end
 end
