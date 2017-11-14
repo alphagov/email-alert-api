@@ -1,19 +1,28 @@
 require "rails_helper"
 
 RSpec.describe DeliverEmailWorker do
+  class FakeLimiter
+    def run
+      yield
+    end
+  end
+
   let(:email_sender) { double }
+  let(:fake_limiter) { FakeLimiter.new }
+
   before do
     allow(email_sender).to receive(:provider_name).and_return(:pseudo)
     allow(Services).to receive(:email_sender).and_return(
       email_sender
     )
+    allow(Services).to receive(:rate_limiter).and_return(fake_limiter)
   end
 
   describe ".perform" do
     let(:email) { create(:email) }
 
     context "with an email and a subscriber" do
-      it "should send the email to the subscriber" do
+      it "sends the email to the subscriber" do
         expect(email_sender).to receive(:call)
           .with(
             address: email.address,
@@ -21,8 +30,12 @@ RSpec.describe DeliverEmailWorker do
             body: email.body
           ).and_return(double(id: 0))
 
-        Sidekiq::Testing.inline!
-        described_class.perform_async(email.id)
+        subject.perform(email.id)
+      end
+
+      it "calls Services.rater_limiter.run" do
+        expect(fake_limiter).to receive(:run)
+        subject.perform(email.id)
       end
     end
   end
