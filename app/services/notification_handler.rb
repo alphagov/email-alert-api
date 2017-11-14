@@ -46,22 +46,8 @@ private
     end
   end
 
-  def subscribers_for(content_change:)
-    Subscriber.joins(:subscriptions).where(
-      subscriptions: {
-        subscriber_list: subscriber_lists_for(content_change: content_change)
-      }
-    ).distinct
-  end
-
-  def subscriber_lists_for(content_change:)
-    SubscriberListQuery.new(
-      tags: content_change.tags,
-      links: content_change.links,
-      document_type: content_change.document_type,
-      email_document_supertype: content_change.email_document_supertype,
-      government_document_supertype: content_change.government_document_supertype,
-    ).lists
+  def subscriptions_for(content_change:)
+    SubscriptionMatcher.call(content_change: content_change)
   end
 
   def notification_params
