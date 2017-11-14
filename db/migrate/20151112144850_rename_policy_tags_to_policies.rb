@@ -1,5 +1,9 @@
-class RenamePolicyTagsToPolicies < ActiveRecord::Migration
+# rubocop:disable Lint/UnreachableCode
+
+class RenamePolicyTagsToPolicies < ActiveRecord::Migration[4.2]
   def up
+    return
+
     subscriber_lists_with_key(:policy).each do |sl|
       sl.tags = { policies: sl.tags[:policy] }
       sl.save!

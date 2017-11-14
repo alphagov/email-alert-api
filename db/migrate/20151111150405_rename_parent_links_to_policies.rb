@@ -1,5 +1,9 @@
-class RenameParentLinksToPolicies < ActiveRecord::Migration
+# rubocop:disable Lint/UnreachableCode
+
+class RenameParentLinksToPolicies < ActiveRecord::Migration[4.2]
   def up
+    return
+
     subscriber_lists_with_key(:parent).each do |sl|
       sl.links = { policies: sl.links[:parent] }
       sl.save!

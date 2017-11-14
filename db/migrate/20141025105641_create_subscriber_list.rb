@@ -1,12 +1,12 @@
-class CreateSubscriberList < ActiveRecord::Migration
+class CreateSubscriberList < ActiveRecord::Migration[4.2]
   def change
     create_table :subscriber_lists, force: true do |t|
-      t.string :title
-      t.string :gov_delivery_id
-      t.hstore :tags
+      t.string :title, limit: 255
+      t.string :gov_delivery_id, limit: 255
+      #t.hstore :tags
       t.timestamps
     end
 
-    add_index :subscriber_lists, :tags, using: :gin
+    #add_index :subscriber_lists, :tags, using: :gin
   end
 end

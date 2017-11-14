@@ -1,4 +1,4 @@
-class CreateNotificationLog < ActiveRecord::Migration
+class CreateNotificationLog < ActiveRecord::Migration[4.2]
   def change
     create_table :notification_logs do |t|
       t.string :govuk_request_id, index: true, default: ''
