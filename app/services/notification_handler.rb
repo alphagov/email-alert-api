@@ -24,9 +24,18 @@ private
     Email.create_from_params!(email_params.merge(address: subscriber.address))
   end
 
-  def deliver_to_subscribers(content_change)
-    subscribers_for(content_change: content_change).find_each do |subscriber|
-      email = create_email(subscriber)
+  def create_subscription_content(notification, subscription, email)
+    SubscriptionContent.create!(
+      notification: notification,
+      subscription: subscription,
+      email: email,
+    )
+  end
+
+  def deliver_to_subscribers(notification)
+    subscriptions_for(content_change: content_change).find_each do |subscription|
+      email = create_email(subscription.subscriber)
+      create_subscription_content(content_change, subscription, email)
       DeliverEmailWorker.perform_async_with_priority(
         email.id, priority: priority
       )

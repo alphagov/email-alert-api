@@ -98,8 +98,7 @@ RSpec.describe NotificationHandler do
 
     context "with a subscription" do
       let(:subscriber) { create(:subscriber) }
-
-      before do
+      let!(:subscription) do
         create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber)
       end
 
@@ -117,6 +116,13 @@ RSpec.describe NotificationHandler do
         expect(DeliverEmailWorker).to receive(:perform_async_with_priority).once
 
         NotificationHandler.call(params: params)
+      end
+
+      it "creates a subscription content" do
+        NotificationHandler.call(params: params)
+
+        expect(SubscriptionContent.count).to eq(1)
+        expect(SubscriptionContent.first.subscription).to eq(subscription)
       end
 
       context "with a low priority" do
