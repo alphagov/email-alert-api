@@ -23,4 +23,15 @@ module Services
     return EmailSenderService::Pseudo.new if provider == "PSEUDO" || provider.nil?
     raise "Email service provider #{provider} does not exist"
   end
+
+  def self.rate_limiter
+    default_rate_for_six_workers = 8
+
+    @rate_limiter ||= RateSleeper.new(
+      jobs_per_second: ENV.fetch(
+        "GOVUK_NOTIFY_RATE_PER_WORKER",
+        default_rate_for_six_workers
+      )
+    )
+  end
 end
