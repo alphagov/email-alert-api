@@ -123,6 +123,7 @@ RSpec.describe NotificationHandler do
 
         expect(SubscriptionContent.count).to eq(1)
         expect(SubscriptionContent.first.subscription).to eq(subscription)
+        expect(SubscriptionContent.first.email).to_not be_nil
       end
 
       context "with a low priority" do

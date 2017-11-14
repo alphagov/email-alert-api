@@ -20,22 +20,17 @@ class NotificationHandler
 
 private
 
-  def create_email(subscriber)
-    Email.create_from_params!(email_params.merge(address: subscriber.address))
-  end
-
-  def create_subscription_content(notification, subscription, email)
-    SubscriptionContent.create!(
-      notification: notification,
-      subscription: subscription,
-      email: email,
-    )
-  end
-
-  def deliver_to_subscribers(notification)
+  def deliver_to_subscribers(content_change)
     subscriptions_for(content_change: content_change).find_each do |subscription|
-      email = create_email(subscription.subscriber)
-      create_subscription_content(content_change, subscription, email)
+      subscription_content = SubscriptionContent.create!(
+        content_change: content_change,
+        subscription: subscription,
+      )
+
+      email = Email.create_from_subscription_content!(email_params, subscription_content)
+
+      subscription_content.update!(email: email)
+
       DeliverEmailWorker.perform_async_with_priority(
         email.id, priority: priority
       )
@@ -48,7 +43,8 @@ private
     ]
 
     Subscriber.where(address: addresses).find_each do |subscriber|
-      email = create_email(subscriber)
+      email = Email.create_from_params!(email_params.merge(address: subscriber.address))
+
       DeliverEmailWorker.perform_async_with_priority(
         email.id, priority: priority
       )
