@@ -32,7 +32,7 @@ RSpec.describe NotificationHandler do
   end
 
   describe ".call" do
-    it "calls create on Notification" do
+    it "calls create on ContentChange" do
       notification_params = {
         content_id: params[:content_id],
         title: params[:title],
@@ -49,7 +49,7 @@ RSpec.describe NotificationHandler do
         publishing_app: params[:publishing_app],
       }
 
-      expect(Notification).to receive(:create!)
+      expect(ContentChange).to receive(:create!)
         .with(notification_params)
         .and_return(double(id: 1, **notification_params))
 
@@ -62,9 +62,9 @@ RSpec.describe NotificationHandler do
       let!(:subscriber) { create(:subscriber, address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk") }
 
       it "calls create on Email" do
-        notification = create(:notification)
-        allow(Notification).to receive(:create!).and_return(
-          notification
+        content_change = create(:content_change)
+        allow(ContentChange).to receive(:create!).and_return(
+          content_change
         )
 
         expect(Email).to receive(:create_from_params!).with(
@@ -72,7 +72,7 @@ RSpec.describe NotificationHandler do
           description: "This is a description",
           change_note: "This is a change note",
           base_path: "/government/things",
-          notification_id: notification.id,
+          content_change_id: content_change.id,
           address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk",
         )
 
@@ -154,8 +154,8 @@ RSpec.describe NotificationHandler do
       end
     end
 
-    it "reports Notification errors to Sentry and swallows them" do
-      allow(Notification).to receive(:create!).and_raise(
+    it "reports ContentChange errors to Sentry and swallows them" do
+      allow(ContentChange).to receive(:create!).and_raise(
         ActiveRecord::RecordInvalid
       )
       expect(Raven).to receive(:capture_exception).with(

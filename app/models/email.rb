@@ -1,7 +1,7 @@
 class Email < ApplicationRecord
-  belongs_to :notification
+  belongs_to :content_change
 
-  validates :address, :subject, :body, :notification, presence: true
+  validates :address, :subject, :body, :content_change, presence: true
 
   def self.create_from_params!(params)
     build_from_params(params).tap(&:save!)
@@ -11,7 +11,7 @@ class Email < ApplicationRecord
     renderer = EmailRenderer.new(params: params)
 
     new(
-      notification_id: params[:notification_id],
+      content_change_id: params[:content_change_id],
       address: params[:address],
       subject: renderer.subject,
       body: renderer.body

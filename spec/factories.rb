@@ -24,7 +24,7 @@ FactoryGirl.define do
     subscriber_list
   end
 
-  factory :notification do
+  factory :content_change do
     content_id { SecureRandom.uuid }
     title "title"
     base_path "government/base_path"
@@ -44,7 +44,7 @@ FactoryGirl.define do
     address "test@example.com"
     subject "subject"
     body "body"
-    notification
+    content_change
   end
 
   factory :delivery_attempt do

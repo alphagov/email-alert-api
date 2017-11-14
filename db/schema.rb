@@ -10,10 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171110163345) do
+ActiveRecord::Schema.define(version: 20171113163731) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "content_changes", force: :cascade do |t|
+    t.uuid "content_id", null: false
+    t.text "title", null: false
+    t.text "base_path", null: false
+    t.text "change_note", null: false
+    t.text "description", null: false
+    t.json "links", default: {}, null: false
+    t.json "tags", default: {}, null: false
+    t.datetime "public_updated_at", null: false
+    t.string "email_document_supertype", null: false
+    t.string "government_document_supertype", null: false
+    t.string "govuk_request_id", null: false
+    t.string "document_type", null: false
+    t.string "publishing_app", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "delivery_attempts", force: :cascade do |t|
     t.bigint "email_id", null: false
@@ -28,11 +46,11 @@ ActiveRecord::Schema.define(version: 20171110163345) do
   create_table "emails", force: :cascade do |t|
     t.string "subject", null: false
     t.text "body", null: false
-    t.bigint "notification_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "address", null: false
-    t.index ["notification_id"], name: "index_emails_on_notification_id"
+    t.bigint "content_change_id", null: false
+    t.index ["content_change_id"], name: "index_emails_on_content_change_id"
   end
 
   create_table "notification_logs", id: :serial, force: :cascade do |t|
@@ -50,24 +68,6 @@ ActiveRecord::Schema.define(version: 20171110163345) do
     t.string "government_document_supertype", default: ""
     t.index ["content_id", "public_updated_at"], name: "index_notification_logs_on_content_id_and_public_updated_at"
     t.index ["govuk_request_id"], name: "index_notification_logs_on_govuk_request_id"
-  end
-
-  create_table "notifications", force: :cascade do |t|
-    t.uuid "content_id", null: false
-    t.text "title", null: false
-    t.text "base_path", null: false
-    t.text "change_note", null: false
-    t.text "description", null: false
-    t.json "links", default: {}, null: false
-    t.json "tags", default: {}, null: false
-    t.datetime "public_updated_at", null: false
-    t.string "email_document_supertype", null: false
-    t.string "government_document_supertype", null: false
-    t.string "govuk_request_id", null: false
-    t.string "document_type", null: false
-    t.string "publishing_app", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
@@ -101,7 +101,7 @@ ActiveRecord::Schema.define(version: 20171110163345) do
   end
 
   add_foreign_key "delivery_attempts", "emails"
-  add_foreign_key "emails", "notifications"
+  add_foreign_key "emails", "content_changes"
   add_foreign_key "subscriptions", "subscriber_lists"
   add_foreign_key "subscriptions", "subscribers", on_delete: :cascade
 end

@@ -1,5 +1,5 @@
 require_relative "extensions/symbolize_json"
 
-class Notification < ApplicationRecord
+class ContentChange < ApplicationRecord
   include SymbolizeJSON
 end
