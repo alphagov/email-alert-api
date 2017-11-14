@@ -10,7 +10,7 @@ class NotificationHandler
 
   def call
     begin
-      content_change = ContentChange.create!(notification_params)
+      content_change = ContentChange.create!(content_change_params)
       deliver_to_subscribers(content_change)
       deliver_to_courtesy_subscribers
     rescue StandardError => ex
@@ -55,7 +55,7 @@ private
     SubscriptionMatcher.call(content_change: content_change)
   end
 
-  def notification_params
+  def content_change_params
     {
       content_id: params[:content_id],
       title: params[:title],

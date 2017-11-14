@@ -42,7 +42,7 @@ FactoryGirl.define do
 
   factory :subscription_content do
     subscription
-    notification
+    content_change
   end
 
   factory :email do

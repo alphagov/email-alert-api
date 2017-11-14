@@ -8,7 +8,7 @@ class Email < ApplicationRecord
   def self.create_from_subscription_content!(params, subscription_content)
     create_from_params!(
       params.merge(
-        address: subscription_content.subscription.subscriber.address,
+        address: subscription_content.subscription.subscriber.address
       )
     )
   end
