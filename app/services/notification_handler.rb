@@ -10,9 +10,9 @@ class NotificationHandler
 
   def call
     begin
-      notification = Notification.create!(notification_params)
-      deliver_to_subscribers(notification)
-      deliver_to_courtesy_subscribers(notification)
+      content_change = ContentChange.create!(notification_params)
+      deliver_to_subscribers(content_change)
+      deliver_to_courtesy_subscribers(content_change)
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
     end
@@ -20,49 +20,49 @@ class NotificationHandler
 
 private
 
-  def create_email(notification, subscriber)
+  def create_email(content_change, subscriber)
     Email.create_from_params!(
-      email_params.merge(notification_id: notification.id, address: subscriber.address)
+      email_params.merge(content_change_id: content_change.id, address: subscriber.address)
     )
   end
 
-  def deliver_to_subscribers(notification)
-    subscribers_for(notification: notification).find_each do |subscriber|
-      email = create_email(notification, subscriber)
+  def deliver_to_subscribers(content_change)
+    subscribers_for(content_change: content_change).find_each do |subscriber|
+      email = create_email(content_change, subscriber)
       DeliverEmailWorker.perform_async_with_priority(
         email.id, priority: priority
       )
     end
   end
 
-  def deliver_to_courtesy_subscribers(notification)
+  def deliver_to_courtesy_subscribers(content_change)
     addresses = [
       "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk",
     ]
 
     Subscriber.where(address: addresses).find_each do |subscriber|
-      email = create_email(notification, subscriber)
+      email = create_email(content_change, subscriber)
       DeliverEmailWorker.perform_async_with_priority(
         email.id, priority: priority
       )
     end
   end
 
-  def subscribers_for(notification:)
+  def subscribers_for(content_change:)
     Subscriber.joins(:subscriptions).where(
       subscriptions: {
-        subscriber_list: subscriber_lists_for(notification: notification)
+        subscriber_list: subscriber_lists_for(content_change: content_change)
       }
     ).distinct
   end
 
-  def subscriber_lists_for(notification:)
+  def subscriber_lists_for(content_change:)
     SubscriberListQuery.new(
-      tags: notification.tags,
-      links: notification.links,
-      document_type: notification.document_type,
-      email_document_supertype: notification.email_document_supertype,
-      government_document_supertype: notification.government_document_supertype,
+      tags: content_change.tags,
+      links: content_change.links,
+      document_type: content_change.document_type,
+      email_document_supertype: content_change.email_document_supertype,
+      government_document_supertype: content_change.government_document_supertype,
     ).lists
   end
 

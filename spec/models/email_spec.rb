@@ -11,16 +11,11 @@ RSpec.describe Email do
       subject.valid?
       expect(subject.errors[:body]).not_to be_empty
     end
-
-    it "requires a notification" do
-      subject.valid?
-      expect(subject.errors[:notification]).not_to be_empty
-    end
   end
 
   describe "create_from_params!" do
-    let(:notification) {
-      create(:notification)
+    let(:content_change) {
+      create(:content_change)
     }
 
     let(:email) {
@@ -30,7 +25,7 @@ RSpec.describe Email do
         change_note: "Change note",
         base_path: "/government/test",
         public_updated_at: DateTime.parse("1/1/2017"),
-        notification_id: notification.id,
+        content_change_id: content_change.id,
         address: "test@example.com",
       )
     }

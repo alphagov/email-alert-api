@@ -172,7 +172,7 @@ RSpec.describe "Sending a notification", type: :request do
     end
 
     it "creates a Notification" do
-      expect(Notification.count).to eq(1)
+      expect(ContentChange.count).to eq(1)
     end
   end
 end
