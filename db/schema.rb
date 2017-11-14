@@ -49,8 +49,6 @@ ActiveRecord::Schema.define(version: 20171113163731) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "address", null: false
-    t.bigint "content_change_id", null: false
-    t.index ["content_change_id"], name: "index_emails_on_content_change_id"
   end
 
   create_table "notification_logs", id: :serial, force: :cascade do |t|
@@ -101,7 +99,6 @@ ActiveRecord::Schema.define(version: 20171113163731) do
   end
 
   add_foreign_key "delivery_attempts", "emails"
-  add_foreign_key "emails", "content_changes"
   add_foreign_key "subscriptions", "subscriber_lists"
   add_foreign_key "subscriptions", "subscribers", on_delete: :cascade
 end

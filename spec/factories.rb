@@ -44,7 +44,6 @@ FactoryGirl.define do
     address "test@example.com"
     subject "subject"
     body "body"
-    content_change
   end
 
   factory :delivery_attempt do

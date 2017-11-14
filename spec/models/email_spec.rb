@@ -11,11 +11,6 @@ RSpec.describe Email do
       subject.valid?
       expect(subject.errors[:body]).not_to be_empty
     end
-
-    it "requires a content change" do
-      subject.valid?
-      expect(subject.errors[:content_change]).not_to be_empty
-    end
   end
 
   describe "create_from_params!" do
