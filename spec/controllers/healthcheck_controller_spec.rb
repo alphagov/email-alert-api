@@ -47,13 +47,14 @@ RSpec.describe HealthcheckController, type: :controller do
   it "includes useful information about each check" do
     get :check, format: :json
 
-    expect(data.fetch(:checks)).to eq(
-      database:      { status: "ok" },
-      govdelivery:   { status: "ok", ping_status: 200 },
-      queue_latency: { status: "ok", queues: {} },
-      queue_size:    { status: "ok", queues: {} },
-      redis:         { status: "ok" },
-      retry_size:    { status: "ok", retry_size: 0 },
+    expect(data.fetch(:checks)).to include(
+      database:          { status: "ok" },
+      govdelivery:       { status: "ok", ping_status: 200 },
+      queue_latency:     { status: "ok", queues: {} },
+      queue_size:        { status: "ok", queues: {} },
+      redis:             { status: "ok" },
+      retry_size:        { status: "ok", retry_size: 0 },
+      technical_failure: hash_including(status: "ok", last_3_hours: 0),
     )
   end
 end
