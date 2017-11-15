@@ -24,6 +24,7 @@ class Healthcheck
 
     def failures_since(datetime)
       DeliveryAttempt
+        .latest_per_email
         .where(status: :technical_failure)
         .where("updated_at > ?", datetime)
     end

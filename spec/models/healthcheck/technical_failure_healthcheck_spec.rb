@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Healthcheck::TechnicalFailureHealthcheck do
-  def create_delivery_attempt(status, updated)
-    FactoryGirl.create(:delivery_attempt, status: status, updated_at: updated)
+  def create_delivery_attempt(status, updated, email = create(:email))
+    create(:delivery_attempt, status: status, updated_at: updated, email: email)
   end
 
   context "when there are no technical failures" do
@@ -25,6 +25,15 @@ RSpec.describe Healthcheck::TechnicalFailureHealthcheck do
       before { create_delivery_attempt(:technical_failure, 25.hours.ago) }
       specify { expect(subject.status).to eq(:ok) }
     end
+  end
+
+  it "ignores technical failures that have newer delivery attempts" do
+    email = FactoryGirl.create(:email)
+
+    create_delivery_attempt(:technical_failure, 30.minutes.ago, email)
+    create_delivery_attempt(:delivered, 5.minutes.ago, email)
+
+    expect(subject.status).to eq(:ok)
   end
 
   describe "#details" do
