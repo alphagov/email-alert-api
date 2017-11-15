@@ -27,7 +27,7 @@ RSpec.describe Healthcheck::TechnicalFailureHealthcheck do
     end
   end
 
-  it "ignores technical failures that have newer delivery attempts" do
+  it "ignores delivery attempts that are superseded by newer ones" do
     email = FactoryGirl.create(:email)
 
     create_delivery_attempt(:technical_failure, 30.minutes.ago, email)

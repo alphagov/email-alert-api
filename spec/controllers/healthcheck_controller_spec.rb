@@ -54,6 +54,7 @@ RSpec.describe HealthcheckController, type: :controller do
       queue_size:        { status: "ok", queues: {} },
       redis:             { status: "ok" },
       retry_size:        { status: "ok", retry_size: 0 },
+      status_update:     { status: "ok" },
       technical_failure: hash_including(status: "ok", last_3_hours: 0),
     )
   end
