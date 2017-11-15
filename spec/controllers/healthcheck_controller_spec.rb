@@ -1,134 +1,59 @@
 require "rails_helper"
 
-ENV['SIDEKIQ_QUEUE_SIZE_WARNING'] = '2'
-ENV['SIDEKIQ_QUEUE_SIZE_CRITICAL'] = '5'
-
-ENV['SIDEKIQ_QUEUE_LATENCY_WARNING'] = '5'
-ENV['SIDEKIQ_QUEUE_LATENCY_CRITICAL'] = '10'
-
-ENV['SIDEKIQ_RETRY_SIZE_WARNING'] = '5'
-ENV['SIDEKIQ_RETRY_SIZE_CRITICAL'] = '10'
-
 RSpec.describe HealthcheckController, type: :controller do
-  describe "#check" do
+  before { stub_request(:get, /govdelivery/).to_return(status: 200) }
+
+  let(:data) { JSON.parse(response.body).deep_symbolize_keys }
+
+  it "responds with json" do
+    get :check, format: :json
+
+    expect(response.status).to eq(200)
+    expect(response.content_type).to eq("application/json")
+    expect { data }.not_to raise_error
+  end
+
+  context "when the healthchecks pass" do
+    it "returns a status of 'ok'" do
+      get :check, format: :json
+      expect(data.fetch(:status)).to eq("ok")
+    end
+  end
+
+  context "when one of the healthchecks is warning" do
     before do
-      stub_request(:get, "http://govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
-        with(headers: { "Authorization" => "Basic #{HTTP_AUTH_CREDENTIALS}" }).
-        to_return(status: 200)
+      allow_any_instance_of(Healthcheck::QueueSizeHealthcheck)
+        .to receive(:queues)
+        .and_return(default: 3)
     end
 
-    it "responds with JSON" do
+    it "returns a status of 'warning'" do
       get :check, format: :json
+      expect(data.fetch(:status)).to eq("warning")
+    end
+  end
 
-      expect(response.status).to eq(200)
-      expect(response.content_type).to eq('application/json')
-
-      _data = JSON.parse(response.body)
+  context "when one of the healthchecks is critical" do
+    before do
+      allow(ActiveRecord::Base).to receive(:connected?).and_return(false)
     end
 
-    it "responds with 'ok'" do
+    it "returns a status of 'critical'" do
       get :check, format: :json
-
-      data = JSON.parse(response.body)
-      expect(data['status']).to eq('ok')
+      expect(data.fetch(:status)).to eq("critical")
     end
+  end
 
-    it "includes queue length check in the response" do
-      queues = {
-        "scheduled_publishing" => 0
-      }
+  it "includes useful information about each check" do
+    get :check, format: :json
 
-      allow_any_instance_of(HealthcheckController).to receive(:sidekiq_queues).and_return(queues)
-      get :check, format: :json
-
-      data = JSON.parse(response.body)
-      expect(data['checks']).to include('queue_size')
-    end
-
-    it "returns ok for small queue sizes" do
-      queues = {
-        "scheduled_publishing" => 0
-      }
-
-      allow_any_instance_of(HealthcheckController).to receive(:sidekiq_queues).and_return(queues)
-
-      get :check, format: :json
-
-      data = JSON.parse(response.body)
-      expect(data['checks']['queue_size']['status']).to eq('ok')
-    end
-
-    it "returns warning for medium queue sizes" do
-      queues = {
-        "scheduled_publishing" => 0,
-        "foo" => 3
-      }
-
-      allow_any_instance_of(HealthcheckController).to receive(:sidekiq_queues).and_return(queues)
-
-      get :check, format: :json
-
-      data = JSON.parse(response.body)
-      expect(data['checks']['queue_size']['status']).to eq('warning')
-    end
-
-    it "returns critical for large queue sizes" do
-      queues = {
-        "scheduled_publishing" => 0,
-        "foo" => 10
-      }
-
-      allow_any_instance_of(HealthcheckController).to receive(:sidekiq_queues).and_return(queues)
-
-      get :check, format: :json
-
-      data = JSON.parse(response.body)
-      expect(data['checks']['queue_size']['status']).to eq('critical')
-    end
-
-    it "includes queue age check in the response" do
-      allow_any_instance_of(HealthcheckController).to receive(:queue_age).and_return(3600.5)
-      get :check, format: :json
-
-      data = JSON.parse(response.body)
-      expect(data['checks']).to include('queue_age')
-    end
-
-    it "returns critical for large latencies" do
-      latencies = {
-        "foo" => 1,
-        "bar" => 5,
-        "baz" => 10
-      }
-
-      allow_any_instance_of(HealthcheckController).to receive(:queue_latencies).and_return(latencies)
-
-      get :check, format: :json
-
-      data = JSON.parse(response.body)
-      expect(data['checks']['queue_age']['status']).to eq('critical')
-    end
-
-    it "returns critical if govdelivery isn't healthy" do
-      stub_request(:get, "http://govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
-        with(headers: { "Authorization" => "Basic #{HTTP_AUTH_CREDENTIALS}" }).
-        to_return(status: 400)
-
-      get :check, format: :json
-
-      data = JSON.parse(response.body)
-      expect(data['checks']['govdelivery']['status']).to eq('critical')
-    end
-
-    it "returns okay if govdelivery is happy" do
-      stub_request(:get, "http://govdelivery-api.example.com/api/account/UKGOVUK/categories.xml").
-        with(headers: { "Authorization" => "Basic #{HTTP_AUTH_CREDENTIALS}" }).
-        to_return(status: 200)
-
-      get :check, format: :json
-
-      data = JSON.parse(response.body)
-      expect(data['checks']['govdelivery']['status']).to eq('ok')
-    end
+    expect(data.fetch(:checks)).to eq(
+      database:      { status: "ok" },
+      govdelivery:   { status: "ok", ping_status: 200 },
+      queue_latency: { status: "ok", queues: {} },
+      queue_size:    { status: "ok", queues: {} },
+      redis:         { status: "ok" },
+      retry_size:    { status: "ok", retry_size: 0 },
+    )
   end
 end
