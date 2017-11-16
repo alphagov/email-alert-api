@@ -49,7 +49,7 @@ RSpec.describe NotificationHandler do
         base_path: params[:base_path],
         links: params[:links],
         tags: params[:tags],
-        public_updated_at: params[:public_updated_at],
+        public_updated_at: DateTime.parse(params[:public_updated_at]),
         email_document_supertype: params[:email_document_supertype],
         government_document_supertype: params[:government_document_supertype],
         govuk_request_id: params[:govuk_request_id],
