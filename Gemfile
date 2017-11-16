@@ -21,6 +21,7 @@ gem 'unicorn', '5.3.0'
 group :test do
   gem 'equivalent-xml'
   gem 'factory_girl_rails'
+  gem 'timecop'
   gem 'webmock'
 end
 

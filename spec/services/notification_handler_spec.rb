@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe NotificationHandler do
+  before do
+    Timecop.freeze(Time.local(2017, 1, 1, 9))
+  end
+
+  after do
+    Timecop.return
+  end
+
   let(:params) {
     {
       subject: "This is a subject",
@@ -41,7 +49,7 @@ RSpec.describe NotificationHandler do
         base_path: params[:base_path],
         links: params[:links],
         tags: params[:tags],
-        public_updated_at: params[:public_updated_at],
+        public_updated_at: DateTime.parse(params[:public_updated_at]),
         email_document_supertype: params[:email_document_supertype],
         government_document_supertype: params[:government_document_supertype],
         govuk_request_id: params[:govuk_request_id],
@@ -69,10 +77,10 @@ RSpec.describe NotificationHandler do
 
         expect(Email).to receive(:create_from_params!).with(
           title: "Travel advice",
-          description: "This is a description",
           change_note: "This is a change note",
+          description: "This is a description",
           base_path: "/government/things",
-          content_change_id: content_change.id,
+          public_updated_at: DateTime.parse("2017/01/01 09:00"),
           address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk",
         )
 

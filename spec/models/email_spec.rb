@@ -14,11 +14,9 @@ RSpec.describe Email do
   end
 
   describe "create_from_params!" do
-    let(:content_change) {
-      create(:content_change)
-    }
+    let(:content_change) { create(:content_change) }
 
-    let(:email) {
+    let(:email) do
       Email.create_from_params!(
         title: "Title",
         description: "Description",
@@ -28,22 +26,22 @@ RSpec.describe Email do
         content_change_id: content_change.id,
         address: "test@example.com",
       )
-    }
+    end
+
+    let(:email_renderer) { double }
+
+    before do
+      allow(email_renderer).to receive(:subject).and_return("a subject")
+      allow(email_renderer).to receive(:body).and_return("a body")
+      allow(EmailRenderer).to receive(:new).and_return(email_renderer)
+    end
 
     it "sets subject" do
-      expect(email.subject).to eq("Title")
+      expect(email.subject).to eq("a subject")
     end
 
     it "sets body" do
-      expect(email.body).to eq(
-        <<~BODY
-          There has been a change to *Title* on 00:00 1 January 2017.
-
-          > Description
-
-          **Change note**
-        BODY
-      )
+      expect(email.body).to eq("a body")
     end
   end
 end
