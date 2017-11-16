@@ -20,13 +20,13 @@ class NotificationHandler
 
 private
 
-  def create_email(content_change, subscriber)
+  def create_email(subscriber)
     Email.create_from_params!(email_params.merge(address: subscriber.address))
   end
 
   def deliver_to_subscribers(content_change)
     subscribers_for(content_change: content_change).find_each do |subscriber|
-      email = create_email(content_change, subscriber)
+      email = create_email(subscriber)
       DeliverEmailWorker.perform_async_with_priority(
         email.id, priority: priority
       )
@@ -39,7 +39,7 @@ private
     ]
 
     Subscriber.where(address: addresses).find_each do |subscriber|
-      email = create_email(content_change, subscriber)
+      email = create_email(subscriber)
       DeliverEmailWorker.perform_async_with_priority(
         email.id, priority: priority
       )
