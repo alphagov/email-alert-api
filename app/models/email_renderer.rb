@@ -4,16 +4,17 @@ class EmailRenderer
   end
 
   def subject
-    params[:title]
+    "GOV.UK Update - #{title}"
   end
 
   def body
     <<~BODY
-      There has been a change to *#{params[:title]}* on #{format_date(params[:public_updated_at])}.
+      #{change_note}: #{description}.
 
-      > #{params[:description]}
+      #{url}
+      Updated on #{public_updated_at}
 
-      **#{params[:change_note]}**
+      Unsubscribe from #{title} - #{unsubscribe_url}
     BODY
   end
 
@@ -21,8 +22,35 @@ private
 
   attr_reader :params
 
-  def format_date(date)
-    return unless date
-    date.strftime("%H:%M %-d %B %Y")
+  def title
+    params.fetch(:title)
+  end
+
+  def base_path
+    params.fetch(:base_path)
+  end
+
+  def change_note
+    params.fetch(:change_note)
+  end
+
+  def description
+    params.fetch(:description)
+  end
+
+  def public_updated_at
+    params.fetch(:public_updated_at).strftime("%I:%M %P, %-d %B %Y")
+  end
+
+  def url
+    "#{website_root}#{base_path}"
+  end
+
+  def unsubscribe_url
+    "#{website_root}/email/token/unsubscribe"
+  end
+
+  def website_root
+    Plek.new.website_root
   end
 end
