@@ -12,7 +12,7 @@ class NotificationHandler
     begin
       content_change = ContentChange.create!(notification_params)
       deliver_to_subscribers(content_change)
-      deliver_to_courtesy_subscribers(content_change)
+      deliver_to_courtesy_subscribers
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
     end
@@ -33,7 +33,7 @@ private
     end
   end
 
-  def deliver_to_courtesy_subscribers(content_change)
+  def deliver_to_courtesy_subscribers
     addresses = [
       "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk",
     ]
