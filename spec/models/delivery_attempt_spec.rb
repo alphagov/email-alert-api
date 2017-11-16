@@ -40,4 +40,16 @@ RSpec.describe DeliveryAttempt, type: :model do
       expect(subject.should_report_failure?).to be_truthy
     end
   end
+
+  describe ".latest_per_email" do
+    it "returns the delivery attempt that was last updated per email" do
+      email = create(:email)
+
+      create(:delivery_attempt, email: email, updated_at: 2.minute.ago)
+      latest = create(:delivery_attempt, email: email, updated_at: 1.minute.ago)
+      create(:delivery_attempt, email: email, updated_at: 3.minute.ago)
+
+      expect(described_class.latest_per_email).to eq [latest]
+    end
+  end
 end
