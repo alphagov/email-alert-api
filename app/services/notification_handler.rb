@@ -21,9 +21,7 @@ class NotificationHandler
 private
 
   def create_email(content_change, subscriber)
-    Email.create_from_params!(
-      email_params.merge(content_change_id: content_change.id, address: subscriber.address)
-    )
+    Email.create_from_params!(email_params.merge(address: subscriber.address))
   end
 
   def deliver_to_subscribers(content_change)
