@@ -47,4 +47,19 @@ RSpec.describe Healthcheck::StatusUpdateHealthcheck do
       specify { expect(subject.status).to eq(:ok) }
     end
   end
+
+  describe "#details" do
+    before do
+      3.times { create_delivery_attempt(:sending, 73.hours.ago) }
+      5.times { create_delivery_attempt(:sending, 76.hours.ago) }
+    end
+
+    it "counts how many attempts are sending over 3-hour slices" do
+      details = subject.details
+
+      expect(details.fetch(:older_than_72_hours)).to eq(8)
+      expect(details.fetch(:older_than_75_hours)).to eq(5)
+      expect(details.fetch(:older_than_78_hours)).to eq(0)
+    end
+  end
 end

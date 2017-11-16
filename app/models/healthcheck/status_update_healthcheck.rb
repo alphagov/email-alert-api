@@ -1,6 +1,6 @@
 class Healthcheck
   class StatusUpdateHealthcheck
-    NOTIFY_SEND_TIME = 72.hours
+    NOTIFY_DELAY = 72 # hours
 
     def name
       :status_update
@@ -17,7 +17,12 @@ class Healthcheck
     end
 
     def details
-      {}
+      from = NOTIFY_DELAY
+      to = from + 48
+
+      (from..to).step(3).with_object({}) do |n, hash|
+        hash[:"older_than_#{n}_hours"] = sending_after(n.hours.ago).count
+      end
     end
 
   private
@@ -35,7 +40,7 @@ class Healthcheck
 
     # Both systems use queueing, so build in some tolerance.
     def warning_time
-      NOTIFY_SEND_TIME + 10.minutes
+      NOTIFY_DELAY.hours + 10.minutes
     end
   end
 end
