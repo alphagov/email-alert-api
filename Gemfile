@@ -22,6 +22,7 @@ group :test do
   gem 'equivalent-xml'
   gem 'factory_girl_rails'
   gem 'webmock'
+  gem 'timecop'
 end
 
 group :development do

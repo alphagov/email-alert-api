@@ -236,6 +236,7 @@ GEM
     statsd-ruby (1.4.0)
     thor (0.19.4)
     thread_safe (0.3.6)
+    timecop (0.9.1)
     tzinfo (1.2.3)
       thread_safe (~> 0.1)
     unf (0.1.4)
@@ -279,6 +280,7 @@ DEPENDENCIES
   sidekiq-statsd (= 0.1.5)
   sidekiq-symbols (~> 0.1)
   statsd-ruby (= 1.4.0)
+  timecop
   unicorn (= 5.3.0)
   webmock
 
