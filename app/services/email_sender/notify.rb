@@ -11,8 +11,10 @@ class EmailSenderService
           body: body,
         },
       )
+      EmailAlertAPI.statsd.increment("notify.email_send_request.success")
       response.id
     rescue Notifications::Client::RequestError
+      EmailAlertAPI.statsd.increment("notify.email_send_request.failure")
       raise EmailSenderService::ClientError
     end
 
