@@ -55,14 +55,9 @@ private
     )
     Rails.logger.info "Email '#{params[:subject]}' sent"
   rescue GovDelivery::Client::UnknownError => e
-    # We want to to be notified when trying to send to a topic without
-    # any subscribers (GD-12004), however we want to swallow the error
-    # as otherwise the sidekiq job continue to retry, with the same error.
-    if e.message.match?(/GD-12004/)
-      GovukError.notify(e.message)
-    else
-      raise
-    end
+    # We don't want to to be notified or retry the job when trying to send to a
+    # topic without any subscribers (GD-12004).
+    raise unless e.message.match?(/GD-12004/)
   end
 
   def log_notification(notification_params, gov_delivery_ids:, links_hash:, tags_hash:)

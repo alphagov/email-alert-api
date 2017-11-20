@@ -248,11 +248,6 @@ RSpec.describe NotificationWorker do
       it "does not raise an error" do
         expect { make_it_perform }.not_to raise_error
       end
-
-      it "sends a GovukError notification" do
-        expect(GovukError).to receive(:notify)
-        make_it_perform
-      end
     end
 
     context "given GovDelivery raises an error other than GD-12004" do
