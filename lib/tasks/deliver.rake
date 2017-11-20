@@ -1,6 +1,10 @@
 namespace :deliver do
   def test_email(address)
-    OpenStruct.new(address: address, subject: "Test email", body: "This is a test email.")
+    Email.create(
+      address: address,
+      subject: "Test email",
+      body: "This is a test email."
+    )
   end
 
   desc "Send a test email to a subscriber by id"
