@@ -89,6 +89,17 @@ ActiveRecord::Schema.define(version: 20171115162823) do
     t.index ["address"], name: "index_subscribers_on_address", unique: true
   end
 
+  create_table "subscription_contents", force: :cascade do |t|
+    t.bigint "subscription_id", null: false
+    t.bigint "content_change_id", null: false
+    t.bigint "email_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["content_change_id"], name: "index_subscription_contents_on_content_change_id"
+    t.index ["email_id"], name: "index_subscription_contents_on_email_id"
+    t.index ["subscription_id"], name: "index_subscription_contents_on_subscription_id"
+  end
+
   create_table "subscriptions", force: :cascade do |t|
     t.bigint "subscriber_id", null: false
     t.bigint "subscriber_list_id", null: false
@@ -100,6 +111,9 @@ ActiveRecord::Schema.define(version: 20171115162823) do
   end
 
   add_foreign_key "delivery_attempts", "emails"
+  add_foreign_key "subscription_contents", "content_changes"
+  add_foreign_key "subscription_contents", "emails"
+  add_foreign_key "subscription_contents", "subscriptions"
   add_foreign_key "subscriptions", "subscriber_lists"
   add_foreign_key "subscriptions", "subscribers", on_delete: :cascade
 end

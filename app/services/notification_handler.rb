@@ -10,7 +10,7 @@ class NotificationHandler
 
   def call
     begin
-      content_change = ContentChange.create!(notification_params)
+      content_change = ContentChange.create!(content_change_params)
       deliver_to_subscribers(content_change)
       deliver_to_courtesy_subscribers
     rescue StandardError => ex
@@ -20,13 +20,19 @@ class NotificationHandler
 
 private
 
-  def create_email(subscriber)
-    Email.create_from_params!(email_params.merge(address: subscriber.address))
-  end
-
   def deliver_to_subscribers(content_change)
-    subscribers_for(content_change: content_change).find_each do |subscriber|
-      email = create_email(subscriber)
+    subscriptions_for(content_change: content_change).find_each do |subscription|
+      subscription_content = SubscriptionContent.create!(
+        content_change: content_change,
+        subscription: subscription,
+      )
+
+      email = Email.create_from_params!(
+        email_params.merge(address: subscription.subscriber.address)
+      )
+
+      subscription_content.update!(email: email)
+
       DeliverEmailWorker.perform_async_with_priority(
         email.id, priority: priority
       )
@@ -39,32 +45,19 @@ private
     ]
 
     Subscriber.where(address: addresses).find_each do |subscriber|
-      email = create_email(subscriber)
+      email = Email.create_from_params!(email_params.merge(address: subscriber.address))
+
       DeliverEmailWorker.perform_async_with_priority(
         email.id, priority: priority
       )
     end
   end
 
-  def subscribers_for(content_change:)
-    Subscriber.joins(:subscriptions).where(
-      subscriptions: {
-        subscriber_list: subscriber_lists_for(content_change: content_change)
-      }
-    ).distinct
+  def subscriptions_for(content_change:)
+    SubscriptionMatcher.call(content_change: content_change)
   end
 
-  def subscriber_lists_for(content_change:)
-    SubscriberListQuery.new(
-      tags: content_change.tags,
-      links: content_change.links,
-      document_type: content_change.document_type,
-      email_document_supertype: content_change.email_document_supertype,
-      government_document_supertype: content_change.government_document_supertype,
-    ).lists
-  end
-
-  def notification_params
+  def content_change_params
     {
       content_id: params[:content_id],
       title: params[:title],
