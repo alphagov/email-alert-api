@@ -27,7 +27,9 @@ private
         subscription: subscription,
       )
 
-      email = Email.create_from_subscription_content!(email_params, subscription_content)
+      email = Email.create_from_params!(
+        email_params.merge(address: subscription.subscriber.address)
+      )
 
       subscription_content.update!(email: email)
 
