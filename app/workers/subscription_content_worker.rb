@@ -1,7 +1,8 @@
 class SubscriptionContentWorker
   include Sidekiq::Worker
 
-  def perform(content_change_id:)
+  def perform(content_change_id:, priority:)
+    @priority = priority
     content_change = ContentChange.find(content_change_id)
     queue_delivery_to_subscribers(content_change)
     queue_delivery_to_courtesy_subscribers(content_change)
@@ -68,9 +69,5 @@ private
       base_path: content_change.base_path,
       public_updated_at: content_change.public_updated_at,
     }
-  end
-
-  def priority
-    params.fetch(:priority, "low").to_sym
   end
 end
