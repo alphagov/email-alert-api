@@ -16,7 +16,7 @@ FactoryGirl.define do
   end
 
   factory :subscriber do
-    address "test@example.com"
+    sequence(:address) { |i| "test-#{i}@example.com" }
   end
 
   factory :subscription do

@@ -27,14 +27,9 @@ private
         subscription: subscription,
       )
 
-      email = Email.create_from_params!(
-        email_params.merge(address: subscription.subscriber.address)
-      )
-
-      subscription_content.update!(email: email)
-
-      DeliverEmailWorker.perform_async_with_priority(
-        email.id, priority: priority
+      EmailGenerationWorker.perform_async(
+        subscription_content_id: subscription_content.id,
+        priority: priority
       )
     end
   end
@@ -76,13 +71,7 @@ private
   end
 
   def email_params
-    {
-      title: params[:title],
-      change_note: params[:change_note],
-      description: params[:description],
-      base_path: params[:base_path],
-      public_updated_at: DateTime.parse(params[:public_updated_at]),
-    }
+    content_change_params.slice(:title, :change_note, :description, :base_path, :public_updated_at)
   end
 
   def priority
