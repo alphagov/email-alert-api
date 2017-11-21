@@ -45,10 +45,11 @@ RSpec.describe DeliverEmailWorker do
     let(:priority) { nil }
 
     before do
-      Sidekiq::Testing.fake!
-      described_class.perform_async_with_priority(
-        email.id, priority: priority
-      )
+      Sidekiq::Testing.fake! do
+        described_class.perform_async_with_priority(
+          email.id, priority: priority
+        )
+      end
     end
 
     context "with a low priority" do
