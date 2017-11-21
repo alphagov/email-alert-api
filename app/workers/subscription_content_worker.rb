@@ -42,7 +42,7 @@ private
           email_params(content_change, subscriber)
         )
 
-        DeliverEmailWorker.perform_async_with_priority(
+        DeliveryRequestWorker.perform_async_with_priority(
           email.id, priority: priority
         )
       rescue StandardError => ex
