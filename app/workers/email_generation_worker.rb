@@ -9,7 +9,7 @@ class EmailGenerationWorker
 
     subscription_content.update!(email: email)
 
-    DeliverEmailWorker.perform_async_with_priority(
+    DeliveryRequestWorker.perform_async_with_priority(
       email.id, priority: priority.to_sym
     )
   end

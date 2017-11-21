@@ -10,7 +10,7 @@ RSpec.describe EmailGenerationWorker do
 
       before do
         Sidekiq::Testing.fake! do
-          DeliverEmailWorker.jobs.clear
+          DeliveryRequestWorker.jobs.clear
           described_class.new.perform(subscription_content_id: subscription_content.id, priority: priority)
         end
       end
@@ -29,7 +29,7 @@ RSpec.describe EmailGenerationWorker do
       end
 
       it "should queue a delivery email job" do
-        expect(DeliverEmailWorker.jobs.size).to eq(1)
+        expect(DeliveryRequestWorker.jobs.size).to eq(1)
       end
     end
   end

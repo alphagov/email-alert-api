@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe DeliverEmailWorker do
+RSpec.describe DeliveryRequestWorker do
   class FakeLimiter
     def run
       yield
@@ -46,11 +46,10 @@ RSpec.describe DeliverEmailWorker do
     let(:priority) { nil }
 
     before do
-      Sidekiq::Testing.fake! do
-        described_class.perform_async_with_priority(
-          email.id, priority: priority
-        )
-      end
+      Sidekiq::Testing.fake!
+      described_class.perform_async_with_priority(
+        email.id, priority: priority
+      )
     end
 
     context "with a low priority" do
