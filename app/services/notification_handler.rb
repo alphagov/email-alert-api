@@ -27,14 +27,9 @@ private
         subscription: subscription,
       )
 
-      email = Email.create_from_params!(
-        email_params.merge(address: subscription.subscriber.address)
-      )
-
-      subscription_content.update!(email: email)
-
-      DeliverEmailWorker.perform_async_with_priority(
-        email.id, priority: priority
+      EmailGenerationWorker.perform_async(
+        subscription_content_id: subscription_content.id,
+        priority: priority
       )
     end
   end

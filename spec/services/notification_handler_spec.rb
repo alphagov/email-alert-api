@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe NotificationHandler do
   before do
     Timecop.freeze(Time.local(2017, 1, 1, 9))
+    Sidekiq::Testing.fake!
   end
 
   after do
@@ -40,7 +41,7 @@ RSpec.describe NotificationHandler do
   end
 
   describe ".call" do
-    it "calls create on ContentChange" do
+    it "creates a ContentChange" do
       notification_params = {
         content_id: params[:content_id],
         title: params[:title],
@@ -61,15 +62,13 @@ RSpec.describe NotificationHandler do
         .with(notification_params)
         .and_return(double(id: 1, **notification_params))
 
-      allow(Email).to receive(:create_from_params!)
-
       NotificationHandler.call(params: params)
     end
 
     context "with a courtesy subscription" do
       let!(:subscriber) { create(:subscriber, address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk") }
 
-      it "calls create on Email" do
+      it "creates an Email" do
         content_change = create(:content_change)
         allow(ContentChange).to receive(:create!).and_return(
           content_change
@@ -87,6 +86,20 @@ RSpec.describe NotificationHandler do
         NotificationHandler.call(params: params)
       end
 
+      it "reports Email errors to Sentry and swallows them" do
+        allow(Email).to receive(:create_from_params!).and_raise(
+          ActiveRecord::RecordInvalid
+        )
+        expect(Raven).to receive(:capture_exception).with(
+          instance_of(ActiveRecord::RecordInvalid),
+          tags: { version: 2 }
+        )
+
+        expect {
+          NotificationHandler.call(params: params)
+        }.not_to raise_error
+      end
+
       it "sends the email to the subscriber" do
         expect(DeliverEmailWorker).to receive(:perform_async_with_priority).with(
           kind_of(Integer), priority: :low,
@@ -102,9 +115,20 @@ RSpec.describe NotificationHandler do
         create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber)
       end
 
+      it "creates a subscription content" do
+        NotificationHandler.call(params: params)
+
+        expect(SubscriptionContent.count).to eq(1)
+
+        subscription_content = SubscriptionContent.first
+        expect(subscription_content.subscription).to eq(subscription)
+        expect(subscription_content.content_change).to_not be_nil
+        expect(subscription_content.email).to be_nil
+      end
+
       it "sends the email to all subscribers" do
-        expect(DeliverEmailWorker).to receive(:perform_async_with_priority).with(
-          kind_of(Integer), priority: :low,
+        expect(EmailGenerationWorker).to receive(:perform_async).with(
+          subscription_content_id: kind_of(Integer), priority: :low,
         ).once
 
         NotificationHandler.call(params: params)
@@ -113,17 +137,9 @@ RSpec.describe NotificationHandler do
       it "does not send an email to other subscribers" do
         create(:subscriber, address: "test2@test.com")
 
-        expect(DeliverEmailWorker).to receive(:perform_async_with_priority).once
+        expect(EmailGenerationWorker).to receive(:perform_async).once
 
         NotificationHandler.call(params: params)
-      end
-
-      it "creates a subscription content" do
-        NotificationHandler.call(params: params)
-
-        expect(SubscriptionContent.count).to eq(1)
-        expect(SubscriptionContent.first.subscription).to eq(subscription)
-        expect(SubscriptionContent.first.email).to_not be_nil
       end
 
       context "with a low priority" do
@@ -132,8 +148,8 @@ RSpec.describe NotificationHandler do
         end
 
         it "sends the email with a low priority" do
-          expect(DeliverEmailWorker).to receive(:perform_async_with_priority).with(
-            kind_of(Integer), priority: :low,
+          expect(EmailGenerationWorker).to receive(:perform_async).with(
+            subscription_content_id: kind_of(Integer), priority: :low,
           )
 
           NotificationHandler.call(params: params)
@@ -146,26 +162,12 @@ RSpec.describe NotificationHandler do
         end
 
         it "sends the email with a high priority" do
-          expect(DeliverEmailWorker).to receive(:perform_async_with_priority).with(
-            kind_of(Integer), priority: :high,
+          expect(EmailGenerationWorker).to receive(:perform_async).with(
+            subscription_content_id: kind_of(Integer), priority: :high,
           )
 
           NotificationHandler.call(params: params)
         end
-      end
-
-      it "reports Email errors to Sentry and swallows them" do
-        allow(Email).to receive(:create_from_params!).and_raise(
-          ActiveRecord::RecordInvalid
-        )
-        expect(Raven).to receive(:capture_exception).with(
-          instance_of(ActiveRecord::RecordInvalid),
-          tags: { version: 2 }
-        )
-
-        expect {
-          NotificationHandler.call(params: params)
-        }.not_to raise_error
       end
     end
 
