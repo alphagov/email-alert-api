@@ -18,9 +18,8 @@ RSpec.describe SubscriptionContentWorker do
         Sidekiq::Testing.fake! do
           SubscriptionContentWorker.perform_async(content_change_id: content_change.id, priority: :low)
 
-          expect(Email)
-            .to receive(:create_from_params!)
-            .with(hash_including(title: content_change.title))
+          expect(EmailGenerationWorker)
+            .to receive(:perform_async)
 
           described_class.drain
         end
@@ -28,7 +27,11 @@ RSpec.describe SubscriptionContentWorker do
     end
 
     context "when we error" do
-      def swallow_errors
+      it "reports errors when creating a SubscriptionContent in the database to Sentry and swallows them" do
+        allow(SubscriptionContent)
+          .to receive(:create!)
+          .and_raise(ActiveRecord::RecordInvalid)
+
         expect(Raven)
           .to receive(:capture_exception)
           .with(
@@ -40,22 +43,6 @@ RSpec.describe SubscriptionContentWorker do
           subject.perform(content_change_id: content_change.id, priority: :low)
         }.not_to raise_error
       end
-
-      it "reports errors when creating a SubscriptionContent in the database to Sentry and swallows them" do
-        allow(SubscriptionContent)
-          .to receive(:create!)
-          .and_raise(ActiveRecord::RecordInvalid)
-
-        swallow_errors
-      end
-
-      it "reports errors when creating an Email in the database to Sentry and swallows them" do
-        allow(Email)
-          .to receive(:create_from_params!)
-          .and_raise(ActiveRecord::RecordInvalid)
-
-        swallow_errors
-      end
     end
 
     it "creates subscription content for the content change" do
@@ -66,27 +53,9 @@ RSpec.describe SubscriptionContentWorker do
       subject.perform(content_change_id: content_change.id, priority: :low)
     end
 
-    it "creates an email with a title of the content change" do
-      expect(Email)
-        .to receive(:create_from_params!)
-        .with(hash_including(title: content_change.title))
-        .and_return(email)
-
-      subject.perform(content_change_id: content_change.id, priority: :low)
-    end
-
-    it "creates an email to send to the subscriber in the list" do
-      expect(Email)
-        .to receive(:create_from_params!)
-        .with(hash_including(address: subscriber.address))
-        .and_return(email)
-
-      subject.perform(content_change_id: content_change.id, priority: :low)
-    end
-
-    it "enqueues the email to send to the subscriber" do
-      expect(DeliverEmailWorker).to receive(:perform_async_with_priority).with(
-        kind_of(Integer), priority: :low,
+    it "queues the email through the EmailGenerationWorker" do
+      expect(EmailGenerationWorker).to receive(:perform_async).with(
+        subscription_content_id: kind_of(Integer), priority: :low,
       )
 
       subject.perform(content_change_id: content_change.id, priority: :low)
@@ -95,15 +64,15 @@ RSpec.describe SubscriptionContentWorker do
     it "does not enqueue an email to subscribers without a subscription to this content" do
       FactoryGirl.create(:subscriber, address: "should_not_receive_email@example.com")
 
-      expect(DeliverEmailWorker).to receive(:perform_async_with_priority).once
+      expect(EmailGenerationWorker).to receive(:perform_async).once
 
       subject.perform(content_change_id: content_change.id, priority: :low)
     end
 
     it "enqueues an email with the injected priority" do
-      expect(DeliverEmailWorker)
-        .to receive(:perform_async_with_priority)
-        .with(kind_of(Integer), priority: :high)
+      expect(EmailGenerationWorker)
+        .to receive(:perform_async)
+        .with(subscription_content_id: kind_of(Integer), priority: :high)
 
       subject.perform(content_change_id: content_change.id, priority: :high)
     end
