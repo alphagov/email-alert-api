@@ -1,5 +1,6 @@
 class SubscriptionContentWorker
   include Sidekiq::Worker
+  include Sidekiq::Symbols
 
   def perform(content_change_id:, priority:)
     @priority = priority

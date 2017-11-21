@@ -13,6 +13,20 @@ RSpec.describe SubscriptionContentWorker do
     let(:subscriber_list) { FactoryGirl.create(:subscriber_list, tags: { topics: ["oil-and-gas/licensing"] }) }
     let!(:subscription) { FactoryGirl.create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list) }
 
+    context "asynchronously" do
+      it "should create an email" do
+        Sidekiq::Testing.fake! do
+          SubscriptionContentWorker.perform_async(content_change_id: content_change.id, priority: :low)
+
+          expect(Email)
+            .to receive(:create_from_params!)
+            .with(hash_including(title: content_change.title))
+
+          described_class.drain
+        end
+      end
+    end
+
     context "when we error" do
       def swallow_errors
         expect(Raven)
