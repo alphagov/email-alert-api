@@ -76,13 +76,7 @@ private
   end
 
   def email_params
-    {
-      title: params[:title],
-      change_note: params[:change_note],
-      description: params[:description],
-      base_path: params[:base_path],
-      public_updated_at: DateTime.parse(params[:public_updated_at]),
-    }
+    content_change_params.slice(:title, :change_note, :description, :base_path, :public_updated_at)
   end
 
   def priority
