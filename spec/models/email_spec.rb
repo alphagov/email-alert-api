@@ -1,6 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe Email do
+  let(:content_change) { create(:content_change) }
+  let(:email) do
+    Email.create_from_params!(
+      title: "Title",
+      description: "Description",
+      change_note: "Change note",
+      base_path: "/government/test",
+      public_updated_at: DateTime.parse("1/1/2017"),
+      content_change_id: content_change.id,
+      address: "test@example.com",
+    )
+  end
+
   describe "validations" do
     it "requires subject" do
       subject.valid?
@@ -14,20 +27,6 @@ RSpec.describe Email do
   end
 
   describe "create_from_params!" do
-    let(:content_change) { create(:content_change) }
-
-    let(:email) do
-      Email.create_from_params!(
-        title: "Title",
-        description: "Description",
-        change_note: "Change note",
-        base_path: "/government/test",
-        public_updated_at: DateTime.parse("1/1/2017"),
-        content_change_id: content_change.id,
-        address: "test@example.com",
-      )
-    end
-
     let(:email_renderer) { double }
 
     before do
@@ -42,6 +41,16 @@ RSpec.describe Email do
 
     it "sets body" do
       expect(email.body).to eq("a body")
+    end
+  end
+
+  describe "mark_processed!" do
+    it "sets processed_at" do
+      Timecop.freeze do
+        now = Time.now
+        email.mark_processed!
+        expect(email.processed_at).to eq(now)
+      end
     end
   end
 end
