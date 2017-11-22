@@ -89,7 +89,7 @@ RSpec.describe SubscriptionContentWorker do
     end
 
     it "enqueues the email to send to the courtesy subscription group" do
-      expect(DeliverEmailWorker)
+      expect(DeliveryRequestWorker)
         .to receive(:perform_async_with_priority)
         .with(kind_of(Integer), priority: :low)
 
