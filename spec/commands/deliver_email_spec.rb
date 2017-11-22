@@ -42,5 +42,13 @@ RSpec.describe DeliverEmail do
         "email cannot be nil"
       )
     end
+
+    it "marks the email processed" do
+      allow(email_sender).to receive(:call)
+        .and_return(double(id: 0))
+
+      expect(email).to receive(:mark_processed!)
+      DeliverEmail.call(email: email)
+    end
   end
 end
