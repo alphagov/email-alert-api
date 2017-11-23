@@ -18,4 +18,23 @@ RSpec.describe Subscription, type: :model do
       expect(subject).to be_invalid
     end
   end
+
+  describe "callbacks" do
+    subject { FactoryGirl.build(:subscription) }
+
+    it "sets a uuid before validation" do
+      expect(subject.uuid).to be_nil
+
+      expect(subject).to be_valid
+      expect(subject.uuid).not_to be_nil
+    end
+
+    it "preserves the same uuid" do
+      subject.valid?
+      uuid = subject.uuid
+
+      subject.valid?
+      expect(subject.uuid).to eq(uuid)
+    end
+  end
 end
