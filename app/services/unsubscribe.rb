@@ -1,31 +1,25 @@
 module Unsubscribe
   class << self
     def subscriber!(subscriber)
-      destroy_subscriptions!(subscriber.subscriptions)
-      nullify_email_address!(subscriber)
+      unsubscribe!(subscriber, subscriber.subscriptions)
     end
 
     def subscription!(subscription)
-      destroy_subscriptions!(subscription)
-
-      if last_subscription?(subscription)
-        nullify_email_address!(subscription.subscriber)
-      end
+      unsubscribe!(subscription.subscriber, [subscription])
     end
 
   private
 
-    def nullify_email_address!(subscriber)
-      subscriber.update!(address: nil)
+    def unsubscribe!(subscriber, subscriptions)
+      subscriptions.each(&:destroy)
+
+      if no_other_subscriptions?(subscriber, subscriptions)
+        subscriber.update!(address: nil)
+      end
     end
 
-    def destroy_subscriptions!(subscriptions)
-      Array(subscriptions).each(&:destroy)
-    end
-
-    def last_subscription?(subscription)
-      subscriber = subscription.subscriber
-      (subscriber.subscriptions - [subscription]).empty?
+    def no_other_subscriptions?(subscriber, subscriptions)
+      (subscriber.subscriptions - subscriptions).empty?
     end
   end
 end
