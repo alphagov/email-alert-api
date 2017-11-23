@@ -11,28 +11,51 @@ RSpec.describe Unsubscribe do
         .to(nil)
     end
 
-    it "removes the subscriber's subscriptions" do
-      FactoryGirl.create_list(:subscription, 3, subscriber: subscriber)
+    context "when the subscriber has subscriptions" do
+      before do
+        FactoryGirl.create_list(:subscription, 3, subscriber: subscriber)
+      end
 
-      expect { subject.subscriber!(subscriber) }
-        .to change { subscriber.subscriptions.count }
-        .from(3)
-        .to(0)
+      it "removes them" do
+        expect { subject.subscriber!(subscriber) }
+          .to change { subscriber.subscriptions.count }
+          .from(3)
+          .to(0)
+      end
+
+      it "does not remove them if the email address update fails" do
+        allow_any_instance_of(Subscriber).
+          to receive(:valid?).and_raise("failed")
+
+        expect { subject.subscriber!(subscriber) }
+          .to raise_error("failed")
+          .and change { subscriber.subscriptions.count }
+          .by(0)
+      end
     end
   end
 
   describe ".subscription!" do
     let!(:subscription) { FactoryGirl.create(:subscription) }
+    let(:subscriber) { subscription.subscriber }
 
     it "removes the subscription" do
       subject.subscription!(subscription)
       expect(subscription).not_to be_persisted
     end
 
+    it "does not remove the subscription if the email address update fails" do
+      allow_any_instance_of(Subscriber).
+        to receive(:valid?).and_raise("failed")
+
+      expect { subject.subscriber!(subscriber) }
+        .to raise_error("failed")
+        .and change { subscriber.subscriptions.count }
+        .by(0)
+    end
+
     context "when it is the only remaining subscription for the subscriber" do
       it "nullifies the email address of the subscriber" do
-        subscriber = subscription.subscriber
-
         expect { subject.subscription!(subscription) }
           .to change { subscriber.reload.address.nil? }
           .from(false)

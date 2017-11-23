@@ -11,10 +11,12 @@ module Unsubscribe
   private
 
     def unsubscribe!(subscriber, subscriptions)
-      subscriptions.each(&:destroy)
+      ActiveRecord::Base.transaction do
+        subscriptions.each(&:destroy)
 
-      if no_other_subscriptions?(subscriber, subscriptions)
-        subscriber.update!(address: nil)
+        if no_other_subscriptions?(subscriber, subscriptions)
+          subscriber.update!(address: nil)
+        end
       end
     end
 
