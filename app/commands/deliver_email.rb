@@ -17,6 +17,8 @@ class DeliverEmail
       body: email.body,
     )
 
+    email.mark_processed!
+
     record_delivery_attempt(
       email: email,
       status: :sending,

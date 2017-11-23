@@ -14,4 +14,8 @@ class Email < ApplicationRecord
       body: renderer.body
     )
   end
+
+  def mark_processed!
+    update_attribute(:processed_at, Time.now)
+  end
 end
