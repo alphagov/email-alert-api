@@ -23,7 +23,7 @@ private
 
         EmailGenerationWorker.perform_async(
           subscription_content_id: subscription_content.id,
-          priority: priority
+          priority: priority.to_sym
         )
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })
@@ -43,7 +43,7 @@ private
         )
 
         DeliveryRequestWorker.perform_async_with_priority(
-          email.id, priority: priority
+          email.id, priority: priority.to_sym
         )
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })
