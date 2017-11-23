@@ -7,7 +7,7 @@ class StatusUpdateWorker
     delivery_attempt.update!(status: status.underscore)
 
     subscriber = lookup_subscriber(delivery_attempt)
-    subscriber.unsubscribe! if subscriber && delivery_attempt.permanent_failure?
+    Unsubscribe.subscriber!(subscriber) if subscriber && delivery_attempt.permanent_failure?
   end
 
 private

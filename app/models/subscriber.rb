@@ -6,9 +6,4 @@ class Subscriber < ActiveRecord::Base
 
   has_many :subscriptions, dependent: :destroy
   has_many :subscriber_lists, through: :subscriptions
-
-  def unsubscribe!
-    update!(address: nil)
-    subscriptions.destroy_all
-  end
 end
