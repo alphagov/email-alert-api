@@ -25,7 +25,7 @@ private
       description: content_change.description,
       base_path: content_change.base_path,
       public_updated_at: content_change.public_updated_at,
-      address: subscription_content.subscription.subscriber.address,
+      subscriber: subscription_content.subscription.subscriber,
     }
   end
 end
