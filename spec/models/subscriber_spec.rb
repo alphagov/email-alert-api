@@ -81,4 +81,15 @@ RSpec.describe Subscriber, type: :model do
       expect(SubscriberList.all.size).to eq(1)
     end
   end
+
+  describe "#nullify_address!" do
+    it "sets the address to nil and saves the record" do
+      subscriber = FactoryGirl.create(:subscriber, address: "foo@bar.com")
+
+      expect { subscriber.nullify_address! }
+        .to change { subscriber.reload.address }
+        .from("foo@bar.com")
+        .to(nil)
+    end
+  end
 end
