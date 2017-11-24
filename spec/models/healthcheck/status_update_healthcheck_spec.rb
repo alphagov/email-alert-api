@@ -28,7 +28,7 @@ RSpec.describe Healthcheck::StatusUpdateHealthcheck do
   end
 
   it "ignores delivery attempts that are superseded by newer ones" do
-    email = FactoryGirl.create(:email)
+    email = create(:email)
 
     create_delivery_attempt(:sending, 73.hours.ago, email)
     create_delivery_attempt(:delivered, 5.hours.ago, email)

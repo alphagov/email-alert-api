@@ -30,7 +30,7 @@ RSpec.describe SubscriberList, type: :model do
   end
 
   describe "validations" do
-    subject { FactoryGirl.build(:subscriber_list) }
+    subject { build(:subscriber_list) }
 
     it "is valid for the default factory" do
       expect(subject).to be_valid
@@ -74,11 +74,9 @@ RSpec.describe SubscriberList, type: :model do
   end
 
   context "with a subscription" do
-    subject { FactoryGirl.create(:subscriber_list) }
+    subject { create(:subscriber_list) }
 
-    before do
-      FactoryGirl.create(:subscription, subscriber_list: subject)
-    end
+    before { create(:subscription, subscriber_list: subject) }
 
     it "can access the subscribers" do
       expect(subject.subscribers.size).to eq(1)

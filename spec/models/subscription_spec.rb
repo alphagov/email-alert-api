@@ -2,14 +2,14 @@ require "rails_helper"
 
 RSpec.describe Subscription, type: :model do
   describe "validations" do
-    subject { FactoryGirl.build(:subscription) }
+    subject { build(:subscription) }
 
     it "is valid for the default factory" do
       expect(subject).to be_valid
     end
 
     it "must be unique between subscriber and subscriber lists" do
-      FactoryGirl.create(
+      create(
         :subscription,
         subscriber: subject.subscriber,
         subscriber_list: subject.subscriber_list
@@ -20,7 +20,7 @@ RSpec.describe Subscription, type: :model do
   end
 
   describe "callbacks" do
-    subject { FactoryGirl.build(:subscription) }
+    subject { build(:subscription) }
 
     it "sets a uuid before validation" do
       expect(subject.uuid).to be_nil

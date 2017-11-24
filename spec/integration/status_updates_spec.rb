@@ -2,19 +2,17 @@ require "rails_helper"
 
 RSpec.describe "Receiving a status update for an email", type: :request do
   let!(:delivery_attempt) do
-    FactoryGirl.create(
+    create(
       :delivery_attempt,
       reference: "ref-123",
       status: "sending",
-      email: FactoryGirl.create(:email, address: "foo@bar.com"),
+      email: create(:email, address: "foo@bar.com"),
     )
   end
 
-  let!(:subscriber) { FactoryGirl.create(:subscriber, address: "foo@bar.com") }
+  let!(:subscriber) { create(:subscriber, address: "foo@bar.com") }
 
-  before do
-    FactoryGirl.create_list(:subscription, 3, subscriber: subscriber)
-  end
+  before { create_list(:subscription, 3, subscriber: subscriber) }
 
   it "sets the delivery attempt's status via a worker" do
     params = { reference: "ref-123", status: "delivered" }

@@ -1,17 +1,17 @@
 require "rails_helper"
 
 RSpec.describe SubscriptionContentWorker do
-  let(:content_change) { FactoryGirl.create(:content_change, tags: { topics: ["oil-and-gas/licensing"] }) }
-  let(:email) { FactoryGirl.create(:email) }
+  let(:content_change) { create(:content_change, tags: { topics: ["oil-and-gas/licensing"] }) }
+  let(:email) { create(:email) }
 
   before do
     allow(ContentChange).to receive(:find).with(content_change.id).and_return(content_change)
   end
 
   context "with a subscription" do
-    let(:subscriber) { FactoryGirl.create(:subscriber) }
-    let(:subscriber_list) { FactoryGirl.create(:subscriber_list, tags: { topics: ["oil-and-gas/licensing"] }) }
-    let!(:subscription) { FactoryGirl.create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list) }
+    let(:subscriber) { create(:subscriber) }
+    let(:subscriber_list) { create(:subscriber_list, tags: { topics: ["oil-and-gas/licensing"] }) }
+    let!(:subscription) { create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list) }
 
     context "asynchronously" do
       it "does not raise an error" do
@@ -60,7 +60,7 @@ RSpec.describe SubscriptionContentWorker do
     end
 
     it "does not enqueue an email to subscribers without a subscription to this content" do
-      FactoryGirl.create(:subscriber, address: "should_not_receive_email@example.com")
+      create(:subscriber, address: "should_not_receive_email@example.com")
 
       expect(EmailGenerationWorker).to receive(:perform_async).once
 
@@ -77,7 +77,9 @@ RSpec.describe SubscriptionContentWorker do
   end
 
   context "with a courtesy subscription" do
-    let!(:subscriber) { FactoryGirl.create(:subscriber, address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk") }
+    let!(:subscriber) do
+      create(:subscriber, address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk")
+    end
 
     it "creates an email for the courtesy email group" do
       expect(Email)

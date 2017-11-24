@@ -2,11 +2,7 @@ require "rails_helper"
 
 RSpec.describe StatusUpdatesController, type: :controller do
   let!(:delivery_attempt) do
-    FactoryGirl.create(
-      :delivery_attempt,
-      reference: "ref-123",
-      status: "sending",
-    )
+    create(:delivery_attempt, reference: "ref-123", status: "sending")
   end
 
   describe "#create" do
