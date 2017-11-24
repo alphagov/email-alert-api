@@ -6,4 +6,8 @@ class Subscriber < ActiveRecord::Base
 
   has_many :subscriptions, dependent: :destroy
   has_many :subscriber_lists, through: :subscriptions
+
+  def nullify_address!
+    update!(address: nil)
+  end
 end
