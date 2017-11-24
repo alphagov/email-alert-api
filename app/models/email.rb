@@ -9,7 +9,7 @@ class Email < ApplicationRecord
     renderer = EmailRenderer.new(params: params)
 
     new(
-      address: params[:subscriber].address,
+      subscriber: params.fetch(:subscriber),
       subject: renderer.subject,
       body: renderer.body
     )
