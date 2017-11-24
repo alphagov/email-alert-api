@@ -74,6 +74,11 @@ RSpec.describe SubscriptionContentWorker do
 
       subject.perform(content_change_id: content_change.id, priority: :high)
     end
+
+    it "marks the content_change as processed" do
+      expect(content_change).to receive(:mark_processed!)
+      subject.perform(content_change_id: content_change.id, priority: :high)
+    end
   end
 
   context "with a courtesy subscription" do

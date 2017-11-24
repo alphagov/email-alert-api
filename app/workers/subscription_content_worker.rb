@@ -7,6 +7,7 @@ class SubscriptionContentWorker
     content_change = ContentChange.find(content_change_id)
     queue_delivery_to_subscribers(content_change)
     queue_delivery_to_courtesy_subscribers(content_change)
+    content_change.mark_processed!
   end
 
 private
