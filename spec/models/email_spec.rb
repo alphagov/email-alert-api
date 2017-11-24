@@ -15,6 +15,7 @@ RSpec.describe Email do
 
   describe "create_from_params!" do
     let(:content_change) { create(:content_change) }
+    let(:subscriber) { double(address: "test@test.com") }
 
     let(:email) do
       Email.create_from_params!(
@@ -24,7 +25,7 @@ RSpec.describe Email do
         base_path: "/government/test",
         public_updated_at: DateTime.parse("1/1/2017"),
         content_change_id: content_change.id,
-        address: "test@example.com",
+        subscriber: subscriber,
       )
     end
 

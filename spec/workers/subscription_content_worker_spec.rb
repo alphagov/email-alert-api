@@ -89,7 +89,7 @@ RSpec.describe SubscriptionContentWorker do
     it "creates an email for the courtesy email group" do
       expect(Email)
         .to receive(:create_from_params!)
-        .with(hash_including(address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk"))
+        .with(hash_including(subscriber: subscriber))
         .and_return(email)
 
       subject.perform(content_change_id: content_change.id, priority: :low)
