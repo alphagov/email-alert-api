@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Getting a subscriber list", type: :request do
   let!(:subscriber_list_links_only) do
-    FactoryGirl.create(
+    create(
       :subscriber_list,
       links: {
         topics: ["oil-and-gas/licensing", "drug-device-alert"]
@@ -13,7 +13,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
   end
 
   let!(:subscriber_list_tags_only) do
-    FactoryGirl.create(
+    create(
       :subscriber_list,
       links: {},
       tags: {
@@ -24,7 +24,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
   end
 
   let!(:subscriber_list_document_type_only) do
-    FactoryGirl.create(
+    create(
       :subscriber_list,
       links: {},
       tags: {},
@@ -33,7 +33,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
   end
 
   let!(:subscriber_list_links_and_document_type) do
-    FactoryGirl.create(
+    create(
       :subscriber_list,
       links: {
         topics: ["vat-rates"],
@@ -44,7 +44,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
   end
 
   let!(:subscriber_list_tags_and_document_type) do
-    FactoryGirl.create(
+    create(
       :subscriber_list,
       links: {},
       tags: {
@@ -168,9 +168,9 @@ RSpec.describe "Getting a subscriber list", type: :request do
     end
 
     it "finds the subscriber list if the gov_delivery_id matches" do
-      _alpha = FactoryGirl.create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "alpha")
-      beta = FactoryGirl.create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "beta")
-      _gamma = FactoryGirl.create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "gamma")
+      _alpha = create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "alpha")
+      beta = create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "beta")
+      _gamma = create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "gamma")
 
       get_subscriber_list(
         tags: { topics: ["vat-rates"] },

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Subscriber, type: :model do
   context "validations" do
-    subject { FactoryGirl.build(:subscriber) }
+    subject { build(:subscriber) }
 
     it "is valid for the default factory" do
       expect(subject).to be_valid
@@ -50,14 +50,14 @@ RSpec.describe Subscriber, type: :model do
     end
 
     it "is invalid if an email address is already taken" do
-      FactoryGirl.create(:subscriber, address: "foo@bar.com")
+      create(:subscriber, address: "foo@bar.com")
 
       subject.address = "foo@bar.com"
       expect(subject).to be_invalid
     end
 
     it "is valid to have more than one nil email address" do
-      FactoryGirl.create(:subscriber, address: nil)
+      create(:subscriber, address: nil)
 
       subject.address = nil
       expect(subject).to be_valid
@@ -65,11 +65,9 @@ RSpec.describe Subscriber, type: :model do
   end
 
   context "with a subscriber list" do
-    subject { FactoryGirl.create(:subscriber) }
+    subject { create(:subscriber) }
 
-    before do
-      FactoryGirl.create(:subscription, subscriber: subject)
-    end
+    before { create(:subscription, subscriber: subject) }
 
     it "can access the subscriber lists" do
       expect(subject.subscriber_lists.size).to eq(1)
@@ -85,11 +83,8 @@ RSpec.describe Subscriber, type: :model do
   end
 
   describe "#unsubscribe!" do
-    subject { FactoryGirl.create(:subscriber, address: "foo@bar.com") }
-
-    before do
-      FactoryGirl.create_list(:subscription, 3, subscriber: subject)
-    end
+    subject { create(:subscriber, address: "foo@bar.com") }
+    before { create_list(:subscription, 3, subscriber: subject) }
 
     it "nullifies the subscriber's email address" do
       expect { subject.unsubscribe! }
