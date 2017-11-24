@@ -1,9 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe UnsubscribeLink do
-  let(:subscription) {
-    double(uuid: "1234", subscriber_list: double(title: "dave crocker & friends"))
-  }
+  let(:subscription) { double(uuid: "1234", subscriber_list: double(title: title)) }
+  let(:title) { "dave crocker & friends" }
 
   let(:unsubscribe_link) {
     UnsubscribeLink.new(subscription)
@@ -14,6 +13,16 @@ RSpec.describe UnsubscribeLink do
       expect(unsubscribe_link.url).to eq(
         "http://www.dev.gov.uk/email/unsubscribe/1234?title=dave%20crocker%20%26%20friends"
       )
+    end
+
+    context "when title is nil" do
+      let(:title) { nil }
+
+      it "omits the title param" do
+        expect(unsubscribe_link.url).to eq(
+          "http://www.dev.gov.uk/email/unsubscribe/1234"
+        )
+      end
     end
   end
 

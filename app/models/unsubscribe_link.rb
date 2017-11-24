@@ -17,8 +17,14 @@ private
   attr_reader :subscription
 
   def build_url
-    root = Plek.new.website_root
-    escaped_title = URI.encode(title, /\W/)
-    "#{root}/email/unsubscribe/#{subscription.uuid}?title=#{escaped_title}"
+    "#{root}/email/unsubscribe/#{subscription.uuid}#{title_param}"
+  end
+
+  def root
+    Plek.new.website_root
+  end
+
+  def title_param
+    "?title=#{URI.encode(title, /\W/)}" if title
   end
 end
