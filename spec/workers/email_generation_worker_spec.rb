@@ -15,13 +15,17 @@ RSpec.describe EmailGenerationWorker do
         end
       end
 
-      it "should create an email" do
-        expect(Email.count).to eq(1)
 
-        email = Email.first
-        expect(email.address).to eq(subscription_content.subscription.subscriber.address)
-        expect(email.subject).to eq("GOV.UK Update - title")
-        expect(email.body).to eq("change note: description.\n\nhttp://www.dev.gov.ukgovernment/base_path\nUpdated on 09:00 am, 1 January 2017\n\nUnsubscribe from title - http://www.dev.gov.uk/email/token/unsubscribe\n")
+      it "should create an email" do
+        expected_params = {
+          title: "title",
+          change_note: "change note",
+          description: "description",
+          base_path: "government/base_path",
+        }
+
+        expect(Email).to receive(:create_from_params!)
+          .with(hash_including(expected_params))
       end
 
       it "should associate the subscription content with the email" do

@@ -5,6 +5,7 @@ class EmailGenerationWorker
   def perform(subscription_content_id:, priority:)
     subscription_content = SubscriptionContent.find(subscription_content_id)
 
+    binding.pry
     email = Email.create_from_params!(email_params(subscription_content))
 
     subscription_content.update!(email: email)
