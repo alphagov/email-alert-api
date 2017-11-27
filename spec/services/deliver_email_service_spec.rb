@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe DeliverEmail do
+RSpec.describe DeliverEmailService do
   describe ".call" do
     let(:email_sender) { double }
     before do
@@ -22,25 +22,21 @@ RSpec.describe DeliverEmail do
         )
         .and_return(double(id: 0))
 
-      DeliverEmail.call(email: email)
+      described_class.call(email: email)
     end
 
     it "creates a delivery attempt instance" do
       expect(email_sender).to receive(:call)
         .and_return(double(id: 0))
 
-      DeliverEmail.call(email: email)
+      described_class.call(email: email)
 
       expect(DeliveryAttempt.count).to eq(1)
     end
 
     it "requires email" do
-      expect {
-        DeliverEmail.call(email: nil)
-      }.to raise_error(
-        ArgumentError,
-        "email cannot be nil"
-      )
+      expect { described_class.call(email: nil) }
+        .to raise_error(ArgumentError, "email cannot be nil")
     end
   end
 end
