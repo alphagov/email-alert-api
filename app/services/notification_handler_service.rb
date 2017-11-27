@@ -1,4 +1,4 @@
-class NotificationHandler
+class NotificationHandlerService
   attr_reader :params
   def initialize(params:)
     @params = params

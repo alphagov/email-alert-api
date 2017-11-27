@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe NotificationHandler do
+RSpec.describe NotificationHandlerService do
   before do
     Timecop.freeze(Time.local(2017, 1, 1, 9))
     Sidekiq::Testing.fake!
@@ -62,7 +62,7 @@ RSpec.describe NotificationHandler do
         .with(notification_params)
         .and_return(double(id: 1, **notification_params))
 
-      NotificationHandler.call(params: params)
+      described_class.call(params: params)
     end
 
     it "enqueues the content change to be processed by the subscription content worker" do
@@ -71,7 +71,7 @@ RSpec.describe NotificationHandler do
         .to receive(:perform_async)
         .with(content_change_id: 1, priority: :low)
 
-      NotificationHandler.call(params: params)
+      described_class.call(params: params)
     end
 
     it "reports ContentChange errors to Sentry and swallows them" do
@@ -83,9 +83,8 @@ RSpec.describe NotificationHandler do
         tags: { version: 2 }
       )
 
-      expect {
-        NotificationHandler.call(params: params)
-      }.not_to raise_error
+      expect { described_class.call(params: params) }
+        .not_to raise_error
     end
   end
 end
