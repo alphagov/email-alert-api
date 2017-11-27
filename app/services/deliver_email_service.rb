@@ -17,6 +17,8 @@ class DeliverEmailService
       body: email.body,
     )
 
+    EmailTimingStatsService.first_delivery_attempt(email, Time.now.utc)
+
     record_delivery_attempt(
       email: email,
       status: :sending,
