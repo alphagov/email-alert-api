@@ -51,7 +51,6 @@ ActiveRecord::Schema.define(version: 20171124105714) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "address", null: false
-    t.datetime "processed_at"
   end
 
   create_table "notification_logs", id: :serial, force: :cascade do |t|
