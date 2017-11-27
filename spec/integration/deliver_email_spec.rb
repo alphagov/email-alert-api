@@ -1,8 +1,5 @@
 require "rails_helper"
 require "notifications/client"
-require "app/services/email_sender/email_sender_service"
-require "app/services/email_sender/notify"
-require "app/services/email_sender/pseudo"
 
 RSpec.describe DeliverEmailService do
   let(:email_sender) { EmailSenderService.clone }
