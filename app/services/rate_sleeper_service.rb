@@ -1,4 +1,4 @@
-class RateSleeper
+class RateSleeperService
   def initialize(jobs_per_second:)
     @jobs_per_second = jobs_per_second
   end

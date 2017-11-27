@@ -16,7 +16,7 @@ class DeliveryRequestWorker
   def perform(email_id)
     Services.rate_limiter.run do
       email = Email.find(email_id)
-      DeliverEmail.call(email: email)
+      DeliverEmailService.call(email: email)
     end
   end
 

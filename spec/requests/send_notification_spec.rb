@@ -7,7 +7,7 @@ RSpec.describe "Sending a notification", type: :request do
       Sidekiq::Testing.fake!
       @gov_delivery = double(:gov_delivery, send_bulletin: nil)
       allow(Services).to receive(:gov_delivery).and_return(@gov_delivery)
-      allow(NotificationHandler).to receive(:call)
+      allow(NotificationHandlerService).to receive(:call)
     end
 
     after do

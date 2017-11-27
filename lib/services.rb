@@ -1,8 +1,5 @@
 require "gov_delivery/client"
 require 'gds_api/content_store'
-require "email_sender/email_sender_service"
-require "email_sender/notify"
-require "email_sender/pseudo"
 
 module Services
   def self.gov_delivery
@@ -27,7 +24,7 @@ module Services
   def self.rate_limiter
     default_rate_for_six_workers = 8
 
-    @rate_limiter ||= RateSleeper.new(
+    @rate_limiter ||= RateSleeperService.new(
       jobs_per_second: ENV.fetch(
         "GOVUK_NOTIFY_RATE_PER_WORKER",
         default_rate_for_six_workers

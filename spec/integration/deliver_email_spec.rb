@@ -1,10 +1,7 @@
 require "rails_helper"
 require "notifications/client"
-require "app/services/email_sender/email_sender_service"
-require "app/services/email_sender/notify"
-require "app/services/email_sender/pseudo"
 
-RSpec.describe DeliverEmail do
+RSpec.describe DeliverEmailService do
   let(:email_sender) { EmailSenderService.clone }
   let(:email) { create(:email, address: "test@test.com") }
 
@@ -23,7 +20,7 @@ RSpec.describe DeliverEmail do
           hash_including(email_address: "test@test.com")
         ).and_return(double(id: 0))
 
-        DeliverEmail.call(email: email)
+        described_class.call(email: email)
       end
     end
   end
@@ -47,7 +44,7 @@ RSpec.describe DeliverEmail do
           .to receive(:info)
           .with("Sending email to test@test.com\nSubject: subject\nBody: body\n")
 
-        DeliverEmail.call(email: email)
+        described_class.call(email: email)
       end
     end
   end

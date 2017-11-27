@@ -1,6 +1,5 @@
 require "rails_helper"
 require "notifications/client"
-require "app/services/email_sender/email_sender_service"
 
 RSpec.describe EmailSenderService do
   it "sends an email to the override email address" do
@@ -12,7 +11,7 @@ RSpec.describe EmailSenderService do
       hash_including(address: "override@example.com")
     )
 
-    email_sender = EmailSenderService.new(config, notify)
+    email_sender = described_class.new(config, notify)
 
     email_sender.call(address: "test@test.com", subject: "subject", body: "body")
   end
