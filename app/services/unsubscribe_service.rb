@@ -1,4 +1,4 @@
-module Unsubscribe
+module UnsubscribeService
   class << self
     def subscriber!(subscriber)
       unsubscribe!(subscriber, subscriber.subscriptions)
