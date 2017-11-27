@@ -82,22 +82,14 @@ RSpec.describe Subscriber, type: :model do
     end
   end
 
-  describe "#unsubscribe!" do
-    subject { create(:subscriber, address: "foo@bar.com") }
-    before { create_list(:subscription, 3, subscriber: subject) }
+  describe "#nullify_address!" do
+    it "sets the address to nil and saves the record" do
+      subscriber = FactoryGirl.create(:subscriber, address: "foo@bar.com")
 
-    it "nullifies the subscriber's email address" do
-      expect { subject.unsubscribe! }
-        .to change { subject.reload.address }
+      expect { subscriber.nullify_address! }
+        .to change { subscriber.reload.address }
         .from("foo@bar.com")
         .to(nil)
-    end
-
-    it "removes the subscriber's subscriptions" do
-      expect { subject.unsubscribe! }
-        .to change { subject.subscriptions.count }
-        .from(3)
-        .to(0)
     end
   end
 end

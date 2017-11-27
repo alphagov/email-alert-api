@@ -37,7 +37,7 @@ RSpec.describe "Receiving a status update for an email", type: :request do
     end
 
     context "and the subscriber has already been unsubscribed" do
-      before { subscriber.unsubscribe! }
+      before { Unsubscribe.subscriber!(subscriber) }
 
       it "does not error" do
         params = { reference: "ref-123", status: "permanent-failure" }

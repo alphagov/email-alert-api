@@ -6,4 +6,6 @@ Rails.application.routes.draw do
   resources :status_updates, only: %i[create]
 
   get "/healthcheck", to: "healthcheck#check"
+
+  post "/unsubscribe/:uuid", to: "unsubscribe#unsubscribe"
 end
