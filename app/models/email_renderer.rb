@@ -14,7 +14,7 @@ class EmailRenderer
       #{url}
       Updated on #{public_updated_at}
 
-      Unsubscribe from #{title} - #{unsubscribe_url}
+      #{unsubscribe_links}
     BODY
   end
 
@@ -42,12 +42,23 @@ private
     params.fetch(:public_updated_at).strftime("%I:%M %P, %-d %B %Y")
   end
 
+  def subscriber
+    params.fetch(:subscriber)
+  end
+
   def url
     "#{website_root}#{base_path}"
   end
 
-  def unsubscribe_url
-    "#{website_root}/email/token/unsubscribe"
+  def unsubscribe_links
+    links = UnsubscribeLink.for(subscriber.subscriptions)
+    links.map { |l| present_unsubscribe_link(l) }.join("\n\n")
+  end
+
+  def present_unsubscribe_link(link)
+    presented_link = "Unsubscribe"
+    presented_link += " from '#{link.title}'" unless link.title.blank?
+    presented_link + ":\n#{link.url}"
   end
 
   def website_root

@@ -59,7 +59,7 @@ private
   def email_params(content_change, subscriber)
     {
       content_change_id: content_change.id,
-      address: subscriber.address,
+      subscriber: subscriber,
       title: content_change.title,
       change_note: content_change.change_note,
       description: content_change.description,
