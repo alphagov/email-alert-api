@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ContentChange do
-  let(:content_change) { create(:content_change) }
-  describe "mark_processed!" do
+  describe "#mark_processed!" do
+    let(:content_change) { create(:content_change) }
     it "sets processed_at" do
       Timecop.freeze do
         expect { content_change.mark_processed! }
