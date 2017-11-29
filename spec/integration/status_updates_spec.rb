@@ -16,7 +16,7 @@ RSpec.describe "Receiving a status update for an email", type: :request do
 
   it "sets the delivery attempt's status via a worker" do
     params = { reference: "ref-123", status: "delivered" }
-    post "/status_updates", params: params
+    post "/status-updates", params: params
 
     expect(response.status).to eq(202)
     expect(response.body).to eq("queued for processing")
@@ -28,7 +28,7 @@ RSpec.describe "Receiving a status update for an email", type: :request do
   context "when the status is 'permanent-failure'" do
     it "unsubscribes the subscriber" do
       params = { reference: "ref-123", status: "permanent-failure" }
-      post "/status_updates", params: params
+      post "/status-updates", params: params
 
       subscriber.reload
 
@@ -41,7 +41,7 @@ RSpec.describe "Receiving a status update for an email", type: :request do
 
       it "does not error" do
         params = { reference: "ref-123", status: "permanent-failure" }
-        expect { post "/status_updates", params: params }.not_to raise_error
+        expect { post "/status-updates", params: params }.not_to raise_error
       end
     end
   end

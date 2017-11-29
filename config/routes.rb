@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   get "/subscriber-lists", to: "subscriber_lists#show"
 
   resources :notifications, only: %i[create index show]
-  resources :status_updates, only: %i[create]
+  resources :status_updates, path: "status-updates", only: %i[create]
 
   get "/healthcheck", to: "healthcheck#check"
 
