@@ -11,6 +11,7 @@ class NotificationHandlerService
   def call
     begin
       content_change = ContentChange.create!(content_change_params)
+      increment_statsd
       SubscriptionContentWorker.perform_async(content_change_id: content_change.id, priority: priority)
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
@@ -39,5 +40,10 @@ private
 
   def priority
     params.fetch(:priority, "low").to_sym
+  end
+
+  def increment_statsd
+    namespace = "#{Socket.gethostname}.content_changes_created"
+    EmailAlertAPI.statsd.increment(namespace)
   end
 end
