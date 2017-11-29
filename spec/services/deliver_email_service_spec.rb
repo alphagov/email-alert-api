@@ -38,5 +38,37 @@ RSpec.describe DeliverEmailService do
       expect { described_class.call(email: nil) }
         .to raise_error(ArgumentError, "email cannot be nil")
     end
+
+    context "in other environments" do
+      after do
+        ENV["GOVUK_APP_DOMAIN"] = nil
+      end
+
+      it "prefixes INTEGRATION when in integration" do
+        ENV["GOVUK_APP_DOMAIN"] = "integration.publishing.service.gov.uk"
+        expect(email_sender).to receive(:call)
+          .with(
+            address: "test@example.com",
+            subject: "INTEGRATION - subject",
+            body: "body",
+        )
+          .and_return(double(id: 0))
+
+        described_class.call(email: email)
+      end
+
+      it "prefixes STAGING when in staging" do
+        ENV["GOVUK_APP_DOMAIN"] = "staging.publishing.service.gov.uk"
+        expect(email_sender).to receive(:call)
+          .with(
+            address: "test@example.com",
+            subject: "STAGING - subject",
+            body: "body",
+        )
+          .and_return(double(id: 0))
+
+        described_class.call(email: email)
+      end
+    end
   end
 end

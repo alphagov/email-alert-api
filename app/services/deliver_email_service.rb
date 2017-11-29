@@ -13,7 +13,7 @@ class DeliverEmailService
   def call
     reference = email_sender.call(
       address: email.address,
-      subject: email.subject,
+      subject: "#{subject_prefix}#{email.subject}",
       body: email.body,
     )
 
@@ -44,5 +44,15 @@ private
 
   def email_sender
     @email_sender ||= Services.email_sender
+  end
+
+  def subject_prefix
+    env = ENV["GOVUK_APP_DOMAIN"]
+    case env
+    when /integration/
+      "INTEGRATION - "
+    when /staging/
+      "STAGING - "
+    end
   end
 end
