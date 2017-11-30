@@ -1,11 +1,18 @@
 class SubscriptionsController < ActionController::Base
   def create
-    subscription = Subscription.create!(
+    subscription = Subscription.find_or_initialize_by(
       subscriber: subscriber,
       subscriber_list: subscribable,
     )
 
-    render json: { id: subscription.id }, status: :created
+    if subscription.new_record?
+      subscription.save!
+      status = :created
+    else
+      status = :ok
+    end
+
+    render json: { id: subscription.id }, status: status
   end
 
 private
