@@ -1,9 +1,22 @@
 class SubscriptionsController < ActionController::Base
   def create
-    render json: {}, status: :created
+    subscription = Subscription.create!(
+      subscriber: subscriber,
+      subscriber_list: subscribable,
+    )
+
+    render json: { id: subscription.id }, status: :created
   end
 
 private
+
+  def subscriber
+    Subscriber.find_or_create_by(address: subscription_params[:address])
+  end
+
+  def subscribable
+    SubscriberList.find(subscription_params[:subscribable_id])
+  end
 
   def subscription_params
     params.require(:address)
