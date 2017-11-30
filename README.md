@@ -111,6 +111,19 @@ and it will respond with the JSON response for the `GET` call above.
 and it will respond with `202 Accepted` (the call is queued to prevent slowness
 in the external notifications API).
 
+* `POST /subscriptions` with data:
+
+```json
+{
+  "address": "email@address.com",
+  "subscribable_id": "The id of a subscriber list"
+}
+```
+
+and it will create a new subscription between the email address and the
+subscriber list. It will respond with a `201 Created` if it's a new
+subscription or a `200 OK` if the subscription already exists.
+
 ### healthcheck API
 
 A queue health check endpoint is available at /healthcheck
