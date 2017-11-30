@@ -113,6 +113,17 @@ ActiveRecord::Schema.define(version: 20171201094128) do
     t.index ["uuid"], name: "index_subscriptions_on_uuid", unique: true
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "uid"
+    t.string "organisation_slug"
+    t.string "organisation_content_id"
+    t.string "permissions", default: [], array: true
+    t.boolean "remotely_signed_out", default: false
+    t.boolean "disabled", default: false
+  end
+
   add_foreign_key "delivery_attempts", "emails"
   add_foreign_key "subscription_contents", "content_changes"
   add_foreign_key "subscription_contents", "emails"
