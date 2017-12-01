@@ -1,6 +1,10 @@
 require "gov_delivery/client"
 
 class SubscriberListsController < ApplicationController
+  rescue_from GovDelivery::Client::TopicAlreadyExistsError do
+    render json: { error: { message: "topic already exists" } }, status: :conflict
+  end
+
   def show
     subscriber_list = FindExactQuery.new(find_exact_query_params).exact_match
     if subscriber_list

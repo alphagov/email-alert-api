@@ -106,6 +106,23 @@ RSpec.describe "Creating a subscriber list", type: :request do
     expect(response.status).to eq(422)
   end
 
+  it "returns an error if creating the same topic" do
+    stub_request(:post, base_url + "/topics.xml")
+      .with(headers: { "Authorization" => "Basic #{http_auth}" })
+      .with(body: /This is a sample title/)
+      .to_return(body: %{
+        <?xml version="1.0" encoding="UTF-8"?>
+        <topic>
+          <code>GD-14004</code>
+          <error>conflict</error>
+        </topic>
+      })
+
+    create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
+
+    expect(response.status).to eq(409)
+  end
+
   it "returns an error if link isn't an array" do
     create_subscriber_list(
       links: { topics: "uuid-888" },
