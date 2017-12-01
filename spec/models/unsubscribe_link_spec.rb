@@ -14,16 +14,6 @@ RSpec.describe UnsubscribeLink do
         "http://www.dev.gov.uk/email/unsubscribe/1234?title=dave%20crocker%20%26%20friends"
       )
     end
-
-    context "when title is nil" do
-      let(:title) { nil }
-
-      it "omits the title param" do
-        expect(unsubscribe_link.url).to eq(
-          "http://www.dev.gov.uk/email/unsubscribe/1234"
-        )
-      end
-    end
   end
 
   describe "#title" do

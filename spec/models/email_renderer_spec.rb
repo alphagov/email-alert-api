@@ -47,36 +47,4 @@ RSpec.describe EmailRenderer do
       )
     end
   end
-
-  context "when there is no title" do
-    let(:subscriptions) {
-      [
-        double(uuid: "1234", subscriber_list: double(title: nil)),
-        double(uuid: "4567", subscriber_list: double(title: nil)),
-        double(uuid: "8910", subscriber_list: double(title: nil)),
-      ]
-    }
-
-    describe "body" do
-      it "should match the expected content" do
-        expect(subject.body).to eq(
-          <<~BODY
-            Change note: Description.
-
-            http://www.dev.gov.uk/base_path
-            Updated on 12:00 am, 1 January 2017
-
-            Unsubscribe:
-            http://www.dev.gov.uk/email/unsubscribe/1234
-
-            Unsubscribe:
-            http://www.dev.gov.uk/email/unsubscribe/4567
-
-            Unsubscribe:
-            http://www.dev.gov.uk/email/unsubscribe/8910
-          BODY
-        )
-      end
-    end
-  end
 end

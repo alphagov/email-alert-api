@@ -56,9 +56,7 @@ private
   end
 
   def present_unsubscribe_link(link)
-    presented_link = "Unsubscribe"
-    presented_link += " from '#{link.title}'" unless link.title.blank?
-    presented_link + ":\n#{link.url}"
+    "Unsubscribe from '#{link.title}':\n#{link.url}"
   end
 
   def website_root
