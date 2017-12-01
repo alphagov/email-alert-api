@@ -25,6 +25,6 @@ private
   end
 
   def title_param
-    "?title=#{URI.encode(title, /\W/)}" if title
+    "?title=#{URI.encode(title, /\W/)}"
   end
 end
