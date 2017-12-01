@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171201082903) do
+ActiveRecord::Schema.define(version: 20171201094128) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,7 +71,7 @@ ActiveRecord::Schema.define(version: 20171201082903) do
   end
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
-    t.string "title", limit: 255
+    t.string "title", limit: 255, null: false
     t.string "gov_delivery_id", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
