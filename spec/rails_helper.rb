@@ -24,4 +24,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.include JSONRequestHelpers, type: :request
+
+  config.include AuthenticationHelper::RequestMixin, type: :request
+  config.include AuthenticationHelper::ControllerMixin, type: :controller
 end
