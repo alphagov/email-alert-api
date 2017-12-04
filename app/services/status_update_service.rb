@@ -11,7 +11,7 @@ class StatusUpdateService
   def call
     delivery_attempt.update!(status: status.underscore)
 
-    if subscriber && delivery_attempt.permanent_failure?
+    if delivery_attempt.permanent_failure? && subscriber
       UnsubscribeService.subscriber!(subscriber)
     end
   end
