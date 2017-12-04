@@ -58,4 +58,6 @@ FactoryGirl.define do
     provider :notify
     reference "reference"
   end
+
+  factory :user
 end
