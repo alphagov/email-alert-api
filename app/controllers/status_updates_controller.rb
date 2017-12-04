@@ -9,6 +9,8 @@ class StatusUpdatesController < ApplicationController
 private
 
   def status_update_params
+    params.require(:reference)
+    params.require(:status)
     params.permit(:reference, :status).to_h.symbolize_keys
   end
 end
