@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :notifications, only: %i[create index show]
   resources :status_updates, path: "status-updates", only: %i[create]
   resources :subscriptions, only: %i[create]
+  get "subscribables/:gov_delivery_id", to: "subscribables#show"
 
   get "/healthcheck", to: "healthcheck#check"
 
