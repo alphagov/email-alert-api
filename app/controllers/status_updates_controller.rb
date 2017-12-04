@@ -2,8 +2,8 @@ class StatusUpdatesController < ApplicationController
   wrap_parameters false
 
   def create
-    StatusUpdateWorker.perform_async(**status_update_params)
-    render plain: "queued for processing", status: :accepted
+    StatusUpdateService.call(**status_update_params)
+    head :no_content
   end
 
 private

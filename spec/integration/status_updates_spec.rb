@@ -18,8 +18,7 @@ RSpec.describe "Receiving a status update for an email", type: :request do
     params = { reference: "ref-123", status: "delivered" }
     post "/status-updates", params: params
 
-    expect(response.status).to eq(202)
-    expect(response.body).to eq("queued for processing")
+    expect(response.status).to eq(204)
 
     delivery_attempt.reload
     expect(delivery_attempt.status).to eq("delivered")
