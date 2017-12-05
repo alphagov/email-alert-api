@@ -87,9 +87,11 @@ GEM
       rubocop (~> 0.49.0)
       rubocop-rspec (~> 1.16.0)
       scss_lint
-    govuk_app_config (0.2.0)
-      sentry-raven (~> 2.6.3)
+    govuk_app_config (1.1.0)
+      logstasher (~> 1.2.2)
+      sentry-raven (~> 2.7.1)
       statsd-ruby (~> 1.4.0)
+      unicorn (~> 5.3.1)
     hashdiff (0.3.4)
     hashie (3.5.6)
     http-cookie (1.0.3)
@@ -103,7 +105,7 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
     logstash-event (1.2.02)
-    logstasher (1.2.1)
+    logstasher (1.2.2)
       activesupport (>= 4.0)
       logstash-event (~> 1.2.0)
       request_store
@@ -190,7 +192,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rainbow (2.2.2)
       rake
-    raindrops (0.18.0)
+    raindrops (0.19.0)
     rake (12.0.0)
     rb-fsevent (0.9.8)
     rb-inotify (0.9.8)
@@ -236,7 +238,7 @@ GEM
     scss_lint (0.55.0)
       rake (>= 0.9, < 13)
       sass (~> 3.4.20)
-    sentry-raven (2.6.3)
+    sentry-raven (2.7.1)
       faraday (>= 0.7.6, < 1.0)
     sidekiq (5.0.0)
       concurrent-ruby (~> 1.0)
@@ -269,7 +271,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.4)
     unicode-display_width (1.3.0)
-    unicorn (5.3.0)
+    unicorn (5.3.1)
       kgio (~> 2.6)
       raindrops (~> 0.7)
     warden (1.2.7)
@@ -295,9 +297,8 @@ DEPENDENCIES
   gds-api-adapters (~> 47.9.0)
   gds-sso (~> 13.2)
   govuk-lint (= 3.3.0)
-  govuk_app_config (~> 0.2.0)
+  govuk_app_config (~> 1.1)
   listen (= 3.1.5)
-  logstasher (= 1.2.1)
   nokogiri (= 1.7.2)
   notifications-ruby-client (~> 2.5)
   pg (= 0.20.0)
@@ -310,9 +311,7 @@ DEPENDENCIES
   sidekiq-logging-json (= 0.0.18)
   sidekiq-statsd (= 0.1.5)
   sidekiq-symbols (~> 0.1)
-  statsd-ruby (= 1.4.0)
   timecop
-  unicorn (= 5.3.0)
   webmock
 
 BUNDLED WITH

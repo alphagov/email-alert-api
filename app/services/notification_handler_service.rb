@@ -43,7 +43,6 @@ private
   end
 
   def increment_statsd
-    namespace = "#{Socket.gethostname}.content_changes_created"
-    EmailAlertAPI.statsd.increment(namespace)
+    GovukStatsd.increment("content_changes_created")
   end
 end

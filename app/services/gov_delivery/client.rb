@@ -14,7 +14,7 @@ module GovDelivery
       # GovDelivery documentation for this endpoint:
       # http://developer.govdelivery.com/api/comm_cloud_v1/Default.htm#API/Comm Cloud V1/API_CommCloudV1_Topics_CreateTopic.htm
       parse_topic_response(
-        EmailAlertAPI.statsd.time('topics.create') do
+        GovukStatsd.time('topics.create') do
           post_xml(
             "topics.xml",
             RequestBuilder.create_topic_xml(name, topic_id),
@@ -45,7 +45,7 @@ module GovDelivery
       # Warning: This currently takes unnacceptably long (40 seconds on staging), so is not used
       # See https://github.com/alphagov/email-alert-api/pull/61
       parse_topic_list_response(
-        EmailAlertAPI.statsd.time('topics.list') { http_client.get("topics.xml") },
+        GovukStatsd.time('topics.list') { http_client.get("topics.xml") },
         name,
       )
     end
@@ -54,7 +54,7 @@ module GovDelivery
       # GovDelivery documentation for this endpoint:
       # http://developer.govdelivery.com/api_docs/comm_cloud_v1/#API/Comm Cloud V1/API_CommCloudV1_Bulletins_CreateandSendBulletin.htm
       parse_topic_response(
-        EmailAlertAPI.statsd.time('bulletin.send') do
+        GovukStatsd.time('bulletin.send') do
           post_xml(
             "bulletins/send_now.xml",
             RequestBuilder.send_bulletin_xml(topic_ids, subject, body, options),
@@ -131,7 +131,7 @@ module GovDelivery
     end
 
     def parse_topic_response(response)
-      EmailAlertAPI.statsd.increment("responses.#{response.status}")
+      GovukStatsd.increment("responses.#{response.status}")
 
       response_parser = ResponseParser.new(response.body)
       if response_parser.xml?
