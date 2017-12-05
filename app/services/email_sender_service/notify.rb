@@ -11,10 +11,10 @@ class EmailSenderService
           body: body,
         },
       )
-      EmailAlertAPI.statsd.increment("#{metrics_namespace}.success")
+      GovukStatsd.increment("notify.email_send_request.success")
       response.id
     rescue Notifications::Client::RequestError
-      EmailAlertAPI.statsd.increment("#{metrics_namespace}.failure")
+      GovukStatsd.increment("notify.email_send_request.failure")
       raise EmailSenderService::ClientError
     end
 
@@ -26,10 +26,6 @@ class EmailSenderService
 
     def config
       EmailAlertAPI.config.notify
-    end
-
-    def metrics_namespace
-      "#{Socket.gethostname}.notify.email_send_request"
     end
 
     def api_key

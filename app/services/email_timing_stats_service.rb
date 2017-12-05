@@ -7,8 +7,8 @@ class EmailTimingStatsService
 
   def self.store_time_to_send_email(email, time)
     difference = (time - email.created_at) * 1000
-    namespace = "#{Socket.gethostname}.email_created_to_first_delivery_attempt"
-    EmailAlertAPI.statsd.timing(namespace, difference)
+    namespace = "email_created_to_first_delivery_attempt"
+    GovukStatsd.timing(namespace, difference)
   end
 
   def self.store_time_to_send_content_change(email, time)
@@ -20,7 +20,7 @@ class EmailTimingStatsService
 
     content_change = content_changes.first
     difference = (time - content_change.created_at) * 1000
-    namespace = "#{Socket.gethostname}.content_change_created_to_first_delivery_attempt"
-    EmailAlertAPI.statsd.timing(namespace, difference)
+    namespace = "content_change_created_to_first_delivery_attempt"
+    GovukStatsd.timing(namespace, difference)
   end
 end
