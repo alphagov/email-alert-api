@@ -39,5 +39,9 @@ class EmailSenderService
     def template_id
       config.fetch(:template_id)
     end
+
+    def base_url
+      config.fetch(:base_url)
+    end
   end
 end
