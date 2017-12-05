@@ -79,10 +79,7 @@ RSpec.describe "Sending a notification", type: :request do
     end
 
     def create_many_lists
-      duplicate_topic_id = "UKGOVUK_DUPLICATE"
-
       all_match = create(:subscriber_list,
-        gov_delivery_id: duplicate_topic_id,
         tags: {
           topics: ["oil-and-gas/licensing"],
           organisations: ["environment-agency", "hm-revenue-customs"]
@@ -94,7 +91,6 @@ RSpec.describe "Sending a notification", type: :request do
       })
 
       full_type_partial_tag_match = create(:subscriber_list,
-        gov_delivery_id: duplicate_topic_id,
         tags: {
           topics: ["oil-and-gas/licensing"],
           organisations: ["environment-agency"]
