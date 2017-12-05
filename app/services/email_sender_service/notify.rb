@@ -21,7 +21,7 @@ class EmailSenderService
   private
 
     def client
-      @client ||= Notifications::Client.new(api_key)
+      @client ||= Notifications::Client.new(api_key, base_url)
     end
 
     def config
@@ -38,6 +38,10 @@ class EmailSenderService
 
     def template_id
       config.fetch(:template_id)
+    end
+
+    def base_url
+      config.fetch(:base_url)
     end
   end
 end
