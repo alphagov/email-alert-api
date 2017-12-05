@@ -21,7 +21,7 @@ class EmailSenderService
   private
 
     def client
-      @client ||= Notifications::Client.new(api_key)
+      @client ||= Notifications::Client.new(api_key, base_url)
     end
 
     def config
