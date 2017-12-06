@@ -1,6 +1,6 @@
 ---
 :verbose: true
-:concurrency:  2
+:concurrency: 10
 :logfile: ./log/sidekiq.json.log
 :queues:
   - high_priority
