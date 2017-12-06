@@ -19,4 +19,13 @@ namespace :load_tests do
 
     puts results
   end
+
+  desc "Run a load test of the SubscriptionContentWorker by triggering requests"
+  task :subscription_content_worker, [:number] => :environment do |_t, args|
+    results = Benchmark.measure do
+      LoadTester.test_subscription_content_workers(args[:number].to_i)
+    end
+
+    puts results
+  end
 end

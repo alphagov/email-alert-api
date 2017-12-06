@@ -38,6 +38,33 @@ class LoadTester
     end
   end
 
+  def self.test_subscription_content_workers(number)
+    new.test_subscription_content_workers(number)
+  end
+
+  def test_subscription_content_workers(number)
+    document_type_prefix = SecureRandom.uuid
+
+    puts "Creating #{number} subscribers"
+    subscribers = create_test_subscribers(number)
+
+    puts "Creating #{number} subscriber lists"
+    subscriber_lists = create_test_subscriber_lists(number, document_type_prefix: document_type_prefix)
+
+    puts "Creating #{number} subscriptions"
+    subscriptions = subscribers.zip(subscriber_lists).map do |subscriber, subscriber_list|
+      Subscription.create!(subscriber: subscriber, subscriber_list: subscriber_list)
+    end
+
+    puts "Creating #{number} content changes"
+    content_changes = create_test_content_changes(number, document_type_prefix: document_type_prefix)
+
+    puts "Running workers"
+    content_changes.each do |content_change|
+      SubscriptionContentWorker.perform_async(content_change_id: content_change.id, priority: :low)
+    end
+  end
+
 private
 
   def create_test_email(to:)
