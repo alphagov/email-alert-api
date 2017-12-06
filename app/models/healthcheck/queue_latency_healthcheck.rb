@@ -39,11 +39,11 @@ class Healthcheck
     end
 
     def critical_size
-      ENV.fetch("SIDEKIQ_QUEUE_LATENCY_CRITICAL", 10).to_i
+      ENV.fetch("SIDEKIQ_QUEUE_LATENCY_CRITICAL", 300).to_i
     end
 
     def warning_size
-      ENV.fetch("SIDEKIQ_QUEUE_LATENCY_WARNING", 5).to_i
+      ENV.fetch("SIDEKIQ_QUEUE_LATENCY_WARNING", 250).to_i
     end
   end
 end
