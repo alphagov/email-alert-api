@@ -65,6 +65,54 @@ class LoadTester
     end
   end
 
+  def self.test_notification_handler_service(number)
+    new.test_notification_handler_service(number)
+  end
+
+  def test_notification_handler_service(number)
+    document_type_prefix = SecureRandom.uuid
+
+    puts "Creating #{number} subscribers"
+    subscribers = create_test_subscribers(number)
+
+    puts "Creating #{number} subscriber lists"
+    subscriber_lists = create_test_subscriber_lists(number, document_type_prefix: document_type_prefix)
+
+    puts "Creating #{number} subscriptions"
+    subscriptions = subscribers.zip(subscriber_lists).map do |subscriber, subscriber_list|
+      Subscription.create!(subscriber: subscriber, subscriber_list: subscriber_list)
+    end
+
+    puts "Creating #{number} content changes"
+    content_changes = create_test_content_changes(number, document_type_prefix: document_type_prefix)
+
+    puts "Converting content changes into params"
+    content_changes_params = content_changes.map do |content_change|
+      params = {
+        content_id: content_change.content_id,
+        title: content_change.title,
+        change_note: content_change.change_note,
+        description: content_change.description,
+        base_path: content_change.base_path,
+        links: content_change.links,
+        tags: content_change.tags,
+        public_updated_at: content_change.public_updated_at.to_s,
+        email_document_supertype: content_change.email_document_supertype,
+        government_document_supertype: content_change.government_document_supertype,
+        govuk_request_id: content_change.govuk_request_id,
+        document_type: content_change.document_type,
+        publishing_app: content_change.publishing_app,
+      }
+      content_change.delete
+      params
+    end
+
+    puts "Running service"
+    content_changes_params.each do |params|
+      NotificationHandlerService.call(params: params)
+    end
+  end
+
 private
 
   def create_test_email(to:)

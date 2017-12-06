@@ -28,4 +28,13 @@ namespace :load_tests do
 
     puts results
   end
+
+  desc "Run a load test of the NotificationHandlerService by triggering requests"
+  task :notification_handler_service, [:number] => :environment do |_t, args|
+    results = Benchmark.measure do
+      LoadTester.test_notification_handler_service(args[:number].to_i)
+    end
+
+    puts results
+  end
 end
