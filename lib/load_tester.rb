@@ -4,7 +4,7 @@ class LoadTester
   end
 
   def test_delivery_request_workers(number)
-    email = create_test_email(to: success_address(0))
+    email = create_email(to: test_address(0))
 
     number.times do
       DeliveryRequestWorker.perform_async(email.id)
@@ -21,7 +21,7 @@ private
     )
   end
 
-  def success_address(n)
+  def test_address(n)
     tag = n.to_s.rjust(8, "0")
     "success+#{tag}@simulator.amazonses.com"
   end
