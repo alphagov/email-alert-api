@@ -5,6 +5,8 @@ class EmailSenderService
 Subject: #{subject}
 Body: #{body}
 ))
+      GovukStatsd.increment("pseudo.email_send_request")
+
       "" # provider reference
     end
 
