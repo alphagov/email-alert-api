@@ -11,6 +11,33 @@ class LoadTester
     end
   end
 
+  def self.test_email_generation_workers(number)
+    new.test_email_generation_workers(number)
+  end
+
+  def test_email_generation_workers(number)
+    puts "Creating subscriber list and content change"
+
+    subscriber_list = create_test_subscriber_list
+    content_change = create_test_content_change
+
+    puts "Creating #{number} subscribers"
+
+    subscribers = create_test_subscribers(number)
+
+    puts "Creating #{number} subscriptions"
+    subscriptions = create_subscriptions(subscribers: subscribers, subscriber_list: subscriber_list)
+
+    puts "Creating #{number} subscription contents"
+    subscription_contents = create_subscription_contents(subscriptions: subscriptions, content_change: content_change)
+
+    puts "Running workers"
+
+    subscription_contents.each do |subscription_content|
+      EmailGenerationWorker.perform_async(subscription_content_id: subscription_content.id, priority: :low)
+    end
+  end
+
 private
 
   def create_test_email(to:)
