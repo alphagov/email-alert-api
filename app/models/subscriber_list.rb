@@ -27,13 +27,7 @@ class SubscriberList < ApplicationRecord
   end
 
   def subscription_url
-    gov_delivery_config.fetch(:protocol) +
-      "://" +
-      gov_delivery_config.fetch(:public_hostname) +
-      "/accounts/" +
-      gov_delivery_config.fetch(:account_code) +
-      "/subscriber/new?topic_id=" +
-      self.gov_delivery_id
+    PublicUrlService.deprecated_subscription_url(gov_delivery_id: gov_delivery_id)
   end
 
   def to_json
