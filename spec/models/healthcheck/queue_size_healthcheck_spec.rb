@@ -14,7 +14,7 @@ RSpec.describe Healthcheck::QueueSizeHealthcheck do
   end
 
   context "when the critical threshold is reached" do
-    let(:size) { 5 }
+    let(:size) { 200000 }
     specify { expect(subject.status).to eq(:critical) }
   end
 
