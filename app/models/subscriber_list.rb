@@ -27,7 +27,11 @@ class SubscriberList < ApplicationRecord
   end
 
   def subscription_url
-    PublicUrlService.deprecated_subscription_url(gov_delivery_id: gov_delivery_id)
+    if use_email_alert_frontend_for_email_collection?
+      PublicUrlService.subscription_url(gov_delivery_id: gov_delivery_id)
+    else
+      PublicUrlService.deprecated_subscription_url(gov_delivery_id: gov_delivery_id)
+    end
   end
 
   def to_json
@@ -50,5 +54,10 @@ private
 
   def gov_delivery_config
     EmailAlertAPI.config.gov_delivery
+  end
+
+  # We could make this more sophisticated if needed, e.g. check document_type.
+  def use_email_alert_frontend_for_email_collection?
+    ENV.include?("USE_EMAIL_ALERT_FRONTEND_FOR_EMAIL_COLLECTION")
   end
 end

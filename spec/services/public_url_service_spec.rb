@@ -8,6 +8,13 @@ RSpec.describe PublicUrlService do
     end
   end
 
+  describe ".subscription_url" do
+    it "returns the GOV.UK for the new subscription page" do
+      result = subject.subscription_url(gov_delivery_id: "foo_bar")
+      expect(result).to eq("http://www.dev.gov.uk/email/subscriptions/new?topic_id=foo_bar")
+    end
+  end
+
   describe ".deprecated_subscription_url" do
     it "returns the govdelivery URL for creating a new subscription" do
       result = subject.deprecated_subscription_url(gov_delivery_id: "foo_bar")
