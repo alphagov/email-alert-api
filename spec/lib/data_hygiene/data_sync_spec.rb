@@ -80,7 +80,6 @@ RSpec.describe DataHygiene::DataSync do
     end
 
     it "won't delete and recreate topics that don't match on title and gov_delivery_id if a record exists that does match on title and gov_delivery_id" do
-      create(:subscriber_list, title: 'Topic alpha', gov_delivery_id: 'TA')
       create(:subscriber_list, title: 'Topic A', gov_delivery_id: 'TA')
       create(:subscriber_list, title: 'Topic B', gov_delivery_id: 'TB')
 
