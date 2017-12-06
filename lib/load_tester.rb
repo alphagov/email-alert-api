@@ -44,14 +44,25 @@ private
     Email.create!(address: to, body: "body", subject: "subject")
   end
 
-  def create_test_subscriber_list
+  def create_test_subscriber_list(document_type: nil)
+    document_type = SecureRandom.uuid unless document_type
+
     SubscriberList.create!(
       title: "title",
       gov_delivery_id: SecureRandom.uuid,
+      document_type: document_type,
     )
   end
 
-  def create_test_content_change
+  def create_test_subscriber_lists(number, document_type_prefix:)
+    number.times.map do |i|
+      create_test_subscriber_list(document_type: "#{document_type_prefix}-#{i}")
+    end
+  end
+
+  def create_test_content_change(document_type: nil)
+    document_type = SecureRandom.uuid unless document_type
+
     ContentChange.create!(
       content_id: SecureRandom.uuid,
       title: "title",
@@ -62,9 +73,15 @@ private
       email_document_supertype: "email document supertype",
       government_document_supertype: "government document supertype",
       govuk_request_id: SecureRandom.uuid,
-      document_type: "document type",
+      document_type: document_type,
       publishing_app: "publishing app",
     )
+  end
+
+  def create_test_content_changes(number, document_type_prefix:)
+    number.times.map do |i|
+      create_test_content_change(document_type: "#{document_type_prefix}-#{i}")
+    end
   end
 
   def create_test_subscribers(n)
