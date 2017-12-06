@@ -11,7 +11,7 @@ class EmailRenderer
     <<~BODY
       #{change_note}: #{description}.
 
-      #{url}
+      #{content_url}
       Updated on #{public_updated_at}
 
       #{unsubscribe_links}
@@ -46,10 +46,6 @@ private
     params.fetch(:subscriber)
   end
 
-  def url
-    "#{website_root}#{base_path}"
-  end
-
   def unsubscribe_links
     links = UnsubscribeLink.for(subscriber.subscriptions)
     links.map { |l| present_unsubscribe_link(l) }.join("\n\n")
@@ -59,7 +55,7 @@ private
     "Unsubscribe from '#{link.title}':\n#{link.url}"
   end
 
-  def website_root
-    Plek.new.website_root
+  def content_url
+    PublicUrlService.content_url(base_path: base_path)
   end
 end
