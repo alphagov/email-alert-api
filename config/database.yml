@@ -5,7 +5,7 @@ default: &default
   encoding: unicode
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: 5
+  pool: 15
   # Necessary to allow creating a db with different encodings.
   # See http://www.postgresql.org/docs/9.1/static/manage-ag-templatedbs.html for details
   template: template0
