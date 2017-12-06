@@ -33,7 +33,7 @@ class Healthcheck
     end
 
     def warning_size
-      ENV.fetch("SIDEKIQ_QUEUE_SIZE_WARNING", 2).to_i
+      ENV.fetch("SIDEKIQ_QUEUE_SIZE_WARNING", 75000).to_i
     end
   end
 end

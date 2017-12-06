@@ -24,7 +24,7 @@ RSpec.describe HealthcheckController, type: :controller do
     before do
       allow_any_instance_of(Healthcheck::QueueSizeHealthcheck)
         .to receive(:queues)
-        .and_return(default: 3)
+        .and_return(default: 80000)
     end
 
     it "returns a status of 'warning'" do
