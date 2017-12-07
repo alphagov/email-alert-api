@@ -3,5 +3,6 @@
 :concurrency: 10
 :logfile: ./log/sidekiq.json.log
 :queues:
-  - high_priority
-  - default
+  - [default, 10]
+  - [high_delivery, 5]
+  - [low_delivery, 1]

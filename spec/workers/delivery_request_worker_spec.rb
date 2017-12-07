@@ -56,7 +56,7 @@ RSpec.describe DeliveryRequestWorker do
       let(:priority) { :low }
 
       it "adds a worker to the low priority queue" do
-        expect(Sidekiq::Queues["default"].size).to eq(1)
+        expect(Sidekiq::Queues["low_delivery"].size).to eq(1)
       end
     end
 
@@ -64,7 +64,7 @@ RSpec.describe DeliveryRequestWorker do
       let(:priority) { :high }
 
       it "adds a worker to the high priority queue" do
-        expect(Sidekiq::Queues["high_priority"].size).to eq(1)
+        expect(Sidekiq::Queues["high_delivery"].size).to eq(1)
       end
     end
   end
