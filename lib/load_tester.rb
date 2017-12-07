@@ -21,14 +21,14 @@ class LoadTester
     puts "Creating subscriber list"
     subscriber_list = create_test_subscriber_list
 
-    puts "Creating content change"
-    content_change = create_test_content_change
-
     puts "Creating #{number} subscribers"
     subscribers = create_test_subscribers(number)
 
     puts "Creating #{number} subscriptions"
     subscriptions = create_subscriptions(subscribers: subscribers, subscriber_list: subscriber_list)
+
+    puts "Creating content change"
+    content_change = create_test_content_change
 
     puts "Creating #{number} subscription contents"
     subscription_contents = create_subscription_contents(subscriptions: subscriptions, content_change: content_change)
@@ -44,19 +44,17 @@ class LoadTester
   end
 
   def test_subscription_content_worker(number)
-    document_type = SecureRandom.uuid
+    puts "Creating subscriber list"
+    subscriber_list = create_test_subscriber_list
 
     puts "Creating #{number} subscribers"
     subscribers = create_test_subscribers(number)
-
-    puts "Creating subscriber list"
-    subscriber_list = create_test_subscriber_list(document_type)
 
     puts "Creating #{number} subscriptions"
     create_subscriptions(subscribers: subscribers, subscriber_list: subscriber_list)
 
     puts "Creating content change"
-    content_change = create_test_content_change(document_type)
+    content_change = create_test_content_change(subscriber_list.document_type)
 
     puts "Running worker"
     SubscriptionContentWorker.perform_async(content_change_id: content_change.id, priority: :low)
@@ -67,19 +65,17 @@ class LoadTester
   end
 
   def test_notification_handler_service(number)
-    document_type = SecureRandom.uuid
+    puts "Creating subscriber list"
+    subscriber_list = create_test_subscriber_list
 
     puts "Creating #{number} subscribers"
     subscribers = create_test_subscribers(number)
-
-    puts "Creating subscriber list"
-    subscriber_list = create_test_subscriber_list(document_type)
 
     puts "Creating #{number} subscriptions"
     create_subscriptions(subscribers: subscribers, subscriber_list: subscriber_list)
 
     puts "Creating content change"
-    content_change = create_test_content_change(document_type)
+    content_change = create_test_content_change(subscriber_list.document_type)
 
     puts "Converting content changes into params"
     params = {
