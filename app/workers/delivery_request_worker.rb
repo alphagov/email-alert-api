@@ -3,9 +3,9 @@ class DeliveryRequestWorker
 
   def self.queue_for_priority(priority)
     if priority == :high
-      :high_priority
+      :high_delivery
     elsif priority == :low
-      :default
+      :low_delivery
     else
       raise ArgumentError, "priority should be :high or :low"
     end
