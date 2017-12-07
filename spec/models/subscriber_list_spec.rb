@@ -99,12 +99,28 @@ RSpec.describe SubscriberList, type: :model do
   end
 
   describe "#subscription_url" do
-    it "provides the subscription URL based on the gov_delivery_id" do
-      list = SubscriberList.new(gov_delivery_id: "UKGOVUK_4567")
+    subject { SubscriberList.new(gov_delivery_id: "UKGOVUK_4567") }
 
-      expect(list.subscription_url).to eq(
+    it "returns the govdelivery subscription URL" do
+      expect(subject.subscription_url).to eq(
         "http://govdelivery-public.example.com/accounts/UKGOVUK/subscriber/new?topic_id=UKGOVUK_4567"
       )
+    end
+
+    context "when switching over to use email alert frontend for email collection" do
+      before do
+        allow(ENV).to receive(:include?).and_call_original
+
+        allow(ENV).to receive(:include?)
+          .with("USE_EMAIL_ALERT_FRONTEND_FOR_EMAIL_COLLECTION")
+          .and_return(true)
+      end
+
+      it "returns the email alert frontend subscription URL" do
+        expect(subject.subscription_url).to eq(
+          "http://www.dev.gov.uk/email/subscriptions/new?topic_id=UKGOVUK_4567"
+        )
+      end
     end
   end
 end
