@@ -2,13 +2,24 @@ require "rails_helper"
 
 RSpec.describe SubscribablesController, type: :request do
   describe "GET /subscribables/<govuk_delivery_id>" do
-    it "returns the subscribable" do
-      subscribable = create(:subscriber_list, gov_delivery_id: "test135")
-      get "/subscribables/test135"
+    context "the subscribable exists" do
+      let!(:subscribable) { create(:subscriber_list, gov_delivery_id: "test135") }
 
-      subscribable_response = JSON.parse(response.body).deep_symbolize_keys[:subscribable]
+      it "returns it" do
+        get "/subscribables/test135"
 
-      expect(subscribable_response[:id]).to eq(subscribable.id)
+        subscribable_response = JSON.parse(response.body).deep_symbolize_keys[:subscribable]
+
+        expect(subscribable_response[:id]).to eq(subscribable.id)
+      end
+    end
+
+    context "the subscribable doesn't exist" do
+      it "returns a 404" do
+        get "/subscribables/test135"
+
+        expect(response.status).to eq(404)
+      end
     end
   end
 end

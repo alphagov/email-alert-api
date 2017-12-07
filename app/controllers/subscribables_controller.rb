@@ -1,12 +1,19 @@
 class SubscribablesController < ApplicationController
   def show
-    render json: subscribable_json
+    render json: { subscribable: subscribable_attributes }, status: status
   end
 
 private
 
-  def subscribable_json
-    subscriber_list = SubscriberList.find_by(gov_delivery_id: params[:gov_delivery_id])
-    { subscribable: subscriber_list.attributes }
+  def subscribable
+    @subscribable ||= SubscriberList.find_by(gov_delivery_id: params[:gov_delivery_id])
+  end
+
+  def subscribable_attributes
+    subscribable.nil? ? nil : subscribable.attributes
+  end
+
+  def status
+    subscribable.nil? ? 404 : 200
   end
 end
