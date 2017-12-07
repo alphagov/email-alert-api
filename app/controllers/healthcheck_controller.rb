@@ -1,4 +1,4 @@
-class HealthcheckController < ActionController::Base
+class HealthcheckController < ApplicationController
   def check
     render json: healthcheck.details.merge(status: healthcheck.status)
   end

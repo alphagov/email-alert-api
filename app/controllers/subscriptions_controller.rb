@@ -1,4 +1,4 @@
-class SubscriptionsController < ActionController::Base
+class SubscriptionsController < ApplicationController
   def create
     subscription = Subscription.find_or_initialize_by(
       subscriber: subscriber,
@@ -18,7 +18,7 @@ class SubscriptionsController < ActionController::Base
 private
 
   def subscriber
-    Subscriber.find_or_create_by(address: subscription_params[:address])
+    Subscriber.find_or_create_by!(address: subscription_params[:address])
   end
 
   def subscribable
