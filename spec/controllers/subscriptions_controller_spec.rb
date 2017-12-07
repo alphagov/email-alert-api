@@ -91,4 +91,16 @@ RSpec.describe SubscriptionsController, type: :controller do
       end
     end
   end
+
+  context "with an invalid email address" do
+    let(:subscribable) { create(:subscriber_list) }
+
+    def create_subscription
+      post :create, params: { subscribable_id: subscribable.id, address: "invalid" }, format: :json
+    end
+
+    it "raises an error" do
+      expect { create_subscription }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
 end
