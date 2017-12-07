@@ -13,6 +13,8 @@ class RateSleeperService
       execution_time_in_milliseconds: duration_in_milliseconds
     )
 
+    GovukStatsd.timing("rate_sleeper_service.required_sleep_time", required_sleep_time)
+
     sleep(required_sleep_time) if required_sleep_time.positive?
   end
 
