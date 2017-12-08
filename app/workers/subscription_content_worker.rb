@@ -1,8 +1,7 @@
 class SubscriptionContentWorker
   include Sidekiq::Worker
-  include Sidekiq::Symbols
 
-  def perform(content_change_id:, priority:)
+  def perform(content_change_id, priority)
     @priority = priority
     content_change = ContentChange.find(content_change_id)
     queue_delivery_to_subscribers(content_change)
@@ -23,8 +22,8 @@ private
         )
 
         EmailGenerationWorker.perform_async(
-          subscription_content_id: subscription_content.id,
-          priority: priority.to_sym
+          subscription_content.id,
+          priority.to_sym
         )
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })

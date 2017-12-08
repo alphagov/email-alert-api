@@ -12,11 +12,7 @@ module EmailAlertAPI
     end
 
     def gov_delivery
-      @gov_delivery ||= environment_config.symbolize_keys.freeze
-    end
-
-    def redis_config
-      YAML.safe_load(ERB.new(File.read(redis_config_path)).result).symbolize_keys
+      @gov_delivery ||= gov_delivery_environment_config.symbolize_keys.freeze
     end
 
     def notify
@@ -29,16 +25,16 @@ module EmailAlertAPI
 
   private
 
-    def redis_config_path
-      File.join(app_root, "config", "redis.yml")
+    def environment_config(path:)
+      YAML.safe_load(ERB.new(File.read(path)).result).fetch(@environment)
     end
 
     def gov_delivery_config_path
       File.join(app_root, "config", "gov_delivery.yml")
     end
 
-    def environment_config
-      YAML.safe_load(ERB.new(File.read(gov_delivery_config_path)).result).fetch(@environment)
+    def gov_delivery_environment_config
+      environment_config(path: gov_delivery_config_path)
     end
 
     def notify_config_path
@@ -46,7 +42,7 @@ module EmailAlertAPI
     end
 
     def notify_environment_config
-      YAML.safe_load(ERB.new(File.read(notify_config_path)).result).fetch(@environment)
+      environment_config(path: notify_config_path)
     end
 
     def email_service_config_path
@@ -54,7 +50,7 @@ module EmailAlertAPI
     end
 
     def email_service_config
-      YAML.safe_load(ERB.new(File.read(email_service_config_path)).result).fetch(@environment)
+      environment_config(path: email_service_config_path)
     end
   end
 end

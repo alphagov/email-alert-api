@@ -69,7 +69,7 @@ RSpec.describe NotificationHandlerService do
       allow(ContentChange).to receive(:create!).and_return(double(id: 1))
       expect(SubscriptionContentWorker)
         .to receive(:perform_async)
-        .with(content_change_id: 1, priority: :low)
+        .with(1, :low)
 
       described_class.call(params: params)
     end

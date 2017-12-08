@@ -11,7 +11,7 @@ RSpec.describe EmailGenerationWorker do
       def perform_with_fake_sidekiq
         Sidekiq::Testing.fake! do
           DeliveryRequestWorker.jobs.clear
-          described_class.new.perform(subscription_content_id: subscription_content.id, priority: priority)
+          described_class.new.perform(subscription_content.id, priority)
         end
       end
 

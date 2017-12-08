@@ -1,5 +1,4 @@
 require "rails_helper"
-require 'sidekiq/testing'
 
 RSpec.describe "Sending a notification", type: :request do
   context "v1" do

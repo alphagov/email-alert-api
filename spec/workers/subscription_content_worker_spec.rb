@@ -17,7 +17,7 @@ RSpec.describe SubscriptionContentWorker do
       it "does not raise an error" do
         expect {
           Sidekiq::Testing.fake! do
-            SubscriptionContentWorker.perform_async(content_change_id: content_change.id, priority: :low)
+            SubscriptionContentWorker.perform_async(content_change.id, :low)
             described_class.drain
           end
         }.not_to raise_error
@@ -38,7 +38,7 @@ RSpec.describe SubscriptionContentWorker do
           )
 
         expect {
-          subject.perform(content_change_id: content_change.id, priority: :low)
+          subject.perform(content_change.id, :low)
         }.not_to raise_error
       end
     end
@@ -48,15 +48,15 @@ RSpec.describe SubscriptionContentWorker do
         .to receive(:create!)
         .with(content_change: content_change, subscription: subscription)
 
-      subject.perform(content_change_id: content_change.id, priority: :low)
+      subject.perform(content_change.id, :low)
     end
 
     it "queues the email through the EmailGenerationWorker" do
       expect(EmailGenerationWorker).to receive(:perform_async).with(
-        subscription_content_id: kind_of(Integer), priority: :low,
+        kind_of(Integer), :low,
       )
 
-      subject.perform(content_change_id: content_change.id, priority: :low)
+      subject.perform(content_change.id, :low)
     end
 
     it "does not enqueue an email to subscribers without a subscription to this content" do
@@ -64,20 +64,20 @@ RSpec.describe SubscriptionContentWorker do
 
       expect(EmailGenerationWorker).to receive(:perform_async).once
 
-      subject.perform(content_change_id: content_change.id, priority: :low)
+      subject.perform(content_change.id, :low)
     end
 
     it "enqueues an email with the injected priority" do
       expect(EmailGenerationWorker)
         .to receive(:perform_async)
-        .with(subscription_content_id: kind_of(Integer), priority: :high)
+        .with(kind_of(Integer), :high)
 
-      subject.perform(content_change_id: content_change.id, priority: :high)
+      subject.perform(content_change.id, :high)
     end
 
     it "marks the content_change as processed" do
       expect(content_change).to receive(:mark_processed!)
-      subject.perform(content_change_id: content_change.id, priority: :high)
+      subject.perform(content_change.id, :high)
     end
   end
 
@@ -92,7 +92,7 @@ RSpec.describe SubscriptionContentWorker do
         .with(hash_including(subscriber: subscriber))
         .and_return(email)
 
-      subject.perform(content_change_id: content_change.id, priority: :low)
+      subject.perform(content_change.id, :low)
     end
 
     it "enqueues the email to send to the courtesy subscription group" do
@@ -100,7 +100,7 @@ RSpec.describe SubscriptionContentWorker do
         .to receive(:perform_async_with_priority)
         .with(kind_of(Integer), priority: :low)
 
-      subject.perform(content_change_id: content_change.id, priority: :low)
+      subject.perform(content_change.id, :low)
     end
   end
 end

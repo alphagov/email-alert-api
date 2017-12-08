@@ -32,7 +32,7 @@ class LoadTester
 
     puts "Running workers"
     subscription_contents.each do |subscription_content|
-      EmailGenerationWorker.perform_async(subscription_content_id: subscription_content.id, priority: :low)
+      EmailGenerationWorker.perform_async(subscription_content.id, :low)
     end
   end
 
@@ -52,7 +52,7 @@ class LoadTester
     content_change = create_test_content_change(subscriber_list.document_type)
 
     puts "Running worker"
-    SubscriptionContentWorker.perform_async(content_change_id: content_change.id, priority: :low)
+    SubscriptionContentWorker.perform_async(content_change.id, :low)
   end
 
   def self.test_notification_handler_service(number)
