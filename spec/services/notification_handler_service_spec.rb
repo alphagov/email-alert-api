@@ -56,6 +56,7 @@ RSpec.describe NotificationHandlerService do
         govuk_request_id: params[:govuk_request_id],
         document_type: params[:document_type],
         publishing_app: params[:publishing_app],
+        priority: :low,
       }
 
       expect(ContentChange).to receive(:create!)
