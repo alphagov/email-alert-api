@@ -1,8 +1,7 @@
 class EmailGenerationWorker
   include Sidekiq::Worker
-  include Sidekiq::Symbols
 
-  def perform(subscription_content_id:, priority:)
+  def perform(subscription_content_id, priority)
     subscription_content = SubscriptionContent.find(subscription_content_id)
 
     email = Email.create_from_params!(email_params(subscription_content))

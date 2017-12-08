@@ -14,7 +14,6 @@ gem 'redis-namespace', '1.5.3'
 gem 'sidekiq', '5.0.0'
 gem 'sidekiq-logging-json', '0.0.18'
 gem 'sidekiq-statsd', '0.1.5'
-gem 'sidekiq-symbols', '~> 0.1'
 
 group :test do
   gem 'equivalent-xml'

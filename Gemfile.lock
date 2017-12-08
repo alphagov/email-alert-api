@@ -251,8 +251,6 @@ GEM
       activesupport
       sidekiq (>= 2.6)
       statsd-ruby (>= 1.1.0)
-    sidekiq-symbols (0.1.1)
-      sidekiq
     slop (3.6.0)
     sprockets (3.7.1)
       concurrent-ruby (~> 1.0)
@@ -310,7 +308,6 @@ DEPENDENCIES
   sidekiq (= 5.0.0)
   sidekiq-logging-json (= 0.0.18)
   sidekiq-statsd (= 0.1.5)
-  sidekiq-symbols (~> 0.1)
   timecop
   webmock
 
