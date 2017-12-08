@@ -1,8 +1,7 @@
 class SubscriptionContentWorker
   include Sidekiq::Worker
 
-  def perform(content_change_id, priority)
-    @priority = priority
+  def perform(content_change_id)
     content_change = ContentChange.find(content_change_id)
     queue_delivery_to_subscribers(content_change)
     queue_delivery_to_courtesy_subscribers(content_change)
@@ -10,8 +9,6 @@ class SubscriptionContentWorker
   end
 
 private
-
-  attr_reader :priority
 
   def queue_delivery_to_subscribers(content_change)
     subscriptions_for(content_change: content_change).find_each do |subscription|
@@ -23,7 +20,7 @@ private
 
         EmailGenerationWorker.perform_async(
           subscription_content.id,
-          priority.to_sym
+          content_change.priority.to_sym,
         )
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })
@@ -43,7 +40,7 @@ private
         )
 
         DeliveryRequestWorker.perform_async_with_priority(
-          email.id, priority: priority.to_sym
+          email.id, priority: content_change.priority.to_sym,
         )
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })
