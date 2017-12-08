@@ -5,6 +5,8 @@ class EmailGenerationWorker
 
   LOCK_NAME = "email_generation_worker".freeze
 
+  sidekiq_options unique: :until_and_while_executing
+
   def perform
     SubscriptionContent.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
       subscription_contents.find_each do |subscription_content|
