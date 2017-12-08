@@ -15,10 +15,6 @@ module EmailAlertAPI
       @gov_delivery ||= environment_config.symbolize_keys.freeze
     end
 
-    def redis_config
-      YAML.safe_load(ERB.new(File.read(redis_config_path)).result).symbolize_keys
-    end
-
     def notify
       @notify ||= notify_environment_config.symbolize_keys.freeze
     end
@@ -28,10 +24,6 @@ module EmailAlertAPI
     end
 
   private
-
-    def redis_config_path
-      File.join(app_root, "config", "redis.yml")
-    end
 
     def gov_delivery_config_path
       File.join(app_root, "config", "gov_delivery.yml")

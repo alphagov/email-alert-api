@@ -10,10 +10,8 @@ gem 'govuk_app_config', '~> 1.1'
 gem 'nokogiri', '1.7.2'
 gem 'notifications-ruby-client', '~> 2.5'
 gem 'plek', '2.0.0'
-gem 'redis-namespace', '1.5.3'
-gem 'sidekiq', '5.0.0'
-gem 'sidekiq-logging-json', '0.0.18'
-gem 'sidekiq-statsd', '0.1.5'
+
+gem 'govuk_sidekiq', '~> 2.0'
 
 group :test do
   gem 'equivalent-xml'
