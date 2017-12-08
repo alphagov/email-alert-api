@@ -1,21 +1,37 @@
 class EmailGenerationWorker
   include Sidekiq::Worker
 
-  def perform(subscription_content_id)
-    subscription_content = SubscriptionContent.find(subscription_content_id)
+  LOCK_NAME = "email_generation_worker".freeze
 
-    email = Email.create_from_params!(email_params(subscription_content))
+  def perform
+    SubscriptionContent.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
+      subscription_contents.find_each do |subscription_content|
+        email = create_email(subscription_content: subscription_content)
+        subscription_content.email = email
+        subscription_content.save
 
-    subscription_content.update!(email: email)
-
-    DeliveryRequestWorker.perform_async_with_priority(
-      email.id, priority: subscription_content.content_change.priority.to_sym,
-    )
+        DeliveryRequestWorker.perform_async_with_priority(
+          email.id, priority: subscription_content.content_change.priority.to_sym
+        )
+      end
+    end
   end
 
 private
 
-  def email_params(subscription_content)
+  def subscription_contents
+    SubscriptionContent
+      .joins(:content_change, subscription: { subscriber: { subscriptions: :subscriber_list } })
+      .includes(:content_change, subscription: { subscriber: { subscriptions: :subscriber_list } })
+      .where.not(subscribers: { address: nil })
+      .where(email: nil)
+  end
+
+  def create_email(subscription_content:)
+    Email.create_from_params!(email_params(subscription_content: subscription_content))
+  end
+
+  def email_params(subscription_content:)
     content_change = subscription_content.content_change
 
     {

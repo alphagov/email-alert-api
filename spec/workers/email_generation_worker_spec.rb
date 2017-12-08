@@ -1,13 +1,17 @@
 RSpec.describe EmailGenerationWorker do
   describe ".perform" do
     context "with a subscription content" do
-      let(:content_change) { create(:content_change, public_updated_at: DateTime.parse("2017/01/01 09:00")) }
-      let(:subscription_content) { create(:subscription_content, content_change: content_change) }
+      let!(:subscription_content) { create(:subscription_content) }
+
+      before do
+        create(:subscription_content, email: create(:email))
+        create(:subscription_content, subscription: create(:subscription, subscriber: create(:subscriber, address: nil)))
+      end
 
       def perform_with_fake_sidekiq
         Sidekiq::Testing.fake! do
           DeliveryRequestWorker.jobs.clear
-          described_class.new.perform(subscription_content.id)
+          described_class.new.perform
         end
       end
 
@@ -16,8 +20,8 @@ RSpec.describe EmailGenerationWorker do
           perform_with_fake_sidekiq
         }
           .to change { Email.count }
-          .from(0)
-          .to(1)
+          .from(1)
+          .to(2)
       end
 
       it "should associate the subscription content with the email" do
