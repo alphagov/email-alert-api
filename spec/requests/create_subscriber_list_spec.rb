@@ -1,5 +1,3 @@
-require "base64"
-
 RSpec.describe "Creating a subscriber list", type: :request do
   let(:base_url) do
     config = EmailAlertAPI.config.gov_delivery
@@ -183,6 +181,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
     request_body = JSON.dump(defaults.merge(payload))
 
-    post "/subscriber-lists", params: request_body, headers: json_headers
+    post "/subscriber-lists", params: request_body, headers: JSON_HEADERS
   end
 end

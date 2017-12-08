@@ -1,5 +1,3 @@
-require "notifications/client"
-
 class EmailSenderService
   class Notify
     def call(address:, subject:, body:)

@@ -1,16 +1,6 @@
-require "base64"
-
-require "app/services/gov_delivery/client"
-require "app/services/gov_delivery/request_builder"
-
 RSpec.describe GovDelivery::Client do
-  let(:config) {
-    EmailAlertAPI.config.gov_delivery
-  }
-
-  subject(:client) {
-    GovDelivery::Client.new(config)
-  }
+  let(:config) { EmailAlertAPI.config.gov_delivery }
+  subject(:client) { GovDelivery::Client.new(config) }
 
   describe "#create_topic" do
     before do

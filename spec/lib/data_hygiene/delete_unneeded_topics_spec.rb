@@ -1,5 +1,3 @@
-require 'data_hygiene/delete_unneeded_topics'
-
 RSpec.describe DataHygiene::DeleteUnneededTopics do
   let!(:subscriber_list) { create(:subscriber_list, title: 'Test') }
   let(:client) { double('GovDelivery::Client') }

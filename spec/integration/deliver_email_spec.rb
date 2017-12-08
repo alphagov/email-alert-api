@@ -1,5 +1,3 @@
-require "notifications/client"
-
 RSpec.describe DeliverEmailService do
   let(:email_sender) { EmailSenderService.clone }
   let(:email) { create(:email, address: "test@test.com") }

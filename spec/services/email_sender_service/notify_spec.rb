@@ -1,5 +1,3 @@
-require "notifications/client"
-
 RSpec.describe EmailSenderService::Notify do
   describe "#call" do
     let(:api_key) { nil }

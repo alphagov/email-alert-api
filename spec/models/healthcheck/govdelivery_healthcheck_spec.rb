@@ -1,6 +1,7 @@
 RSpec.describe Healthcheck::GovdeliveryHealthcheck do
   let(:url) { "http://govdelivery-api.example.com/api/account/UKGOVUK/categories.xml" }
-  let(:headers) { { "Authorization" => "Basic #{HTTP_AUTH_CREDENTIALS}" } }
+  let(:credentials) { Base64.strict_encode64("test@example.com:test123") }
+  let(:headers) { { "Authorization" => "Basic #{credentials}" } }
   let(:status) { 200 }
 
   before do
