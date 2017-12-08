@@ -56,6 +56,8 @@ GEM
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
     erubi (1.6.0)
+    et-orbi (1.0.8)
+      tzinfo
     factory_girl (4.8.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.8.0)
@@ -239,6 +241,8 @@ GEM
       rubocop (>= 0.49.0)
     ruby-progressbar (1.9.0)
     ruby_dep (1.5.0)
+    rufus-scheduler (3.4.2)
+      et-orbi (~> 1.0)
     safe_yaml (1.0.4)
     sass (3.4.25)
     scss_lint (0.55.0)
@@ -253,6 +257,11 @@ GEM
       redis (~> 3.2, >= 3.2.1)
     sidekiq-logging-json (0.0.18)
       sidekiq (>= 3)
+    sidekiq-scheduler (2.1.10)
+      redis (>= 3, < 5)
+      rufus-scheduler (~> 3.2)
+      sidekiq (>= 3)
+      tilt (>= 1.4.0)
     sidekiq-statsd (0.1.5)
       activesupport
       sidekiq (>= 2.6)
@@ -271,6 +280,7 @@ GEM
     statsd-ruby (1.4.0)
     thor (0.19.4)
     thread_safe (0.3.6)
+    tilt (2.0.8)
     timecop (0.9.1)
     tzinfo (1.2.3)
       thread_safe (~> 0.1)
@@ -314,6 +324,7 @@ DEPENDENCIES
   pry-byebug
   rails (= 5.1.0)
   rspec-rails (= 3.6.0)
+  sidekiq-scheduler (~> 2.1)
   sidekiq-unique-jobs (~> 5.0)
   timecop
   webmock
