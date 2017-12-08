@@ -1,3 +1,5 @@
+require "sidekiq-scheduler"
+
 class EmailGenerationWorker
   include Sidekiq::Worker
 

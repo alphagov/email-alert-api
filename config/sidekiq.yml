@@ -6,3 +6,7 @@
   - [high_delivery, 3]
   - [low_delivery, 2]
   - [default, 1]
+:schedule:
+  email_generation:
+    every: '5s'
+    class: EmailGenerationWorker
