@@ -52,9 +52,7 @@ RSpec.describe SubscriptionContentWorker do
     end
 
     it "queues the email through the EmailGenerationWorker" do
-      expect(EmailGenerationWorker).to receive(:perform_async).with(
-        kind_of(Integer), :low,
-      )
+      expect(EmailGenerationWorker).to receive(:perform_async).with(kind_of(Integer))
 
       subject.perform(content_change.id)
     end
@@ -65,20 +63,6 @@ RSpec.describe SubscriptionContentWorker do
       expect(EmailGenerationWorker).to receive(:perform_async).once
 
       subject.perform(content_change.id)
-    end
-
-    context "with a high priority content change" do
-      before do
-        content_change.update(priority: "high")
-      end
-
-      it "enqueues an email with the correct priority" do
-        expect(EmailGenerationWorker)
-          .to receive(:perform_async)
-          .with(kind_of(Integer), :high)
-
-        subject.perform(content_change.id)
-      end
     end
 
     it "marks the content_change as processed" do

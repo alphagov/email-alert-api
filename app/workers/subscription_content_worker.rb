@@ -18,10 +18,7 @@ private
           subscription: subscription,
         )
 
-        EmailGenerationWorker.perform_async(
-          subscription_content.id,
-          content_change.priority.to_sym,
-        )
+        EmailGenerationWorker.perform_async(subscription_content.id)
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })
       end

@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe EmailGenerationWorker do
-  let(:priority) { :low }
-
   describe ".perform" do
     context "with a subscription content" do
       let(:content_change) { create(:content_change, public_updated_at: DateTime.parse("2017/01/01 09:00")) }
@@ -11,7 +9,7 @@ RSpec.describe EmailGenerationWorker do
       def perform_with_fake_sidekiq
         Sidekiq::Testing.fake! do
           DeliveryRequestWorker.jobs.clear
-          described_class.new.perform(subscription_content.id, priority)
+          described_class.new.perform(subscription_content.id)
         end
       end
 
