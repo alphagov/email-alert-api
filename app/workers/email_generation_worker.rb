@@ -1,7 +1,7 @@
 class EmailGenerationWorker
   include Sidekiq::Worker
 
-  def perform(subscription_content_id, priority)
+  def perform(subscription_content_id)
     subscription_content = SubscriptionContent.find(subscription_content_id)
 
     email = Email.create_from_params!(email_params(subscription_content))
@@ -9,7 +9,7 @@ class EmailGenerationWorker
     subscription_content.update!(email: email)
 
     DeliveryRequestWorker.perform_async_with_priority(
-      email.id, priority: priority.to_sym
+      email.id, priority: subscription_content.content_change.priority.to_sym,
     )
   end
 

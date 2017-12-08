@@ -56,6 +56,7 @@ RSpec.describe NotificationHandlerService do
         govuk_request_id: params[:govuk_request_id],
         document_type: params[:document_type],
         publishing_app: params[:publishing_app],
+        priority: :low,
       }
 
       expect(ContentChange).to receive(:create!)
@@ -69,7 +70,7 @@ RSpec.describe NotificationHandlerService do
       allow(ContentChange).to receive(:create!).and_return(double(id: 1))
       expect(SubscriptionContentWorker)
         .to receive(:perform_async)
-        .with(1, :low)
+        .with(1)
 
       described_class.call(params: params)
     end

@@ -12,7 +12,7 @@ class NotificationHandlerService
     begin
       content_change = ContentChange.create!(content_change_params)
       increment_statsd
-      SubscriptionContentWorker.perform_async(content_change.id, priority)
+      SubscriptionContentWorker.perform_async(content_change.id)
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
     end
@@ -35,11 +35,8 @@ private
       govuk_request_id: params[:govuk_request_id],
       document_type: params[:document_type],
       publishing_app: params[:publishing_app],
+      priority: params.fetch(:priority, "low").to_sym,
     }
-  end
-
-  def priority
-    params.fetch(:priority, "low").to_sym
   end
 
   def increment_statsd
