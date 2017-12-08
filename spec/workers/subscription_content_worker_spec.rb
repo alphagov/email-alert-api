@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe SubscriptionContentWorker do
   let(:content_change) { create(:content_change, tags: { topics: ["oil-and-gas/licensing"] }) }
   let(:email) { create(:email) }

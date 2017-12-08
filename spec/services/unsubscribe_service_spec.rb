@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe UnsubscribeService do
   describe ".subscriber!" do
     let!(:subscriber) { FactoryGirl.create(:subscriber, address: "foo@bar.com") }

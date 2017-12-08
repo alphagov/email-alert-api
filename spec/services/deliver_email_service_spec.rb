@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe DeliverEmailService do
   describe ".call" do
     let(:email_sender) { double }

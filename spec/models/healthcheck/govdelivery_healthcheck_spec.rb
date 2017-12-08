@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Healthcheck::GovdeliveryHealthcheck do
   let(:url) { "http://govdelivery-api.example.com/api/account/UKGOVUK/categories.xml" }
   let(:headers) { { "Authorization" => "Basic #{HTTP_AUTH_CREDENTIALS}" } }

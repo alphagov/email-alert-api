@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe Email do
   describe "validations" do
     it "requires subject" do

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe SubscriberListQuery do
   subject do
     described_class.new(

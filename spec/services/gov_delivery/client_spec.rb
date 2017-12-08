@@ -1,4 +1,3 @@
-require "rails_helper" # These tests use #strip_heredoc which is in ActiveSupport
 require "base64"
 
 require "app/services/gov_delivery/client"

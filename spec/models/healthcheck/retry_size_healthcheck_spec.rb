@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Healthcheck::RetrySizeHealthcheck do
   before { allow(subject).to receive(:retry_size).and_return(size) }
 

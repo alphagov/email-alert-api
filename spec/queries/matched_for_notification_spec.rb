@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe MatchedForNotification do
   describe "#call" do
     before do

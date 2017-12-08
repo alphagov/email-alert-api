@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Healthcheck::QueueLatencyHealthcheck do
   before { allow(subject).to receive(:queue_latencies).and_return [latency] }
 

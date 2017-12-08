@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe SubscribablesController, type: :request do
   describe "GET /subscribables/<govuk_delivery_id>" do
     context "the subscribable exists" do

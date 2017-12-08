@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Healthcheck::DatabaseHealthcheck do
   let(:db) { ActiveRecord::Base }
 

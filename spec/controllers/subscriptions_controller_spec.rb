@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe SubscriptionsController, type: :controller do
   let(:data) { JSON.parse(response.body).deep_symbolize_keys }
 

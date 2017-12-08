@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Sending a notification", type: :request do
   context "v1" do
     before do

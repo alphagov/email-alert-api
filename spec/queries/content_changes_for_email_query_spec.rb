@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe ContentChangesForEmailQuery do
   describe ".call" do
     let!(:email) { create(:email) }

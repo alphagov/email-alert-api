@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe PublicUrlService do
   describe ".content_url" do
     it "returns the GOV.UK url for the content item" do

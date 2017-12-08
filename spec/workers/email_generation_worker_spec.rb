@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe EmailGenerationWorker do
   describe ".perform" do
     context "with a subscription content" do

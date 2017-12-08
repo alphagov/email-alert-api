@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe NotificationsController, type: :controller do
   describe "#create" do
     let(:body) {

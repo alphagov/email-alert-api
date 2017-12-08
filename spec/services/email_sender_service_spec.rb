@@ -1,4 +1,3 @@
-require "rails_helper"
 require "notifications/client"
 
 RSpec.describe EmailSenderService do

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Getting a subscriber list", type: :request do
   let!(:subscriber_list_links_only) do
     create(

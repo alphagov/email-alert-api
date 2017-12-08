@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe FindExactMatch do
   let!(:list_with_tags) do
     create(

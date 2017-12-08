@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe EmailRenderer do
   let(:subscriber) { double(:subscriber, subscriptions: subscriptions) }
 

@@ -1,4 +1,3 @@
-require 'rails_helper'
 require 'data_hygiene/delete_unneeded_topics'
 
 RSpec.describe DataHygiene::DeleteUnneededTopics do

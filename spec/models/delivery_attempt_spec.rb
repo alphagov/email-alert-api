@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe DeliveryAttempt, type: :model do
   shared_examples "is marked as a failure" do
     it "is marked as a failure" do

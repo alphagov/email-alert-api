@@ -1,4 +1,3 @@
-require "rails_helper"
 require "base64"
 
 RSpec.describe "Creating a subscriber list", type: :request do

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe RateSleeperService do
   describe ".run" do
     context "with jobs per second = 8" do

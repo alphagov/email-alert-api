@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe FindExactQuery do
   context "when links are in the query" do
     it "matched when subscriber list has the same links" do

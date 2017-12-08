@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe DeliveryRequestWorker do
   class FakeLimiter
     def run

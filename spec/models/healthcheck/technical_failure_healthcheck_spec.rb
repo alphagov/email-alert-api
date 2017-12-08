@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Healthcheck::TechnicalFailureHealthcheck do
   def create_delivery_attempt(status, updated, email = create(:email))
     create(:delivery_attempt, status: status, updated_at: updated, email: email)

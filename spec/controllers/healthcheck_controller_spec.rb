@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe HealthcheckController, type: :controller do
   before { stub_request(:get, /govdelivery/).to_return(status: 200) }
 
