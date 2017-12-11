@@ -3,12 +3,12 @@ require 'rails_helper'
 RSpec.describe EmailRenderer do
   let(:subscriber) { double(:subscriber, subscriptions: subscriptions) }
 
-  let(:subscriptions) do
-    [
-      double(uuid: "1234", subscriber_list: double(title: "First Subscription")),
-      double(uuid: "5678", subscriber_list: double(title: "Second Subscription")),
-    ]
+  before do
+    create(:subscription, uuid: "ad22a6f8-d6dd-4989-98e0-29a7c1049173", subscriber_list: create(:subscriber_list, title: "First Subscription"))
+    create(:subscription, uuid: "6fabfabd-8d02-4dc3-8190-a647ae69aef2", subscriber_list: create(:subscriber_list, title: "Second Subscription"))
   end
+
+  let(:subscriptions) { Subscription.all }
 
   let(:params) do
     {
@@ -39,10 +39,10 @@ RSpec.describe EmailRenderer do
           Updated on 12:00 am, 1 January 2017
 
           Unsubscribe from 'First Subscription':
-          http://www.dev.gov.uk/email/unsubscribe/1234?title=First%20Subscription
+          http://www.dev.gov.uk/email/unsubscribe/ad22a6f8-d6dd-4989-98e0-29a7c1049173?title=First%20Subscription
 
           Unsubscribe from 'Second Subscription':
-          http://www.dev.gov.uk/email/unsubscribe/5678?title=Second%20Subscription
+          http://www.dev.gov.uk/email/unsubscribe/6fabfabd-8d02-4dc3-8190-a647ae69aef2?title=Second%20Subscription
         BODY
       )
     end
