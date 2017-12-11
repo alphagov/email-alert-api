@@ -1,4 +1,4 @@
-RSpec.describe SubscribablesController, type: :request do
+RSpec.describe "Getting a subscribable", type: :request do
   describe "GET /subscribables/<govuk_delivery_id>" do
     context "the subscribable exists" do
       let!(:subscribable) { create(:subscriber_list, gov_delivery_id: "test135") }

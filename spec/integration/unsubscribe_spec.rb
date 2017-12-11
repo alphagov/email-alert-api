@@ -1,4 +1,4 @@
-RSpec.describe "/unsubscribe/<uuid>", type: :request do
+RSpec.describe "Unsubscribing", type: :request do
   describe "POST" do
     context "when the subscription exists" do
       let(:subscription) { create(:subscription) }

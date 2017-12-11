@@ -1,6 +1,7 @@
-RSpec.describe DeliverEmailService do
+RSpec.describe "Delivering an email" do
   let(:email_sender) { EmailSenderService.clone }
   let(:email) { create(:email, address: "test@test.com") }
+  let(:service) { DeliverEmailService }
 
   context "when sending through Notify" do
     describe ".call" do
@@ -17,7 +18,7 @@ RSpec.describe DeliverEmailService do
           hash_including(email_address: "test@test.com")
         ).and_return(double(id: 0))
 
-        described_class.call(email: email)
+        service.call(email: email)
       end
     end
   end
@@ -41,7 +42,7 @@ RSpec.describe DeliverEmailService do
           .to receive(:info)
           .with("Sending email to test@test.com\nSubject: subject\nBody: body\n")
 
-        described_class.call(email: email)
+        service.call(email: email)
       end
     end
   end
