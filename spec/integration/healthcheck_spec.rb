@@ -1,10 +1,10 @@
-RSpec.describe HealthcheckController, type: :controller do
+RSpec.describe "Healthcheck", type: :request do
   before { stub_request(:get, /govdelivery/).to_return(status: 200) }
 
   let(:data) { JSON.parse(response.body).deep_symbolize_keys }
 
   it "responds with json" do
-    get :check, format: :json
+    get "/healthcheck"
 
     expect(response.status).to eq(200)
     expect(response.content_type).to eq("application/json")
@@ -13,7 +13,7 @@ RSpec.describe HealthcheckController, type: :controller do
 
   context "when the healthchecks pass" do
     it "returns a status of 'ok'" do
-      get :check, format: :json
+      get "/healthcheck"
       expect(data.fetch(:status)).to eq("ok")
     end
   end
@@ -26,7 +26,7 @@ RSpec.describe HealthcheckController, type: :controller do
     end
 
     it "returns a status of 'warning'" do
-      get :check, format: :json
+      get "/healthcheck"
       expect(data.fetch(:status)).to eq("warning")
     end
   end
@@ -37,13 +37,13 @@ RSpec.describe HealthcheckController, type: :controller do
     end
 
     it "returns a status of 'critical'" do
-      get :check, format: :json
+      get "/healthcheck"
       expect(data.fetch(:status)).to eq("critical")
     end
   end
 
   it "includes useful information about each check" do
-    get :check, format: :json
+    get "/healthcheck"
 
     expect(data.fetch(:checks)).to include(
       database:          { status: "ok" },

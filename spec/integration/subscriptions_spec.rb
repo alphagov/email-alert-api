@@ -1,22 +1,19 @@
-RSpec.describe SubscriptionsController, type: :controller do
+RSpec.describe "Subscriptions", type: :request do
   let(:data) { JSON.parse(response.body).deep_symbolize_keys }
 
   it "requires an address parameter" do
-    expect {
-      post :create, params: { subscribable_id: 10 }
-    }.to raise_error(ActionController::ParameterMissing)
+    post "/subscriptions", params: { subscribable_id: 10 }
+    expect(response.status).to eq(400)
   end
 
   it "requires a subscribable_id parameter" do
-    expect {
-      post :create, params: { address: "test@example.com" }
-    }.to raise_error(ActionController::ParameterMissing)
+    post "/subscriptions", params: { address: "test@example.com" }
+    expect(response.status).to eq(400)
   end
 
   it "fails with an invalid subscribable" do
-    expect {
-      post :create, params: { subscribable_id: 10, address: "test@example.com" }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/subscriptions", params: { subscribable_id: 10, address: "test@example.com" }
+    expect(response.status).to eq(404)
   end
 
   context "with an existing subscription" do
@@ -25,7 +22,7 @@ RSpec.describe SubscriptionsController, type: :controller do
     let!(:subscription) { create(:subscription, subscriber_list: subscribable, subscriber: subscriber) }
 
     def create_subscription
-      post :create, params: { subscribable_id: subscribable.id, address: subscriber.address }, format: :json
+      post "/subscriptions", params: { subscribable_id: subscribable.id, address: subscriber.address }
     end
 
     it "doesn't create a new subscription" do
@@ -48,7 +45,7 @@ RSpec.describe SubscriptionsController, type: :controller do
       let(:subscribable) { create(:subscriber_list) }
 
       def create_subscription
-        post :create, params: { subscribable_id: subscribable.id, address: "test@example.com" }, format: :json
+        post "/subscriptions", params: { subscribable_id: subscribable.id, address: "test@example.com" }
       end
 
       context "with an existing subscriber" do
@@ -93,12 +90,9 @@ RSpec.describe SubscriptionsController, type: :controller do
   context "with an invalid email address" do
     let(:subscribable) { create(:subscriber_list) }
 
-    def create_subscription
-      post :create, params: { subscribable_id: subscribable.id, address: "invalid" }, format: :json
-    end
-
-    it "raises an error" do
-      expect { create_subscription }.to raise_error(ActiveRecord::RecordInvalid)
+    it "cannot process the request" do
+      post "/subscriptions", params: { subscribable_id: subscribable.id, address: "invalid" }
+      expect(response.status).to eq(422)
     end
   end
 end

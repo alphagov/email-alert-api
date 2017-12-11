@@ -27,7 +27,5 @@ JSON_HEADERS = {
 }.freeze
 
 def login_as(user)
-  request.env["warden"] = double(
-    authenticate!: true, authenticated?: true, user: user,
-  )
+  GDS::SSO.test_user = user
 end
