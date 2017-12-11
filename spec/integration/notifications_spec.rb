@@ -1,4 +1,4 @@
-RSpec.describe NotificationsController, type: :controller do
+RSpec.describe "Receiving a notification", type: :request do
   describe "#create" do
     let(:body) {
       <<-BODY.strip_heredoc
@@ -41,7 +41,7 @@ RSpec.describe NotificationsController, type: :controller do
         expected_notification_params
       )
 
-      post :create, params: notification_params.merge(format: :json)
+      post "/notifications", params: notification_params.merge(format: :json)
     end
 
     it "allows an optional document_type parameter" do
@@ -50,7 +50,7 @@ RSpec.describe NotificationsController, type: :controller do
         expected_notification_params
       )
 
-      post :create, params: notification_params.merge(format: :json)
+      post "/notifications", params: notification_params.merge(format: :json)
     end
 
     it "allows an optional email_document_supertype parameter" do
@@ -59,7 +59,7 @@ RSpec.describe NotificationsController, type: :controller do
         expected_notification_params
       )
 
-      post :create, params: notification_params.merge(format: :json)
+      post "/notifications", params: notification_params.merge(format: :json)
     end
 
     it "allows an optional government_document_supertype parameter" do
@@ -68,7 +68,7 @@ RSpec.describe NotificationsController, type: :controller do
         expected_notification_params
       )
 
-      post :create, params: notification_params.merge(format: :json)
+      post "/notifications", params: notification_params.merge(format: :json)
     end
   end
 end

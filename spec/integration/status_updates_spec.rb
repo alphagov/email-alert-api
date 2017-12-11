@@ -1,44 +1,48 @@
-RSpec.describe "Receiving a status update for an email", type: :request do
+RSpec.describe "Receiving a status update", type: :request do
   let!(:delivery_attempt) do
-    create(
-      :delivery_attempt,
-      reference: "ref-123",
-      status: "sending",
-      email: create(:email, address: "foo@bar.com"),
-    )
+    create(:delivery_attempt, reference: "ref-123", status: "sending")
   end
 
-  let!(:subscriber) { create(:subscriber, address: "foo@bar.com") }
+  describe "#create" do
+    let(:params) { { reference: "ref-123", status: "delivered" } }
 
-  before { create_list(:subscription, 3, subscriber: subscriber) }
+    context "when a user does not have 'status_updates' permission" do
+      before do
+        login_as(create(:user, permissions: %w[signin]))
+      end
 
-  it "sets the delivery attempt's status via a worker" do
-    params = { reference: "ref-123", status: "delivered" }
-    post "/status-updates", params: params
+      it "renders 403" do
+        post "/status-updates", params: params
 
-    expect(response.status).to eq(204)
-
-    delivery_attempt.reload
-    expect(delivery_attempt.status).to eq("delivered")
-  end
-
-  context "when the status is 'permanent-failure'" do
-    it "unsubscribes the subscriber" do
-      params = { reference: "ref-123", status: "permanent-failure" }
-      post "/status-updates", params: params
-
-      subscriber.reload
-
-      expect(subscriber.address).to be_nil
-      expect(subscriber.subscriptions).to be_empty
+        expect(response.status).to eq(403)
+      end
     end
 
-    context "and the subscriber has already been unsubscribed" do
-      before { UnsubscribeService.subscriber!(subscriber) }
+    context "when a user does not have 'status_updates' permission" do
+      before do
+        login_as(create(:user, permissions: %w[signin status_updates]))
+      end
 
-      it "does not error" do
-        params = { reference: "ref-123", status: "permanent-failure" }
-        expect { post "/status-updates", params: params }.not_to raise_error
+      it "calls the status update service" do
+        expect(StatusUpdateService).to receive(:call).with(
+          reference: "ref-123",
+          status: "delivered",
+        )
+
+        post "/status-updates", params: params
+      end
+
+      it "renders 204 no content" do
+        post "/status-updates", params: params
+
+        expect(response.status).to eq(204)
+        expect(response.body).to eq("")
+      end
+
+      it "updates the delivery attempt" do
+        expect { post "/status-updates", params: params }
+          .to change { delivery_attempt.reload.status }
+          .to eq("delivered")
       end
     end
   end
