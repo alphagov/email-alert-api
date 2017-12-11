@@ -16,7 +16,7 @@ RSpec.describe UnsubscribeService do
 
       it "removes them" do
         expect { subject.subscriber!(subscriber) }
-          .to change { subscriber.subscriptions.count }
+          .to change(subscriber.subscriptions, :count)
           .from(3)
           .to(0)
       end
@@ -27,7 +27,7 @@ RSpec.describe UnsubscribeService do
 
         expect { subject.subscriber!(subscriber) }
           .to raise_error("failed")
-          .and change { subscriber.subscriptions.count }
+          .and change(subscriber.subscriptions, :count)
           .by(0)
       end
     end
@@ -48,7 +48,7 @@ RSpec.describe UnsubscribeService do
 
       expect { subject.subscriber!(subscriber) }
         .to raise_error("failed")
-        .and change { subscriber.subscriptions.count }
+        .and change(subscriber.subscriptions, :count)
         .by(0)
     end
 
