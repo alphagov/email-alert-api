@@ -156,19 +156,23 @@ private
     puts "Creating #{subscribers.length} subscriptions"
 
     records = subscribers.map do |subscriber|
-      { subscriber_id: subscriber.id, subscriber_list_id: subscriber_list.id }
+      Subscription.new(uuid: SecureRandom.uuid, subscriber_id: subscriber.id, subscriber_list_id: subscriber_list.id)
     end
 
-    Subscription.create!(records)
+    Subscription.import!(records)
+
+    records
   end
 
   def create_subscription_contents(subscriptions:, content_change:)
     puts "Creating #{subscriptions.length} subscription contents"
 
     records = subscriptions.map do |subscription|
-      { content_change_id: content_change.id, subscription_id: subscription.id }
+      SubscriptionContent.new(content_change_id: content_change.id, subscription_id: subscription.id)
     end
 
-    SubscriptionContent.create!(records)
+    SubscriptionContent.import!(records)
+
+    records
   end
 end
