@@ -21,13 +21,6 @@ module Services
   end
 
   def self.rate_limiter
-    default_rate_for_six_workers = 8
-
-    @rate_limiter ||= RateSleeperService.new(
-      jobs_per_second: ENV.fetch(
-        "GOVUK_NOTIFY_RATE_PER_WORKER",
-        default_rate_for_six_workers
-      )
-    )
+    @rate_limiter ||= Ratelimit.new("deliveries")
   end
 end

@@ -31,6 +31,16 @@ RSpec.describe DeliveryRequestWorker do
         subject.perform(email.id)
       end
     end
+
+    context "with rate limit exceeded" do
+      it "raises a RatelimitExceededError" do
+        allow(Services).to receive(:rate_limiter).and_return(rate_limit = double)
+        allow(rate_limit).to receive(:exceeded?).and_return(true)
+        expect {
+          subject.perform(email.id)
+        }.to raise_error(RatelimitExceededError)
+      end
+    end
   end
 
   describe ".perform_async_with_priority" do
