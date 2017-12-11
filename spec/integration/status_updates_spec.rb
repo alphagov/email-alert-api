@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Receiving a status update for an email", type: :request do
   let!(:delivery_attempt) do
     create(

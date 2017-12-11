@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Healthcheck::QueueSizeHealthcheck do
   before { allow(subject).to receive(:queue_sizes).and_return [size] }
 

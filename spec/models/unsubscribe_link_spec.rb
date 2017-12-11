@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe UnsubscribeLink do
   let(:subscription) { double(uuid: "1234", subscriber_list: double(title: title)) }
   let(:title) { "dave crocker & friends" }

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Sending a notification", type: :request do
   context "v1" do
     before do
@@ -129,7 +127,7 @@ RSpec.describe "Sending a notification", type: :request do
         tags: tags,
       }.merge(options))
 
-      post "/notifications", params: request_body, headers: json_headers
+      post "/notifications", params: request_body, headers: JSON_HEADERS
     end
   end
 
@@ -163,7 +161,7 @@ RSpec.describe "Sending a notification", type: :request do
       allow(NotificationWorker).to receive(:perform_async)
       post "/notifications",
         params: request_params,
-        headers: json_headers.merge("HTTP_GOVUK_REQUEST_ID" => "request_id")
+        headers: JSON_HEADERS.merge("HTTP_GOVUK_REQUEST_ID" => "request_id")
     end
 
     it "creates a Notification" do

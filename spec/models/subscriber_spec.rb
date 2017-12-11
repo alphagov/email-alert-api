@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Subscriber, type: :model do
   context "validations" do
     subject { build(:subscriber) }

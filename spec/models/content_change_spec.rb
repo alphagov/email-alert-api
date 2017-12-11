@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe ContentChange do
   describe "#mark_processed!" do
     let(:content_change) { create(:content_change) }

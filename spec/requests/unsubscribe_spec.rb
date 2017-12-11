@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "/unsubscribe/<uuid>", type: :request do
   describe "POST" do
     context "when the subscription exists" do

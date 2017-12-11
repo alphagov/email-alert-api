@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Subscription, type: :model do
   describe "validations" do
     subject { build(:subscription) }

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe SubscriptionMatcher do
   let(:content_change) do
     create(:content_change, tags: { topics: ["oil-and-gas/licensing"] })

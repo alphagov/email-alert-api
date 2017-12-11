@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe StatusUpdatesController, type: :controller do
   let!(:delivery_attempt) do
     create(:delivery_attempt, reference: "ref-123", status: "sending")

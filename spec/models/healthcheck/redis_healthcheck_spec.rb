@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Healthcheck::RedisHealthcheck do
   context "when redis is available" do
     specify { expect(subject.status).to eq(:ok) }

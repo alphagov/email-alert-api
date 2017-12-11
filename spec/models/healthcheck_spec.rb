@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Healthcheck do
   let(:critical) do
     double(:healthcheck, name: :foo, status: :critical, details: {})

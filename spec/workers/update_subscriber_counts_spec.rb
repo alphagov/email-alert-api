@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe UpdateSubscriberCounts do
   describe '#perform' do
     it "updates the counts" do

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe FindByTopic do
   before do
     @list1 = create(:subscriber_list, tags: { format: ["raib_report"], })

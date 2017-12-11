@@ -1,31 +1,33 @@
-# This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= 'test'
-require 'spec_helper'
-require File.expand_path("../../config/environment", __FILE__)
-require 'rspec/rails'
+ENV["RAILS_ENV"] ||= "test"
 
-# Requires supporting ruby files with custom matchers and macros, etc, in
-# spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
-# run as spec files by default. This means that files in spec/support that end
-# in _spec.rb will both be required and run as specs, causing the specs to be
-# run twice. It is recommended that you do not name files matching this glob to
-# end with _spec.rb. You can configure this pattern with the --pattern
-# option on the command line or in ~/.rspec, .rspec or `.rspec-local`.
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+$LOAD_PATH << File.join(__dir__, "..")
+
+require "webmock/rspec"
+require "base64"
+require "config/environment"
+require "rspec/rails"
+require "govuk_sidekiq/testing"
+require "gds-sso/lint/user_spec"
+require "db/seeds"
 
 RSpec.configure do |config|
-  config.include FactoryGirl::Syntax::Methods
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
-
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
+  config.disable_monkey_patching!
   config.use_transactional_fixtures = true
-  config.before(:suite) { require "db/seeds" }
+  config.include FactoryGirl::Syntax::Methods
+end
 
-  config.include JSONRequestHelpers, type: :request
+WebMock.disable_net_connect!(allow_localhost: true)
 
-  config.include AuthenticationHelper::RequestMixin, type: :request
-  config.include AuthenticationHelper::ControllerMixin, type: :controller
+Sidekiq::Testing.inline!
+Sidekiq::Worker.clear_all
+
+JSON_HEADERS = {
+  "CONTENT_TYPE" => "application/json",
+  "ACCEPT" => "application/json",
+}.freeze
+
+def login_as(user)
+  request.env["warden"] = double(
+    authenticate!: true, authenticated?: true, user: user,
+  )
 end

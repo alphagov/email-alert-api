@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe DataHygiene::DataSync do
   let(:logger) { double(:logger, info: true, warn: true) }
   let(:topics) do

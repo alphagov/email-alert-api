@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe NotificationHandlerService do
   before do
     Timecop.freeze(Time.local(2017, 1, 1, 9))

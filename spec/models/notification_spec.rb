@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe ContentChange, type: :model do
   describe "validations" do
     subject { create(:content_change) }

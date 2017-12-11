@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe GovukRequestId, :insert do
   before do
     allow(GdsApi::GovukHeaders).to receive(:headers)

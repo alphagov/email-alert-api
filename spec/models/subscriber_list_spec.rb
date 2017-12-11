@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe SubscriberList, type: :model do
   describe ".build_from(params:, gov_delivery_id:)" do
     let(:params) {
