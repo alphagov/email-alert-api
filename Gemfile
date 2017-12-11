@@ -31,4 +31,5 @@ group :development, :test do
   gem 'listen', '3.1.5'
   gem 'pry-byebug'
   gem 'rspec-rails', '3.6.0'
+  gem 'ruby-prof', '~> 0.16'
 end
