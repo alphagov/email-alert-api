@@ -20,7 +20,7 @@ RSpec.describe "Sending a notification", type: :request do
     it "kicks off a notification job" do
       expect {
         send_notification(topics: ["oil-and-gas/licensing"])
-      }.to change { NotificationWorker.jobs.count }.from(0).to(1)
+      }.to change(NotificationWorker.jobs, :count).from(0).to(1)
     end
 
     it "sends notifications for the right subscriber lists" do

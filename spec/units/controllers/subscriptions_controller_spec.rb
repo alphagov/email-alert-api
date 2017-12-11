@@ -29,7 +29,7 @@ RSpec.describe SubscriptionsController, type: :controller do
     end
 
     it "doesn't create a new subscription" do
-      expect { create_subscription }.to_not(change { Subscription.count })
+      expect { create_subscription }.not_to change(Subscription, :count)
     end
 
     it "returns status code 201" do
@@ -57,19 +57,19 @@ RSpec.describe SubscriptionsController, type: :controller do
         end
 
         it "does not create another subscriber" do
-          expect { create_subscription }.to_not(change { Subscriber.count })
+          expect { create_subscription }.not_to change(Subscriber, :count)
         end
       end
 
       context "without an existing subscriber" do
         it "creates a new subscriber" do
-          expect { create_subscription }.to change { Subscriber.count }.by(1)
+          expect { create_subscription }.to change(Subscriber, :count).by(1)
           expect(Subscriber.first.address).to eq("test@example.com")
         end
       end
 
       it "creates the subscription" do
-        expect { create_subscription }.to change { Subscription.count }.by(1)
+        expect { create_subscription }.to change(Subscription, :count).by(1)
         expect(Subscription.first.subscriber_list).to eq(subscribable)
       end
 
@@ -85,7 +85,7 @@ RSpec.describe SubscriptionsController, type: :controller do
 
       it "returns the ID of the new subscription" do
         create_subscription
-        expect(data[:id]).to_not be_nil
+        expect(data[:id]).not_to be_nil
       end
     end
   end

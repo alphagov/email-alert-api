@@ -12,17 +12,15 @@ RSpec.describe EmailGenerationWorker do
       end
 
       it "should create an email" do
-        expect {
-          perform_with_fake_sidekiq
-        }
-          .to change { Email.count }
+        expect { perform_with_fake_sidekiq }
+          .to change(Email, :count)
           .from(0)
           .to(1)
       end
 
       it "should associate the subscription content with the email" do
         perform_with_fake_sidekiq
-        expect(subscription_content.reload.email).to_not be_nil
+        expect(subscription_content.reload.email).not_to be_nil
       end
 
       it "should queue a delivery email job" do
