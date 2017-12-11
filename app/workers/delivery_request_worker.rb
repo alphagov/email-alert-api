@@ -14,10 +14,8 @@ class DeliveryRequestWorker
   sidekiq_options retry: 3, queue: queue_for_priority(:low)
 
   def perform(email_id)
-    Services.rate_limiter.run do
-      email = Email.find(email_id)
-      DeliverEmailService.call(email: email)
-    end
+    email = Email.find(email_id)
+    DeliverEmailService.call(email: email)
   end
 
   def self.perform_async_with_priority(*args, priority:)

@@ -14,7 +14,6 @@ RSpec.describe DeliveryRequestWorker do
     allow(Services).to receive(:email_sender).and_return(
       email_sender
     )
-    allow(Services).to receive(:rate_limiter).and_return(fake_limiter)
   end
 
   describe ".perform" do
@@ -29,11 +28,6 @@ RSpec.describe DeliveryRequestWorker do
             body: email.body
           ).and_return(double(id: 0))
 
-        subject.perform(email.id)
-      end
-
-      it "calls Services.rater_limiter.run" do
-        expect(fake_limiter).to receive(:run)
         subject.perform(email.id)
       end
     end
