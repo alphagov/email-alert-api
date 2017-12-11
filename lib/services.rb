@@ -1,6 +1,4 @@
 require "gov_delivery/client"
-require "gds_api/content_store"
-require "notifications/client"
 
 module Services
   def self.gov_delivery
