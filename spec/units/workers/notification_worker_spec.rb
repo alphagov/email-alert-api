@@ -39,7 +39,7 @@ RSpec.describe NotificationWorker do
       end
 
       it 'creates a delivery log record' do
-        expect { make_it_perform }.to change { NotificationLog.count }.by(1)
+        expect { make_it_perform }.to change(NotificationLog, :count).by(1)
 
         expect(NotificationLog.last).to have_attributes(
           govuk_request_id: 'AAAAAA',
@@ -281,12 +281,11 @@ RSpec.describe NotificationWorker do
 
       it "does not send a bulletin" do
         make_it_perform
-
-        expect(@gov_delivery).to_not have_received(:send_bulletin)
+        expect(@gov_delivery).not_to have_received(:send_bulletin)
       end
 
       it 'creates a notification log record' do
-        expect { make_it_perform }.to change { NotificationLog.count }.by(1)
+        expect { make_it_perform }.to change(NotificationLog, :count).by(1)
 
         expect(NotificationLog.last).to have_attributes(
           govuk_request_id: 'AAAAAA',

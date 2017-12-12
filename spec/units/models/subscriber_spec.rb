@@ -72,10 +72,7 @@ RSpec.describe Subscriber, type: :model do
     end
 
     it "can be deleted and won't delete the subscriber list" do
-      expect {
-        subject.destroy
-      }.to_not raise_error
-
+      expect { subject.destroy }.not_to raise_error
       expect(SubscriberList.all.size).to eq(1)
     end
   end

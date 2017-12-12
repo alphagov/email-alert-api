@@ -226,7 +226,7 @@ RSpec.describe DataHygiene::DeleteUnneededTopics do
       end
 
       it 'deletes the subscriber list with 0 subscribers and the one missing from GovDelivery from the database' do
-        expect { subject.call }.to change { SubscriberList.count }.by(-2)
+        expect { subject.call }.to change(SubscriberList, :count).by(-2)
       end
 
       it 'correctly logs the process' do
@@ -259,7 +259,7 @@ RSpec.describe DataHygiene::DeleteUnneededTopics do
         end
 
         it 'does not delete that subscriber_list from the database' do
-          expect { subject.call }.to change { SubscriberList.count }.by(-1)
+          expect { subject.call }.to change(SubscriberList, :count).by(-1)
         end
       end
     end
