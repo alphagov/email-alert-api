@@ -7,7 +7,7 @@ class EmailGenerationService
 
   def call
     SubscriptionContent.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
-      subscription_contents.find_in_batches(batch_size: 500) do |group|
+      subscription_contents.find_in_batches(batch_size: 1000) do |group|
         to_queue = []
 
         SubscriptionContent.transaction do
