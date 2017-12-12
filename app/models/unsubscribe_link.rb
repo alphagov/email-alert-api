@@ -1,22 +1,21 @@
 class UnsubscribeLink
   def self.for(subscriptions)
-    subscriptions.includes(:subscriber_list).pluck(:title, :uuid).map do |title, uuid|
-      new(title: title, uuid: uuid)
-    end
+    subscriptions.map { |s| new(s) }
   end
 
-  attr_reader :title
+  def initialize(subscription)
+    self.subscription = subscription
+  end
 
-  def initialize(title:, uuid:)
-    @title = title
-    @uuid = uuid
+  def title
+    subscription.subscriber_list.title
   end
 
   def url
-    PublicUrlService.unsubscribe_url(uuid: uuid, title: title)
+    PublicUrlService.unsubscribe_url(uuid: subscription.uuid, title: title)
   end
 
 private
 
-  attr_reader :uuid
+  attr_accessor :subscription
 end

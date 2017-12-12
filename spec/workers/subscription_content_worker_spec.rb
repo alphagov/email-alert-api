@@ -50,7 +50,7 @@ RSpec.describe SubscriptionContentWorker do
     end
 
     it "queues the email through the EmailGenerationWorker" do
-      expect(EmailGenerationWorker).to receive(:perform_async).with(kind_of(Integer))
+      expect(EmailGenerationWorker).to receive(:perform_async)
 
       subject.perform(content_change.id)
     end

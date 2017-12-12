@@ -1,14 +1,18 @@
 RSpec.describe EmailGenerationWorker do
   describe ".perform" do
-    context "with a subscription content" do
-      let(:content_change) { create(:content_change, public_updated_at: DateTime.parse("2017/01/01 09:00")) }
-      let(:subscription_content) { create(:subscription_content, content_change: content_change) }
+    def perform_with_fake_sidekiq
+      Sidekiq::Testing.fake! do
+        DeliveryRequestWorker.jobs.clear
+        described_class.new.perform
+      end
+    end
 
-      def perform_with_fake_sidekiq
-        Sidekiq::Testing.fake! do
-          DeliveryRequestWorker.jobs.clear
-          described_class.new.perform(subscription_content.id)
-        end
+    context "with a subscription content" do
+      let!(:subscription_content) { create(:subscription_content) }
+
+      before do
+        create(:subscription_content, email: create(:email))
+        create(:subscription_content, subscription: create(:subscription, subscriber: create(:subscriber, address: nil)))
       end
 
       it "should create an email" do
@@ -16,8 +20,8 @@ RSpec.describe EmailGenerationWorker do
           perform_with_fake_sidekiq
         }
           .to change { Email.count }
-          .from(0)
-          .to(1)
+          .from(1)
+          .to(2)
       end
 
       it "should associate the subscription content with the email" do
@@ -28,6 +32,30 @@ RSpec.describe EmailGenerationWorker do
       it "should queue a delivery email job" do
         perform_with_fake_sidekiq
         expect(DeliveryRequestWorker.jobs.size).to eq(1)
+      end
+    end
+
+    context "with many subscription contents running concurrently" do
+      before do
+        100.times do
+          create(:subscription_content)
+        end
+      end
+
+      def run_worker
+        Sidekiq::Testing.fake! { described_class.new.perform }
+      end
+
+      def run_worker_threads
+        Rails.application.eager_load! # needed as autoload is not thread safe
+
+        3.times
+          .map { Thread.new { run_worker } }
+          .each(&:join)
+      end
+
+      it "will raise a stale object exception" do
+        expect { run_worker_threads }.to raise_error(ActiveRecord::StaleObjectError)
       end
     end
   end
