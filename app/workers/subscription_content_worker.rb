@@ -11,15 +11,17 @@ class SubscriptionContentWorker
 private
 
   def queue_delivery_to_subscribers(content_change)
-    subscriptions_for(content_change: content_change).find_each do |subscription|
-      begin
-        SubscriptionContent.create!(
-          content_change: content_change,
-          subscription: subscription,
-        )
-      rescue StandardError => ex
-        Raven.capture_exception(ex, tags: { version: 2 })
-      end
+    subscription_contents = subscriptions_for(content_change: content_change).find_each.map do |subscription|
+      SubscriptionContent.new(
+        content_change: content_change,
+        subscription: subscription,
+      )
+    end
+
+    begin
+      SubscriptionContent.import!(subscription_contents)
+    rescue StandardError => ex
+      Raven.capture_exception(ex, tags: { version: 2 })
     end
 
     EmailGenerationWorker.perform_async

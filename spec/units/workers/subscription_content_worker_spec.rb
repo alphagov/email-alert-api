@@ -25,7 +25,7 @@ RSpec.describe SubscriptionContentWorker do
     context "when we error" do
       it "reports errors when creating a SubscriptionContent in the database to Sentry and swallows them" do
         allow(SubscriptionContent)
-          .to receive(:create!)
+          .to receive(:import!)
           .and_raise(ActiveRecord::RecordInvalid)
 
         expect(Raven)
@@ -43,7 +43,7 @@ RSpec.describe SubscriptionContentWorker do
 
     it "creates subscription content for the content change" do
       expect(SubscriptionContent)
-        .to receive(:create!)
+        .to receive(:new)
         .with(content_change: content_change, subscription: subscription)
 
       subject.perform(content_change.id)
