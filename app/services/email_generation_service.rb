@@ -11,18 +11,12 @@ class EmailGenerationService
         to_queue = []
 
         SubscriptionContent.transaction do
-          emails = group.map do |subscription_content|
-            create_email(subscription_content: subscription_content)
-          end
+          emails = create_and_insert_emails(group)
 
-          Email.import!(emails)
-
-          new_values = group.zip(emails).each_with_object({}) do |(subscription_content, email), hsh|
+          values = group.zip(emails).map do |subscription_content, email|
             to_queue << [email.id, subscription_content.content_change.priority.to_sym]
-            hsh[subscription_content.id] = email.id
-          end
-
-          values = new_values.map { |id, email_id| "(#{id}, #{email_id})" }.join(",")
+            "(#{subscription_content.id}, #{email.id})"
+          end.join(",")
 
           ActiveRecord::Base.connection.execute(%(
             UPDATE subscription_contents SET email_id = v.email_id
@@ -31,16 +25,20 @@ class EmailGenerationService
           ))
         end
 
-        to_queue.each do |email_id, priority|
-          DeliveryRequestWorker.perform_async_with_priority(
-            email_id, priority: priority
-          )
-        end
+        queue_delivery_request_workers(to_queue)
       end
     end
   end
 
 private
+
+  def queue_delivery_request_workers(queue)
+    queue.each do |email_id, priority|
+      DeliveryRequestWorker.perform_async_with_priority(
+        email_id, priority: priority
+      )
+    end
+  end
 
   def subscription_contents
     SubscriptionContent
@@ -48,6 +46,18 @@ private
       .includes(:content_change, subscription: { subscriber: { subscriptions: :subscriber_list } })
       .where.not(subscribers: { address: nil })
       .where(email: nil)
+  end
+
+  def create_many_emails(subscription_contents)
+    subscription_contents.map do |subscription_content|
+      create_email(subscription_content: subscription_content)
+    end
+  end
+
+  def create_and_insert_emails(subscription_contents)
+    emails = create_many_emails(subscription_contents)
+    Email.import!(emails)
+    emails
   end
 
   def create_email(subscription_content:)
