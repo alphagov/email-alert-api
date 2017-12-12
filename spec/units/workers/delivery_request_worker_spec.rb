@@ -70,4 +70,40 @@ RSpec.describe DeliveryRequestWorker do
       end
     end
   end
+
+  describe ".perform_in_with_priority" do
+    let(:email) { double(id: 0) }
+    let(:priority) { nil }
+
+    before do
+      Sidekiq::Testing.fake!
+      Timecop.freeze do
+        described_class.perform_in_with_priority(
+          30.seconds, email.id, priority: priority
+        )
+
+        @frozen_time = Time.now
+      end
+    end
+
+    context "with a low priority" do
+      let(:priority) { :low }
+
+      it "schedules a job for 30 seconds from now" do
+        queued_job = Sidekiq::Queues["low_delivery"].first
+        expected_time = (@frozen_time + 30.seconds).to_i
+        expect(queued_job["at"].to_i).to eq(expected_time)
+      end
+    end
+
+    context "with a high priority" do
+      let(:priority) { :high }
+
+      it "schedules a job for 30 seconds from now" do
+        queued_job = Sidekiq::Queues["high_delivery"].first
+        expected_time = (@frozen_time + 30.seconds).to_i
+        expect(queued_job["at"].to_i).to eq(expected_time)
+      end
+    end
+  end
 end
