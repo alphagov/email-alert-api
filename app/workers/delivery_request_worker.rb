@@ -13,6 +13,10 @@ class DeliveryRequestWorker
 
   sidekiq_options retry: 3, queue: queue_for_priority(:low)
 
+  sidekiq_retry_in do |count|
+    10 * (count + 1) # 10, 20, 30
+  end
+
   def perform(email_id)
     email = Email.find(email_id)
     check_rate_limit!
