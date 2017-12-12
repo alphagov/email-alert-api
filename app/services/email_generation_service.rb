@@ -17,10 +17,18 @@ class EmailGenerationService
 
           Email.import!(emails)
 
-          group.zip(emails).each do |subscription_content, email|
-            subscription_content.update!(email_id: email.id)
+          new_values = group.zip(emails).each_with_object({}) do |(subscription_content, email), hsh|
             to_queue << [email.id, subscription_content.content_change.priority.to_sym]
+            hsh[subscription_content.id] = email.id
           end
+
+          values = new_values.map { |id, email_id| "(#{id}, #{email_id})" }.join(",")
+
+          ActiveRecord::Base.connection.execute(%(
+            UPDATE subscription_contents SET email_id = v.email_id
+            FROM (VALUES #{values}) AS v(id, email_id)
+            WHERE subscription_contents.id = v.id
+          ))
         end
 
         to_queue.each do |email_id, priority|
