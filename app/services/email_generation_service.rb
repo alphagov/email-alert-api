@@ -6,7 +6,7 @@ class EmailGenerationService
   end
 
   def call
-    SubscriptionContent.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
+    ensure_only_running_once do
       subscription_contents.find_in_batches do |group|
         to_queue = []
 
@@ -31,6 +31,12 @@ class EmailGenerationService
   end
 
 private
+
+  def ensure_only_running_once
+    SubscriptionContent.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
+      yield
+    end
+  end
 
   def queue_delivery_request_workers(queue)
     queue.each do |email_id, priority|
