@@ -21,6 +21,8 @@ private
         Raven.capture_exception(ex, tags: { version: 2 })
       end
     end
+
+    EmailGenerationWorker.perform_async
   end
 
   def queue_delivery_to_courtesy_subscribers(content_change)
