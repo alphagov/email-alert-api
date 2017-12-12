@@ -13,7 +13,6 @@ gem 'plek', '2.0.0'
 
 gem 'govuk_sidekiq', '~> 3.0'
 gem 'sidekiq-scheduler', '~> 2.1'
-gem 'sidekiq-unique-jobs', '~> 5.0'
 
 group :test do
   gem 'equivalent-xml'
