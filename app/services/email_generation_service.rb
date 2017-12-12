@@ -11,8 +11,13 @@ class EmailGenerationService
         to_queue = []
 
         SubscriptionContent.transaction do
-          group.each do |subscription_content|
-            email = create_email(subscription_content: subscription_content)
+          emails = group.map do |subscription_content|
+            create_email(subscription_content: subscription_content)
+          end
+
+          Email.import!(emails)
+
+          group.zip(emails).each do |subscription_content, email|
             subscription_content.update!(email_id: email.id)
             to_queue << [email.id, subscription_content.content_change.priority.to_sym]
           end
@@ -38,7 +43,7 @@ private
   end
 
   def create_email(subscription_content:)
-    Email.create_from_params!(email_params(subscription_content: subscription_content))
+    Email.build_from_params(email_params(subscription_content: subscription_content))
   end
 
   def email_params(subscription_content:)
