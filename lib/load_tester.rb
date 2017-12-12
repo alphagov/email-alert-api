@@ -1,4 +1,8 @@
 class LoadTester
+  def initialize
+    #enable_logging
+  end
+
   def self.test_delivery_request_worker(number)
     new.test_delivery_request_worker(number)
   end
@@ -28,12 +32,11 @@ class LoadTester
     puts "Creating content change"
     content_change = create_test_content_change
 
-    subscription_contents = create_subscription_contents(subscriptions: subscriptions, content_change: content_change)
+    create_subscription_contents(subscriptions: subscriptions, content_change: content_change)
 
-    puts "Running workers"
-    subscription_contents.each do |subscription_content|
-      EmailGenerationWorker.perform_async(subscription_content.id, :low)
-    end
+    puts "Running service"
+    duration = Benchmark.measure { EmailGenerationService.call }
+    puts "Took #{duration}"
   end
 
   def self.test_subscription_content_worker(number)
@@ -52,7 +55,8 @@ class LoadTester
     content_change = create_test_content_change(subscriber_list.document_type)
 
     puts "Running worker"
-    SubscriptionContentWorker.perform_async(content_change.id, :low)
+    duration = Benchmark.measure { SubscriptionContentWorker.new.perform(content_change.id) }
+    puts "Took #{duration}"
   end
 
   def self.test_notification_handler_service(number)
@@ -89,10 +93,15 @@ class LoadTester
     content_change.delete
 
     puts "Running service"
-    NotificationHandlerService.call(params: params)
+    duration = Benchmark.measure { NotificationHandlerService.call(params: params) }
+    puts "Took #{duration}"
   end
 
 private
+
+  def enable_logging
+    ActiveRecord::Base.logger = Logger.new(STDOUT)
+  end
 
   def create_test_email(to:)
     Email.create!(address: to, body: "body", subject: "subject")
@@ -147,19 +156,23 @@ private
     puts "Creating #{subscribers.length} subscriptions"
 
     records = subscribers.map do |subscriber|
-      { subscriber_id: subscriber.id, subscriber_list_id: subscriber_list.id }
+      Subscription.new(uuid: SecureRandom.uuid, subscriber_id: subscriber.id, subscriber_list_id: subscriber_list.id)
     end
 
-    Subscription.create!(records)
+    Subscription.import!(records)
+
+    records
   end
 
   def create_subscription_contents(subscriptions:, content_change:)
     puts "Creating #{subscriptions.length} subscription contents"
 
     records = subscriptions.map do |subscription|
-      { content_change_id: content_change.id, subscription_id: subscription.id }
+      SubscriptionContent.new(content_change_id: content_change.id, subscription_id: subscription.id)
     end
 
-    SubscriptionContent.create!(records)
+    SubscriptionContent.import!(records)
+
+    records
   end
 end

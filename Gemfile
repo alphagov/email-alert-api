@@ -3,6 +3,9 @@ source 'https://rubygems.org'
 gem 'pg', '0.20.0'
 gem 'rails', '5.1.0'
 
+gem 'activerecord-import', '~> 0.21'
+gem 'with_advisory_lock', '~> 3.2'
+
 gem 'faraday', '0.12.1'
 gem 'gds-api-adapters', '~> 47.9.0'
 gem 'gds-sso', '~> 13.2'
@@ -13,7 +16,6 @@ gem 'plek', '2.0.0'
 
 gem 'govuk_sidekiq', '~> 3.0'
 gem 'sidekiq-scheduler', '~> 2.1'
-gem 'sidekiq-unique-jobs', '~> 5.0'
 
 group :test do
   gem 'equivalent-xml'

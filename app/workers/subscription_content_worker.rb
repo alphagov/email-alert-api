@@ -13,16 +13,16 @@ private
   def queue_delivery_to_subscribers(content_change)
     subscriptions_for(content_change: content_change).find_each do |subscription|
       begin
-        subscription_content = SubscriptionContent.create!(
+        SubscriptionContent.create!(
           content_change: content_change,
           subscription: subscription,
         )
-
-        EmailGenerationWorker.perform_async(subscription_content.id)
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })
       end
     end
+
+    EmailGenerationWorker.perform_async
   end
 
   def queue_delivery_to_courtesy_subscribers(content_change)
