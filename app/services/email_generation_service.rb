@@ -7,13 +7,22 @@ class EmailGenerationService
 
   def call
     SubscriptionContent.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
-      subscription_contents.find_each do |subscription_content|
-        email = create_email(subscription_content: subscription_content)
-        subscription_content.update!(email_id: email.id)
+      subscription_contents.find_in_batches(batch_size: 500) do |group|
+        to_queue = []
 
-        DeliveryRequestWorker.perform_async_with_priority(
-          email.id, priority: subscription_content.content_change.priority.to_sym
-        )
+        SubscriptionContent.transaction do
+          group.each do |subscription_content|
+            email = create_email(subscription_content: subscription_content)
+            subscription_content.update!(email_id: email.id)
+            to_queue << [email.id, subscription_content.content_change.priority.to_sym]
+          end
+        end
+
+        to_queue.each do |email_id, priority|
+          DeliveryRequestWorker.perform_async_with_priority(
+            email_id, priority: priority
+          )
+        end
       end
     end
   end
