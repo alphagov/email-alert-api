@@ -49,20 +49,6 @@ RSpec.describe SubscriptionContentWorker do
       subject.perform(content_change.id)
     end
 
-    it "queues the email through the EmailGenerationWorker" do
-      expect(EmailGenerationWorker).to receive(:perform_async).with(kind_of(Integer))
-
-      subject.perform(content_change.id)
-    end
-
-    it "does not enqueue an email to subscribers without a subscription to this content" do
-      create(:subscriber, address: "should_not_receive_email@example.com")
-
-      expect(EmailGenerationWorker).to receive(:perform_async).once
-
-      subject.perform(content_change.id)
-    end
-
     it "marks the content_change as processed" do
       expect(content_change).to receive(:mark_processed!)
       subject.perform(content_change.id)

@@ -28,12 +28,10 @@ class LoadTester
     puts "Creating content change"
     content_change = create_test_content_change
 
-    subscription_contents = create_subscription_contents(subscriptions: subscriptions, content_change: content_change)
+    create_subscription_contents(subscriptions: subscriptions, content_change: content_change)
 
-    puts "Running workers"
-    subscription_contents.each do |subscription_content|
-      EmailGenerationWorker.perform_async(subscription_content.id, :low)
-    end
+    puts "Running service"
+    EmailGenerationService.call
   end
 
   def self.test_subscription_content_worker(number)
