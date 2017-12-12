@@ -7,6 +7,23 @@ RSpec.describe EmailGenerationService do
       end
     end
 
+    context "with many subscription contents" do
+      before do
+        50.times do
+          create(:subscription_content)
+        end
+      end
+
+      it "should match up with the right emails" do
+        perform_with_fake_sidekiq
+
+        SubscriptionContent.all.find_each do |subscription_content|
+          expect(subscription_content.email.address)
+            .to eq(subscription_content.subscription.subscriber.address)
+        end
+      end
+    end
+
     context "with a subscription content" do
       let!(:subscription_content) { create(:subscription_content) }
 
