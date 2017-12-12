@@ -11,18 +11,22 @@ class SubscriptionContentWorker
 private
 
   def queue_delivery_to_subscribers(content_change)
-    subscriptions_for(content_change: content_change).find_each do |subscription|
+    subscriptions_for(content_change: content_change).find_in_batches do |group|
+      records = group.map do |subscription|
+        {
+          content_change_id: content_change.id,
+          subscription_id: subscription.id,
+        }
+      end
+
       begin
-        SubscriptionContent.create!(
-          content_change: content_change,
-          subscription: subscription,
-        )
+        SubscriptionContent.import!(records)
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })
       end
-    end
 
-    EmailGenerationWorker.perform_async
+      EmailGenerationWorker.perform_async
+    end
   end
 
   def queue_delivery_to_courtesy_subscribers(content_change)

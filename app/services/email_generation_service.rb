@@ -6,41 +6,45 @@ class EmailGenerationService
   end
 
   def call
-    SubscriptionContent.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
-      subscription_contents.find_in_batches(batch_size: 1000) do |group|
+    ensure_only_running_once do
+      subscription_contents.find_in_batches do |group|
         to_queue = []
 
         SubscriptionContent.transaction do
-          emails = group.map do |subscription_content|
-            create_email(subscription_content: subscription_content)
+          email_ids = build_and_insert_emails(group).ids
+
+          values = group.zip(email_ids).map do |subscription_content, email_id|
+            to_queue << [email_id, subscription_content.content_change.priority.to_sym]
+            "(#{subscription_content.id}, #{email_id})"
           end
-
-          Email.import!(emails)
-
-          new_values = group.zip(emails).each_with_object({}) do |(subscription_content, email), hsh|
-            to_queue << [email.id, subscription_content.content_change.priority.to_sym]
-            hsh[subscription_content.id] = email.id
-          end
-
-          values = new_values.map { |id, email_id| "(#{id}, #{email_id})" }.join(",")
 
           ActiveRecord::Base.connection.execute(%(
             UPDATE subscription_contents SET email_id = v.email_id
-            FROM (VALUES #{values}) AS v(id, email_id)
+            FROM (VALUES #{values.join(',')}) AS v(id, email_id)
             WHERE subscription_contents.id = v.id
           ))
         end
 
-        to_queue.each do |email_id, priority|
-          DeliveryRequestWorker.perform_async_with_priority(
-            email_id, priority: priority
-          )
-        end
+        queue_delivery_request_workers(to_queue)
       end
     end
   end
 
 private
+
+  def ensure_only_running_once
+    SubscriptionContent.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
+      yield
+    end
+  end
+
+  def queue_delivery_request_workers(queue)
+    queue.each do |email_id, priority|
+      DeliveryRequestWorker.perform_async_with_priority(
+        email_id, priority: priority
+      )
+    end
+  end
 
   def subscription_contents
     SubscriptionContent
@@ -50,7 +54,18 @@ private
       .where(email: nil)
   end
 
-  def create_email(subscription_content:)
+  def build_many_emails(subscription_contents)
+    subscription_contents.map do |subscription_content|
+      build_email(subscription_content: subscription_content)
+    end
+  end
+
+  def build_and_insert_emails(subscription_contents)
+    emails = build_many_emails(subscription_contents)
+    Email.import!(emails)
+  end
+
+  def build_email(subscription_content:)
     Email.build_from_params(email_params(subscription_content: subscription_content))
   end
 

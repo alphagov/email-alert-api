@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171208081924) do
+ActiveRecord::Schema.define(version: 20171212130557) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,7 +82,10 @@ ActiveRecord::Schema.define(version: 20171208081924) do
     t.string "email_document_supertype", default: "", null: false
     t.string "government_document_supertype", default: "", null: false
     t.integer "subscriber_count"
+    t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
+    t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
     t.index ["gov_delivery_id"], name: "index_subscriber_lists_on_gov_delivery_id", unique: true
+    t.index ["government_document_supertype"], name: "index_subscriber_lists_on_government_document_supertype"
   end
 
   create_table "subscribers", force: :cascade do |t|
