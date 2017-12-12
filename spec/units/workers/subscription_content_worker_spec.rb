@@ -43,8 +43,8 @@ RSpec.describe SubscriptionContentWorker do
 
     it "creates subscription content for the content change" do
       expect(SubscriptionContent)
-        .to receive(:new)
-        .with(content_change: content_change, subscription: subscription)
+        .to receive(:import!)
+        .with([{ content_change_id: content_change.id, subscription_id: subscription.id }])
 
       subject.perform(content_change.id)
     end

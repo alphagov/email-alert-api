@@ -13,10 +13,10 @@ private
   def queue_delivery_to_subscribers(content_change)
     subscriptions_for(content_change: content_change).find_in_batches do |group|
       records = group.map do |subscription|
-        SubscriptionContent.new(
-          content_change: content_change,
-          subscription: subscription,
-        )
+        {
+          content_change_id: content_change.id,
+          subscription_id: subscription.id,
+        }
       end
 
       begin
