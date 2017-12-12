@@ -43,7 +43,10 @@ class DeliveryRequestWorker
   end
 
   def check_rate_limit!
-    raise RatelimitExceededError if rate_limit_exceeded?
+    if rate_limit_exceeded?
+      GovukStatsd.increment("delivery_request_worker.rate_limit_exceeded")
+      raise RatelimitExceededError
+    end
   end
 
   def rate_limit_exceeded?
@@ -59,6 +62,7 @@ class DeliveryRequestWorker
   end
 
   def reschedule_job
+    GovukStatsd.increment("delivery_request_worker.rescheduled")
     DeliveryRequestWorker.perform_in_with_priority(30.seconds, email.id, priority)
   end
 end
