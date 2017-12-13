@@ -1,11 +1,18 @@
+<% app_domain = ENV.fetch("GOVUK_APP_DOMAIN", "") %>
+<% env = %w(integration staging).detect { |s| app_domain.include?(s) } %>
+<% email_subject_prefix = "#{env.upcase} - " if env %>
+
 development:
   provider: <%= ENV["EMAIL_SERVICE_PROVIDER"] || "PSEUDO" %>
+  email_subject_prefix: <%= email_subject_prefix %>
   email_address_override: <%= ENV["EMAIL_ADDRESS_OVERRIDE"] %>
 
 test:
   provider: <%= ENV["EMAIL_SERVICE_PROVIDER"] || "PSEUDO" %>
+  email_subject_prefix: <%= email_subject_prefix %>
   email_address_override: <%= ENV["EMAIL_ADDRESS_OVERRIDE"] %>
 
 production:
   provider: <%= ENV["EMAIL_SERVICE_PROVIDER"] || "NOTIFY" %>
+  email_subject_prefix: <%= email_subject_prefix %>
   email_address_override: <%= ENV["EMAIL_ADDRESS_OVERRIDE"] %>
