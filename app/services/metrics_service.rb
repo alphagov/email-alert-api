@@ -20,6 +20,10 @@ class MetricsService
       increment("responses.#{status}")
     end
 
+    def email_send_request(provider_name, &block)
+      time("#{provider_name}.email_send_request.timing", &block)
+    end
+
     def first_delivery_attempt(email, time)
       return if DeliveryAttempt.exists?(email: email)
       store_time_to_send_email(email, time)
@@ -49,6 +53,10 @@ class MetricsService
 
     def increment(metric)
       GovukStatsd.increment(metric)
+    end
+
+    def time(metric, &block)
+      GovukStatsd.time(metric, &block)
     end
 
     def timing(namespace, difference)

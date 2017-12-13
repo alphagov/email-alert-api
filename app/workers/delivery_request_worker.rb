@@ -27,7 +27,7 @@ class DeliveryRequestWorker
     @email = Email.find(email_id)
     check_rate_limit!
     increment_rate_limiter
-    DeliverEmailService.call(email: email)
+    DeliveryRequestService.call(email: @email)
   end
 
   def self.perform_async_with_priority(*args, priority:)
