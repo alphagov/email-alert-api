@@ -13,7 +13,6 @@ test:
   template_id: <%= ENV.fetch('GOVUK_NOTIFY_TEMPLATE_ID', template_id) %>
 
 production:
-  <% # Don't use fakes in production, which causes Notifications::Client.new to fail %>
   api_key: <%= ENV.fetch('GOVUK_NOTIFY_API_KEY', nil) %>
   base_url: <%= ENV.fetch('GOVUK_NOTIFY_BASE_URL', nil) %>
   template_id: <%= ENV.fetch('GOVUK_NOTIFY_TEMPLATE_ID', template_id) %>
