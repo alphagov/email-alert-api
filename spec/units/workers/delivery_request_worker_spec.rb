@@ -106,4 +106,90 @@ RSpec.describe DeliveryRequestWorker do
       end
     end
   end
+
+  describe "rate_limiter" do
+    let(:rate_limiter) { double }
+
+    before do
+      allow(Services).to receive(:rate_limiter).and_return(rate_limiter)
+    end
+
+    describe "rate_limit_threshold" do
+      before do
+        ENV["DELIVERY_REQUEST_THRESHOLD"] = nil
+      end
+
+      it "returns ENV['DELIVERY_REQUEST_THRESHOLD'] if set" do
+        ENV["DELIVERY_REQUEST_THRESHOLD"] = "10"
+        expect(subject.rate_limit_threshold).to eq("10")
+      end
+
+      it "is 21600 by default" do
+        expect(subject.rate_limit_threshold).to eq(21600)
+      end
+    end
+
+    describe "rate_limit_interval" do
+      before do
+        ENV["DELIVERY_REQUEST_INTERVAL"] = nil
+      end
+
+      it "returns ENV['DELIVERY_REQUEST_INTERVAL'] if set" do
+        ENV["DELIVERY_REQUEST_INTERVAL"] = "20"
+        expect(subject.rate_limit_interval).to eq("20")
+      end
+
+      it "is 60 by default" do
+        expect(subject.rate_limit_interval).to eq(60)
+      end
+    end
+
+    describe "increment_rate_limiter" do
+      it "increments the delivery_request count" do
+        expect(rate_limiter).to receive(:add).with("delivery_request")
+        subject.increment_rate_limiter
+      end
+    end
+
+    describe "rate_limit_exceeded?" do
+      it "checks the delivery_request limit" do
+        default_threshold = 21600
+        default_interval = 60
+
+        expect(rate_limiter).to receive(:exceeded?).with(
+          "delivery_request",
+          threshold: default_threshold,
+          interval: default_interval
+        ).and_return(true)
+
+        expect(subject.rate_limit_exceeded?).to eq(true)
+      end
+    end
+
+    describe "check_rate_limit!" do
+      context "rate limit not exceeded" do
+        before do
+          allow(rate_limiter).to receive(:exceeded?).and_return(false)
+        end
+
+        it "doesn't raise" do
+          expect {
+            subject.check_rate_limit!
+          }.not_to raise_error
+        end
+      end
+
+      context "rate limit exceeded" do
+        before do
+          allow(rate_limiter).to receive(:exceeded?).and_return(true)
+        end
+
+        it "raises a RatelimitExceededError" do
+          expect {
+            subject.check_rate_limit!
+          }.to raise_error(RatelimitExceededError)
+        end
+      end
+    end
+  end
 end

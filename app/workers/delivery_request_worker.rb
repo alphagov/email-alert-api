@@ -50,7 +50,11 @@ class DeliveryRequestWorker
   end
 
   def rate_limit_exceeded?
-    rate_limiter.exceeded?("notify", threshold: 18000, interval: 60)
+    rate_limiter.exceeded?(
+      "delivery_request",
+      threshold: rate_limit_threshold,
+      interval: rate_limit_interval,
+    )
   end
 
   def rate_limiter
@@ -58,12 +62,22 @@ class DeliveryRequestWorker
   end
 
   def increment_rate_limiter
-    rate_limiter.add("notify")
+    rate_limiter.add("delivery_request")
   end
 
   def reschedule_job
     GovukStatsd.increment("delivery_request_worker.rescheduled")
     DeliveryRequestWorker.perform_in_with_priority(30.seconds, email.id, priority)
+  end
+
+  def rate_limit_threshold
+    per_minute_to_allow_360_per_second = 21600
+    ENV["DELIVERY_REQUEST_THRESHOLD"] || per_minute_to_allow_360_per_second
+  end
+
+  def rate_limit_interval
+    minute_in_seconds = 60
+    ENV["DELIVERY_REQUEST_INTERVAL"] || minute_in_seconds
   end
 end
 
