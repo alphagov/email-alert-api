@@ -28,3 +28,5 @@ end
 
 require_relative '../lib/email_alert_api/config'
 EmailAlertAPI.config = EmailAlertAPI::Config.new(Rails.env)
+
+class ProviderError < StandardError; end;
