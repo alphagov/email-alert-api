@@ -11,7 +11,7 @@ class NotificationHandlerService
   def call
     begin
       content_change = ContentChange.create!(content_change_params)
-      increment_statsd
+      MetricsService.content_change_created
       SubscriptionContentWorker.perform_async(content_change.id)
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
@@ -37,9 +37,5 @@ private
       publishing_app: params[:publishing_app],
       priority: params.fetch(:priority, "low").to_sym,
     }
-  end
-
-  def increment_statsd
-    GovukStatsd.increment("content_changes_created")
   end
 end
