@@ -15,6 +15,7 @@ gem 'notifications-ruby-client', '~> 2.5'
 gem 'plek', '2.0.0'
 
 gem 'govuk_sidekiq', '~> 3.0'
+gem 'ratelimit', '~> 1.0'
 gem 'sidekiq-scheduler', '~> 2.1'
 
 group :test do

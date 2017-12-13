@@ -205,6 +205,9 @@ GEM
       rake
     raindrops (0.19.0)
     rake (12.0.0)
+    ratelimit (1.0.3)
+      redis (>= 2.0.0)
+      redis-namespace (>= 1.0.0)
     rb-fsevent (0.9.8)
     rb-inotify (0.9.8)
       ffi (>= 0.5.0)
@@ -327,6 +330,7 @@ DEPENDENCIES
   plek (= 2.0.0)
   pry-byebug
   rails (= 5.1.0)
+  ratelimit (~> 1.0)
   rspec-rails (= 3.6.0)
   ruby-prof (~> 0.16)
   sidekiq-scheduler (~> 2.1)
