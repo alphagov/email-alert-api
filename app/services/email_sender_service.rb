@@ -9,11 +9,13 @@ class EmailSenderService
   def call(address:, subject:, body:)
     log_override(address: address, subject: subject, body: body) if email_address_override
 
-    provider.call(
-      address: email_address_override || address,
-      subject: subject,
-      body: body
-    )
+    GovukStatsd.time("#{provider_name}.email_send_request.timing") do
+      provider.call(
+        address: email_address_override || address,
+        subject: subject,
+        body: body
+      )
+    end
   end
 
   def provider_name
