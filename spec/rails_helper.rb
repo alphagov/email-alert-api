@@ -24,6 +24,7 @@ Sidekiq::Worker.clear_all
 JSON_HEADERS = {
   "CONTENT_TYPE" => "application/json",
   "ACCEPT" => "application/json",
+  "HTTP_GOVUK_REQUEST_ID" => "request-id",
 }.freeze
 
 def login_as(user)
