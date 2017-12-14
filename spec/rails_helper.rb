@@ -8,12 +8,14 @@ require "config/environment"
 require "rspec/rails"
 require "govuk_sidekiq/testing"
 require "gds-sso/lint/user_spec"
+require "spec/features/_shared_steps"
 require "db/seeds"
 
 RSpec.configure do |config|
   config.disable_monkey_patching!
   config.use_transactional_fixtures = true
   config.include FactoryGirl::Syntax::Methods
+  config.include SharedSteps, type: :request
 end
 
 WebMock.disable_net_connect!(allow_localhost: true)
