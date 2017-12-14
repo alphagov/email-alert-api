@@ -1,6 +1,4 @@
 RSpec.describe "Subscriptions", type: :request do
-  let(:data) { JSON.parse(response.body).deep_symbolize_keys }
-
   it "requires an address parameter" do
     post "/subscriptions", params: { subscribable_id: 10 }
     expect(response.status).to eq(400)

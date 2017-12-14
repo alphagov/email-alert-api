@@ -30,3 +30,7 @@ JSON_HEADERS = {
 def login_as(user)
   GDS::SSO.test_user = user
 end
+
+def data(body = response.body)
+  JSON.parse(body).deep_symbolize_keys
+end

@@ -1,8 +1,6 @@
 RSpec.describe "Healthcheck", type: :request do
   before { stub_request(:get, /govdelivery/).to_return(status: 200) }
 
-  let(:data) { JSON.parse(response.body).deep_symbolize_keys }
-
   it "responds with json" do
     get "/healthcheck"
 
