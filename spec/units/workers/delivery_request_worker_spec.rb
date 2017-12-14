@@ -1,15 +1,9 @@
 RSpec.describe DeliveryRequestWorker do
-  class FakeLimiter
-    def run
-      yield
-    end
-  end
-
-  let(:fake_limiter) { FakeLimiter.new }
+  let(:rate_limiter) { double(exceeded?: false, add: nil) }
 
   before do
     Sidekiq::Worker.clear_all
-    allow(Services).to receive(:rate_limiter).and_return(fake_limiter)
+    allow(Services).to receive(:rate_limiter).and_return(rate_limiter)
   end
 
   describe ".perform" do
@@ -24,8 +18,7 @@ RSpec.describe DeliveryRequestWorker do
 
     context "with rate limit exceeded" do
       it "raises a RatelimitExceededError" do
-        allow(Services).to receive(:rate_limiter).and_return(rate_limit = double)
-        allow(rate_limit).to receive(:exceeded?).and_return(true)
+        allow(rate_limiter).to receive(:exceeded?).and_return(true)
         expect {
           subject.perform(email.id)
         }.to raise_error(RatelimitExceededError)
@@ -98,12 +91,6 @@ RSpec.describe DeliveryRequestWorker do
   end
 
   describe "rate_limiter" do
-    let(:rate_limiter) { double }
-
-    before do
-      allow(Services).to receive(:rate_limiter).and_return(rate_limiter)
-    end
-
     describe "rate_limit_threshold" do
       before do
         ENV["DELIVERY_REQUEST_THRESHOLD"] = nil
