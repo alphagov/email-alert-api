@@ -55,6 +55,11 @@ module SharedSteps
     expect(a_request(:post, /fake-notify/)).not_to have_been_made
   end
 
+  def extract_unsubscribe_uuid(email_data)
+    body = email_data.dig(:personalisation, :body)
+    body[%r{/unsubscribe/(.*)\?}, 1]
+  end
+
   def clear_any_requests_that_have_been_recorded!
     WebMock::RequestRegistry.instance.reset!
   end
