@@ -44,6 +44,12 @@ module SharedSteps
     expect(response.status).to eq(202)
   end
 
+  def send_status_update(reference, status, expected_status: 204)
+    params = { reference: reference, status: status }
+    post "/status-updates", params: params.to_json, headers: JSON_HEADERS
+    expect(response.status).to eq(expected_status)
+  end
+
   def expect_an_email_was_sent
     request_data = nil
     expectation = ->(request) { request_data = data(request.body) }
