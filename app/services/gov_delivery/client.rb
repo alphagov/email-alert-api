@@ -131,7 +131,7 @@ module GovDelivery
     end
 
     def parse_topic_response(response)
-      GovukStatsd.increment("responses.#{response.status}")
+      MetricsService.govdelivery_topic_response(response.status)
 
       response_parser = ResponseParser.new(response.body)
       if response_parser.xml?
