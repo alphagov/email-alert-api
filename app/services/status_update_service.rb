@@ -14,6 +14,11 @@ class StatusUpdateService
     if delivery_attempt.permanent_failure? && subscriber
       UnsubscribeService.subscriber!(subscriber)
     end
+
+    GovukStatsd.increment("status_update.success")
+  rescue
+    GovukStatsd.increment("status_update.failure")
+    raise
   end
 
 private
