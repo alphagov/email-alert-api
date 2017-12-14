@@ -1,7 +1,7 @@
 module SharedSteps
   def stub_govdelivery(gov_delivery_id)
     body = "<topic><to-param>#{gov_delivery_id}</to-param></topic>"
-    stub_request(:post, /govdelivery/).to_return(body: body)
+    stub_request(:any, /govdelivery/).to_return(body: body)
   end
 
   def stub_notify
@@ -10,6 +10,11 @@ module SharedSteps
 
     body = {}.to_json
     stub_request(:post, /fake-notify/).to_return(body: body)
+  end
+
+  def check_health_of_the_app
+    get "/healthcheck"
+    expect(response.status).to eq(200)
   end
 
   def create_subscribable(overrides = {})
