@@ -19,10 +19,25 @@ module SharedSteps
     data.dig(:subscriber_list, :id)
   end
 
-  def subscribe_to_subscribable(subscribable_id)
+  def lookup_subscribable(gov_delivery_id, expected_status: 200)
+    get "/subscribables/#{gov_delivery_id}"
+    expect(response.status).to eq(expected_status)
+  end
+
+  def lookup_subscriber_list(params, expected_status: 200)
+    get "/subscriber-lists", params: params, headers: JSON_HEADERS
+    expect(response.status).to eq(expected_status)
+  end
+
+  def subscribe_to_subscribable(subscribable_id, expected_status: 201)
     params = { subscribable_id: subscribable_id, address: "test@test.com" }
     post "/subscriptions", params: params.to_json, headers: JSON_HEADERS
-    expect(response.status).to eq(201)
+    expect(response.status).to eq(expected_status)
+  end
+
+  def unsubscribe_from_subscribable(uuid, expected_status: 204)
+    post "/unsubscribe/#{uuid}"
+    expect(response.status).to eq(expected_status)
   end
 
   def create_content_change(overrides = {})

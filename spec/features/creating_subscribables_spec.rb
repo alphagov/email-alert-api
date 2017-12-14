@@ -6,23 +6,18 @@ RSpec.describe "Creating subscribables", type: :request do
   scenario "creating and looking up subscribables" do
     params = { title: "Example", tags: {}, links: { person: ["test-123"] } }
 
-    get "/subscriber-lists", params: params, headers: JSON_HEADERS
-    expect(response.status).to eq(404)
-
-    get "/subscribables/UKGOVUK_1234"
-    expect(response.status).to eq(404)
+    lookup_subscribable("UKGOVUK_1234", expected_status: 404)
+    lookup_subscriber_list(params, expected_status: 404)
 
     create_subscribable(links: { person: ["test-123"] })
 
-    get "/subscriber-lists", params: params, headers: JSON_HEADERS
-    expect(response.status).to eq(200)
+    lookup_subscribable("UKGOVUK_1234", expected_status: 200)
+    expect(data.fetch(:subscribable)).to include(params)
+
+    lookup_subscriber_list(params, expected_status: 200)
     expect(data.fetch(:subscriber_list)).to include(params)
 
     gov_delivery_id = data.dig(:subscriber_list, :gov_delivery_id)
     expect(gov_delivery_id).to eq("UKGOVUK_1234")
-
-    get "/subscribables/UKGOVUK_1234"
-    expect(response.status).to eq(200)
-    expect(data.fetch(:subscribable)).to include(params)
   end
 end
