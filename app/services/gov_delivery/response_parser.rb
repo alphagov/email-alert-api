@@ -1,7 +1,6 @@
 module GovDelivery
   class ResponseParser
     def initialize(response_body)
-      @xml_parser = Nokogiri::XML.method(:parse)
       @response_body = response_body
     end
 
@@ -15,10 +14,7 @@ module GovDelivery
 
   private
 
-    attr_reader(
-      :xml_parser,
-      :response_body,
-    )
+    attr_reader :response_body
 
     def keys
       first_level_element_nodes
@@ -43,6 +39,10 @@ module GovDelivery
 
     def xml_tree
       @xml_tree ||= xml_parser.call(response_body)
+    end
+
+    def xml_parser
+      @xml_parser ||= Nokogiri::XML.method(:parse)
     end
   end
 end
