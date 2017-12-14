@@ -27,12 +27,12 @@ class LoadTester
 
     subscribers = create_test_subscribers(number)
 
-    subscriptions = create_subscriptions(subscribers: subscribers, subscriber_list: subscriber_list)
+    subscription_ids = create_subscriptions(subscribers: subscribers, subscriber_list: subscriber_list).ids
 
     puts "Creating content change"
     content_change = create_test_content_change
 
-    create_subscription_contents(subscriptions: subscriptions, content_change: content_change)
+    create_subscription_contents(subscription_ids: subscription_ids, content_change: content_change)
 
     puts "Running service"
     duration = Benchmark.measure { EmailGenerationService.call }
@@ -155,24 +155,24 @@ private
   def create_subscriptions(subscribers:, subscriber_list:)
     puts "Creating #{subscribers.length} subscriptions"
 
-    records = subscribers.map do |subscriber|
-      Subscription.new(uuid: SecureRandom.uuid, subscriber_id: subscriber.id, subscriber_list_id: subscriber_list.id)
+    columns = %i(uuid subscriber_id subscriber_list_id)
+
+    values = subscribers.map do |subscriber|
+      [SecureRandom.uuid, subscriber.id, subscriber_list.id]
     end
 
-    Subscription.import!(records)
-
-    records
+    Subscription.import!(columns, values)
   end
 
-  def create_subscription_contents(subscriptions:, content_change:)
-    puts "Creating #{subscriptions.length} subscription contents"
+  def create_subscription_contents(subscription_ids:, content_change:)
+    puts "Creating #{subscription_ids.length} subscription contents"
 
-    records = subscriptions.map do |subscription|
-      SubscriptionContent.new(content_change_id: content_change.id, subscription_id: subscription.id)
+    columns = %i(content_change_id subscription_id)
+
+    values = subscription_ids.map do |subscription_id|
+      [content_change.id, subscription_id]
     end
 
-    SubscriptionContent.import!(records)
-
-    records
+    SubscriptionContent.import!(columns, values)
   end
 end
