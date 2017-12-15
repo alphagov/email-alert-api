@@ -37,7 +37,7 @@ module PublicUrlService
     end
 
     def param(key, value)
-      "#{key}=#{URI.encode(value, /\W/)}"
+      "#{key}=#{ERB::Util.url_encode(value)}"
     end
   end
 end

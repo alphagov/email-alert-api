@@ -11,7 +11,7 @@ RSpec.describe EmailRenderer do
   let(:params) do
     {
       title: "Title",
-      public_updated_at: DateTime.parse("1/1/2017"),
+      public_updated_at: Time.parse("1/1/2017"),
       description: "Description",
       change_note: "Change note",
       base_path: "/base_path",

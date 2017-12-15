@@ -21,7 +21,7 @@ RSpec.describe Email do
         description: "Description",
         change_note: "Change note",
         base_path: "/government/test",
-        public_updated_at: DateTime.parse("1/1/2017"),
+        public_updated_at: Time.parse("1/1/2017"),
         content_change_id: content_change.id,
         subscriber: subscriber,
       )

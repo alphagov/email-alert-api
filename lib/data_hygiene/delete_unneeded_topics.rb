@@ -1,5 +1,3 @@
-require 'thread'
-
 module DataHygiene
   class DeleteUnneededTopics
     attr_reader :client

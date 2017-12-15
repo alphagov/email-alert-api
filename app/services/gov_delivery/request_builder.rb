@@ -8,9 +8,9 @@ module GovDelivery
           xml.send(:'short-name', name)
           xml.visibility 'Unlisted'
           xml.send(:'pagewatch-enabled', "false", type: :boolean)
-          xml.send(:'rss-feed-url', nil: :true)
-          xml.send(:'rss-feed-title', nil: :true)
-          xml.send(:'rss-feed-description', nil: :true)
+          xml.send(:'rss-feed-url', nil: true)
+          xml.send(:'rss-feed-title', nil: true)
+          xml.send(:'rss-feed-description', nil: true)
         }
       }.to_xml
     end

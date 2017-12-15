@@ -108,7 +108,7 @@ private
   end
 
   def create_test_subscriber_list(document_type = nil)
-    document_type = SecureRandom.uuid unless document_type
+    document_type ||= SecureRandom.uuid
 
     SubscriberList.create!(
       title: "title",
@@ -118,7 +118,7 @@ private
   end
 
   def create_test_content_change(document_type = nil)
-    document_type = SecureRandom.uuid unless document_type
+    document_type ||= SecureRandom.uuid
 
     ContentChange.create!(
       content_id: SecureRandom.uuid,
@@ -126,7 +126,7 @@ private
       base_path: "base path",
       change_note: "change note",
       description: "description",
-      public_updated_at: DateTime.now,
+      public_updated_at: Time.now,
       email_document_supertype: "email document supertype",
       government_document_supertype: "government document supertype",
       govuk_request_id: SecureRandom.uuid,
