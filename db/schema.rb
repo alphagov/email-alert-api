@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171215161358) do
+ActiveRecord::Schema.define(version: 20171215163908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -132,7 +132,7 @@ ActiveRecord::Schema.define(version: 20171215161358) do
   add_foreign_key "delivery_attempts", "emails", on_delete: :cascade
   add_foreign_key "subscription_contents", "content_changes"
   add_foreign_key "subscription_contents", "emails", on_delete: :nullify
-  add_foreign_key "subscription_contents", "subscriptions"
+  add_foreign_key "subscription_contents", "subscriptions", on_delete: :nullify
   add_foreign_key "subscriptions", "subscriber_lists"
   add_foreign_key "subscriptions", "subscribers", on_delete: :cascade
 end
