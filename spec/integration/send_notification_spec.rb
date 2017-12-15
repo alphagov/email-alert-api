@@ -35,7 +35,7 @@ RSpec.describe "Sending a notification", type: :request do
         .with(
           relevant_list_ids,
           "This is a sample subject",
-          "Here is some body copy<span data-govuk-request-id=\"\"></span>",
+          "Here is some body copy<span data-govuk-request-id=\"request-id\"></span>",
           {},
         )
     end
@@ -58,7 +58,7 @@ RSpec.describe "Sending a notification", type: :request do
         .with(
           relevant_list_ids,
           "This is a sample subject",
-          "Here is some body copy<span data-govuk-request-id=\"\"></span>",
+          "Here is some body copy<span data-govuk-request-id=\"request-id\"></span>",
                     "from_address_id" => "12345",
             "urgent" => true,
             "header" => "foo",
@@ -159,9 +159,7 @@ RSpec.describe "Sending a notification", type: :request do
 
     before do
       allow(NotificationWorker).to receive(:perform_async)
-      post "/notifications",
-        params: request_params,
-        headers: JSON_HEADERS.merge("HTTP_GOVUK_REQUEST_ID" => "request_id")
+      post "/notifications", params: request_params, headers: JSON_HEADERS
     end
 
     it "creates a Notification" do
