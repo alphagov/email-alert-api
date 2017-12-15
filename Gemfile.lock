@@ -66,7 +66,7 @@ GEM
     factory_girl_rails (4.9.0)
       factory_girl (~> 4.9.0)
       railties (>= 3.0.0)
-    faraday (0.12.1)
+    faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
     foreman (0.84.0)
@@ -319,7 +319,7 @@ DEPENDENCIES
   activerecord-import (~> 0.21)
   equivalent-xml
   factory_girl_rails
-  faraday (= 0.12.1)
+  faraday (= 0.12.2)
   foreman (= 0.84.0)
   gds-api-adapters (~> 47.9.0)
   gds-sso (~> 13.2)
