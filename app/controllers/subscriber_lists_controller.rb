@@ -8,26 +8,18 @@ class SubscriberListsController < ApplicationController
   def show
     subscriber_list = FindExactQuery.new(find_exact_query_params).exact_match
     if subscriber_list
-      respond_to do |format|
-        format.json { render json: subscriber_list.to_json }
-      end
+      render json: subscriber_list.to_json
     else
-      respond_to do |format|
-        format.json { render json: { message: "Could not find the subscriber list" }, status: 404 }
-      end
+      render json: { message: "Could not find the subscriber list" }, status: 404
     end
   end
 
   def create
     subscriber_list = SubscriberList.new(subscriber_list_params)
     if subscriber_list.save
-      respond_to do |format|
-        format.json { render json: subscriber_list.to_json, status: 201 }
-      end
+      render json: subscriber_list.to_json, status: 201
     else
-      respond_to do |format|
-        format.json { render json: { message: subscriber_list.errors.full_messages.to_sentence }, status: 422 }
-      end
+      render json: { message: subscriber_list.errors.full_messages.to_sentence }, status: 422
     end
   end
 
