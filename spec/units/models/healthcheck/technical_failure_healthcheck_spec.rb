@@ -3,6 +3,14 @@ RSpec.describe Healthcheck::TechnicalFailureHealthcheck do
     create(:delivery_attempt, status: status, updated_at: updated, email: email)
   end
 
+  context "when status update callbacks are not expected" do
+    before do
+      allow(subject).to receive(:expect_status_update_callbacks?).and_return(false)
+      create_delivery_attempt(:technical_failure, 59.minutes.ago)
+    end
+    specify { expect(subject.status).to eq(:ok) }
+  end
+
   context "when there are no technical failures" do
     before { create_delivery_attempt(:delivered, 1.minute.ago) }
     specify { expect(subject.status).to eq(:ok) }

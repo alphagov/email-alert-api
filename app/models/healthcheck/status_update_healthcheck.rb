@@ -7,6 +7,8 @@ class Healthcheck
     end
 
     def status
+      return :ok unless expect_status_update_callbacks?
+
       if sending_after(critical_time.ago).exists?
         :critical
       elsif sending_after(warning_time.ago).exists?
@@ -41,6 +43,10 @@ class Healthcheck
     # Both systems use queueing, so build in some tolerance.
     def warning_time
       NOTIFY_DELAY.hours + 10.minutes
+    end
+
+    def expect_status_update_callbacks?
+      EmailAlertAPI.config.email_service.fetch(:expect_status_update_callbacks)
     end
   end
 end
