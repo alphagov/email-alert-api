@@ -1,6 +1,6 @@
 RSpec.describe UnsubscribeService do
   describe ".subscriber!" do
-    let!(:subscriber) { FactoryBot.create(:subscriber, address: "foo@bar.com") }
+    let!(:subscriber) { create(:subscriber, address: "foo@bar.com") }
 
     it "nullifies the email address" do
       expect { subject.subscriber!(subscriber) }
@@ -11,7 +11,7 @@ RSpec.describe UnsubscribeService do
 
     context "when the subscriber has subscriptions" do
       before do
-        FactoryBot.create_list(:subscription, 3, subscriber: subscriber)
+        create_list(:subscription, 3, subscriber: subscriber)
       end
 
       it "removes them" do
@@ -34,7 +34,7 @@ RSpec.describe UnsubscribeService do
   end
 
   describe ".subscription!" do
-    let!(:subscription) { FactoryBot.create(:subscription) }
+    let!(:subscription) { create(:subscription) }
     let(:subscriber) { subscription.subscriber }
 
     it "removes the subscription" do
@@ -63,7 +63,7 @@ RSpec.describe UnsubscribeService do
 
     context "when there are other subscriptions for the subscriber" do
       before do
-        FactoryBot.create_list(:subscription, 3, subscriber: subscription.subscriber)
+        create_list(:subscription, 3, subscriber: subscription.subscriber)
       end
 
       it "does not nullify the email address of the subscriber" do
