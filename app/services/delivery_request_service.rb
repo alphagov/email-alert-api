@@ -50,7 +50,7 @@ class DeliveryRequestService
 private
 
   def generate_reference(email)
-    timestamp = DateTime.now.to_s(:iso8601)
+    timestamp = Time.now.to_s(:iso8601)
     "delivery-attempt-for-email-#{email.id}-sent-to-notify-at-#{timestamp}"
   end
 
