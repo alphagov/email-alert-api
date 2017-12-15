@@ -79,7 +79,7 @@ RSpec.describe Subscriber, type: :model do
 
   describe "#nullify_address!" do
     it "sets the address to nil and saves the record" do
-      subscriber = FactoryGirl.create(:subscriber, address: "foo@bar.com")
+      subscriber = FactoryBot.create(:subscriber, address: "foo@bar.com")
 
       expect { subscriber.nullify_address! }
         .to change { subscriber.reload.address }

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :subscriber_list do
     title "title"
     sequence(:gov_delivery_id) { |n| "UKGOVUK_#{n}" }

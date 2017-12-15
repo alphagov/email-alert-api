@@ -14,7 +14,7 @@ require "db/seeds"
 RSpec.configure do |config|
   config.disable_monkey_patching!
   config.use_transactional_fixtures = true
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
   config.include SharedSteps, type: :request
 end
 
