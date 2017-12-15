@@ -4,9 +4,7 @@ class NotificationsController < ApplicationController
 
     NotificationHandlerService.call(params: notification_params)
 
-    respond_to do |format|
-      format.json { render json: { message: "Notification queued for sending" }, status: 202 }
-    end
+    render json: { message: "Notification queued for sending" }, status: 202
   end
 
   def index
