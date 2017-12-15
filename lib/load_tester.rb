@@ -108,7 +108,7 @@ private
   end
 
   def create_test_subscriber_list(document_type = nil)
-    document_type = SecureRandom.uuid unless document_type
+    document_type ||= SecureRandom.uuid
 
     SubscriberList.create!(
       title: "title",
@@ -118,7 +118,7 @@ private
   end
 
   def create_test_content_change(document_type = nil)
-    document_type = SecureRandom.uuid unless document_type
+    document_type ||= SecureRandom.uuid
 
     ContentChange.create!(
       content_id: SecureRandom.uuid,

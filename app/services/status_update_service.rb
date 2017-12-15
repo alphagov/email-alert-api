@@ -16,7 +16,7 @@ class StatusUpdateService
     end
 
     GovukStatsd.increment("status_update.success")
-  rescue
+  rescue StandardError
     GovukStatsd.increment("status_update.failure")
     raise
   end
