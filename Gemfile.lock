@@ -61,10 +61,10 @@ GEM
     erubi (1.7.0)
     et-orbi (1.0.8)
       tzinfo
-    factory_girl (4.9.0)
+    factory_bot (4.8.2)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.9.0)
-      factory_girl (~> 4.9.0)
+    factory_bot_rails (4.8.2)
+      factory_bot (~> 4.8.2)
       railties (>= 3.0.0)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
@@ -321,7 +321,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-import (~> 0.21)
   equivalent-xml
-  factory_girl_rails
+  factory_bot_rails
   faraday (= 0.12.2)
   foreman (= 0.84.0)
   gds-api-adapters (~> 50.6.0)

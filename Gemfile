@@ -20,7 +20,7 @@ gem 'sidekiq-scheduler', '~> 2.1'
 
 group :test do
   gem 'equivalent-xml'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'timecop'
   gem 'webmock'
 end
