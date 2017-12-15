@@ -11,7 +11,7 @@ gem 'gds-api-adapters', '~> 47.9.0'
 gem 'gds-sso', '~> 13.2'
 gem 'govuk_app_config', '~> 1.1'
 gem 'nokogiri', '1.7.2'
-gem 'notifications-ruby-client', '~> 2.5'
+gem 'notifications-ruby-client', '~> 2.6'
 gem 'plek', '2.0.0'
 
 gem 'govuk_sidekiq', '~> 3.0'
