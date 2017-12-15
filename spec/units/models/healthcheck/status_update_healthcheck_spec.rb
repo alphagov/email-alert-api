@@ -3,6 +3,14 @@ RSpec.describe Healthcheck::StatusUpdateHealthcheck do
     create(:delivery_attempt, status: status, updated_at: updated, email: email)
   end
 
+  context "when status update callbacks are not expected" do
+    before do
+      allow(subject).to receive(:expect_status_update_callbacks?).and_return(false)
+      create_delivery_attempt(:sending, 75.hours.ago)
+    end
+    specify { expect(subject.status).to eq(:ok) }
+  end
+
   context "when delivery attempts haven't received status updates" do
     context "in less than 72 hours" do
       before { create_delivery_attempt(:sending, 71.hours.ago) }

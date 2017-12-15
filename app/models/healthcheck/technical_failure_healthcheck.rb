@@ -5,6 +5,8 @@ class Healthcheck
     end
 
     def status
+      return :ok unless expect_status_update_callbacks?
+
       if failures_since(1.hour.ago).exists?
         :critical
       elsif failures_since(1.day.ago).exists?
@@ -27,6 +29,10 @@ class Healthcheck
         .latest_per_email
         .where(status: :technical_failure)
         .where("updated_at > ?", datetime)
+    end
+
+    def expect_status_update_callbacks?
+      EmailAlertAPI.config.email_service.fetch(:expect_status_update_callbacks)
     end
   end
 end
