@@ -2,10 +2,11 @@ module DataHygiene
   class DataSync
     PRODUCTION_ACCOUNT_CODE = "UKGOVUK".freeze
     THREAD_COUNT = 40
+    DEFAULT_DELETE_WAIT = 60 # time to wait for all deletions to complete
 
     attr_reader :logger
 
-    def initialize(logger = Logger.new(STDOUT), delete_wait = 30)
+    def initialize(logger = Logger.new(STDOUT), delete_wait = DEFAULT_DELETE_WAIT)
       @logger ||= logger
       @delete_wait = delete_wait
     end
@@ -22,7 +23,6 @@ module DataHygiene
       matching = topics & subscriber_lists
       to_be_deleted = topics - subscriber_lists
       to_be_created = subscriber_lists - topics
-
 
       # Handle rows with duplicate codes but different titles, because one of those may
       # exist in GovDelivery already so we don't want to try to create/delete another
@@ -80,14 +80,14 @@ module DataHygiene
         .distinct
         .pluck(:title, :gov_delivery_id)
         .map do |title, gov_delivery_id|
-          [(title || "MISSING TITLE #{gov_delivery_id}").strip, gov_delivery_id]
+          [title.strip, gov_delivery_id]
         end
     end
 
     def topics
       @topics ||= Services.gov_delivery
                     .fetch_topics["topics"]
-                    .map { |topic| [topic["name"], topic["code"]] }
+                    .map { |topic| [topic["name"].strip, topic["code"]] }
     end
 
     def delete_topics_from_gov_delivery(list)
@@ -115,7 +115,7 @@ module DataHygiene
 
         @delete_wait.times do
           sleep 1
-          print '.'
+          print "."
         end
       end
     end
@@ -132,15 +132,14 @@ module DataHygiene
           sleep 2
         end
 
-        logger.warn 'Failed to create all topics'
-        raise 'Failed to create all topics'
+        logger.warn "Failed to create all topics"
+        raise "Failed to create all topics"
       end
     end
 
     def create_topics(list)
       retry_create = []
       list.each do |title, gov_delivery_id|
-        title = title || "MISSING TITLE #{gov_delivery_id}"
         logger.info "-- Creating #{title} (#{gov_delivery_id}) in GovDelivery"
         begin
           Services.gov_delivery.create_topic(title, gov_delivery_id)
