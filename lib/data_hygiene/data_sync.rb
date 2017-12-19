@@ -2,10 +2,11 @@ module DataHygiene
   class DataSync
     PRODUCTION_ACCOUNT_CODE = "UKGOVUK".freeze
     THREAD_COUNT = 40
+    DEFAULT_DELETE_WAIT = 60 # time to wait for all deletions to complete
 
     attr_reader :logger
 
-    def initialize(logger = Logger.new(STDOUT), delete_wait = 30)
+    def initialize(logger = Logger.new(STDOUT), delete_wait = DEFAULT_DELETE_WAIT)
       @logger ||= logger
       @delete_wait = delete_wait
     end
