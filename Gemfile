@@ -10,7 +10,7 @@ gem 'faraday', '0.12.2'
 gem 'gds-api-adapters', '~> 50.6.0'
 gem 'gds-sso', '~> 13.5'
 gem 'govuk_app_config', '~> 1.1'
-gem 'nokogiri', '1.8.1'
+gem 'nokogiri', '1.7.2'
 gem 'notifications-ruby-client', '~> 2.6'
 gem 'plek', '2.0.0'
 
