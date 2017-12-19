@@ -80,14 +80,14 @@ module DataHygiene
         .distinct
         .pluck(:title, :gov_delivery_id)
         .map do |title, gov_delivery_id|
-          [(title || "MISSING TITLE #{gov_delivery_id}").strip, gov_delivery_id]
+          [title.strip, gov_delivery_id]
         end
     end
 
     def topics
       @topics ||= Services.gov_delivery
                     .fetch_topics["topics"]
-                    .map { |topic| [topic["name"], topic["code"]] }
+                    .map { |topic| [topic["name"].strip, topic["code"]] }
     end
 
     def delete_topics_from_gov_delivery(list)
@@ -140,7 +140,6 @@ module DataHygiene
     def create_topics(list)
       retry_create = []
       list.each do |title, gov_delivery_id|
-        title = title || "MISSING TITLE #{gov_delivery_id}"
         logger.info "-- Creating #{title} (#{gov_delivery_id}) in GovDelivery"
         begin
           Services.gov_delivery.create_topic(title, gov_delivery_id)
