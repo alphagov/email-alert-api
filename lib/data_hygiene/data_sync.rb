@@ -23,7 +23,6 @@ module DataHygiene
       to_be_deleted = topics - subscriber_lists
       to_be_created = subscriber_lists - topics
 
-
       # Handle rows with duplicate codes but different titles, because one of those may
       # exist in GovDelivery already so we don't want to try to create/delete another
       # topic with the same id
@@ -115,7 +114,7 @@ module DataHygiene
 
         @delete_wait.times do
           sleep 1
-          print '.'
+          print "."
         end
       end
     end
@@ -132,8 +131,8 @@ module DataHygiene
           sleep 2
         end
 
-        logger.warn 'Failed to create all topics'
-        raise 'Failed to create all topics'
+        logger.warn "Failed to create all topics"
+        raise "Failed to create all topics"
       end
     end
 
