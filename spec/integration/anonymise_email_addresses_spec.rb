@@ -6,7 +6,7 @@ RSpec.describe "Anonymising email addresses" do
   let(:column_names) { columns.map { |c| "#{c.table_name}.#{c.name}" } }
 
   def execute_sql
-    ActiveRecord::Base.connection.execute(sql)
+    ActiveRecord::Base.connection.execute(sql.gsub(/#.*$/, ""))
   end
 
   it "anonymises addresses in the subscribers table" do
