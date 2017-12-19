@@ -1,7 +1,6 @@
 module GovDelivery
   class ResponseParser
     def initialize(response_body)
-      @xml_parser = Nokogiri::XML.method(:parse)
       @response_body = response_body
     end
 
@@ -15,10 +14,7 @@ module GovDelivery
 
   private
 
-    attr_reader(
-      :xml_parser,
-      :response_body,
-    )
+    attr_reader :response_body
 
     def keys
       first_level_element_nodes
@@ -34,15 +30,31 @@ module GovDelivery
     end
 
     def first_level_element_nodes
+      reject_duplicate_nodes(
+        reject_links(
+          xml_tree.root.element_children
+        )
+      )
+    end
+
+    def reject_links(nodes)
       # Remove <link> tags since there are many of them, we don't use them,
       # and they break the "no duplicates in a Struct" rule
-      xml_tree.root.element_children.reject do |node|
+      nodes.reject do |node|
         node.name == "link"
       end
     end
 
+    def reject_duplicate_nodes(nodes)
+      nodes.uniq(&:name)
+    end
+
     def xml_tree
       @xml_tree ||= xml_parser.call(response_body)
+    end
+
+    def xml_parser
+      @xml_parser ||= Nokogiri::XML.method(:parse)
     end
   end
 end
