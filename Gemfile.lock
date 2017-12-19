@@ -248,7 +248,7 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     rubocop-rspec (1.19.0)
       rubocop (>= 0.51.0)
-    ruby-prof (0.16.2)
+    ruby-prof (0.17.0)
     ruby-progressbar (1.9.0)
     ruby_dep (1.5.0)
     rufus-scheduler (3.4.2)
@@ -338,7 +338,7 @@ DEPENDENCIES
   rails (= 5.1.0)
   ratelimit (~> 1.0)
   rspec-rails (= 3.7.2)
-  ruby-prof (~> 0.16)
+  ruby-prof (~> 0.17)
   sidekiq-scheduler (~> 2.1)
   timecop
   webmock
