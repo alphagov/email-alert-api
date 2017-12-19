@@ -1,6 +1,3 @@
-require 'json'
-require_relative "extensions/symbolize_json"
-
 class SubscriberList < ApplicationRecord
   include SymbolizeJSON
 
