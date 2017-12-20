@@ -13,7 +13,9 @@ class ImportGovdeliveryCsv
   end
 
   def import
-    CSV.foreach(csv_path, headers: true) do |row|
+    check_encoding_is_windows_1252
+
+    CSV.foreach(csv_path, headers: true, encoding: "WINDOWS-1252") do |row|
       with_reporting(row) { import_row(row) }
     end
 
@@ -78,5 +80,17 @@ class ImportGovdeliveryCsv
 
   def output(message)
     output_io.print(message) if output_io
+  end
+
+  def check_encoding_is_windows_1252
+    File.readlines(csv_path).each do |line|
+      if line.include?("Principe") && !line.include?("São Tomé and Principe")
+        message = "The CSV has the wrong encoding. It should be WINDOWS-1252."
+        message += "\nYou can set the encoding in LibreOffice with:"
+        message += "\nFile > Save As > Edit filter settings > Character set > Western Europe (Windows-1252/WinLatin 1)"
+
+        raise EncodingError, message
+      end
+    end
   end
 end

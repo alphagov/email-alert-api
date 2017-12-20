@@ -95,4 +95,11 @@ RSpec.describe ImportGovdeliveryCsv do
       expect(io.string).to eq("..F")
     end
   end
+
+  context "when the file has the wrong encoding" do
+    it "raises an error" do
+      expect { described_class.import("spec/units/lib/csv_fixture_broken.csv") }
+        .to raise_error(/should be WINDOWS-1252/)
+    end
+  end
 end
