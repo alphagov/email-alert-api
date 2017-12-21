@@ -11,6 +11,8 @@ require "gds-sso/lint/user_spec"
 require "spec/features/_shared_steps"
 require "db/seeds"
 
+Dir[Rails.root.join("spec/support/**/*.rb")].each { |file| require file }
+
 RSpec.configure do |config|
   config.disable_monkey_patching!
   config.use_transactional_fixtures = true
@@ -28,10 +30,6 @@ JSON_HEADERS = {
   "ACCEPT" => "application/json",
   "HTTP_GOVUK_REQUEST_ID" => "request-id",
 }.freeze
-
-def login_as(user)
-  GDS::SSO.test_user = user
-end
 
 def data(body = response.body)
   JSON.parse(body).deep_symbolize_keys
