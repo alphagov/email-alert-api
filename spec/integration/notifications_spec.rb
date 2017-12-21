@@ -1,74 +1,92 @@
 RSpec.describe "Receiving a notification", type: :request do
-  describe "#create" do
-    let(:body) {
-      <<-BODY.strip_heredoc
-        <div>
-          <div>Travel advice</div>
-        </div>
-      BODY
-    }
-    let(:expected_body) {
-      <<-BODY.strip_heredoc
-        <div>
-          <div>Travel advice</div>
-        </div>
-        <span data-govuk-request-id="12345-67890"></span>
-      BODY
-    }
-    let(:notification_params) {
-      {
-        subject: "This is a subject",
-        body: body,
-        tags: {
-          topics: ["oil-and-gas/licensing"]
+  context "with authentication and authorisation" do
+    describe "#create" do
+      let(:body) {
+        <<-BODY.strip_heredoc
+          <div>
+            <div>Travel advice</div>
+          </div>
+        BODY
+      }
+      let(:expected_body) {
+        <<-BODY.strip_heredoc
+          <div>
+            <div>Travel advice</div>
+          </div>
+          <span data-govuk-request-id="12345-67890"></span>
+        BODY
+      }
+      let(:notification_params) {
+        {
+          subject: "This is a subject",
+          body: body,
+          tags: {
+            topics: ["oil-and-gas/licensing"]
+          }
         }
       }
-    }
-    let(:expected_notification_params) {
-      notification_params
-        .merge(links: {})
-        .merge(body: expected_body.strip)
-        .merge(govuk_request_id: '12345-67890')
-    }
+      let(:expected_notification_params) {
+        notification_params
+          .merge(links: {})
+          .merge(body: expected_body.strip)
+          .merge(govuk_request_id: '12345-67890')
+      }
 
-    before do
-      allow(GdsApi::GovukHeaders).to receive(:headers)
-        .and_return(govuk_request_id: "12345-67890")
+      before do
+        login_with_internal_app
+        allow(GdsApi::GovukHeaders).to receive(:headers)
+          .and_return(govuk_request_id: "12345-67890")
+      end
+
+      it "serializes the tags and passes them to the NotificationWorker" do
+        expect(NotificationWorker).to receive(:perform_async).with(
+          expected_notification_params
+        )
+
+        post "/notifications", params: notification_params.merge(format: :json)
+      end
+
+      it "allows an optional document_type parameter" do
+        notification_params[:document_type] = "travel_advice"
+        expect(NotificationWorker).to receive(:perform_async).with(
+          expected_notification_params
+        )
+
+        post "/notifications", params: notification_params.merge(format: :json)
+      end
+
+      it "allows an optional email_document_supertype parameter" do
+        notification_params[:email_document_supertype] = "travel_advice"
+        expect(NotificationWorker).to receive(:perform_async).with(
+          expected_notification_params
+        )
+
+        post "/notifications", params: notification_params.merge(format: :json)
+      end
+
+      it "allows an optional government_document_supertype parameter" do
+        notification_params[:government_document_supertype] = "travel_advice"
+        expect(NotificationWorker).to receive(:perform_async).with(
+          expected_notification_params
+        )
+
+        post "/notifications", params: notification_params.merge(format: :json)
+      end
     end
+  end
 
-    it "serializes the tags and passes them to the NotificationWorker" do
-      expect(NotificationWorker).to receive(:perform_async).with(
-        expected_notification_params
-      )
-
-      post "/notifications", params: notification_params.merge(format: :json)
+  context "without authentication" do
+    it "returns a 403" do
+      post "/notifications", params: {}
+      expect(response.status).to eq(403)
     end
+  end
 
-    it "allows an optional document_type parameter" do
-      notification_params[:document_type] = "travel_advice"
-      expect(NotificationWorker).to receive(:perform_async).with(
-        expected_notification_params
-      )
-
-      post "/notifications", params: notification_params.merge(format: :json)
-    end
-
-    it "allows an optional email_document_supertype parameter" do
-      notification_params[:email_document_supertype] = "travel_advice"
-      expect(NotificationWorker).to receive(:perform_async).with(
-        expected_notification_params
-      )
-
-      post "/notifications", params: notification_params.merge(format: :json)
-    end
-
-    it "allows an optional government_document_supertype parameter" do
-      notification_params[:government_document_supertype] = "travel_advice"
-      expect(NotificationWorker).to receive(:perform_async).with(
-        expected_notification_params
-      )
-
-      post "/notifications", params: notification_params.merge(format: :json)
+  context "without authorisation" do
+    it "returns a 403" do
+      login_with_signin
+      post "/notifications", params: {}
+      expect(response.status).to eq(403)
     end
   end
 end

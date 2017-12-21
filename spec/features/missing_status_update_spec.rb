@@ -5,6 +5,8 @@ RSpec.describe "Missing a status update after three days", type: :request do
   end
 
   scenario "when no status update has been received for an email" do
+    login_with(%w(internal_app status_updates))
+
     subscribable_id = create_subscribable
     subscribe_to_subscribable(subscribable_id)
     create_content_change

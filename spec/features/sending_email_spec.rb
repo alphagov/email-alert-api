@@ -5,6 +5,8 @@ RSpec.describe "Sending an email", type: :request do
   end
 
   scenario "sending an email for a subscription to a subscribable" do
+    login_with_internal_app
+
     subscribable_id = create_subscribable
     subscribe_to_subscribable(subscribable_id)
     create_content_change

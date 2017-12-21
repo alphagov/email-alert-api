@@ -5,6 +5,8 @@ RSpec.describe "Delivering an email successfully via Notify", type: :request do
   end
 
   scenario "sending an email and receiving a 'delivered' status update" do
+    login_with(%w(internal_app status_updates))
+
     subscribable_id = create_subscribable
     subscribe_to_subscribable(subscribable_id)
     create_content_change

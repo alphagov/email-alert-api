@@ -18,6 +18,10 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.include FactoryBot::Syntax::Methods
   config.include SharedSteps, type: :request
+
+  config.after do
+    logout
+  end
 end
 
 WebMock.disable_net_connect!(allow_localhost: true)

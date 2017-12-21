@@ -4,6 +4,8 @@ RSpec.describe "Creating subscribables", type: :request do
   end
 
   scenario "creating and looking up subscribables" do
+    login_with(%w(internal_app status_updates))
+
     params = { title: "Example", tags: {}, links: { person: ["test-123"] } }
 
     lookup_subscribable("UKGOVUK_1234", expected_status: 404)

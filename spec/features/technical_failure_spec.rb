@@ -5,6 +5,8 @@ RSpec.describe "Failing to deliver an email via Notify (technical failure)", typ
   end
 
   scenario "failing the healthcheck if delivery failed for a technical reason" do
+    login_with(%w(internal_app status_updates))
+
     subscribable_id = create_subscribable
     subscribe_to_subscribable(subscribable_id)
     create_content_change
