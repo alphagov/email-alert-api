@@ -21,9 +21,9 @@ RSpec.describe "Sending an email", type: :request do
 
     expect(body).to include("Change note: Description")
     expect(body).to include("gov.uk/base-path")
-    expect(body).to include("Updated on 12:00 am, 1 January 2017")
+    expect(body).to include("Updated at 12:00 am on 1 January 2017")
 
-    expect(body).to include("Unsubscribe from 'Example'")
+    expect(body).to include("Unsubscribe from [Example]")
     expect(body).to include("gov.uk/email/unsubscribe/")
   end
 end

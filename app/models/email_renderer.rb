@@ -9,10 +9,13 @@ class EmailRenderer
 
   def body
     <<~BODY
+      [#{title}](#{content_url})
+
       #{change_note}: #{description}.
 
-      #{content_url}
-      Updated on #{public_updated_at}
+      Updated at #{public_updated_at}
+
+      ----
 
       #{unsubscribe_links}
     BODY
@@ -39,7 +42,7 @@ private
   end
 
   def public_updated_at
-    params.fetch(:public_updated_at).strftime("%I:%M %P, %-d %B %Y")
+    params.fetch(:public_updated_at).strftime("%I:%M %P on %-d %B %Y")
   end
 
   def subscriber
@@ -52,7 +55,7 @@ private
   end
 
   def present_unsubscribe_link(link)
-    "Unsubscribe from '#{link.title}':\n#{link.url}"
+    "Unsubscribe from [#{link.title}](#{link.url})"
   end
 
   def content_url
