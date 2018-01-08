@@ -31,16 +31,17 @@ RSpec.describe EmailRenderer do
     it "should match the expected content" do
       expect(subject.body).to eq(
         <<~BODY
+          [Title](http://www.dev.gov.uk/base_path)
+
           Change note: Description.
 
-          http://www.dev.gov.uk/base_path
-          Updated on 12:00 am, 1 January 2017
+          Updated at 12:00 am on 1 January 2017
 
-          Unsubscribe from 'First Subscription':
-          http://www.dev.gov.uk/email/unsubscribe/1234?title=First%20Subscription
+          ----
 
-          Unsubscribe from 'Second Subscription':
-          http://www.dev.gov.uk/email/unsubscribe/5678?title=Second%20Subscription
+          Unsubscribe from [First Subscription](http://www.dev.gov.uk/email/unsubscribe/1234?title=First%20Subscription)
+
+          Unsubscribe from [Second Subscription](http://www.dev.gov.uk/email/unsubscribe/5678?title=Second%20Subscription)
         BODY
       )
     end
