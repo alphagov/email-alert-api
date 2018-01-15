@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'pg', '0.21.0'
+gem 'pg', '1.0.0'
 gem 'rails', '5.1.4'
 
 gem 'activerecord-import', '~> 0.21'
