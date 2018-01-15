@@ -7,7 +7,7 @@ gem 'activerecord-import', '~> 0.21'
 gem 'with_advisory_lock', '~> 3.2'
 
 gem 'faraday', '0.12.2'
-gem 'gds-api-adapters', '~> 50.8.0'
+gem 'gds-api-adapters', '~> 51.0.0'
 gem 'gds-sso', '~> 13.5'
 gem 'govuk_app_config', '~> 1.2'
 gem 'nokogiri', '1.7.2'
