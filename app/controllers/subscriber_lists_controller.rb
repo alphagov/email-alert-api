@@ -29,6 +29,7 @@ private
     find_exact_query_params.merge(
       title: params[:title],
       gov_delivery_id: gov_delivery_id,
+      signon_user_uid: current_user.uid,
     )
   end
 

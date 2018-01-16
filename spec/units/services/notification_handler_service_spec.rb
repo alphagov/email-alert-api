@@ -40,28 +40,8 @@ RSpec.describe NotificationHandlerService do
 
   describe ".call" do
     it "creates a ContentChange" do
-      notification_params = {
-        content_id: params[:content_id],
-        title: params[:title],
-        change_note: params[:change_note],
-        description: params[:description],
-        base_path: params[:base_path],
-        links: params[:links],
-        tags: params[:tags],
-        public_updated_at: Time.parse(params[:public_updated_at]),
-        email_document_supertype: params[:email_document_supertype],
-        government_document_supertype: params[:government_document_supertype],
-        govuk_request_id: params[:govuk_request_id],
-        document_type: params[:document_type],
-        publishing_app: params[:publishing_app],
-        priority: :low,
-      }
-
-      expect(ContentChange).to receive(:create!)
-        .with(notification_params)
-        .and_return(double(id: 1, **notification_params))
-
-      described_class.call(params: params)
+      expect { described_class.call(params: params) }
+        .to change { ContentChange.count }.by(1)
     end
 
     it "enqueues the content change to be processed by the subscription content worker" do

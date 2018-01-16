@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20180118085957) do
     t.datetime "updated_at", null: false
     t.datetime "processed_at"
     t.integer "priority", default: 0
+    t.string "signon_user_uid"
   end
 
   create_table "delivery_attempts", force: :cascade do |t|
@@ -42,6 +43,7 @@ ActiveRecord::Schema.define(version: 20180118085957) do
     t.string "reference", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "signon_user_uid"
     t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
     t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
   end
@@ -82,6 +84,7 @@ ActiveRecord::Schema.define(version: 20180118085957) do
     t.string "email_document_supertype", default: "", null: false
     t.string "government_document_supertype", default: "", null: false
     t.integer "subscriber_count"
+    t.string "signon_user_uid"
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
     t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
     t.index ["gov_delivery_id"], name: "index_subscriber_lists_on_gov_delivery_id", unique: true
@@ -93,6 +96,7 @@ ActiveRecord::Schema.define(version: 20180118085957) do
     t.string "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "signon_user_uid"
     t.index ["address"], name: "index_subscribers_on_address", unique: true
   end
 
@@ -113,7 +117,11 @@ ActiveRecord::Schema.define(version: 20180118085957) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "uuid", null: false
+<<<<<<< HEAD
     t.integer "frequency", default: 0, null: false
+=======
+    t.string "signon_user_uid"
+>>>>>>> Add signon_user_uid fields to table
     t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true
     t.index ["subscriber_id"], name: "index_subscriptions_on_subscriber_id"
     t.index ["subscriber_list_id"], name: "index_subscriptions_on_subscriber_list_id"

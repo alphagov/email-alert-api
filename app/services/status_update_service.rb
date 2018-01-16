@@ -1,7 +1,8 @@
 class StatusUpdateService
-  def initialize(reference:, status:)
+  def initialize(reference:, status:, user: nil)
     @reference = reference
     @status = status
+    @user = user
   end
 
   def self.call(*args)
@@ -9,7 +10,10 @@ class StatusUpdateService
   end
 
   def call
-    delivery_attempt.update!(status: status.underscore)
+    delivery_attempt.update!(
+      status: status.underscore,
+      signon_user_uid: user&.uid,
+    )
 
     if delivery_attempt.permanent_failure? && subscriber
       UnsubscribeService.subscriber!(subscriber)
@@ -23,7 +27,7 @@ class StatusUpdateService
 
 private
 
-  attr_reader :reference, :status
+  attr_reader :reference, :status, :user
 
   def delivery_attempt
     @delivery_attempt ||= DeliveryAttempt.find_by!(reference: reference)
