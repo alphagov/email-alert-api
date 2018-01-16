@@ -86,8 +86,8 @@ module DataHygiene
 
     def topics
       @topics ||= Services.gov_delivery
-                    .fetch_topics["topics"]
-                    .map { |topic| [topic["name"].strip, topic["code"]] }
+        .fetch_topics.fetch("topics", [])
+        .map { |topic| [topic["name"].strip, topic["code"]] }
     end
 
     def delete_topics_from_gov_delivery(list)
