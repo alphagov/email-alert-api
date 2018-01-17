@@ -238,7 +238,7 @@ UKGOVUK_125
     }
 
     let(:subject) { "a subject line" }
-    let(:body) { "a body" }
+    let(:body) { "a body with “utf-8 quotes”" }
 
     it "POSTs the bulletin XML to the send_now endpoint" do
       stub_request(:post, @base_url).
@@ -250,7 +250,7 @@ UKGOVUK_125
       expected_xml = <<-XML.strip_heredoc
         <bulletin>
           <subject>a subject line</subject>
-          <body><![CDATA[a body]]></body>
+          <body><![CDATA[a body with “utf-8 quotes”]]></body>
           <topics type="array">
             <topic>
               <code>UKGOVUK_123</code>
@@ -266,6 +266,7 @@ UKGOVUK_125
         </bulletin>
       XML
       assert_requested(:post, @base_url) do |req|
+        expect(req.body.encoding.to_s).to eql "UTF-8"
         expect(req.body).to be_equivalent_to(expected_xml)
       end
     end
@@ -322,7 +323,7 @@ UKGOVUK_125
       expected_xml = <<-XML.strip_heredoc
         <bulletin>
           <subject>a subject line</subject>
-          <body><![CDATA[a body]]></body>
+          <body><![CDATA[a body with “utf-8 quotes”]]></body>
           <topics type="array">
             <topic>
               <code>UKGOVUK_123</code>

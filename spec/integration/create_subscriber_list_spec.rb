@@ -30,7 +30,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
 
       body = <<-XML.strip_heredoc
-        <?xml version="1.0"?>
+        <?xml version="1.0" encoding="utf-8"?>
         <topic>
           <name>This is a sample title</name>
           <short-name>This is a sample title</short-name>

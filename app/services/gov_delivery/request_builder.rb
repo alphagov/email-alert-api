@@ -1,7 +1,7 @@
 module GovDelivery
   module RequestBuilder
     def self.create_topic_xml(name, topic_id = nil)
-      Nokogiri::XML::Builder.new { |xml|
+      Nokogiri::XML::Builder.new(encoding: "utf-8") { |xml|
         xml.topic {
           xml.code(topic_id) if topic_id
           xml.name name
@@ -16,7 +16,7 @@ module GovDelivery
     end
 
     def self.send_bulletin_xml(topic_ids, subject, body, options = {})
-      Nokogiri::XML::Builder.new { |xml|
+      Nokogiri::XML::Builder.new(encoding: "utf-8") { |xml|
         xml.bulletin {
           xml.subject subject
           xml.body {
