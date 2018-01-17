@@ -30,7 +30,7 @@ group :development do
 end
 
 group :development, :test do
-  gem 'govuk-lint', '~> 3.5'
+  gem 'govuk-lint', '~> 3.6'
   gem 'listen', '3.1.5'
   gem 'pry-byebug'
   gem 'rspec-rails', '3.7.2'
