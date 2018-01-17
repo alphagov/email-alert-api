@@ -89,7 +89,7 @@ GEM
       warden-oauth2 (~> 0.0.1)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
-    govuk-lint (3.5.0)
+    govuk-lint (3.6.0)
       rubocop (~> 0.51.0)
       rubocop-rspec (~> 1.19.0)
       scss_lint
@@ -328,7 +328,7 @@ DEPENDENCIES
   foreman (= 0.84.0)
   gds-api-adapters (~> 51.0.0)
   gds-sso (~> 13.5)
-  govuk-lint (~> 3.5)
+  govuk-lint (~> 3.6)
   govuk_app_config (~> 1.2)
   govuk_sidekiq (~> 3.0)
   listen (= 3.1.5)
