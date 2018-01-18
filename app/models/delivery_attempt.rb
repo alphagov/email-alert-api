@@ -3,8 +3,8 @@ class DeliveryAttempt < ApplicationRecord
 
   validates :email, :status, :provider, presence: true
 
-  enum status: %i(sending delivered permanent_failure temporary_failure technical_failure)
-  enum provider: %i(pseudo notify)
+  enum status: { sending: 0, delivered: 1, permanent_failure: 2, temporary_failure: 3, technical_failure: 4 }
+  enum provider: { pseudo: 0, notify: 1 }
 
   def self.latest_per_email
     inner = group(:email_id).select("email_id AS id, MAX(updated_at) AS max")
