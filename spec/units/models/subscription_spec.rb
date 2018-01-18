@@ -15,6 +15,10 @@ RSpec.describe Subscription, type: :model do
 
       expect(subject).to be_invalid
     end
+
+    it "is an immediate email" do
+      expect(subject.immediately?).to be_truthy
+    end
   end
 
   describe "callbacks" do
