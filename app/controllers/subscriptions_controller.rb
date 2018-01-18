@@ -5,12 +5,10 @@ class SubscriptionsController < ApplicationController
       subscriber_list: subscribable,
     )
 
-    if subscription.new_record?
-      subscription.save!
-      status = :created
-    else
-      status = :ok
-    end
+    status = subscription.new_record? ? :created : :ok
+
+    subscription.frequency = frequency
+    subscription.save!
 
     render json: { id: subscription.id }, status: status
   end
@@ -25,9 +23,13 @@ private
     SubscriberList.find(subscription_params[:subscribable_id])
   end
 
+  def frequency
+    subscription_params.fetch(:frequency, "immediately").to_sym
+  end
+
   def subscription_params
     params.require(:address)
     params.require(:subscribable_id)
-    params.permit(:address, :subscribable_id)
+    params.permit(:address, :subscribable_id, :frequency)
   end
 end
