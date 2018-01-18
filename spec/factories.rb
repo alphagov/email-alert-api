@@ -22,6 +22,17 @@ FactoryBot.define do
     reference "reference"
   end
 
+  factory :digest_run do
+    date { Date.current }
+    range DigestRun::DAILY
+
+    trait :daily
+
+    trait :weekly do
+      range DigestRun::WEEKLY
+    end
+  end
+
   factory :email do
     address "test@example.com"
     subject "subject"
