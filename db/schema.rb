@@ -117,11 +117,8 @@ ActiveRecord::Schema.define(version: 20180118085957) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "uuid", null: false
-<<<<<<< HEAD
-    t.integer "frequency", default: 0, null: false
-=======
     t.string "signon_user_uid"
->>>>>>> Add signon_user_uid fields to table
+    t.integer "frequency", default: 0, null: false
     t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true
     t.index ["subscriber_id"], name: "index_subscriptions_on_subscriber_id"
     t.index ["subscriber_list_id"], name: "index_subscriptions_on_subscriber_list_id"

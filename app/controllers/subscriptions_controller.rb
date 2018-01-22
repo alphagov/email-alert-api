@@ -5,15 +5,11 @@ class SubscriptionsController < ApplicationController
       subscriber_list: subscribable,
     )
 
-    subscription.frequency = frequency
+    status = subscription.new_record? ? :created : :ok
 
-    if subscription.new_record?
-      subscription.signon_user_uid = current_user.uid
-      subscription.save!
-      status = :created
-    else
-      status = :ok
-    end
+    subscription.frequency = frequency
+    subscription.signon_user_uid = current_user.uid
+    subscription.save!
 
     render json: { id: subscription.id }, status: status
   end
