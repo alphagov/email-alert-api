@@ -31,8 +31,10 @@ class SubscriberList < ApplicationRecord
     end
   end
 
-  def to_json
-    super(methods: :subscription_url)
+  def to_json(options = {})
+    options[:except] ||= %i{signon_user_uid}
+    options[:methods] ||= %i{subscription_url}
+    super(options)
   end
 
 private

@@ -1,7 +1,8 @@
 class NotificationHandlerService
-  attr_reader :params
-  def initialize(params:)
+  attr_reader :params, :user
+  def initialize(params:, user: nil)
     @params = params
+    @user = user
   end
 
   def self.call(*args)
@@ -36,6 +37,7 @@ private
       document_type: params[:document_type],
       publishing_app: params[:publishing_app],
       priority: params.fetch(:priority, "low").to_sym,
+      signon_user_uid: user&.uid,
     }
   end
 end

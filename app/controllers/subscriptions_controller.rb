@@ -8,6 +8,7 @@ class SubscriptionsController < ApplicationController
     status = subscription.new_record? ? :created : :ok
 
     subscription.frequency = frequency
+    subscription.signon_user_uid = current_user.uid
     subscription.save!
 
     render json: { id: subscription.id }, status: status
@@ -16,11 +17,18 @@ class SubscriptionsController < ApplicationController
 private
 
   def subscriber
-    Subscriber.find_or_create_by!(address: subscription_params[:address])
+    @subscriber ||= begin
+                      address = subscription_params.require(:address)
+                      found = Subscriber.find_by(address: address)
+                      found || Subscriber.create!(
+                        address: address,
+                        signon_user_uid: current_user.uid,
+                      )
+                    end
   end
 
   def subscribable
-    SubscriberList.find(subscription_params[:subscribable_id])
+    SubscriberList.find(subscription_params.require(:subscribable_id))
   end
 
   def frequency
@@ -28,8 +36,6 @@ private
   end
 
   def subscription_params
-    params.require(:address)
-    params.require(:subscribable_id)
     params.permit(:address, :subscribable_id, :frequency)
   end
 end

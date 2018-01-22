@@ -19,14 +19,14 @@ RSpec.describe "Receiving a status update", type: :request do
     end
 
     context "when a user does not have 'status_updates' permission" do
-      before do
-        login_as(create(:user, permissions: %w[signin status_updates]))
-      end
+      let(:user) { create(:user, permissions: %w[signin status_updates]) }
+      before { login_as(user) }
 
       it "calls the status update service" do
         expect(StatusUpdateService).to receive(:call).with(
           reference: "ref-123",
           status: "delivered",
+          user: user,
         )
 
         post "/status-updates", params: params

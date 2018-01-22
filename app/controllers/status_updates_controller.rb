@@ -2,17 +2,15 @@ class StatusUpdatesController < ApplicationController
   wrap_parameters false
 
   def create
-    StatusUpdateService.call(**status_update_params)
+    StatusUpdateService.call(
+      reference: params.require(:reference),
+      status: params.require(:status),
+      user: current_user,
+    )
     head :no_content
   end
 
 private
-
-  def status_update_params
-    params.require(:reference)
-    params.require(:status)
-    params.permit(:reference, :status).to_h.symbolize_keys
-  end
 
   def authorise
     authorise_user!("status_updates")
