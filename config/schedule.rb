@@ -21,4 +21,8 @@ every 1.day, at: "8:30 am" do
   runner "DailyDigestSchedulerService.call"
 end
 
+every :saturday, at: "8:30 am" do
+  runner "WeeklyDigestSchedulerService.call"
+end
+
 # Learn more: http://github.com/javan/whenever
