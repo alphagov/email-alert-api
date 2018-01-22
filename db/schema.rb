@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180118085957) do
+ActiveRecord::Schema.define(version: 20180118134516) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,16 @@ ActiveRecord::Schema.define(version: 20180118085957) do
     t.string "signon_user_uid"
     t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
     t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
+  end
+
+  create_table "digest_runs", force: :cascade do |t|
+    t.date "date", null: false
+    t.datetime "starts_at", null: false
+    t.datetime "ends_at", null: false
+    t.integer "range", null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "emails", force: :cascade do |t|
