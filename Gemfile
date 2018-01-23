@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'pg', '~> 0.21'
 gem 'rails', '~> 5.1'
 
-gem 'activerecord-import', '~> 0.21'
+gem 'activerecord-import', '~> 0.22'
 gem 'with_advisory_lock', '~> 3.2'
 
 gem 'faraday', '0.12.2'
