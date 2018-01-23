@@ -34,7 +34,7 @@ RSpec.describe NotificationHandlerService do
     }
   }
 
-  let(:subscriber_list) do
+  let!(:subscriber_list) do
     create(:subscriber_list, tags: { topics: ["oil-and-gas/licensing"] })
   end
 
@@ -44,11 +44,19 @@ RSpec.describe NotificationHandlerService do
         .to change { ContentChange.count }.by(1)
     end
 
+    it "creates a MatchedContentChange" do
+      expect { described_class.call(params: params) }
+        .to change { MatchedContentChange.count }.by(1)
+    end
+
+    let(:content_change) { create(:content_change) }
+
     it "enqueues the content change to be processed by the subscription content worker" do
-      allow(ContentChange).to receive(:create!).and_return(double(id: 1))
+      allow(ContentChange).to receive(:create!).and_return(content_change)
+
       expect(SubscriptionContentWorker)
         .to receive(:perform_async)
-        .with(1)
+        .with(content_change.id)
 
       described_class.call(params: params)
     end

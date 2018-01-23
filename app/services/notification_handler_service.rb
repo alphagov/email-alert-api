@@ -13,6 +13,7 @@ class NotificationHandlerService
     begin
       content_change = ContentChange.create!(content_change_params)
       MetricsService.content_change_created
+      store_matched_content_change(content_change)
       SubscriptionContentWorker.perform_async(content_change.id)
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
@@ -20,6 +21,31 @@ class NotificationHandlerService
   end
 
 private
+
+  def store_matched_content_change(content_change)
+    MatchedContentChange.import!(
+      matched_content_change_records_for(content_change: content_change)
+    )
+  end
+
+  def matched_content_change_records_for(content_change:)
+    subscriber_lists_for(content_change: content_change).map do |subscriber_list|
+      {
+        content_change_id: content_change.id,
+        subscriber_list_id: subscriber_list.id,
+      }
+    end
+  end
+
+  def subscriber_lists_for(content_change:)
+    SubscriberListQuery.new(
+      tags: content_change.tags,
+      links: content_change.links,
+      document_type: content_change.document_type,
+      email_document_supertype: content_change.email_document_supertype,
+      government_document_supertype: content_change.government_document_supertype,
+    ).lists
+  end
 
   def content_change_params
     {
