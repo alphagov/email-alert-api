@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180118134516) do
+ActiveRecord::Schema.define(version: 20180123093411) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,6 +64,16 @@ ActiveRecord::Schema.define(version: 20180118134516) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "address", null: false
+  end
+
+  create_table "matched_content_changes", force: :cascade do |t|
+    t.bigint "content_change_id", null: false
+    t.bigint "subscriber_list_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["content_change_id", "subscriber_list_id"], name: "index_matched_content_changes_content_change_subscriber_list", unique: true
+    t.index ["content_change_id"], name: "index_matched_content_changes_on_content_change_id"
+    t.index ["subscriber_list_id"], name: "index_matched_content_changes_on_subscriber_list_id"
   end
 
   create_table "notification_logs", id: :serial, force: :cascade do |t|
@@ -127,8 +137,8 @@ ActiveRecord::Schema.define(version: 20180118134516) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "uuid", null: false
-    t.string "signon_user_uid"
     t.integer "frequency", default: 0, null: false
+    t.string "signon_user_uid"
     t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true
     t.index ["subscriber_id"], name: "index_subscriptions_on_subscriber_id"
     t.index ["subscriber_list_id"], name: "index_subscriptions_on_subscriber_list_id"
@@ -147,6 +157,8 @@ ActiveRecord::Schema.define(version: 20180118134516) do
   end
 
   add_foreign_key "delivery_attempts", "emails", on_delete: :cascade
+  add_foreign_key "matched_content_changes", "content_changes"
+  add_foreign_key "matched_content_changes", "subscriber_lists"
   add_foreign_key "subscription_contents", "content_changes"
   add_foreign_key "subscription_contents", "emails", on_delete: :nullify
   add_foreign_key "subscription_contents", "subscriptions", on_delete: :nullify
