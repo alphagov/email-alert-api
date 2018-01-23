@@ -1,7 +1,7 @@
 module PublicUrlService
   class << self
     def content_url(base_path:)
-      "#{website_root}#{base_path}"
+      URI.join(website_root, base_path).to_s
     end
 
     # This url is for the page mid-way through the signup journey where the user
