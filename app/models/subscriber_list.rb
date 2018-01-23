@@ -10,6 +10,7 @@ class SubscriberList < ApplicationRecord
 
   has_many :subscriptions
   has_many :subscribers, through: :subscriptions
+  has_many :matched_content_changes, through: :matched_content_changes
 
   def self.build_from(params:, gov_delivery_id:)
     new(

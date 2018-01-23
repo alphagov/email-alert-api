@@ -70,5 +70,10 @@ FactoryBot.define do
     content_change
   end
 
+  factory :matched_content_change do
+    content_change
+    subscriber_list
+  end
+
   factory :user
 end
