@@ -1,4 +1,4 @@
-RSpec.describe EmailRenderer do
+RSpec.describe ImmediateEmailBuilder do
   let(:subscriber) { double(:subscriber, subscriptions: subscriptions) }
 
   let(:subscriptions) do
@@ -19,7 +19,7 @@ RSpec.describe EmailRenderer do
     }
   end
 
-  subject { EmailRenderer.new(params: params) }
+  subject { described_class.new(params: params) }
 
   describe "subject" do
     it "should match the expected title" do

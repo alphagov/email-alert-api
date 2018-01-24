@@ -32,7 +32,7 @@ RSpec.describe Email do
     before do
       allow(email_renderer).to receive(:subject).and_return("a subject")
       allow(email_renderer).to receive(:body).and_return("a body")
-      allow(EmailRenderer).to receive(:new).and_return(email_renderer)
+      allow(ImmediateEmailBuilder).to receive(:new).and_return(email_renderer)
     end
 
     it "sets subject" do

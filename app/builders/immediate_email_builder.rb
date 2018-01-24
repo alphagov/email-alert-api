@@ -1,4 +1,4 @@
-class EmailRenderer
+class ImmediateEmailBuilder
   def initialize(params:)
     @params = params
   end
