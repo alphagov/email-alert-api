@@ -3,6 +3,22 @@ class ImmediateEmailBuilder
     @params = params
   end
 
+  def self.call(*args)
+    new(*args).call
+  end
+
+  def call
+    {
+      address: subscriber.address,
+      subject: subject,
+      body: body
+    }
+  end
+
+private
+
+  attr_reader :params
+
   def subject
     "GOV.UK Update - #{title}"
   end
@@ -20,10 +36,6 @@ class ImmediateEmailBuilder
       #{unsubscribe_links}
     BODY
   end
-
-private
-
-  attr_reader :params
 
   def title
     params.fetch(:title)

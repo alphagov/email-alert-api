@@ -1,5 +1,5 @@
 RSpec.describe ImmediateEmailBuilder do
-  let(:subscriber) { double(:subscriber, subscriptions: subscriptions) }
+  let(:subscriber) { double(:subscriber, subscriptions: subscriptions, address: "test@example.com") }
 
   let(:subscriptions) do
     [
@@ -19,17 +19,17 @@ RSpec.describe ImmediateEmailBuilder do
     }
   end
 
-  subject { described_class.new(params: params) }
+  subject { described_class.call(params: params) }
 
   describe "subject" do
     it "should match the expected title" do
-      expect(subject.subject).to eq("GOV.UK Update - #{params[:title]}")
+      expect(subject[:subject]).to eq("GOV.UK Update - #{params[:title]}")
     end
   end
 
   describe "body" do
     it "should match the expected content" do
-      expect(subject.body).to eq(
+      expect(subject[:body]).to eq(
         <<~BODY
           [Title](http://www.dev.gov.uk/base_path)
 

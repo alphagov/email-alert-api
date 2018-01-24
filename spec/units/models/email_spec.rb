@@ -13,7 +13,7 @@ RSpec.describe Email do
 
   describe "create_from_params!" do
     let(:content_change) { create(:content_change) }
-    let(:subscriber) { double(address: "test@test.com") }
+    let(:subscriber) { double(address: "test@test.com", subscriptions: []) }
 
     let(:email) do
       Email.create_from_params!(
@@ -27,20 +27,12 @@ RSpec.describe Email do
       )
     end
 
-    let(:email_renderer) { double }
-
-    before do
-      allow(email_renderer).to receive(:subject).and_return("a subject")
-      allow(email_renderer).to receive(:body).and_return("a body")
-      allow(ImmediateEmailBuilder).to receive(:new).and_return(email_renderer)
-    end
-
     it "sets subject" do
-      expect(email.subject).to eq("a subject")
+      expect(email.subject).to_not be_nil
     end
 
     it "sets body" do
-      expect(email.body).to eq("a body")
+      expect(email.body).to_not be_nil
     end
   end
 end

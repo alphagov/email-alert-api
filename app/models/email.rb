@@ -10,13 +10,6 @@ class Email < ApplicationRecord
   end
 
   def self.build_from_params(params)
-    builder = ImmediateEmailBuilder.new(params: params)
-    subscriber = params.fetch(:subscriber)
-
-    {
-      address: subscriber.address,
-      subject: builder.subject,
-      body: builder.body
-    }
+    ImmediateEmailBuilder.call(params: params)
   end
 end
