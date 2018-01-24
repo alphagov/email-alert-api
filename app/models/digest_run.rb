@@ -10,6 +10,14 @@ class DigestRun < ApplicationRecord
 
 private
 
+  def starts_at=(value)
+    super
+  end
+
+  def ends_at=(value)
+    super
+  end
+
   def set_range_dates
     self.starts_at = configured_starts_at
     self.ends_at = configured_ends_at
@@ -20,15 +28,15 @@ private
   end
 
   def configured_starts_at
-    Time.parse("#{digest_range_hour}:00", starts_at_date)
+    Time.parse("#{digest_range_hour}:00", starts_at_time)
   end
 
   def configured_ends_at
-    Time.parse("#{digest_range_hour}:00", Time.now)
+    Time.parse("#{digest_range_hour}:00", date.to_time)
   end
 
-  def starts_at_date
-    daily? ? 1.day.ago : 1.week.ago
+  def starts_at_time
+    (daily? ? date - 1.day : date - 1.week).to_time
   end
 
   def digest_range_hour
