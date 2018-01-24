@@ -3,8 +3,16 @@ RSpec.describe SubscriptionMatcher do
     create(:content_change, tags: { topics: ["oil-and-gas/licensing"] })
   end
 
-  let(:subscribable) do
+  let(:subscriber_list) do
     create(:subscriber_list, tags: { topics: ["oil-and-gas/licensing"] })
+  end
+
+  before do
+    create(
+      :matched_content_change,
+      content_change: content_change,
+      subscriber_list: subscriber_list,
+    )
   end
 
   subject { described_class.call(content_change: content_change) }
@@ -12,7 +20,7 @@ RSpec.describe SubscriptionMatcher do
   describe ".call" do
     context "with a subscription" do
       before do
-        create(:subscription, subscriber_list: subscribable)
+        create(:subscription, subscriber_list: subscriber_list)
       end
 
       it "returns the subscriptions" do
@@ -22,8 +30,8 @@ RSpec.describe SubscriptionMatcher do
 
     context "with two subscriptions" do
       before do
-        create(:subscription, subscriber_list: subscribable)
-        create(:subscription, subscriber_list: subscribable, subscriber: create(:subscriber, address: "test2@example.com"))
+        create(:subscription, subscriber_list: subscriber_list)
+        create(:subscription, subscriber_list: subscriber_list, subscriber: create(:subscriber, address: "test2@example.com"))
       end
 
       it "returns the subscriptions" do

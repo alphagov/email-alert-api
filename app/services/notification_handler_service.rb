@@ -13,6 +13,7 @@ class NotificationHandlerService
     begin
       content_change = ContentChange.create!(content_change_params)
       MetricsService.content_change_created
+      MatchedContentChangeGenerationService.call(content_change: content_change)
       SubscriptionContentWorker.perform_async(content_change.id)
     rescue StandardError => ex
       Raven.capture_exception(ex, tags: { version: 2 })
