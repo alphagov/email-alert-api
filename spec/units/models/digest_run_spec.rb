@@ -13,7 +13,7 @@ RSpec.describe DigestRun do
     context "with no environment vars set" do
       context "daily" do
         it "sets starts_at to 8am on date - 1.day" do
-          date = Date.current
+          date = 2.days.ago
           instance = described_class.create(date: date, range: "daily")
 
           expect(instance.starts_at).to eq(
@@ -22,7 +22,7 @@ RSpec.describe DigestRun do
         end
 
         it "sets ends_at to 8am on date" do
-          date = Date.current
+          date = 1.day.ago
           instance = described_class.create(date: date, range: "daily")
 
           expect(instance.ends_at).to eq(
@@ -33,7 +33,7 @@ RSpec.describe DigestRun do
 
       context "weekly" do
         it "sets starts_at to 8am on date - 1.week" do
-          date = Date.current
+          date = 1.day.ago
           instance = described_class.create(date: date, range: "weekly")
 
           expect(instance.starts_at).to eq(
@@ -65,7 +65,7 @@ RSpec.describe DigestRun do
 
       context "daily" do
         it "sets starts_at to the configured hour on date - 1.day" do
-          date = Date.current
+          date = 1.week.ago
           instance = described_class.create(date: date, range: "daily")
 
           expect(instance.starts_at).to eq(
@@ -74,7 +74,7 @@ RSpec.describe DigestRun do
         end
 
         it "sets ends_at to the configured hour on date" do
-          date = Date.current
+          date = 1.day.ago
           instance = described_class.create(date: date, range: "daily")
 
           expect(instance.ends_at).to eq(
@@ -94,7 +94,7 @@ RSpec.describe DigestRun do
         end
 
         it "sets ends_at to the configured hour on date" do
-          date = Date.current
+          date = 4.days.ago
           instance = described_class.create(date: date, range: "weekly")
 
           expect(instance.ends_at).to eq(
