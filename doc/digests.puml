@@ -1,0 +1,35 @@
+@startuml
+control scheduler
+participant digest_initiator_service as "DigestInitiatorService"
+database digest_run as "DigestRun"
+participant digest_subscriber_query as "DigestSubscriberQuery"
+database digest_run_subscriber as "DigestRunSubscriber"
+participant digest_generation_worker as "DigestGenerationWorker"
+participant subscription_content_change_query as "SubscriptionContentChangeQuery"
+participant digest_email_builder as "DigestEmailBuilder"
+database email as "Email"
+database subscription_content as "SubscriptionContent"
+
+group scheduled task
+  scheduler -> digest_initiator_service : 8am Daily/Monday
+  digest_initiator_service -> digest_run : create
+  digest_run -> digest_initiator_service : digest_run
+  digest_initiator_service -> digest_subscriber_query : fetch subscribers
+  digest_subscriber_query -> digest_initiator_service : subscriber_ids
+  digest_initiator_service -> digest_run_subscriber : create_all
+  digest_run_subscriber -> digest_initiator_service : ids
+  digest_initiator_service -> digest_generation_worker : enqueue digest_run_subscribers
+end
+
+group sidekiq
+  digest_generation_worker -> subscription_content_change_query : digest_run_subscriber
+  subscription_content_change_query -> digest_generation_worker : results (subscriptions with content_changes)
+  digest_generation_worker -> digest_email_builder : digest_run_subscriber, results
+  digest_email_builder -> email : create
+  email -> digest_email_builder : email
+  digest_email_builder -> digest_generation_worker : email
+  digest_generation_worker -> subscription_content : create_for subscription_content_change_results, email
+  digest_generation_worker -> digest_run_subscriber : mark as complete
+  digest_run_subscriber -> digest_run : mark as complete
+end
+@enduml
