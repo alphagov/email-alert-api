@@ -50,7 +50,7 @@ private
   end
 
   def subscriptions_for(content_change:)
-    SubscriptionMatcher.call(content_change: content_change)
+    ContentChangeSubscriptionQuery.call(content_change: content_change)
   end
 
   def email_params(content_change, subscriber)
