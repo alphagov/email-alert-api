@@ -1,7 +1,8 @@
 class ContentChangeSubscriptionQuery
   def self.call(content_change:)
-    Subscription.where(
-      subscriber_list: MatchedContentChange.where(content_change: content_change).pluck(:subscriber_list_id)
-    ).distinct
+    Subscription
+      .joins(subscriber_list: :matched_content_changes)
+      .where(matched_content_changes: { content_change_id: content_change.id })
+      .distinct
   end
 end
