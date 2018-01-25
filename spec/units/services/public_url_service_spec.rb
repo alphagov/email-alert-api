@@ -22,11 +22,4 @@ RSpec.describe PublicUrlService do
       )
     end
   end
-
-  describe ".unsubscribe_url" do
-    it "returns the GOV.UK url to unsubscribe for a subscription" do
-      result = subject.unsubscribe_url(uuid: "foo-bar", title: "Foo & Bar")
-      expect(result).to eq("http://www.dev.gov.uk/email/unsubscribe/foo-bar?title=Foo%20%26%20Bar")
-    end
-  end
 end

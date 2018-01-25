@@ -28,10 +28,6 @@ module PublicUrlService
       "#{proto}://#{host}/accounts/#{code}/subscriber/new?#{params}"
     end
 
-    def unsubscribe_url(uuid:, title:)
-      "#{website_root}/email/unsubscribe/#{uuid}?#{param(:title, title)}"
-    end
-
   private
 
     def website_root
