@@ -1,7 +1,7 @@
 class ContentChange < ApplicationRecord
   include SymbolizeJSON
 
-  has_many :matched_subscriber_lists, through: :matched_content_changes
+  has_many :matched_content_changes
 
   enum priority: { low: 0, high: 1 }
 
