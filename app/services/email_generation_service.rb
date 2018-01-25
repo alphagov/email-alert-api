@@ -66,19 +66,9 @@ private
   end
 
   def build_email(subscription_content:)
-    Email.build_from_params(email_params(subscription_content: subscription_content))
-  end
-
-  def email_params(subscription_content:)
-    content_change = subscription_content.content_change
-
-    {
-      title: content_change.title,
-      change_note: content_change.change_note,
-      description: content_change.description,
-      base_path: content_change.base_path,
-      public_updated_at: content_change.public_updated_at,
+    ImmediateEmailBuilder.call(
       subscriber: subscription_content.subscription.subscriber,
-    }
+      content_change: subscription_content.content_change
+    )
   end
 end

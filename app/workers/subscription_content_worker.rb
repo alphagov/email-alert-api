@@ -36,8 +36,11 @@ private
 
     Subscriber.where(address: addresses).find_each do |subscriber|
       begin
-        email = Email.create_from_params!(
-          email_params(content_change, subscriber)
+        email = Email.create!(
+          ImmediateEmailBuilder.call(
+            subscriber: subscriber,
+            content_change: content_change,
+          )
         )
 
         DeliveryRequestWorker.perform_async_with_priority(

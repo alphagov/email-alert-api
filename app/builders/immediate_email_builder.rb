@@ -1,6 +1,7 @@
 class ImmediateEmailBuilder
-  def initialize(params:)
-    @params = params
+  def initialize(subscriber:, content_change:)
+    @subscriber = subscriber
+    @content_change = content_change
   end
 
   def self.call(*args)
@@ -17,60 +18,30 @@ class ImmediateEmailBuilder
 
 private
 
-  attr_reader :params
+  attr_reader :subscriber, :content_change
 
   def subject
-    "GOV.UK Update - #{title}"
+    "GOV.UK Update - #{content_change.title}"
   end
 
   def body
     <<~BODY
-      [#{title}](#{content_url})
-
-      #{change_note}: #{description}.
-
-      Updated at #{public_updated_at}
-
-      ----
+      #{presented_content_change}
+      ---
 
       #{unsubscribe_links}
     BODY
   end
 
-  def title
-    params.fetch(:title)
-  end
-
-  def base_path
-    params.fetch(:base_path)
-  end
-
-  def change_note
-    params.fetch(:change_note)
-  end
-
-  def description
-    params.fetch(:description)
-  end
-
-  def public_updated_at
-    params.fetch(:public_updated_at).strftime("%I:%M %P on %-d %B %Y")
-  end
-
-  def subscriber
-    params.fetch(:subscriber)
+  def presented_content_change
+    ContentChangePresenter.call(content_change)
   end
 
   def unsubscribe_links
-    links = UnsubscribeLink.for(subscriber.subscriptions)
-    links.map { |l| present_unsubscribe_link(l) }.join("\n\n")
-  end
+    links = subscriber.subscriptions.map do |subscription|
+      UnsubscribeLinkPresenter.call(uuid: subscription.uuid, title: subscription.subscriber_list.title)
+    end
 
-  def present_unsubscribe_link(link)
-    "Unsubscribe from [#{link.title}](#{link.url})"
-  end
-
-  def content_url
-    PublicUrlService.content_url(base_path: base_path)
+    links.join("\n\n")
   end
 end

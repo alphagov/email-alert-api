@@ -8,40 +8,50 @@ RSpec.describe ImmediateEmailBuilder do
     ]
   end
 
-  let(:params) do
-    {
+  let(:content_change) do
+    double(
       title: "Title",
       public_updated_at: Time.parse("1/1/2017"),
       description: "Description",
       change_note: "Change note",
       base_path: "/base_path",
-      subscriber: subscriber,
-    }
+    )
   end
 
-  subject { described_class.call(params: params) }
+  describe ".call" do
+    subject(:email) { described_class.call(subscriber: subscriber, content_change: content_change) }
 
-  describe "subject" do
-    it "should match the expected title" do
-      expect(subject[:subject]).to eq("GOV.UK Update - #{params[:title]}")
+    it "returns an email hash" do
+      expect(email).to be_a(Hash)
     end
-  end
 
-  describe "body" do
-    it "should match the expected content" do
-      expect(subject[:body]).to eq(
+    it "sets the subject" do
+      expect(email[:subject]).to eq("GOV.UK Update - Title")
+    end
+
+    it "sets the body and unsubscribe links" do
+      expect(UnsubscribeLinkPresenter).to receive(:call).with(
+        uuid: "1234",
+        title: "First Subscription"
+      ).and_return("unsubscribe_link_1")
+
+      expect(UnsubscribeLinkPresenter).to receive(:call).with(
+        uuid: "5678",
+        title: "Second Subscription"
+      ).and_return("unsubscribe_link_2")
+
+      expect(ContentChangePresenter).to receive(:call)
+        .and_return("presented_content_change\n")
+
+      expect(email[:body]).to eq(
         <<~BODY
-          [Title](http://www.dev.gov.uk/base_path)
+          presented_content_change
 
-          Change note: Description.
+          ---
 
-          Updated at 12:00 am on 1 January 2017
+          unsubscribe_link_1
 
-          ----
-
-          Unsubscribe from [First Subscription](http://www.dev.gov.uk/email/unsubscribe/1234?title=First%20Subscription)
-
-          Unsubscribe from [Second Subscription](http://www.dev.gov.uk/email/unsubscribe/5678?title=Second%20Subscription)
+          unsubscribe_link_2
         BODY
       )
     end
