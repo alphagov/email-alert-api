@@ -60,7 +60,7 @@ GEM
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
     erubi (1.7.0)
-    et-orbi (1.0.8)
+    et-orbi (1.0.9)
       tzinfo
     factory_bot (4.8.2)
       activesupport (>= 3.0.0)
@@ -274,7 +274,7 @@ GEM
       redis (>= 3.3.4, < 5)
     sidekiq-logging-json (0.0.18)
       sidekiq (>= 3)
-    sidekiq-scheduler (2.1.10)
+    sidekiq-scheduler (2.2.1)
       redis (>= 3, < 5)
       rufus-scheduler (~> 3.2)
       sidekiq (>= 3)
@@ -344,7 +344,7 @@ DEPENDENCIES
   ratelimit (~> 1.0)
   rspec-rails (= 3.7.2)
   ruby-prof (~> 0.17)
-  sidekiq-scheduler (~> 2.1)
+  sidekiq-scheduler (~> 2.2)
   timecop
   webmock
   whenever
