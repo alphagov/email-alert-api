@@ -17,7 +17,7 @@ gem 'whenever', require: false
 
 gem 'govuk_sidekiq', '~> 3.0'
 gem 'ratelimit', '~> 1.0'
-gem 'sidekiq-scheduler', '~> 2.1'
+gem 'sidekiq-scheduler', '~> 2.2'
 
 group :test do
   gem 'equivalent-xml'
