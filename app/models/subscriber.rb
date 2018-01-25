@@ -1,4 +1,4 @@
-class Subscriber < ActiveRecord::Base
+class Subscriber < ApplicationRecord
   with_options allow_nil: true do
     validates :address, format: { with: /@/, message: "is not an email address" }
     validates :address, uniqueness: true

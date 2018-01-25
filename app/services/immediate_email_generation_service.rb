@@ -1,5 +1,5 @@
-class EmailGenerationService
-  LOCK_NAME = "email_generation_worker".freeze
+class ImmediateEmailGenerationService
+  LOCK_NAME = "immediate_email_generation_worker".freeze
 
   def self.call(*args)
     new.call(*args)

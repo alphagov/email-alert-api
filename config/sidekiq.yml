@@ -7,9 +7,9 @@
   - [low_delivery, 2]
   - [default, 1]
 :schedule:
-  email_generation:
+  immediate_email_generation:
     every: '5s'
-    class: EmailGenerationWorker
+    class: ImmediateEmailGenerationWorker
   daily_digest_initiator:
     cron: '30 8 * * *' # every day at 8:30am
     class: DailyDigestInitiatorWorker

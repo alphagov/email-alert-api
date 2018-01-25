@@ -1,4 +1,4 @@
-RSpec.describe EmailGenerationService do
+RSpec.describe ImmediateEmailGenerationService do
   describe ".call" do
     def perform_with_fake_sidekiq
       Sidekiq::Testing.fake! do

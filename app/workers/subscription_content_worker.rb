@@ -25,7 +25,7 @@ private
         Raven.capture_exception(ex, tags: { version: 2 })
       end
 
-      EmailGenerationWorker.perform_async
+      ImmediateEmailGenerationWorker.perform_async
     end
   end
 
