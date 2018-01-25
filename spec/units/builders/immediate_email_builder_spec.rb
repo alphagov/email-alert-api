@@ -19,14 +19,18 @@ RSpec.describe ImmediateEmailBuilder do
   end
 
   describe ".call" do
-    subject(:email) { described_class.call(subscriber: subscriber, content_change: content_change) }
+    subject(:email_import) do
+      described_class.call([{ subscriber: subscriber, content_change: content_change }])
+    end
+
+    let(:email) { Email.find(email_import.ids.first) }
 
     it "returns an email hash" do
-      expect(email).to be_a(Hash)
+      expect(email_import.ids.count).to eq(1)
     end
 
     it "sets the subject" do
-      expect(email[:subject]).to eq("GOV.UK Update - Title")
+      expect(email.subject).to eq("GOV.UK Update - Title")
     end
 
     it "sets the body and unsubscribe links" do
@@ -43,7 +47,7 @@ RSpec.describe ImmediateEmailBuilder do
       expect(ContentChangePresenter).to receive(:call)
         .and_return("presented_content_change\n")
 
-      expect(email[:body]).to eq(
+      expect(email.body).to eq(
         <<~BODY
           presented_content_change
 

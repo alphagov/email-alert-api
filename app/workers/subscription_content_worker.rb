@@ -36,15 +36,12 @@ private
 
     Subscriber.where(address: addresses).find_each do |subscriber|
       begin
-        email = Email.create!(
-          ImmediateEmailBuilder.call(
-            subscriber: subscriber,
-            content_change: content_change,
-          )
-        )
+        email_id = ImmediateEmailBuilder.call([
+          { subscriber: subscriber, content_change: content_change }
+        ]).ids.first
 
         DeliveryRequestWorker.perform_async_with_priority(
-          email.id, priority: content_change.priority.to_sym,
+          email_id, priority: content_change.priority.to_sym,
         )
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })

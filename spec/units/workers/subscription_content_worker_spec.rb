@@ -64,8 +64,8 @@ RSpec.describe SubscriptionContentWorker do
     it "creates an email for the courtesy email group" do
       expect(ImmediateEmailBuilder)
         .to receive(:call)
-        .with(hash_including(subscriber: subscriber))
-        .and_return(email)
+        .with([hash_including(subscriber: subscriber)])
+        .and_return(double(ids: [0]))
 
       subject.perform(content_change.id)
     end
