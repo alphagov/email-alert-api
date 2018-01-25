@@ -1,4 +1,4 @@
-module DigestSchedulerService
+module DigestInitiatorService
   extend ActiveSupport::Concern
 
   class_methods do

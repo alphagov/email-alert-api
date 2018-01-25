@@ -1,5 +1,5 @@
 class DailyDigestInitiatorWorker < DigestInitiatorWorker
   def perform
-    DailyDigestSchedulerService.call
+    DailyDigestInitiatorService.call
   end
 end

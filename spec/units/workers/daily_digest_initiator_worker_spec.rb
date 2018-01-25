@@ -1,7 +1,7 @@
 RSpec.describe DailyDigestInitiatorWorker do
   describe ".perform" do
     it "calls the daily digest initiator service" do
-      expect(DailyDigestSchedulerService).to receive(:call)
+      expect(DailyDigestInitiatorService).to receive(:call)
 
       subject.perform
     end
