@@ -31,7 +31,7 @@ private
     <<~RESULT
       ##{result.subscriber_list_title}
 
-      #{presented_content_changes(result.content_changes)}
+      #{deduplicate_and_present(result.content_changes)}
       ---
 
       #{unsubscribe_link(result)}
@@ -44,6 +44,16 @@ private
     else
       "GOV.UK Weekly Update"
     end
+  end
+
+  def deduplicate_and_present(content_changes)
+    presented_content_changes(
+      deduplicated_content_changes(content_changes)
+    )
+  end
+
+  def deduplicated_content_changes(content_changes)
+    ContentChangeDeduplicatorService.call(content_changes)
   end
 
   def presented_content_changes(content_changes)

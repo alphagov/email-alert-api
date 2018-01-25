@@ -35,6 +35,10 @@ RSpec.describe DigestEmailBuilder do
     )
   }
 
+  def simulated_deduplification(content_changes)
+    content_changes.slice(0, content_changes.length - 1)
+  end
+
   it "returns an Email" do
     expect(email).to be_a(Email)
   end
@@ -50,7 +54,23 @@ RSpec.describe DigestEmailBuilder do
       title: "Test title 2"
     ).and_return("unsubscribe_link_2")
 
-    expect(ContentChangePresenter).to receive(:call).exactly(6).times
+    first_content_changes = subscription_content_change_results
+      .first
+      .content_changes
+
+    second_content_changes = subscription_content_change_results
+      .second
+      .content_changes
+
+    expect(ContentChangeDeduplicatorService).to receive(:call)
+      .with(first_content_changes)
+      .and_return(simulated_deduplification(first_content_changes))
+
+    expect(ContentChangeDeduplicatorService).to receive(:call)
+      .with(second_content_changes)
+      .and_return(simulated_deduplification(second_content_changes))
+
+    expect(ContentChangePresenter).to receive(:call).exactly(4).times
       .and_return("presented_content_change\n")
 
     expect(email.body).to eq(
@@ -65,19 +85,11 @@ RSpec.describe DigestEmailBuilder do
 
         ---
 
-        presented_content_change
-
-        ---
-
         unsubscribe_link_1
 
         &nbsp;
 
         #Test title 2
-
-        presented_content_change
-
-        ---
 
         presented_content_change
 
