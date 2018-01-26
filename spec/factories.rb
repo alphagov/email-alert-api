@@ -33,6 +33,11 @@ FactoryBot.define do
     end
   end
 
+  factory :digest_run_subscriber do
+    digest_run
+    subscriber
+  end
+
   factory :email do
     address "test@example.com"
     subject "subject"

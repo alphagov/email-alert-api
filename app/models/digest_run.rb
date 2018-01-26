@@ -3,6 +3,9 @@ class DigestRun < ApplicationRecord
   before_validation :set_range_dates, on: :create
   validate :ends_at_is_in_the_past
 
+  has_many :digest_run_subscribers, dependent: :destroy
+  has_many :subscribers, through: :digest_run_subscribers
+
   enum range: { daily: 0, weekly: 1 }
 
   DAILY = "daily".freeze

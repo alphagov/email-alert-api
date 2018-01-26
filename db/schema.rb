@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180123093411) do
+ActiveRecord::Schema.define(version: 20180126144040) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,14 @@ ActiveRecord::Schema.define(version: 20180123093411) do
     t.string "signon_user_uid"
     t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
     t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
+  end
+
+  create_table "digest_run_subscribers", force: :cascade do |t|
+    t.integer "digest_run_id", null: false
+    t.integer "subscriber_id", null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "digest_runs", force: :cascade do |t|
@@ -137,8 +145,8 @@ ActiveRecord::Schema.define(version: 20180123093411) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "uuid", null: false
-    t.integer "frequency", default: 0, null: false
     t.string "signon_user_uid"
+    t.integer "frequency", default: 0, null: false
     t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true
     t.index ["subscriber_id"], name: "index_subscriptions_on_subscriber_id"
     t.index ["subscriber_list_id"], name: "index_subscriptions_on_subscriber_list_id"
@@ -157,6 +165,8 @@ ActiveRecord::Schema.define(version: 20180123093411) do
   end
 
   add_foreign_key "delivery_attempts", "emails", on_delete: :cascade
+  add_foreign_key "digest_run_subscribers", "digest_runs", on_delete: :cascade
+  add_foreign_key "digest_run_subscribers", "subscribers", on_delete: :cascade
   add_foreign_key "matched_content_changes", "content_changes"
   add_foreign_key "matched_content_changes", "subscriber_lists"
   add_foreign_key "subscription_contents", "content_changes"
