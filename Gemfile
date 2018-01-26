@@ -13,7 +13,6 @@ gem 'govuk_app_config', '~> 1.2'
 gem 'nokogiri', '~> 1.8'
 gem 'notifications-ruby-client', '~> 2.6'
 gem 'plek', '~> 2.0'
-gem 'whenever', require: false
 
 gem 'govuk_sidekiq', '~> 3.0'
 gem 'ratelimit', '~> 1.0'
