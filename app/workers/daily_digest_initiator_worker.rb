@@ -1,6 +1,4 @@
-class DailyDigestInitiatorWorker
-  include Sidekiq::Worker
-
+class DailyDigestInitiatorWorker < DigestInitiatorWorker
   def perform
     DailyDigestSchedulerService.call
   end
