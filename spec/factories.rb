@@ -63,6 +63,16 @@ FactoryBot.define do
   factory :subscription do
     subscriber
     subscriber_list
+
+    trait :immediately
+
+    trait :daily do
+      frequency "daily"
+    end
+
+    trait :weekly do
+      frequency "weekly"
+    end
   end
 
   factory :subscription_content do

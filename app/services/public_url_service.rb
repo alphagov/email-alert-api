@@ -4,6 +4,8 @@ module PublicUrlService
       URI.join(website_root, base_path).to_s
     end
 
+    alias_method :url_for, :content_url
+
     # This url is for the page mid-way through the signup journey where the user
     # enters their email address. At present, multiple frontends start the
     # journey, e.g. collections, but eventually all these will be consolidated
