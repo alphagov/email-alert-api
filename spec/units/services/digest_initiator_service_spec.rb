@@ -42,6 +42,15 @@ RSpec.describe DigestInitiatorService do
           end
         end
       end
+
+      it "creates a DigestRunSubscriber for each subscriber" do
+        subscribers = [ create(:subscriber, id: 1), create(:subscriber, id: 2) ]
+
+        allow(DigestRunSubscriberQuery).to receive(:call).and_return(subscribers)
+        described_class.call(range: range)
+
+        expect(DigestRunSubscriber.all.map(&:subscriber_id)).to match([1,2])
+      end
     end
 
     context "weekly" do

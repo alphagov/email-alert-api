@@ -8,6 +8,8 @@ class DigestInitiatorService
   end
 
   def call
+    digest_run = nil
+
     run_with_advisory_lock do
       digest_run = DigestRun.find_or_initialize_by(
         date: Date.current, range: range
@@ -16,7 +18,18 @@ class DigestInitiatorService
       digest_run.save!
     end
 
-    #enqueue the digest creation workers TBC
+    #TODO think about this being retried
+    #
+    subscribers = DigestRunSubscriberQuery.call(digest_run: digest_run)
+
+    digest_run_subscriber_params = subscribers.map do |subscriber|
+      {
+        subscriber_id: subscriber.id,
+        digest_run_id: digest_run.id
+      }
+    end
+
+    DigestRunSubscriber.import!(digest_run_subscriber_params)
   end
 
 private
