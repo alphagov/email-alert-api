@@ -29,7 +29,10 @@ class DigestInitiatorService
       }
     end
 
-    DigestRunSubscriber.import!(digest_run_subscriber_params)
+    import_result = DigestRunSubscriber.import!(digest_run_subscriber_params)
+    import_result.ids.each do |digest_run_subscriber_id|
+      DigestEmailGenerationWorker.perform_async(digest_run_subscriber_id)
+    end
   end
 
 private
