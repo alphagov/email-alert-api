@@ -52,15 +52,4 @@ private
   def subscriptions_for(content_change:)
     ContentChangeSubscriptionQuery.call(content_change: content_change)
   end
-
-  def email_params(content_change, subscriber)
-    {
-      subscriber: subscriber,
-      title: content_change.title,
-      change_note: content_change.change_note,
-      description: content_change.description,
-      base_path: content_change.base_path,
-      public_updated_at: content_change.public_updated_at,
-    }
-  end
 end
