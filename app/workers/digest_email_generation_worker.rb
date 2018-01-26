@@ -1,8 +1,6 @@
 class DigestEmailGenerationWorker
   include Sidekiq::Worker
 
-  attr_reader :subscriber, :digest_run, :email
-
   def perform(subscriber_id:, digest_run_id:)
     @subscriber = Subscriber.find(subscriber_id)
     @digest_run = DigestRun.find(digest_run_id)
@@ -14,17 +12,11 @@ class DigestEmailGenerationWorker
 
 private
 
-  attr_reader :results
+  attr_reader :subscriber, :digest_run, :email, :results
 
   def generate_email_and_subscription_contents
-    @results = subscriber_content_changes
-    @email = build_email
-    persist_email_and_subscription_contents
-  end
-
-  def persist_email_and_subscription_contents
     Email.transaction do
-      email.save!
+      @email = create_email
 
       SubscriptionContent.import!(
         formatted_subscription_content_changes
@@ -33,7 +25,7 @@ private
   end
 
   def formatted_subscription_content_changes
-    results.flat_map do |result|
+    subscriber_content_changes.flat_map do |result|
       result.content_changes.map do |content_change|
         {
           email_id: email.id,
@@ -44,16 +36,16 @@ private
     end
   end
 
-  def build_email
+  def create_email
     DigestEmailBuilder.call(
       subscriber: subscriber,
       digest_run: digest_run,
-      subscription_content_change_results: results,
+      subscription_content_change_results: subscriber_content_changes,
     )
   end
 
   def subscriber_content_changes
-    SubscriptionContentChangeQuery.call(
+    @subscriber_content_changes ||= SubscriptionContentChangeQuery.call(
       subscriber: subscriber,
       digest_run: digest_run
     )

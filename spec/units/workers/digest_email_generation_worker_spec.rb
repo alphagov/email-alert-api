@@ -55,17 +55,4 @@ RSpec.describe DigestEmailGenerationWorker do
 
     subject.perform(subscriber_id: 1, digest_run_id: 10)
   end
-
-  it "builds and saves the correct email" do
-    allow(SubscriptionContent).to receive(:import!)
-    allow(DeliveryRequestWorker).to receive(:perform_async_with_priority)
-    expect(DigestEmailBuilder).to receive(:call).with(
-      subscriber: subscriber,
-      digest_run: digest_run,
-      subscription_content_change_results: subscription_content_change_query_results,
-    ).and_return(email = double(id: 100))
-    expect(email).to receive(:save!)
-
-    subject.perform(subscriber_id: 1, digest_run_id: 10)
-  end
 end

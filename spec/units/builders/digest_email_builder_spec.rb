@@ -104,6 +104,11 @@ RSpec.describe DigestEmailBuilder do
     )
   end
 
+  it "saves the email" do
+    expect(email.id).to_not be_nil
+    expect(Email.count).to eq(1)
+  end
+
   context "daily" do
     it "sets the subject" do
       expect(email.subject).to eq("GOV.UK Daily Update")

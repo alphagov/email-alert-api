@@ -9,7 +9,8 @@ RSpec.describe ImmediateEmailBuilder do
   end
 
   let(:content_change) do
-    double(
+    build(
+      :content_change,
       title: "Title",
       public_updated_at: Time.parse("1/1/2017"),
       description: "Description",
@@ -25,7 +26,7 @@ RSpec.describe ImmediateEmailBuilder do
 
     let(:email) { Email.find(email_import.ids.first) }
 
-    it "returns an email hash" do
+    it "returns an email import" do
       expect(email_import.ids.count).to eq(1)
     end
 
