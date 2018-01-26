@@ -1,9 +1,11 @@
 class DigestEmailGenerationWorker
   include Sidekiq::Worker
 
-  def perform(subscriber_id:, digest_run_id:)
-    @subscriber = Subscriber.find(subscriber_id)
-    @digest_run = DigestRun.find(digest_run_id)
+  def perform(digest_run_subscriber_id)
+    digest_run_subscriber = DigestRunSubscriber.find(digest_run_subscriber_id)
+
+    @subscriber = digest_run_subscriber.subscriber
+    @digest_run = digest_run_subscriber.digest_run
 
     generate_email_and_subscription_contents
 

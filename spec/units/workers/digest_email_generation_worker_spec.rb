@@ -37,14 +37,18 @@ RSpec.describe DigestEmailGenerationWorker do
     )
   end
 
-  it "accepts a subscriber_id and a digest_run_id" do
+  it "accepts digest_run_subscriber_id" do
+    create(:digest_run_subscriber, id: 1)
+
     expect {
-      subject.perform(subscriber_id: 1, digest_run_id: 10)
+      subject.perform(1)
     }.not_to raise_error
   end
 
   it "creates an email" do
-    expect { subject.perform(subscriber_id: 1, digest_run_id: 10) }
+    create(:digest_run_subscriber, id: 1)
+
+    expect { subject.perform(1) }
       .to change { Email.count }.by(1)
   end
 
@@ -52,6 +56,8 @@ RSpec.describe DigestEmailGenerationWorker do
     expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
       .with(instance_of(Integer), queue: :delivery_digest)
 
-    subject.perform(subscriber_id: 1, digest_run_id: 10)
+    create(:digest_run_subscriber, id: 1)
+
+    subject.perform(1)
   end
 end
