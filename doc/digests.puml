@@ -2,7 +2,7 @@
 control scheduler
 participant digest_initiator_service as "DigestInitiatorService"
 database digest_run as "DigestRun"
-participant digest_subscriber_query as "DigestSubscriberQuery"
+participant digest_subscriber_query as "DigestRunSubscriberQuery"
 database digest_run_subscriber as "DigestRunSubscriber"
 participant digest_generation_worker as "DigestGenerationWorker"
 participant subscription_content_change_query as "SubscriptionContentChangeQuery"

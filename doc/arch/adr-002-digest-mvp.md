@@ -50,7 +50,7 @@ this was ill fitting with the classes actual responsibilities.
   for their period
 - Create a [`DigestRun`](#digestrun) model
 - Ensure that multiple digests for the same period are not run concurrently
-- Interface with `DigestSubscriberQuery` to determine which subscribers are
+- Interface with `DigestRunSubscriberQuery` to determine which subscribers are
   due to receive emails for this digest
 
 ##### Should
@@ -86,7 +86,7 @@ a module in Ruby standard library named `Digest`.
 - Have a unique index for digest date and period, however this would limit
   ability to re-run a digest in the case of a problem.
 
-#### `DigestSubscriberQuery`
+#### `DigestRunSubscriberQuery`
 
 Responsible for taking a [`DigestRun`](#digestrun) instance and using that to
 determine which subscribers should receive an email for the digest period.
