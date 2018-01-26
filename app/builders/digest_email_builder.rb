@@ -10,7 +10,7 @@ class DigestEmailBuilder
   end
 
   def call
-    Email.new(
+    Email.create!(
       subject: subject,
       body: body,
       address: subscriber.address

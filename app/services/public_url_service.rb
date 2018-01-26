@@ -1,10 +1,8 @@
 module PublicUrlService
   class << self
-    def content_url(base_path:)
+    def url_for(base_path:)
       URI.join(website_root, base_path).to_s
     end
-
-    alias_method :url_for, :content_url
 
     # This url is for the page mid-way through the signup journey where the user
     # enters their email address. At present, multiple frontends start the
@@ -26,10 +24,6 @@ module PublicUrlService
       params = param(:topic_id, gov_delivery_id)
 
       "#{proto}://#{host}/accounts/#{code}/subscriber/new?#{params}"
-    end
-
-    def unsubscribe_url(uuid:, title:)
-      "#{website_root}/email/unsubscribe/#{uuid}?#{param(:title, title)}"
     end
 
   private

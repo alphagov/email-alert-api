@@ -1,17 +1,15 @@
-class EmailGenerationService
-  LOCK_NAME = "email_generation_worker".freeze
+class ImmediateEmailGenerationWorker
+  include Sidekiq::Worker
 
-  def self.call(*args)
-    new.call(*args)
-  end
+  LOCK_NAME = "immediate_email_generation_worker".freeze
 
-  def call
+  def perform
     ensure_only_running_once do
       subscription_contents.find_in_batches do |group|
         to_queue = []
 
         SubscriptionContent.transaction do
-          email_ids = build_and_insert_emails(group).ids
+          email_ids = import_emails(group).ids
 
           values = group.zip(email_ids).map do |subscription_content, email_id|
             to_queue << [email_id, subscription_content.content_change.priority.to_sym]
@@ -54,31 +52,14 @@ private
       .where(email: nil)
   end
 
-  def build_many_emails(subscription_contents)
-    subscription_contents.map do |subscription_content|
-      build_email(subscription_content: subscription_content)
+  def import_emails(subscription_contents)
+    subscriber_content_changes = subscription_contents.map do |subscription_content|
+      {
+        subscriber: subscription_content.subscription.subscriber,
+        content_change: subscription_content.content_change,
+      }
     end
-  end
 
-  def build_and_insert_emails(subscription_contents)
-    emails = build_many_emails(subscription_contents)
-    Email.import!(emails)
-  end
-
-  def build_email(subscription_content:)
-    Email.build_from_params(email_params(subscription_content: subscription_content))
-  end
-
-  def email_params(subscription_content:)
-    content_change = subscription_content.content_change
-
-    {
-      title: content_change.title,
-      change_note: content_change.change_note,
-      description: content_change.description,
-      base_path: content_change.base_path,
-      public_updated_at: content_change.public_updated_at,
-      subscriber: subscription_content.subscription.subscriber,
-    }
+    ImmediateEmailBuilder.call(subscriber_content_changes)
   end
 end

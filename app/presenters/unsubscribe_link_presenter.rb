@@ -1,6 +1,4 @@
 class UnsubscribeLinkPresenter
-  attr_reader :uuid, :title
-
   def initialize(uuid:, title:)
     @uuid = uuid
     @title = title
@@ -16,11 +14,11 @@ class UnsubscribeLinkPresenter
 
 private
 
-  def url
-    PublicUrlService.url_for(base_path: "/email/unsubscribe/#{uuid}?title=#{escaped_title}")
-  end
+  attr_reader :uuid, :title
 
-  def escaped_title
-    ERB::Util.url_encode(title)
+  def url
+    escaped_title = ERB::Util.url_encode(title)
+    base_path = "/email/unsubscribe/#{uuid}?title=#{escaped_title}"
+    PublicUrlService.url_for(base_path: base_path)
   end
 end

@@ -28,7 +28,7 @@ private
   delegate :title, :description, :change_note, to: :content_change
 
   def content_url
-    PublicUrlService.content_url(base_path: content_change.base_path)
+    PublicUrlService.url_for(base_path: content_change.base_path)
   end
 
   def public_updated_at

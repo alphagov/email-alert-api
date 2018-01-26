@@ -35,7 +35,7 @@ class LoadTester
     create_subscription_contents(subscription_ids: subscription_ids, content_change: content_change)
 
     puts "Running service"
-    duration = Benchmark.measure { EmailGenerationService.call }
+    duration = Benchmark.measure { ImmediateEmailGenerationService.call }
     puts "Took #{duration}"
   end
 

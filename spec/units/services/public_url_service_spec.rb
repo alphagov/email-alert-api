@@ -1,7 +1,7 @@
 RSpec.describe PublicUrlService do
-  describe ".content_url" do
+  describe ".url_for" do
     it "returns the GOV.UK url for the content item" do
-      result = subject.content_url(base_path: "/foo/bar")
+      result = subject.url_for(base_path: "/foo/bar")
       expect(result).to eq("http://www.dev.gov.uk/foo/bar")
     end
   end
@@ -20,13 +20,6 @@ RSpec.describe PublicUrlService do
       expect(result).to eq(
         "http://govdelivery-public.example.com/accounts/UKGOVUK/subscriber/new?topic_id=foo_bar"
       )
-    end
-  end
-
-  describe ".unsubscribe_url" do
-    it "returns the GOV.UK url to unsubscribe for a subscription" do
-      result = subject.unsubscribe_url(uuid: "foo-bar", title: "Foo & Bar")
-      expect(result).to eq("http://www.dev.gov.uk/email/unsubscribe/foo-bar?title=Foo%20%26%20Bar")
     end
   end
 end

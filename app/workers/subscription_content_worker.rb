@@ -25,7 +25,7 @@ private
         Raven.capture_exception(ex, tags: { version: 2 })
       end
 
-      EmailGenerationWorker.perform_async
+      ImmediateEmailGenerationWorker.perform_async
     end
   end
 
@@ -36,12 +36,12 @@ private
 
     Subscriber.where(address: addresses).find_each do |subscriber|
       begin
-        email = Email.create_from_params!(
-          email_params(content_change, subscriber)
-        )
+        email_id = ImmediateEmailBuilder.call([
+          { subscriber: subscriber, content_change: content_change }
+        ]).ids.first
 
         DeliveryRequestWorker.perform_async_with_priority(
-          email.id, priority: content_change.priority.to_sym,
+          email_id, priority: content_change.priority.to_sym,
         )
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })
@@ -50,17 +50,6 @@ private
   end
 
   def subscriptions_for(content_change:)
-    SubscriptionMatcher.call(content_change: content_change)
-  end
-
-  def email_params(content_change, subscriber)
-    {
-      subscriber: subscriber,
-      title: content_change.title,
-      change_note: content_change.change_note,
-      description: content_change.description,
-      base_path: content_change.base_path,
-      public_updated_at: content_change.public_updated_at,
-    }
+    ContentChangeSubscriptionQuery.call(content_change: content_change)
   end
 end

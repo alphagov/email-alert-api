@@ -1,9 +1,9 @@
-RSpec.describe EmailGenerationService do
+RSpec.describe ImmediateEmailGenerationWorker do
   describe ".call" do
     def perform_with_fake_sidekiq
       Sidekiq::Testing.fake! do
         DeliveryRequestWorker.jobs.clear
-        described_class.call
+        described_class.new.perform
       end
     end
 
