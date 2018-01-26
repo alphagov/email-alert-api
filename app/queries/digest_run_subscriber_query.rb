@@ -1,4 +1,4 @@
-class DigestSubscriberQuery
+class DigestRunSubscriberQuery
   def self.call(digest_run:)
     Subscriber
       .joins(subscriptions: { subscriber_list: { matched_content_changes: :content_change } })
