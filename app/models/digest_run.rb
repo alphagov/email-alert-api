@@ -11,6 +11,10 @@ class DigestRun < ApplicationRecord
   DAILY = "daily".freeze
   WEEKLY = "weekly".freeze
 
+  def mark_complete!
+    update_attributes!(completed_at: Time.now)
+  end
+
 private
 
   def starts_at=(value)

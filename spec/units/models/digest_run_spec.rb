@@ -113,4 +113,15 @@ RSpec.describe DigestRun do
       end
     end
   end
+
+  describe "#mark_complete!" do
+    it "sets completed_at to Time.now" do
+      Timecop.freeze do
+        digest_run = create(:digest_run)
+        digest_run.mark_complete!
+        digest_run.reload
+        expect(digest_run.completed_at.change(nsec: 0)).to eq(Time.now.change(nsec: 0))
+      end
+    end
+  end
 end
