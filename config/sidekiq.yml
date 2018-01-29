@@ -3,8 +3,8 @@
 :concurrency: 30
 :logfile: ./log/sidekiq.json.log
 :queues:
-  - [high_delivery, 3]
-  - [low_delivery, 2]
+  - [delivery_immediate_high, 3]
+  - [delivery_immediate, 2]
   - [default, 1]
 :schedule:
   immediate_email_generation:

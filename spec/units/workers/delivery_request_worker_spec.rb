@@ -41,7 +41,7 @@ RSpec.describe DeliveryRequestWorker do
       let(:priority) { :low }
 
       it "adds a worker to the low priority queue" do
-        expect(Sidekiq::Queues["low_delivery"].size).to eq(1)
+        expect(Sidekiq::Queues["delivery_immediate"].size).to eq(1)
       end
     end
 
@@ -49,7 +49,7 @@ RSpec.describe DeliveryRequestWorker do
       let(:priority) { :high }
 
       it "adds a worker to the high priority queue" do
-        expect(Sidekiq::Queues["high_delivery"].size).to eq(1)
+        expect(Sidekiq::Queues["delivery_immediate_high"].size).to eq(1)
       end
     end
   end
@@ -73,7 +73,7 @@ RSpec.describe DeliveryRequestWorker do
       let(:priority) { :low }
 
       it "schedules a job for 30 seconds from now" do
-        queued_job = Sidekiq::Queues["low_delivery"].first
+        queued_job = Sidekiq::Queues["delivery_immediate"].first
         expected_time = (@frozen_time + 30.seconds).to_i
         expect(queued_job["at"].to_i).to eq(expected_time)
       end
@@ -83,7 +83,7 @@ RSpec.describe DeliveryRequestWorker do
       let(:priority) { :high }
 
       it "schedules a job for 30 seconds from now" do
-        queued_job = Sidekiq::Queues["high_delivery"].first
+        queued_job = Sidekiq::Queues["delivery_immediate_high"].first
         expected_time = (@frozen_time + 30.seconds).to_i
         expect(queued_job["at"].to_i).to eq(expected_time)
       end
