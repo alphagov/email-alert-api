@@ -60,4 +60,15 @@ RSpec.describe DigestEmailGenerationWorker do
 
     subject.perform(1)
   end
+
+  it "marks the DigestRunSubscriber completed" do
+    digest_run_subscriber = create(:digest_run_subscriber, id: 1)
+    allow(DigestRunSubscriber).to receive(:find)
+      .with(1)
+      .and_return(digest_run_subscriber)
+
+    expect(digest_run_subscriber).to receive(:mark_complete!)
+
+    subject.perform(1)
+  end
 end

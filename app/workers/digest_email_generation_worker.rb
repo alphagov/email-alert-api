@@ -7,7 +7,10 @@ class DigestEmailGenerationWorker
     @subscriber = digest_run_subscriber.subscriber
     @digest_run = digest_run_subscriber.digest_run
 
-    generate_email_and_subscription_contents
+    Email.transaction do
+      generate_email_and_subscription_contents
+      digest_run_subscriber.mark_complete!
+    end
 
     DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_digest)
   end
@@ -17,13 +20,11 @@ private
   attr_reader :subscriber, :digest_run, :email, :results
 
   def generate_email_and_subscription_contents
-    Email.transaction do
-      @email = create_email
+    @email = create_email
 
-      SubscriptionContent.import!(
-        formatted_subscription_content_changes
-      )
-    end
+    SubscriptionContent.import!(
+      formatted_subscription_content_changes
+    )
   end
 
   def formatted_subscription_content_changes
