@@ -49,9 +49,8 @@ RSpec.describe DigestEmailGenerationWorker do
   end
 
   it "enqueues delivery" do
-    #TODO priority needs sorting out
-    expect(DeliveryRequestWorker).to receive(:perform_async_for_immediate)
-      .with(instance_of(Integer), priority: :normal)
+    expect(DeliveryRequestWorker).to receive(:perform_async_for_digest)
+      .with(instance_of(Integer))
 
     subject.perform(subscriber_id: 1, digest_run_id: 10)
   end

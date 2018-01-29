@@ -7,7 +7,7 @@ class DigestEmailGenerationWorker
 
     generate_email_and_subscription_contents
 
-    DeliveryRequestWorker.perform_async_for_immediate(email.id, priority: :normal)
+    DeliveryRequestWorker.perform_async_for_digest(email.id)
   end
 
 private
