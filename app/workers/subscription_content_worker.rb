@@ -40,7 +40,7 @@ private
           { subscriber: subscriber, content_change: content_change }
         ]).ids.first
 
-        DeliveryRequestWorker.perform_async_with_priority(
+        DeliveryRequestWorker.perform_async_for_immediate(
           email_id, priority: content_change.priority.to_sym,
         )
       rescue StandardError => ex

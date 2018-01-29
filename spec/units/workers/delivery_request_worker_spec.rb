@@ -27,13 +27,13 @@ RSpec.describe DeliveryRequestWorker do
     end
   end
 
-  describe ".perform_async_with_priority" do
+  describe ".perform_async_for_immediate" do
     let(:email) { double(id: 0) }
     let(:priority) { nil }
 
     before do
       Sidekiq::Testing.fake!
-      described_class.perform_async_with_priority(
+      described_class.perform_async_for_immediate(
         email.id, priority: priority
       )
     end

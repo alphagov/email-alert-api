@@ -3,7 +3,7 @@ class DeliveryRequestWorker
 
   attr_reader :email, :queue
 
-  def self.queue_for_priority(priority)
+  def self.queue_for_immediate(priority)
     if priority == :high
       :delivery_immediate_high
     elsif priority == :normal
@@ -13,7 +13,7 @@ class DeliveryRequestWorker
     end
   end
 
-  sidekiq_options retry: 3, queue: queue_for_priority(:normal)
+  sidekiq_options retry: 3, queue: queue_for_immediate(:normal)
 
   sidekiq_retry_in do |count|
     10 * (count + 1) # 10, 20, 30, 40 ish
@@ -31,8 +31,8 @@ class DeliveryRequestWorker
     DeliveryRequestService.call(email: @email)
   end
 
-  def self.perform_async_with_priority(*args, priority:)
-    queue = queue_for_priority(priority)
+  def self.perform_async_for_immediate(*args, priority: :normal)
+    queue = queue_for_immediate(priority)
     set(queue: queue).perform_async(*args, queue)
   end
 

@@ -38,7 +38,7 @@ private
 
   def queue_delivery_request_workers(queue)
     queue.each do |email_id, priority|
-      DeliveryRequestWorker.perform_async_with_priority(
+      DeliveryRequestWorker.perform_async_for_immediate(
         email_id, priority: priority
       )
     end
