@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180126144040) do
+ActiveRecord::Schema.define(version: 20180129081557) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,6 +134,7 @@ ActiveRecord::Schema.define(version: 20180126144040) do
     t.bigint "email_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "digest_run_subscriber_id"
     t.index ["content_change_id"], name: "index_subscription_contents_on_content_change_id"
     t.index ["email_id"], name: "index_subscription_contents_on_email_id"
     t.index ["subscription_id"], name: "index_subscription_contents_on_subscription_id"
@@ -170,6 +171,7 @@ ActiveRecord::Schema.define(version: 20180126144040) do
   add_foreign_key "matched_content_changes", "content_changes"
   add_foreign_key "matched_content_changes", "subscriber_lists"
   add_foreign_key "subscription_contents", "content_changes"
+  add_foreign_key "subscription_contents", "digest_run_subscribers", on_delete: :cascade
   add_foreign_key "subscription_contents", "emails", on_delete: :nullify
   add_foreign_key "subscription_contents", "subscriptions", on_delete: :nullify
   add_foreign_key "subscriptions", "subscriber_lists"

@@ -2,8 +2,7 @@ class DigestEmailGenerationWorker
   include Sidekiq::Worker
 
   def perform(digest_run_subscriber_id)
-    digest_run_subscriber = DigestRunSubscriber.find(digest_run_subscriber_id)
-
+    @digest_run_subscriber = DigestRunSubscriber.find(digest_run_subscriber_id)
     @subscriber = digest_run_subscriber.subscriber
     @digest_run = digest_run_subscriber.digest_run
 
@@ -17,7 +16,7 @@ class DigestEmailGenerationWorker
 
 private
 
-  attr_reader :subscriber, :digest_run, :email, :results
+  attr_reader :digest_run, :digest_run_subscriber, :email, :results, :subscriber
 
   def generate_email_and_subscription_contents
     @email = create_email
@@ -34,6 +33,7 @@ private
           email_id: email.id,
           subscription_id: result.subscription_id,
           content_change_id: content_change.id,
+          digest_run_subscriber_id: digest_run_subscriber.id,
         }
       end
     end
