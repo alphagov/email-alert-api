@@ -89,4 +89,19 @@ RSpec.describe DigestEmailGenerationWorker do
     subscription_content = SubscriptionContent.last
     expect(subscription_content.digest_run_subscriber_id).to eq(1)
   end
+
+  it "marks the digest run complete" do
+    create(:digest_run_subscriber, id: 1)
+    expect_any_instance_of(DigestRun).to receive(:mark_complete!)
+    subject.perform(1)
+  end
+
+  context "when there are incomplete DigestRunSubscribers left" do
+    it "doesn't mark the digest run complete" do
+      create(:digest_run_subscriber, id: 1, digest_run_id: digest_run.id)
+      create(:digest_run_subscriber, digest_run_id: digest_run.id)
+      expect_any_instance_of(DigestRun).not_to receive(:mark_complete!)
+      subject.perform(1)
+    end
+  end
 end

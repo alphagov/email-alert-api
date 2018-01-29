@@ -12,6 +12,8 @@ class DigestEmailGenerationWorker
     end
 
     DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_digest)
+
+    update_digest_run
   end
 
 private
@@ -52,5 +54,9 @@ private
       subscriber: subscriber,
       digest_run: digest_run
     )
+  end
+
+  def update_digest_run
+    digest_run.mark_complete! unless DigestRunSubscriber.incomplete_for_run(digest_run.id).exists?
   end
 end
