@@ -37,10 +37,10 @@ RSpec.describe DeliveryRequestWorker do
       )
     end
 
-    context "with a low priority" do
-      let(:priority) { :low }
+    context "with a normal priority" do
+      let(:priority) { :normal }
 
-      it "adds a worker to the low priority queue" do
+      it "adds a worker to the normal priority queue" do
         expect(Sidekiq::Queues["delivery_immediate"].size).to eq(1)
       end
     end
@@ -70,7 +70,7 @@ RSpec.describe DeliveryRequestWorker do
     end
 
     context "with a low priority" do
-      let(:priority) { :low }
+      let(:priority) { :normal }
 
       it "schedules a job for 30 seconds from now" do
         queued_job = Sidekiq::Queues["delivery_immediate"].first

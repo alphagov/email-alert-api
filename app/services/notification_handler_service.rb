@@ -37,7 +37,7 @@ private
       govuk_request_id: params[:govuk_request_id],
       document_type: params[:document_type],
       publishing_app: params[:publishing_app],
-      priority: params.fetch(:priority, "low").to_sym,
+      priority: params.fetch(:priority, "normal").to_sym,
       signon_user_uid: user&.uid,
     }
   end

@@ -6,14 +6,14 @@ class DeliveryRequestWorker
   def self.queue_for_priority(priority)
     if priority == :high
       :delivery_immediate_high
-    elsif priority == :low
+    elsif priority == :normal
       :delivery_immediate
     else
-      raise ArgumentError, "priority should be :high or :low"
+      raise ArgumentError, "priority should be :high or :normal"
     end
   end
 
-  sidekiq_options retry: 3, queue: queue_for_priority(:low)
+  sidekiq_options retry: 3, queue: queue_for_priority(:normal)
 
   sidekiq_retry_in do |count|
     10 * (count + 1) # 10, 20, 30, 40 ish
