@@ -1,7 +1,7 @@
 class DeliveryRequestWorker
   include Sidekiq::Worker
 
-  attr_reader :priority, :email
+  attr_reader :email, :queue
 
   def self.queue_for_priority(priority)
     if priority == :high
@@ -23,23 +23,17 @@ class DeliveryRequestWorker
     reschedule_job if msg["error_class"] == "RatelimitExceededError"
   end
 
-  def perform(email_id)
+  def perform(email_id, queue)
     @email = Email.find(email_id)
+    @queue = queue
     check_rate_limit!
     increment_rate_limiter
     DeliveryRequestService.call(email: @email)
   end
 
   def self.perform_async_with_priority(*args, priority:)
-    @priority = priority
-    set(queue: queue_for_priority(priority))
-      .perform_async(*args)
-  end
-
-  def self.perform_in_with_priority(*args, priority:)
-    @priority = priority
-    set(queue: queue_for_priority(priority))
-      .perform_in(*args)
+    queue = queue_for_priority(priority)
+    set(queue: queue).perform_async(*args, queue)
   end
 
   def check_rate_limit!
@@ -67,7 +61,7 @@ class DeliveryRequestWorker
 
   def reschedule_job
     GovukStatsd.increment("delivery_request_worker.rescheduled")
-    DeliveryRequestWorker.perform_in_with_priority(30.seconds, email.id, priority)
+    DeliveryRequestWorker.set(queue: queue).perform_in(30.seconds, email.id, queue)
   end
 
   def rate_limit_threshold

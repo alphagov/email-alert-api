@@ -8,11 +8,12 @@ RSpec.describe DeliveryRequestWorker do
 
   describe ".perform" do
     let(:email) { create(:email) }
+    let(:queue) { :default }
 
     context "with an email and a subscriber" do
       it "calls the DeliveryRequestService" do
         expect(DeliveryRequestService).to receive(:call).with(email: email)
-        subject.perform(email.id)
+        subject.perform(email.id, queue)
       end
     end
 
@@ -20,7 +21,7 @@ RSpec.describe DeliveryRequestWorker do
       it "raises a RatelimitExceededError" do
         allow(rate_limiter).to receive(:exceeded?).and_return(true)
         expect {
-          subject.perform(email.id)
+          subject.perform(email.id, queue)
         }.to raise_error(RatelimitExceededError)
       end
     end
@@ -50,42 +51,6 @@ RSpec.describe DeliveryRequestWorker do
 
       it "adds a worker to the high priority queue" do
         expect(Sidekiq::Queues["delivery_immediate_high"].size).to eq(1)
-      end
-    end
-  end
-
-  describe ".perform_in_with_priority" do
-    let(:email) { double(id: 0) }
-    let(:priority) { nil }
-
-    before do
-      Sidekiq::Testing.fake!
-      Timecop.freeze do
-        described_class.perform_in_with_priority(
-          30.seconds, email.id, priority: priority
-        )
-
-        @frozen_time = Time.now
-      end
-    end
-
-    context "with a low priority" do
-      let(:priority) { :normal }
-
-      it "schedules a job for 30 seconds from now" do
-        queued_job = Sidekiq::Queues["delivery_immediate"].first
-        expected_time = (@frozen_time + 30.seconds).to_i
-        expect(queued_job["at"].to_i).to eq(expected_time)
-      end
-    end
-
-    context "with a high priority" do
-      let(:priority) { :high }
-
-      it "schedules a job for 30 seconds from now" do
-        queued_job = Sidekiq::Queues["delivery_immediate_high"].first
-        expected_time = (@frozen_time + 30.seconds).to_i
-        expect(queued_job["at"].to_i).to eq(expected_time)
       end
     end
   end
