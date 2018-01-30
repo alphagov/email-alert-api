@@ -37,14 +37,18 @@ RSpec.describe DigestEmailGenerationWorker do
     )
   end
 
-  it "accepts a subscriber_id and a digest_run_id" do
+  it "accepts digest_run_subscriber_id" do
+    create(:digest_run_subscriber, id: 1)
+
     expect {
-      subject.perform(subscriber_id: 1, digest_run_id: 10)
+      subject.perform(1)
     }.not_to raise_error
   end
 
   it "creates an email" do
-    expect { subject.perform(subscriber_id: 1, digest_run_id: 10) }
+    create(:digest_run_subscriber, id: 1)
+
+    expect { subject.perform(1) }
       .to change { Email.count }.by(1)
   end
 
@@ -52,6 +56,52 @@ RSpec.describe DigestEmailGenerationWorker do
     expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
       .with(instance_of(Integer), queue: :delivery_digest)
 
-    subject.perform(subscriber_id: 1, digest_run_id: 10)
+    create(:digest_run_subscriber, id: 1)
+
+    subject.perform(1)
+  end
+
+  it "marks the DigestRunSubscriber completed" do
+    digest_run_subscriber = create(
+      :digest_run_subscriber,
+      id: 1,
+      subscriber_id: subscriber.id
+    )
+
+    allow(DigestRunSubscriber).to receive(:find)
+      .with(1)
+      .and_return(digest_run_subscriber)
+
+    expect(digest_run_subscriber).to receive(:mark_complete!)
+
+    subject.perform(1)
+  end
+
+  it "creates a SubscriptionContent" do
+    create(
+      :digest_run_subscriber,
+      id: 1,
+      subscriber_id: subscriber.id
+    )
+
+    subject.perform(1)
+
+    subscription_content = SubscriptionContent.last
+    expect(subscription_content.digest_run_subscriber_id).to eq(1)
+  end
+
+  it "marks the digest run complete" do
+    create(:digest_run_subscriber, id: 1)
+    expect_any_instance_of(DigestRun).to receive(:mark_complete!)
+    subject.perform(1)
+  end
+
+  context "when there are incomplete DigestRunSubscribers left" do
+    it "doesn't mark the digest run complete" do
+      create(:digest_run_subscriber, id: 1, digest_run_id: digest_run.id)
+      create(:digest_run_subscriber, digest_run_id: digest_run.id)
+      expect_any_instance_of(DigestRun).not_to receive(:mark_complete!)
+      subject.perform(1)
+    end
   end
 end

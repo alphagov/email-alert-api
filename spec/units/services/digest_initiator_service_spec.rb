@@ -42,6 +42,32 @@ RSpec.describe DigestInitiatorService do
           end
         end
       end
+
+      context "with matched content" do
+        let(:subscribers) { [create(:subscriber, id: 1), create(:subscriber, id: 2)] }
+
+        before do
+          allow(DigestRunSubscriberQuery).to receive(:call).and_return(subscribers)
+          allow(DigestEmailGenerationWorker).to receive(:perform_async)
+        end
+
+        it "creates a DigestRunSubscriber for each subscriber" do
+          Timecop.freeze(Time.parse("08:30")) do
+            described_class.call(range: DigestRun::DAILY)
+            expect(DigestRunSubscriber.all.map(&:subscriber_id)).to match([1, 2])
+          end
+        end
+
+        it "enqueues a DigestEmailGenerationWorker job" do
+          Timecop.freeze(Time.parse("08:30")) do
+            expect(DigestEmailGenerationWorker)
+              .to receive(:perform_async)
+              .exactly(2).times
+
+            described_class.call(range: DigestRun::DAILY)
+          end
+        end
+      end
     end
 
     context "weekly" do

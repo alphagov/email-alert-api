@@ -3,10 +3,21 @@ class DigestRun < ApplicationRecord
   before_validation :set_range_dates, on: :create
   validate :ends_at_is_in_the_past
 
+  has_many :digest_run_subscribers, dependent: :destroy
+  has_many :subscribers, through: :digest_run_subscribers
+
   enum range: { daily: 0, weekly: 1 }
 
   DAILY = "daily".freeze
   WEEKLY = "weekly".freeze
+
+  def mark_complete!
+    update_attributes!(completed_at: Time.now)
+  end
+
+  def check_and_mark_complete!
+    mark_complete! unless has_incomplete_subscribers?
+  end
 
 private
 
@@ -41,5 +52,9 @@ private
 
   def digest_range_hour
     ENV.fetch("DIGEST_RANGE_HOUR", 8).to_i
+  end
+
+  def has_incomplete_subscribers?
+    digest_run_subscribers.incomplete_for_run(id).exists?
   end
 end
