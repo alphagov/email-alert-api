@@ -3,17 +3,7 @@ class DeliveryRequestWorker
 
   attr_reader :email, :queue
 
-  def self.queue_for_immediate(priority)
-    if priority == :high
-      :delivery_immediate_high
-    elsif priority == :normal
-      :delivery_immediate
-    else
-      raise ArgumentError, "priority should be :high or :normal"
-    end
-  end
-
-  sidekiq_options retry: 3, queue: queue_for_immediate(:normal)
+  sidekiq_options retry: 3
 
   sidekiq_retry_in do |count|
     10 * (count + 1) # 10, 20, 30, 40 ish
@@ -29,10 +19,6 @@ class DeliveryRequestWorker
     check_rate_limit!
     increment_rate_limiter
     DeliveryRequestService.call(email: @email)
-  end
-
-  def self.perform_async_for_immediate(*args, priority: :normal)
-    perform_async_in_queue(*args, queue: queue_for_immediate(priority))
   end
 
   def self.perform_async_in_queue(*args, queue:)

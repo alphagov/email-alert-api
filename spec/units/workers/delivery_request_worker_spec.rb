@@ -27,34 +27,6 @@ RSpec.describe DeliveryRequestWorker do
     end
   end
 
-  describe ".perform_async_for_immediate" do
-    let(:email) { double(id: 0) }
-    let(:priority) { nil }
-
-    before do
-      Sidekiq::Testing.fake!
-      described_class.perform_async_for_immediate(
-        email.id, priority: priority
-      )
-    end
-
-    context "with a normal priority" do
-      let(:priority) { :normal }
-
-      it "adds a worker to the normal priority queue" do
-        expect(Sidekiq::Queues["delivery_immediate"].size).to eq(1)
-      end
-    end
-
-    context "with a high priority" do
-      let(:priority) { :high }
-
-      it "adds a worker to the high priority queue" do
-        expect(Sidekiq::Queues["delivery_immediate_high"].size).to eq(1)
-      end
-    end
-  end
-
   describe ".perform_async_in_queue" do
     let(:email) { double(id: 0) }
 

@@ -72,8 +72,8 @@ RSpec.describe SubscriptionContentWorker do
 
     it "enqueues the email to send to the courtesy subscription group" do
       expect(DeliveryRequestWorker)
-        .to receive(:perform_async_for_immediate)
-        .with(kind_of(Integer), priority: :normal)
+        .to receive(:perform_async_in_queue)
+        .with(kind_of(Integer), queue: :delivery_immediate)
 
       subject.perform(content_change.id)
     end

@@ -50,6 +50,19 @@ RSpec.describe ImmediateEmailGenerationWorker do
         perform_with_fake_sidekiq
         expect(DeliveryRequestWorker.jobs.size).to eq(1)
       end
+
+      context "with a high priority content change" do
+        before do
+          subscription_content.content_change.update(priority: "high")
+        end
+
+        it "should queue a delivery email job with a high priority" do
+          expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
+            .with(an_instance_of(Integer), queue: :delivery_immediate_high)
+
+          perform_with_fake_sidekiq
+        end
+      end
     end
   end
 end

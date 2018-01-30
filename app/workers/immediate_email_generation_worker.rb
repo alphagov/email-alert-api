@@ -38,9 +38,19 @@ private
 
   def queue_delivery_request_workers(queue)
     queue.each do |email_id, priority|
-      DeliveryRequestWorker.perform_async_for_immediate(
-        email_id, priority: priority
+      DeliveryRequestWorker.perform_async_in_queue(
+        email_id, queue: queue_for_priority(priority)
       )
+    end
+  end
+
+  def queue_for_priority(priority)
+    if priority == :high
+      :delivery_immediate_high
+    elsif priority == :normal
+      :delivery_immediate
+    else
+      raise ArgumentError, "priority should be :high or :normal"
     end
   end
 
