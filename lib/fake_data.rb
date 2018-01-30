@@ -1,22 +1,25 @@
 require "csv"
 
 class FakeData
-  def self.insert
-    new.insert
+  def self.insert(proportion: 1)
+    new.insert(proportion)
   end
 
   def self.delete
     new.delete
   end
 
-  def insert
+  def insert(proportion)
     if has_test_subscribers?
       raise "There is already test data in the system. Run rake fake_data:delete first."
     end
 
     fake_subscriptions_data.each do |subscription_stat|
-      subscriber_ids = create_subscribers(subscription_stat.number_of_subscribers).ids
-      create_subscriptions(subscriber_ids, subscription_stat.number_of_subscriptions)
+      number_of_subscribers = (subscription_stat.number_of_subscribers * proportion).ceil
+      number_of_subscriptions = (subscription_stat.number_of_subscriptions * proportion).ceil
+
+      subscriber_ids = create_subscribers(number_of_subscribers).ids
+      create_subscriptions(subscriber_ids, number_of_subscriptions)
     end
 
     count = existing_test_subscribers.count
