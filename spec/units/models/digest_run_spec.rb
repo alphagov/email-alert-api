@@ -124,4 +124,30 @@ RSpec.describe DigestRun do
       end
     end
   end
+
+  describe ".check_and_mark_complete?" do
+    let(:subject) { create(:digest_run) }
+
+    context "incomplete digest_run_subscribers" do
+      before do
+        create(:digest_run_subscriber, digest_run_id: subject.id)
+      end
+
+      it "marks the digest run complete" do
+        subject.check_and_mark_complete!
+        expect(subject.completed_at).to be_nil
+      end
+    end
+
+    context "no incomplete digest_run_subscribers" do
+      before do
+        create(:digest_run_subscriber, digest_run_id: subject.id, completed_at: Time.now)
+      end
+    end
+
+    it "marks the digest run complete" do
+      subject.check_and_mark_complete!
+      expect(subject.completed_at).not_to be_nil
+    end
+  end
 end

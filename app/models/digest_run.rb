@@ -15,6 +15,10 @@ class DigestRun < ApplicationRecord
     update_attributes!(completed_at: Time.now)
   end
 
+  def check_and_mark_complete!
+    mark_complete! unless has_incomplete_subscribers?
+  end
+
 private
 
   def starts_at=(value)
@@ -48,5 +52,9 @@ private
 
   def digest_range_hour
     ENV.fetch("DIGEST_RANGE_HOUR", 8).to_i
+  end
+
+  def has_incomplete_subscribers?
+    digest_run_subscribers.incomplete_for_run(id).exists?
   end
 end
