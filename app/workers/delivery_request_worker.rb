@@ -13,10 +13,6 @@ class DeliveryRequestWorker
     end
   end
 
-  def self.queue_for_digest
-    :delivery_digest
-  end
-
   sidekiq_options retry: 3, queue: queue_for_immediate(:normal)
 
   sidekiq_retry_in do |count|
@@ -36,14 +32,10 @@ class DeliveryRequestWorker
   end
 
   def self.perform_async_for_immediate(*args, priority: :normal)
-    perform_async_in_queue(*args, queue_for_immediate(priority))
+    perform_async_in_queue(*args, queue: queue_for_immediate(priority))
   end
 
-  def self.perform_async_for_digest(*args)
-    perform_async_in_queue(*args, queue_for_digest)
-  end
-
-  def self.perform_async_in_queue(*args, queue)
+  def self.perform_async_in_queue(*args, queue:)
     set(queue: queue).perform_async(*args, queue)
   end
 

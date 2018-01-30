@@ -7,7 +7,7 @@ class DigestEmailGenerationWorker
 
     generate_email_and_subscription_contents
 
-    DeliveryRequestWorker.perform_async_for_digest(email.id)
+    DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_digest)
   end
 
 private

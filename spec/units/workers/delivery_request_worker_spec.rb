@@ -55,25 +55,12 @@ RSpec.describe DeliveryRequestWorker do
     end
   end
 
-  describe ".perform_async_for_digest" do
-    let(:email) { double(id: 0) }
-
-    before do
-      Sidekiq::Testing.fake!
-      described_class.perform_async_for_digest(email.id)
-    end
-
-    it "adds a worker to the digest queue" do
-      expect(Sidekiq::Queues["delivery_digest"].size).to eq(1)
-    end
-  end
-
   describe ".perform_async_in_queue" do
     let(:email) { double(id: 0) }
 
     before do
       Sidekiq::Testing.fake! do
-        described_class.perform_async_in_queue(email.id, queue)
+        described_class.perform_async_in_queue(email.id, queue: queue)
       end
     end
 

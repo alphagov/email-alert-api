@@ -49,8 +49,8 @@ RSpec.describe DigestEmailGenerationWorker do
   end
 
   it "enqueues delivery" do
-    expect(DeliveryRequestWorker).to receive(:perform_async_for_digest)
-      .with(instance_of(Integer))
+    expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
+      .with(instance_of(Integer), queue: :delivery_digest)
 
     subject.perform(subscriber_id: 1, digest_run_id: 10)
   end
