@@ -47,12 +47,10 @@ private
 
   def subscriber_list_ids
     @subscriber_list_ids ||= begin
+      all_ids = SubscriberList.order("RANDOM()").pluck(:id)
+
       Enumerator.new do |yielder|
-        loop do
-          SubscriberList.order("RANDOM()").pluck(:id).each do |id|
-            yielder << id
-          end
-        end
+        loop { yielder << all_ids.sample }
       end
     end
   end
