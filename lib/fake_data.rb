@@ -15,8 +15,12 @@ class FakeData
     end
 
     fake_subscriptions_data.each do |subscription_stat|
-      subscriber_ids = create_subscribers(subscription_stat.count)
+      subscriber_ids = create_subscribers(subscription_stat.number_of_subscribers).ids
+      create_subscriptions(subscriber_ids, subscription_stat.number_of_subscriptions)
     end
+
+    count = existing_test_subscribers.count
+    puts "Created #{count} subscribers."
   end
 
   def delete
@@ -26,31 +30,63 @@ class FakeData
 
 private
 
-  def pick_subscriber_list(limit: 1)
-    SubscriberList.order("RANDOM()").limit(limit)
+  def frequencies
+    @frequencies ||= begin
+      Enumerator.new do |yielder|
+        loop do
+          3.times { yielder << :weekly }
+          7.times { yielder << :daily }
+          10.times { yielder << :immediately }
+        end
+      end
+    end
   end
 
-  def pick_subscription_frequency
-    random = Random.new
-    choice = random.rand(1.0)
+  def subscriber_list_ids
+    @subscriber_list_ids ||= begin
+      Enumerator.new do |yielder|
+        loop do
+          SubscriberList.order("RANDOM()").pluck(:id).each do |id|
+            yielder << id
+          end
+        end
+      end
+    end
+  end
 
-    if choice < 0.15
-      :weekly
-    elsif choice < 0.5
-      :daily
-    else
-      :immediately
+  def uuids
+    Enumerator.new do |yielder|
+      loop { yielder << SecureRandom.uuid }
     end
   end
 
   def create_subscribers(count)
-    puts "Creating #{count} subscribers..."
+    puts "Building #{count} subscribers..."
 
-    records = count.times.map do
-      { address: "success+#{SecureRandom.uuid}@simulator.amazonses.com" }
+    columns = %i(address)
+    records = uuids.take(count).map do |uuid|
+      ["success+#{uuid}@simulator.amazonses.com"]
     end
 
-    Subscriber.import!(records)
+    puts "> Importing #{records.count} subscribers..."
+
+    Subscriber.import!(columns, records, validate: false)
+  end
+
+  def create_subscriptions(subscriber_ids, count)
+    count = subscriber_ids.count * count
+
+    puts "> Building #{count} subscriptions..."
+
+    columns = %i(subscriber_id subscriber_list_id frequency uuid)
+
+    count.times do
+      records = subscriber_ids.zip(subscriber_list_ids, frequencies, uuids)
+
+      puts ">> Importing #{records.count} subscriptions..."
+
+      Subscription.import!(columns, records, validate: false)
+    end
   end
 
   def existing_test_subscribers
@@ -61,12 +97,12 @@ private
     existing_test_subscribers.exists?
   end
 
-  SubscriptionStat = Struct.new(:number, :count)
+  SubscriptionStat = Struct.new(:number_of_subscriptions, :number_of_subscribers)
 
   def fake_subscriptions_data
     @fake_subscriptions_data ||= begin
-      CSV.read(fake_subscription_data_path).map do |(number, count)|
-        SubscriptionStat.new(number.to_i, count.to_i)
+      CSV.read(fake_subscription_data_path).map do |(number_of_subscriptions, number_of_subscribers)|
+        SubscriptionStat.new(number_of_subscriptions.to_i, number_of_subscribers.to_i)
       end
     end
   end
