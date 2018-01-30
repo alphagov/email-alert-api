@@ -1,25 +1,17 @@
 require "csv"
 
 class FakeData
-  def initialize; end
-
-  def self.call(*args)
-    new(*args).call
+  def self.insert
+    new.insert
   end
 
-  def call
-    20.times do
-      p pick_subscriber_list
-    end
-
-    20.times do
-      p pick_subscription_frequency
-    end
-
-    subscriptions.each do |subscription|
-      p subscription
-    end
+  def self.delete
+    new.delete
   end
+
+  def insert; end
+
+  def delete; end
 
 private
 
@@ -42,10 +34,18 @@ private
     end
   end
 
+  def subscriber_addresses
+
+  end
+
+  def no_subscribers
+    @no_subscribers ||= subscriptions.map { |s| s.count }.sum
+  end
+
   def subscriptions
     @subscriptions ||= begin
       CSV.read(fake_subscription_data_path).map do |(number, count)|
-        SubscriptionStat.new(number, count)
+        SubscriptionStat.new(number.to_i, count.to_i)
       end
     end
   end
