@@ -46,12 +46,17 @@ private
   end
 
   def subscriber_list_ids
-    @subscriber_list_ids ||= begin
-      all_ids = SubscriberList.order("RANDOM()").pluck(:id)
+    @subscriber_list_ids ||= SubscriberList.order("RANDOM()").pluck(:id)
+  end
 
-      Enumerator.new do |yielder|
-        loop { yielder << all_ids.sample }
-      end
+  def pick_subscriber_list_ids(group_index, group_count)
+    length = (subscriber_list_ids.count / group_count).round
+    start = (group_index * length).round
+
+    slice_ids = subscriber_list_ids.slice(start, length)
+
+    Enumerator.new do |yielder|
+      loop { yielder << slice_ids.sample }
     end
   end
 
@@ -79,12 +84,12 @@ private
 
     columns = %i(subscriber_id subscriber_list_id frequency uuid)
 
-    count.times do
-      records = subscriber_ids.zip(subscriber_list_ids, frequencies, uuids)
+    count.times do |i|
+      records = subscriber_ids.zip(pick_subscriber_list_ids(i, count), frequencies, uuids)
 
       puts ">> Importing #{records.count} subscriptions..."
 
-      Subscription.import!(columns, records, validate: false, on_duplicate_key_ignore: true)
+      Subscription.import!(columns, records, validate: false)
     end
   end
 
