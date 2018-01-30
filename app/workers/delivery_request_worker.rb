@@ -36,12 +36,15 @@ class DeliveryRequestWorker
   end
 
   def self.perform_async_for_immediate(*args, priority: :normal)
-    queue = queue_for_immediate(priority)
-    set(queue: queue).perform_async(*args, queue)
+    perform_async_in_queue(*args, queue_for_immediate(priority))
   end
 
   def self.perform_async_for_digest(*args)
-    set(queue: queue_for_digest).perform_async(*args, queue_for_digest)
+    perform_async_in_queue(*args, queue_for_digest)
+  end
+
+  def self.perform_async_in_queue(*args, queue)
+    set(queue: queue).perform_async(*args, queue)
   end
 
   def check_rate_limit!

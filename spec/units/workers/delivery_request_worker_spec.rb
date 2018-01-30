@@ -68,6 +68,32 @@ RSpec.describe DeliveryRequestWorker do
     end
   end
 
+  describe ".perform_async_in_queue" do
+    let(:email) { double(id: 0) }
+
+    before do
+      Sidekiq::Testing.fake! do
+        described_class.perform_async_in_queue(email.id, queue)
+      end
+    end
+
+    context "with a delivery digest queue" do
+      let(:queue) { "delivery_digest" }
+
+      it "adds a worker to the correct queue" do
+        expect(Sidekiq::Queues["delivery_digest"].size).to eq(1)
+      end
+    end
+
+    context "with a delivery immediate queue" do
+      let(:queue) { "delivery_immediate" }
+
+      it "adds a worker to the correct queue" do
+        expect(Sidekiq::Queues["delivery_immediate"].size).to eq(1)
+      end
+    end
+  end
+
   describe "rate_limiter" do
     describe "rate_limit_threshold" do
       before do
