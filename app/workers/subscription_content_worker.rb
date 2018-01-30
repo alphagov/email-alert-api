@@ -40,8 +40,8 @@ private
           { subscriber: subscriber, content_change: content_change }
         ]).ids.first
 
-        DeliveryRequestWorker.perform_async_with_priority(
-          email_id, priority: content_change.priority.to_sym,
+        DeliveryRequestWorker.perform_async_in_queue(
+          email_id, queue: :delivery_immediate,
         )
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })
