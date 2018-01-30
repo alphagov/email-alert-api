@@ -74,9 +74,7 @@ private
   end
 
   def create_subscriptions(subscriber_ids, count)
-    count = subscriber_ids.count * count
-
-    puts "> Building #{count} subscriptions..."
+    puts "> Building #{subscriber_ids.count * count} subscriptions..."
 
     columns = %i(subscriber_id subscriber_list_id frequency uuid)
 
@@ -85,7 +83,7 @@ private
 
       puts ">> Importing #{records.count} subscriptions..."
 
-      Subscription.import!(columns, records, validate: false)
+      Subscription.import!(columns, records, validate: false, on_duplicate_key_ignore: true)
     end
   end
 
