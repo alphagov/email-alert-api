@@ -1,6 +1,6 @@
 class ImmediateEmailBuilder
-  def initialize(subscriber_content_changes)
-    @subscriber_content_changes = subscriber_content_changes
+  def initialize(subscription_content_changes)
+    @subscription_content_changes = subscription_content_changes
   end
 
   def self.call(*args)
@@ -15,11 +15,11 @@ class ImmediateEmailBuilder
 
 private
 
-  attr_reader :subscriber_content_changes
+  attr_reader :subscription_content_changes
 
   def records
-    subscriber_content_changes.map do |subscriber_content_change|
-      single_email_record(subscriber_content_change)
+    subscription_content_changes.map do |subscription_content_change|
+      single_email_record(subscription_content_change)
     end
   end
 
@@ -27,9 +27,15 @@ private
     %i(address subject body)
   end
 
-  def single_email_record(subscriber_content_change)
-    subscriber = subscriber_content_change.fetch(:subscriber)
-    content_change = subscriber_content_change.fetch(:content_change)
+  def single_email_record(subscription_content_change)
+    content_change = subscription_content_change.fetch(:content_change)
+    subscription = subscription_content_change[:subscription]
+
+    subscriber = if subscription
+                   subscription.subscriber
+                 else
+                   subscription_content_change.fetch(:subscriber)
+                 end
 
     [subscriber.address, subject(content_change), body(subscriber, content_change)]
   end
