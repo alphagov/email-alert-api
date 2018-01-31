@@ -37,31 +37,34 @@ private
                    subscription_content_change.fetch(:subscriber)
                  end
 
-    [subscriber.address, subject(content_change), body(subscriber, content_change)]
+    [subscriber.address, subject(content_change), body(content_change, subscription)]
   end
 
   def subject(content_change)
     "GOV.UK Update - #{content_change.title}"
   end
 
-  def body(subscriber, content_change)
-    <<~BODY
-      #{presented_content_change(content_change)}
-      ---
+  def body(content_change, subscription)
+    if subscription
+      <<~BODY
+        #{presented_content_change(content_change)}
+        ---
 
-      #{unsubscribe_links(subscriber)}
-    BODY
+        #{presented_unsubscribe_link(subscription)}
+      BODY
+    else
+      presented_content_change(content_change)
+    end
   end
 
   def presented_content_change(content_change)
     ContentChangePresenter.call(content_change)
   end
 
-  def unsubscribe_links(subscriber)
-    links = subscriber.subscriptions.map do |subscription|
-      UnsubscribeLinkPresenter.call(uuid: subscription.uuid, title: subscription.subscriber_list.title)
-    end
-
-    links.join("\n\n")
+  def presented_unsubscribe_link(subscription)
+    UnsubscribeLinkPresenter.call(
+      uuid: subscription.uuid,
+      title: subscription.subscriber_list.title,
+    )
   end
 end

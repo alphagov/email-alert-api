@@ -31,9 +31,11 @@ RSpec.describe ImmediateEmailBuilder do
   end
 
   describe ".call" do
-    subject(:email_import) do
-      described_class.call([{ subscriber: subscriber, content_change: content_change }])
+    let(:subscription_contents) do
+      [{ subscriber: subscriber, content_change: content_change }]
     end
+
+    subject(:email_import) { described_class.call(subscription_contents) }
 
     let(:email) { Email.find(email_import.ids.first) }
 
@@ -46,30 +48,40 @@ RSpec.describe ImmediateEmailBuilder do
     end
 
     it "sets the body and unsubscribe links" do
-      expect(UnsubscribeLinkPresenter).to receive(:call).with(
-        uuid: "1234",
-        title: "First Subscription"
-      ).and_return("unsubscribe_link_1")
-
-      expect(UnsubscribeLinkPresenter).to receive(:call).with(
-        uuid: "5678",
-        title: "Second Subscription"
-      ).and_return("unsubscribe_link_2")
-
       expect(ContentChangePresenter).to receive(:call)
         .and_return("presented_content_change\n")
 
       expect(email.body).to eq(
         <<~BODY
           presented_content_change
-
-          ---
-
-          unsubscribe_link_1
-
-          unsubscribe_link_2
         BODY
       )
+    end
+
+    context "with a subscription" do
+      let(:subscription_contents) do
+        [{ subscription: subscriptions.first, content_change: content_change }]
+      end
+
+      it "sets the body and unsubscribe links" do
+        expect(UnsubscribeLinkPresenter).to receive(:call).with(
+          uuid: "bef9b608-05ba-46ce-abb7-8567f4180a25",
+          title: "First Subscription"
+        ).and_return("unsubscribe_link")
+
+        expect(ContentChangePresenter).to receive(:call)
+          .and_return("presented_content_change\n")
+
+        expect(email.body).to eq(
+          <<~BODY
+            presented_content_change
+
+            ---
+
+            unsubscribe_link
+          BODY
+        )
+      end
     end
   end
 end
