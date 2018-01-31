@@ -1,4 +1,4 @@
-module SharedSteps
+module FeatureHelpers
   def stub_govdelivery(gov_delivery_id)
     body = "<topic><to-param>#{gov_delivery_id}</to-param></topic>"
     stub_request(:any, /govdelivery/).to_return(body: body)
@@ -89,4 +89,8 @@ module SharedSteps
   def clear_any_requests_that_have_been_recorded!
     WebMock::RequestRegistry.instance.reset!
   end
+end
+
+RSpec.configure do |config|
+  config.include FeatureHelpers
 end

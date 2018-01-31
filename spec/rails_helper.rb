@@ -8,7 +8,6 @@ require "config/environment"
 require "rspec/rails"
 require "govuk_sidekiq/testing"
 require "gds-sso/lint/user_spec"
-require "spec/features/_shared_steps"
 require "db/seeds"
 
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |file| require file }
@@ -17,7 +16,6 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.use_transactional_fixtures = true
   config.include FactoryBot::Syntax::Methods
-  config.include SharedSteps, type: :request
 
   config.after do
     logout
