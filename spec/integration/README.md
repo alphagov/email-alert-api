@@ -23,4 +23,4 @@ If you need to test an entire journey through the system, consider writing a
 feature test instead. See `spec/features/README.md`.
 
 If you need to test a single component exhaustively, consider writing a unit
-test instead. See `spec/units/README.md`.
+test instead. See `spec/README.md`.
