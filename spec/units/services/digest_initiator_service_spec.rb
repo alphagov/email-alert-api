@@ -53,7 +53,7 @@ RSpec.describe DigestInitiatorService do
 
         it "creates a DigestRunSubscriber for each subscriber" do
           Timecop.freeze(Time.parse("08:30")) do
-            described_class.call(range: DigestRun::DAILY)
+            described_class.call(range: range)
             expect(DigestRunSubscriber.all.map(&:subscriber_id)).to match([1, 2])
           end
         end
@@ -64,9 +64,16 @@ RSpec.describe DigestInitiatorService do
               .to receive(:perform_async)
               .exactly(2).times
 
-            described_class.call(range: DigestRun::DAILY)
+            described_class.call(range: range)
           end
         end
+      end
+
+      it "records a metric for the delivery attempt" do
+        expect(MetricsService).to receive(:digest_initiator_service)
+          .with("daily")
+
+        described_class.call(range: range)
       end
     end
 

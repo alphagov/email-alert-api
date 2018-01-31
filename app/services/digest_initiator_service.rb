@@ -11,18 +11,20 @@ class DigestInitiatorService
     digest_run = create_digest_run
     return if digest_run.nil?
 
-    subscribers = DigestRunSubscriberQuery.call(digest_run: digest_run)
+    MetricsService.digest_initiator_service(range) do
+      subscribers = DigestRunSubscriberQuery.call(digest_run: digest_run)
 
-    digest_run_subscriber_params = build_digest_run_subscriber_params(
-      digest_run,
-      subscribers
-    )
+      digest_run_subscriber_params = build_digest_run_subscriber_params(
+        digest_run,
+        subscribers
+      )
 
-    digest_run_subscriber_ids = import_digest_run_subscribers(
-      digest_run_subscriber_params
-    )
+      digest_run_subscriber_ids = import_digest_run_subscribers(
+        digest_run_subscriber_params
+      )
 
-    enqueue_jobs(digest_run_subscriber_ids)
+      enqueue_jobs(digest_run_subscriber_ids)
+    end
   end
 
 private
