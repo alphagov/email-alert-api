@@ -11,7 +11,9 @@ class FakeData
 
   def insert(proportion)
     if has_test_subscribers?
-      raise "There is already test data in the system. Run rake fake_data:delete first."
+      puts "There is already test data in the system. Run rake fake_data:delete first."
+      puts "Continue anyway? Press enter or CTRL+C to cancel."
+      gets
     end
 
     fake_subscriptions_data.each do |subscription_stat|
