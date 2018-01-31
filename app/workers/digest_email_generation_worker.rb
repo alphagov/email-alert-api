@@ -6,14 +6,16 @@ class DigestEmailGenerationWorker
     @subscriber = digest_run_subscriber.subscriber
     @digest_run = digest_run_subscriber.digest_run
 
-    Email.transaction do
-      generate_email_and_subscription_contents
-      digest_run_subscriber.mark_complete!
+    MetricsService.digest_email_generation(digest_run.range) do
+      Email.transaction do
+        generate_email_and_subscription_contents
+        digest_run_subscriber.mark_complete!
+      end
+
+      DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_digest)
+
+      digest_run.check_and_mark_complete!
     end
-
-    DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_digest)
-
-    digest_run.check_and_mark_complete!
   end
 
 private

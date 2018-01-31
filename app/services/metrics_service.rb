@@ -24,6 +24,14 @@ class MetricsService
       time("#{provider_name}.email_send_request.timing", &block)
     end
 
+    def digest_email_generation(range, &block)
+      time("digest_email_generation.#{range}.timing", &block)
+    end
+
+    def digest_initiator_service(range, &block)
+      time("digest_initiator_service.#{range}.timing", &block)
+    end
+
     def first_delivery_attempt(email, time)
       return if DeliveryAttempt.exists?(email: email)
       store_time_to_send_email(email, time)
