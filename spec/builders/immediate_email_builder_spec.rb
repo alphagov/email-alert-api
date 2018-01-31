@@ -1,10 +1,21 @@
 RSpec.describe ImmediateEmailBuilder do
-  let(:subscriber) { double(:subscriber, subscriptions: subscriptions, address: "test@example.com") }
+  let(:subscriber) { build(:subscriber, address: "test@example.com") }
 
   let(:subscriptions) do
     [
-      double(uuid: "1234", subscriber_list: double(title: "First Subscription")),
-      double(uuid: "5678", subscriber_list: double(title: "Second Subscription")),
+      build(
+        :subscription,
+        uuid: "bef9b608-05ba-46ce-abb7-8567f4180a25",
+        subscriber: subscriber,
+        subscriber_list: build(:subscriber_list, title: "First Subscription")
+      ),
+
+      build(
+        :subscription,
+        uuid: "69ca6fce-34f5-4ebd-943c-83bd1b2e70fb",
+        subscriber: subscriber,
+        subscriber_list: build(:subscriber_list, title: "Second Subscription")
+      ),
     ]
   end
 
