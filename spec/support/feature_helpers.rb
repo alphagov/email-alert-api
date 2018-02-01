@@ -34,8 +34,13 @@ module FeatureHelpers
     expect(response.status).to eq(expected_status)
   end
 
-  def subscribe_to_subscribable(subscribable_id, expected_status: 201)
-    params = { subscribable_id: subscribable_id, address: "test@test.com" }
+  def subscribe_to_subscribable(subscribable_id, expected_status: 201,
+    address: "test@test.com", frequency: "immediately")
+    params = {
+      subscribable_id: subscribable_id,
+      address: address,
+      frequency: frequency
+    }
     post "/subscriptions", params: params.to_json, headers: JSON_HEADERS
     expect(response.status).to eq(expected_status)
   end
