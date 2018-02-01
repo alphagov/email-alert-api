@@ -1,4 +1,4 @@
-class ContentChangeSubscriptionQuery
+class ContentChangeImmediateSubscriptionQuery
   def self.call(content_change:)
     Subscription
       .joins(subscriber_list: :matched_content_changes)

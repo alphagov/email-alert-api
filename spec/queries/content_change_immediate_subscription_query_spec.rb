@@ -1,4 +1,4 @@
-RSpec.describe ContentChangeSubscriptionQuery do
+RSpec.describe ContentChangeImmediateSubscriptionQuery do
   let(:content_change) do
     create(:content_change, tags: { topics: ["oil-and-gas/licensing"] })
   end
