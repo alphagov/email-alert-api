@@ -50,6 +50,6 @@ private
   end
 
   def subscriptions_for(content_change:)
-    ContentChangeSubscriptionQuery.call(content_change: content_change)
+    ContentChangeImmediateSubscriptionQuery.call(content_change: content_change)
   end
 end

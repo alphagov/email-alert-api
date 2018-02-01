@@ -1,4 +1,4 @@
-RSpec.describe ContentChangeSubscriptionQuery do
+RSpec.describe ContentChangeImmediateSubscriptionQuery do
   let(:content_change) do
     create(:content_change, tags: { topics: ["oil-and-gas/licensing"] })
   end
@@ -45,6 +45,26 @@ RSpec.describe ContentChangeSubscriptionQuery do
       end
 
       it "returns no subscriptions" do
+        expect(subject.count).to eq(0)
+      end
+    end
+
+    context "with daily subscription" do
+      before do
+        create(:subscription, frequency: "daily", subscriber_list: subscriber_list)
+      end
+
+      it "does not return them" do
+        expect(subject.count).to eq(0)
+      end
+    end
+
+    context "with weekly subscription" do
+      before do
+        create(:subscription, frequency: "weekly", subscriber_list: subscriber_list)
+      end
+
+      it "does not return them" do
         expect(subject.count).to eq(0)
       end
     end
