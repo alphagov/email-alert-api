@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe DigestInitiatorService do
   describe ".call" do
     context "daily" do
-      let(:range) { DigestRun::DAILY }
+      let(:range) { Frequency::DAILY }
 
       after do
         ENV["DIGEST_RANGE_HOUR"] = nil
@@ -78,7 +78,7 @@ RSpec.describe DigestInitiatorService do
     end
 
     context "weekly" do
-      let(:range) { DigestRun::WEEKLY }
+      let(:range) { Frequency::WEEKLY }
 
       context "when there is no daily DigestRun for the date" do
         it "creates one" do

@@ -24,12 +24,12 @@ FactoryBot.define do
 
   factory :digest_run do
     date { Date.current }
-    range DigestRun::DAILY
+    range Frequency::DAILY
 
     trait :daily
 
     trait :weekly do
-      range DigestRun::WEEKLY
+      range Frequency::WEEKLY
     end
   end
 
@@ -68,15 +68,16 @@ FactoryBot.define do
   factory :subscription do
     subscriber
     subscriber_list
+    frequency Frequency::IMMEDIATELY
 
     trait :immediately
 
     trait :daily do
-      frequency "daily"
+      frequency Frequency::DAILY
     end
 
     trait :weekly do
-      frequency "weekly"
+      frequency Frequency::WEEKLY
     end
   end
 

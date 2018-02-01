@@ -6,7 +6,7 @@ RSpec.describe SubscriptionContentChangeQuery do
   let(:ends_at) { Time.parse("2017-01-02 08:00") }
 
   let(:digest_run) do
-    create(:digest_run, date: ends_at, range: :daily)
+    create(:digest_run, :daily, date: ends_at)
   end
 
   let(:starts_at) { digest_run.starts_at }
