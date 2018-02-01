@@ -13,7 +13,7 @@ class FakeData
     if has_test_subscribers?
       puts "There is already test data in the system. Run rake fake_data:delete first."
       puts "Continue anyway? Press enter or CTRL+C to cancel."
-      gets
+      STDIN.gets
     end
 
     fake_subscriptions_data.each do |subscription_stat|
