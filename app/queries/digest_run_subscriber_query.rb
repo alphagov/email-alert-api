@@ -5,5 +5,6 @@ class DigestRunSubscriberQuery
       .where("content_changes.created_at >= ?", digest_run.starts_at)
       .where("content_changes.created_at < ?", digest_run.ends_at)
       .where("subscriptions.frequency": digest_run.range)
+      .distinct
   end
 end
