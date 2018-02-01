@@ -8,9 +8,6 @@ class DigestRun < ApplicationRecord
 
   enum range: { daily: 0, weekly: 1 }
 
-  DAILY = "daily".freeze
-  WEEKLY = "weekly".freeze
-
   def mark_complete!
     update_attributes!(completed_at: Time.now)
   end
