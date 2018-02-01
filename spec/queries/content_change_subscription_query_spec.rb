@@ -48,5 +48,25 @@ RSpec.describe ContentChangeSubscriptionQuery do
         expect(subject.count).to eq(0)
       end
     end
+
+    context "with daily subscription" do
+      before do
+        create(:subscription, frequency: "daily", subscriber_list: subscriber_list)
+      end
+
+      it "does not return them" do
+        expect(subject.count).to eq(0)
+      end
+    end
+
+    context "with weekly subscription" do
+      before do
+        create(:subscription, frequency: "weekly", subscriber_list: subscriber_list)
+      end
+
+      it "does not return them" do
+        expect(subject.count).to eq(0)
+      end
+    end
   end
 end
