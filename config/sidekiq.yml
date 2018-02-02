@@ -4,10 +4,11 @@
 :logfile: ./log/sidekiq.json.log
 :queues:
   - govdelivery
-  - [delivery_immediate_high, 5]
-  - [delivery_immediate, 4]
-  - [email_generation_immediate, 3]
-  - [delivery_digest, 2]
+  - [delivery_immediate_high, 6]
+  - [delivery_immediate, 5]
+  - [email_generation_immediate, 4]
+  - [delivery_digest, 3]
+  - [email_generation_digest, 2]
   - [default, 1]
 :schedule:
   immediate_email_generation:
