@@ -7,9 +7,9 @@
   - [delivery_immediate_high, 6]
   - [delivery_immediate, 5]
   - [email_generation_immediate, 4]
-  - [delivery_digest, 3]
-  - [email_generation_digest, 2]
-  - [default, 1]
+  - [default, 3]
+  - [delivery_digest, 2]
+  - [email_generation_digest, 1]
 :schedule:
   immediate_email_generation:
     every: '5s'
