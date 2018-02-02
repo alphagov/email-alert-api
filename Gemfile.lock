@@ -325,7 +325,7 @@ DEPENDENCIES
   equivalent-xml
   factory_bot_rails
   faraday (= 0.12.2)
-  foreman (= 0.84.0)
+  foreman (~> 0.84)
   gds-api-adapters (~> 51.1)
   gds-sso (~> 13.5)
   govuk-lint (~> 3.6)
