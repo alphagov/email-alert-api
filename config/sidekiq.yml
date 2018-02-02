@@ -3,6 +3,7 @@
 :concurrency: 30
 :logfile: ./log/sidekiq.json.log
 :queues:
+  - govdelivery
   - [delivery_immediate_high, 4]
   - [delivery_immediate, 3]
   - [delivery_digest, 2]
