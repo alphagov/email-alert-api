@@ -6,9 +6,10 @@ RSpec.describe DigestRunSubscriberQuery do
   describe ".call" do
     subject(:subscribers) { described_class.call(digest_run: digest_run) }
 
-    let(:subscriber_list) { create(:subscriber_list) }
+    let(:subscriber_list_one) { create(:subscriber_list) }
 
-    def create_and_match_content_change(created_at: starts_at)
+    def create_and_match_content_change(created_at: starts_at,
+      subscriber_list: subscriber_list_one)
       content_change = create(
         :content_change,
         created_at: created_at,
@@ -22,7 +23,7 @@ RSpec.describe DigestRunSubscriberQuery do
 
     context "with one subscription" do
       let!(:subscription) do
-        create(:subscription, subscriber_list: subscriber_list, frequency: :daily)
+        create(:subscription, subscriber_list: subscriber_list_one, frequency: :daily)
       end
 
       context "with a matched content change" do
@@ -58,7 +59,7 @@ RSpec.describe DigestRunSubscriberQuery do
 
     context "with a weekly subscription" do
       let!(:subscription) do
-        create(:subscription, :weekly, subscriber_list: subscriber_list)
+        create(:subscription, :weekly, subscriber_list: subscriber_list_one)
       end
 
       context "with a matched content change" do
@@ -74,11 +75,11 @@ RSpec.describe DigestRunSubscriberQuery do
 
     context "with two subscriptions" do
       let!(:subscription_1) do
-        create(:subscription, :daily, subscriber_list: subscriber_list)
+        create(:subscription, :daily, subscriber_list: subscriber_list_one)
       end
 
       let!(:subscription_2) do
-        create(:subscription, :daily, subscriber_list: subscriber_list)
+        create(:subscription, :daily, subscriber_list: subscriber_list_one)
       end
 
       before do
@@ -87,6 +88,36 @@ RSpec.describe DigestRunSubscriberQuery do
 
       it "returns the subscribers" do
         expect(subscribers.count).to eq(2)
+      end
+    end
+
+    context "when the subscriber is subscribed to two matching subscribables" do
+      let(:subscriber_list_two) { create(:subscriber_list) }
+      let(:subscriber) { create(:subscriber) }
+      let!(:subscription_1) do
+        create(
+          :subscription,
+          :daily,
+          subscriber: subscriber,
+          subscriber_list: subscriber_list_one
+        )
+      end
+      let!(:subscription_2) do
+        create(
+          :subscription,
+          :daily,
+          subscriber: subscriber,
+          subscriber_list: subscriber_list_two
+        )
+      end
+
+      before do
+        create_and_match_content_change
+        create_and_match_content_change(subscriber_list: subscriber_list_two)
+      end
+
+      it "only returns the subscriber once" do
+        expect(subscribers.count).to eq(1)
       end
     end
   end
