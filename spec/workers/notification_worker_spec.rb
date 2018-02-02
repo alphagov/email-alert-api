@@ -1,19 +1,29 @@
 RSpec.describe NotificationWorker do
+  let(:notification_params) do
+    {
+      subject: "Test subject",
+      body: "Test body copy",
+      content_id: "111111-aaaaaa",
+      public_updated_at: "2017-02-21T14:58:45+00:00",
+      govuk_request_id: 'AAAAAA',
+    }
+  end
+
+  describe "#perform_async" do
+    before do
+      NotificationWorker.perform_async(notification_params)
+    end
+
+    it "gets put on the govdelivery queue" do
+      expect(Sidekiq::Queues["govdelivery"].size).to eq(1)
+    end
+  end
+
   describe "#perform" do
     before do
       @gov_delivery = double(:gov_delivery, send_bulletin: nil)
       allow(Services).to receive(:gov_delivery).and_return(@gov_delivery)
       allow(Rails.logger).to receive(:info)
-    end
-
-    let(:notification_params) do
-      {
-        subject: "Test subject",
-        body: "Test body copy",
-        content_id: "111111-aaaaaa",
-        public_updated_at: "2017-02-21T14:58:45+00:00",
-        govuk_request_id: 'AAAAAA',
-      }
     end
 
     def make_it_perform

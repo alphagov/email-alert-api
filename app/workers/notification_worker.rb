@@ -1,6 +1,8 @@
 class NotificationWorker
   include Sidekiq::Worker
 
+  sidekiq_options queue: :govdelivery
+
   def perform(notification_params)
     notification_params = notification_params.with_indifferent_access
 

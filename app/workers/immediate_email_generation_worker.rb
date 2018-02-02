@@ -1,6 +1,8 @@
 class ImmediateEmailGenerationWorker
   include Sidekiq::Worker
 
+  sidekiq_options queue: :email_generation_immediate
+
   LOCK_NAME = "immediate_email_generation_worker".freeze
 
   def perform

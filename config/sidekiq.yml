@@ -3,10 +3,13 @@
 :concurrency: 30
 :logfile: ./log/sidekiq.json.log
 :queues:
-  - [delivery_immediate_high, 4]
-  - [delivery_immediate, 3]
+  - govdelivery
+  - [delivery_immediate_high, 6]
+  - [delivery_immediate, 5]
+  - [email_generation_immediate, 4]
+  - [default, 3]
   - [delivery_digest, 2]
-  - [default, 1]
+  - [email_generation_digest, 1]
 :schedule:
   immediate_email_generation:
     every: '5s'
