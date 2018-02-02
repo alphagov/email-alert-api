@@ -8,7 +8,7 @@ class ImmediateEmailBuilder
   end
 
   def call
-    Email.import!(records)
+    Email.import!(columns, records)
   end
 
   private_class_method :new
@@ -23,15 +23,15 @@ private
     end
   end
 
+  def columns
+    %i(address subject body)
+  end
+
   def single_email_record(subscriber_content_change)
     subscriber = subscriber_content_change.fetch(:subscriber)
     content_change = subscriber_content_change.fetch(:content_change)
 
-    {
-      address: subscriber.address,
-      subject: subject(content_change),
-      body: body(subscriber, content_change)
-    }
+    [subscriber.address, subject(content_change), body(subscriber, content_change)]
   end
 
   def subject(content_change)
