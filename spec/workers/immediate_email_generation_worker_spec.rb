@@ -1,5 +1,15 @@
 RSpec.describe ImmediateEmailGenerationWorker do
-  describe ".call" do
+  describe ".perform_async" do
+    before do
+      described_class.perform_async
+    end
+
+    it "gets put on the email_generation_immediate queue" do
+      expect(Sidekiq::Queues["email_generation_immediate"].size).to eq(1)
+    end
+  end
+
+  describe ".perform" do
     def perform_with_fake_sidekiq
       Sidekiq::Testing.fake! do
         DeliveryRequestWorker.jobs.clear
