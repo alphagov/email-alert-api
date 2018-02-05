@@ -41,7 +41,17 @@ RSpec.describe "Subscriptions", type: :request do
         create_subscription
         expect(data[:id]).to eq(subscription.id)
       end
+
+      context "with a deleted subscription" do
+        let!(:subscription) { create(:subscription, subscriber_list: subscribable, subscriber: subscriber, deleted_at: 1.day.ago) }
+
+        it "undeletes the subscription" do
+          create_subscription
+          expect(Subscription.find(subscription.id).deleted_at).to be_nil
+        end
+      end
     end
+
 
     context "without an existing subscription" do
       context "with a subscribable" do
