@@ -17,7 +17,7 @@ class Healthcheck
     end
 
     def details
-      1.upto(24).each_with_object({}) do |n, hash|
+      [1, 6, 12, 24].each_with_object({}) do |n, hash|
         hash[:"last_#{n}_hours"] = failures_since(n.hours.ago).count
       end
     end
