@@ -27,6 +27,7 @@ module FeatureHelpers
   def lookup_subscribable(gov_delivery_id, expected_status: 200)
     get "/subscribables/#{gov_delivery_id}"
     expect(response.status).to eq(expected_status)
+    data.dig(:subscribable, :id)
   end
 
   def lookup_subscriber_list(params, expected_status: 200)
@@ -34,8 +35,13 @@ module FeatureHelpers
     expect(response.status).to eq(expected_status)
   end
 
-  def subscribe_to_subscribable(subscribable_id, expected_status: 201)
-    params = { subscribable_id: subscribable_id, address: "test@test.com" }
+  def subscribe_to_subscribable(subscribable_id, expected_status: 201,
+    address: "test@test.com", frequency: "immediately")
+    params = {
+      subscribable_id: subscribable_id,
+      address: address,
+      frequency: frequency
+    }
     post "/subscriptions", params: params.to_json, headers: JSON_HEADERS
     expect(response.status).to eq(expected_status)
   end
