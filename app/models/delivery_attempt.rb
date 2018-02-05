@@ -7,8 +7,7 @@ class DeliveryAttempt < ApplicationRecord
   enum provider: { pseudo: 0, notify: 1 }
 
   def self.latest_per_email
-    inner = group(:email_id).select("email_id AS id, MAX(updated_at) AS max")
-    joins("JOIN (#{inner.to_sql}) x ON email_id = x.id and updated_at = x.max")
+    from("(SELECT DISTINCT ON (email_id) * FROM delivery_attempts ORDER BY email_id, updated_at DESC) AS delivery_attempts")
   end
 
   def failure?
