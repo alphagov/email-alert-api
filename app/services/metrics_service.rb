@@ -45,13 +45,11 @@ class MetricsService
     end
 
     def store_time_to_send_content_change(email, time)
-      # We don't want to store this statistic for emails that have more than one
-      # content change associated with them. Since they don't exist yet this
-      # does just a crude check.
-      content_changes = ContentChangesForEmailQuery.call(email).all
-      return unless content_changes.count == 1
+      return if SubscriptionContent.where(email: email).digest.exists?
 
-      content_change = content_changes.first
+      content_change = ContentChangesForEmailQuery.call(email).first
+      return unless content_change
+
       difference = (time - content_change.created_at) * 1000
       namespace = "content_change_created_to_first_delivery_attempt"
       timing(namespace, difference)
