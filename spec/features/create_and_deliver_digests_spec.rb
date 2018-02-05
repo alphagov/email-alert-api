@@ -12,6 +12,76 @@ RSpec.describe "creating and delivering digests", type: :request do
     Timecop.return
   end
 
+  def first_expected_daily_email_body(subscription_one, subscription_two)
+    <<~BODY
+      #Subscriber list one
+
+      [Title one](http://www.dev.gov.uk/base-path)
+
+      Change note one: Description one
+
+      Updated at 10:00 am on 1 January 2017
+
+      ---
+
+      [Title two](http://www.dev.gov.uk/base-path)
+
+      Change note two: Description two
+
+      Updated at 09:00 am on 1 January 2017
+
+      ---
+
+      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription_one.uuid}?title=Subscriber%20list%20one)
+
+      &nbsp;
+
+      #Subscriber list two
+
+      [Title four](http://www.dev.gov.uk/base-path)
+
+      Change note four: Description four
+
+      Updated at 09:30 am on 1 January 2017
+
+      ---
+
+      [Title three](http://www.dev.gov.uk/base-path)
+
+      Change note three: Description three
+
+      Updated at 09:00 am on 1 January 2017
+
+      ---
+
+      Unsubscribe from [Subscriber list two](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.uuid}?title=Subscriber%20list%20two)
+    BODY
+  end
+
+  def second_expected_daily_email_body(subscription)
+    <<~BODY
+      #Subscriber list one
+
+      [Title one](http://www.dev.gov.uk/base-path)
+
+      Change note one: Description one
+
+      Updated at 10:00 am on 1 January 2017
+
+      ---
+
+      [Title two](http://www.dev.gov.uk/base-path)
+
+      Change note two: Description two
+
+      Updated at 09:00 am on 1 January 2017
+
+      ---
+
+      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription.uuid}?title=Subscriber%20list%20one)
+    BODY
+  end
+
   scenario "daily digest run" do
     login_with_internal_app
 
@@ -108,82 +178,28 @@ RSpec.describe "creating and delivering digests", type: :request do
     #TODO retrieve this via the API when we have an endpoint
     subscriptions = Subscription.all
 
-    expected_subscriber_one_body = <<~BODY
-      #Subscriber list one
-
-      [Title one](http://www.dev.gov.uk/base-path)
-
-      Change note one: Description one
-
-      Updated at 10:00 am on 1 January 2017
-
-      ---
-
-      [Title two](http://www.dev.gov.uk/base-path)
-
-      Change note two: Description two
-
-      Updated at 09:00 am on 1 January 2017
-
-      ---
-
-      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscriptions[0].uuid}?title=Subscriber%20list%20one)
-
-      &nbsp;
-
-      #Subscriber list two
-
-      [Title four](http://www.dev.gov.uk/base-path)
-
-      Change note four: Description four
-
-      Updated at 09:30 am on 1 January 2017
-
-      ---
-
-      [Title three](http://www.dev.gov.uk/base-path)
-
-      Change note three: Description three
-
-      Updated at 09:00 am on 1 January 2017
-
-      ---
-
-      Unsubscribe from [Subscriber list two](http://www.dev.gov.uk/email/unsubscribe/#{subscriptions[1].uuid}?title=Subscriber%20list%20two)
-    BODY
-
-    expected_subscriber_two_body = <<~BODY
-      #Subscriber list one
-
-      [Title one](http://www.dev.gov.uk/base-path)
-
-      Change note one: Description one
-
-      Updated at 10:00 am on 1 January 2017
-
-      ---
-
-      [Title two](http://www.dev.gov.uk/base-path)
-
-      Change note two: Description two
-
-      Updated at 09:00 am on 1 January 2017
-
-      ---
-
-      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscriptions[2].uuid}?title=Subscriber%20list%20one)
-    BODY
-
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
       .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK Daily Update")))
-      .with(body: hash_including(personalisation: hash_including("body" => expected_subscriber_one_body)))
+      .with(
+        body: hash_including(
+          personalisation: hash_including(
+            "body" => first_expected_daily_email_body(subscriptions[0], subscriptions[1])
+          )
+        )
+      )
       .to_return(body: {}.to_json)
 
     second_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-two@example.com"))
       .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK Daily Update")))
-      .with(body: hash_including(personalisation: hash_including("body" => expected_subscriber_two_body)))
+      .with(
+        body: hash_including(
+          personalisation: hash_including(
+            "body" => second_expected_daily_email_body(subscriptions[2])
+          )
+        )
+      )
       .to_return(body: {}.to_json)
 
     DailyDigestInitiatorWorker.new.perform
