@@ -16,3 +16,10 @@ When this is set jobs will still be scheduled to sidekiq but they will all not
 be executed. No data will be saved about jobs aborted.
 
 [worker]: ../app/notifications_worker.rb
+
+### `USE_EMAIL_ALERT_FRONTEND_FOR_EMAIL_COLLECTION`
+
+When this environment variable set the redirect location that is returned
+as part of a subscriber list JSON serialization. Once this is returning
+frontend apps will redirect users to the Email Alert Frontend signup which
+does not use govdelivery.
