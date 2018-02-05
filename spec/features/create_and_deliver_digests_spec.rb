@@ -104,6 +104,9 @@ RSpec.describe "creating and delivering digests", type: :request do
     subscriber_one_address = "test-one@example.com"
     subscriber_two_address = "test-two@example.com"
 
+    #subscriber that shouldn't receive a digest
+    non_digest_subscriber_address = "test-three@example.com"
+
     subscribe_to_subscribable(
       subscribable_one_id,
       address: subscriber_one_address,
@@ -120,6 +123,12 @@ RSpec.describe "creating and delivering digests", type: :request do
       subscribable_one_id,
       address: subscriber_two_address,
       frequency: Frequency::DAILY
+    )
+
+    subscribe_to_subscribable(
+      subscribable_one_id,
+      address: non_digest_subscriber_address,
+      frequency: Frequency::IMMEDIATELY
     )
 
     #publish two items to each list
