@@ -9,9 +9,9 @@ class Healthcheck
     def status
       return :ok unless expect_status_update_callbacks?
 
-      if sending_after(critical_time.ago).exists?
+      if sending_after(critical_time).exists?
         :critical
-      elsif sending_after(warning_time.ago).exists?
+      elsif sending_after(warning_time).exists?
         :warning
       else
         :ok
@@ -23,17 +23,20 @@ class Healthcheck
       to = from + 36
 
       (from..to).step(12).with_object({}) do |n, hash|
-        hash[:"older_than_#{n}_hours"] = sending_after(n.hours.ago).count
+        hash[:"older_than_#{n}_hours"] = sending_after(n.hours).count
       end
     end
 
   private
 
-    def sending_after(datetime)
-      DeliveryAttempt
-        .latest_per_email
-        .where(status: :sending)
-        .where("updated_at < ?", datetime)
+    def sending_after(hours)
+      @sending_after_cache ||= {}
+      @sending_after_cache[hours] ||= begin
+        DeliveryAttempt
+          .latest_per_email
+          .where(status: :sending)
+          .where("updated_at < ?", hours.ago)
+      end
     end
 
     def critical_time
