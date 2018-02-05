@@ -65,13 +65,13 @@ private
   end
 
   def import_emails(subscription_contents)
-    subscriber_content_changes = subscription_contents.map do |subscription_content|
+    subscription_content_changes = subscription_contents.map do |subscription_content|
       {
-        subscriber: subscription_content.subscription.subscriber,
+        subscription: subscription_content.subscription,
         content_change: subscription_content.content_change,
       }
     end
 
-    ImmediateEmailBuilder.call(subscriber_content_changes)
+    ImmediateEmailBuilder.call(subscription_content_changes)
   end
 end
