@@ -4,6 +4,13 @@ class NotificationWorker
   sidekiq_options queue: :govdelivery
 
   def perform(notification_params)
+    # This is used to disable sending data to govdelivery while the system
+    # transitions from govdelivery to notify.
+    #
+    # Note this does not store any data and details of any jobs that are
+    # disabled will be lost unless we set something up to store them.
+    return if ENV.include?("DISABLE_GOVDELIVERY_EMAILS")
+
     notification_params = notification_params.with_indifferent_access
 
     tags_hash  = Hash(notification_params[:tags])

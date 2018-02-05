@@ -20,6 +20,7 @@ gem 'ratelimit', '~> 1.0'
 gem 'sidekiq-scheduler', '~> 2.2'
 
 group :test do
+  gem 'climate_control'
   gem 'equivalent-xml'
   gem 'factory_bot_rails'
   gem 'timecop'

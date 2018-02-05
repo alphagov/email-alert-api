@@ -308,5 +308,22 @@ RSpec.describe NotificationWorker do
         )
       end
     end
+
+    context "when DISABLE_GOVDELIVERY_EMAILS env var is set" do
+      around do |example|
+        ClimateControl.modify(DISABLE_GOVDELIVERY_EMAILS: "1") do
+          example.run
+        end
+      end
+
+      it "does not send a bulletin" do
+        make_it_perform
+        expect(@gov_delivery).not_to have_received(:send_bulletin)
+      end
+
+      it "does not append a notification log entry" do
+        expect { make_it_perform }.to_not change(NotificationLog, :count)
+      end
+    end
   end
 end
