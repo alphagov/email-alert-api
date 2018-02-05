@@ -166,7 +166,7 @@ GEM
     parser (2.4.0.2)
       ast (~> 2.3)
     pg (0.21.0)
-    plek (2.0.0)
+    plek (2.1.0)
     powerpack (0.1.1)
     pry (0.11.3)
       coderay (~> 1.1.0)
@@ -335,7 +335,7 @@ DEPENDENCIES
   nokogiri (~> 1.8)
   notifications-ruby-client (~> 2.6)
   pg (~> 0.21)
-  plek (~> 2.0)
+  plek (~> 2.1)
   pry-byebug
   rails (~> 5.1)
   ratelimit (~> 1.0)
