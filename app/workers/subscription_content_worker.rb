@@ -12,15 +12,15 @@ private
 
   def queue_delivery_to_subscribers(content_change)
     subscriptions_for(content_change: content_change).find_in_batches do |group|
-      records = group.map do |subscription|
-        {
-          content_change_id: content_change.id,
-          subscription_id: subscription.id,
-        }
+      columns = %i(content_change_id subscription_id)
+
+      content_change_id = content_change.id
+      records = group.pluck(:id).map do |subscription_id|
+        [content_change_id, subscription_id]
       end
 
       begin
-        SubscriptionContent.import!(records)
+        SubscriptionContent.import!(columns, records)
       rescue StandardError => ex
         Raven.capture_exception(ex, tags: { version: 2 })
       end

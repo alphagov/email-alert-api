@@ -28,19 +28,24 @@ private
     @email = create_email
 
     SubscriptionContent.import!(
-      formatted_subscription_content_changes
+      formatted_subscription_content_change_columns,
+      formatted_subscription_content_changes,
     )
+  end
+
+  def formatted_subscription_content_change_columns
+    %i(email_id subscription_id content_change_id digest_run_subscriber_id)
   end
 
   def formatted_subscription_content_changes
     subscriber_content_changes.flat_map do |result|
       result.content_changes.map do |content_change|
-        {
-          email_id: email.id,
-          subscription_id: result.subscription_id,
-          content_change_id: content_change.id,
-          digest_run_subscriber_id: digest_run_subscriber.id,
-        }
+        [
+          email.id,
+          result.subscription_id,
+          content_change.id,
+          digest_run_subscriber.id,
+        ]
       end
     end
   end

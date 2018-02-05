@@ -8,19 +8,21 @@ class MatchedContentChangeGenerationService
   end
 
   def call
-    MatchedContentChange.import!(records)
+    MatchedContentChange.import!(columns, records)
   end
 
 private
 
   attr_reader :content_change
 
+  def columns
+    %i(content_change_id subscriber_list_id)
+  end
+
   def records
+    content_change_id = content_change.id
     subscriber_lists.map do |subscriber_list|
-      {
-        content_change_id: content_change.id,
-        subscriber_list_id: subscriber_list.id,
-      }
+      [content_change_id, subscriber_list.id]
     end
   end
 

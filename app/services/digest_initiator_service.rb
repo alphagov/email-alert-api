@@ -12,11 +12,11 @@ class DigestInitiatorService
     return if digest_run.nil?
 
     MetricsService.digest_initiator_service(range) do
-      subscribers = DigestRunSubscriberQuery.call(digest_run: digest_run)
+      subscriber_ids = DigestRunSubscriberQuery.call(digest_run: digest_run).pluck(:id)
 
       digest_run_subscriber_params = build_digest_run_subscriber_params(
-        digest_run,
-        subscribers
+        digest_run.id,
+        subscriber_ids
       )
 
       digest_run_subscriber_ids = import_digest_run_subscribers(
@@ -42,15 +42,6 @@ private
     end
   end
 
-  def build_digest_run_subscriber_params(digest_run, subscribers)
-    subscribers.map do |subscriber|
-      {
-        subscriber_id: subscriber.id,
-        digest_run_id: digest_run.id
-      }
-    end
-  end
-
   def enqueue_jobs(digest_run_subscriber_ids)
     Array(digest_run_subscriber_ids).each do |digest_run_subscriber_id|
       DigestEmailGenerationWorker.perform_async(digest_run_subscriber_id)
@@ -67,7 +58,14 @@ private
     "#{range}_digest_initiator"
   end
 
+  def build_digest_run_subscriber_params(digest_run_id, subscriber_ids)
+    subscriber_ids.map do |subscriber_id|
+      [subscriber_id, digest_run_id]
+    end
+  end
+
   def import_digest_run_subscribers(params)
-    DigestRunSubscriber.import!(params).ids
+    columns = %i(subscriber_id digest_run_id)
+    DigestRunSubscriber.import!(columns, params).ids
   end
 end
