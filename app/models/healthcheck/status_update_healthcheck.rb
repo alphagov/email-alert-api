@@ -20,9 +20,9 @@ class Healthcheck
 
     def details
       from = NOTIFY_DELAY
-      to = from + 48
+      to = from + 36
 
-      (from..to).step(6).with_object({}) do |n, hash|
+      (from..to).step(12).with_object({}) do |n, hash|
         hash[:"older_than_#{n}_hours"] = sending_after(n.hours.ago).count
       end
     end

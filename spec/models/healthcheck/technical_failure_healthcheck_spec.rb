@@ -52,8 +52,8 @@ RSpec.describe Healthcheck::TechnicalFailureHealthcheck do
       details = subject.details
 
       expect(details.fetch(:last_1_hours)).to eq(3)
-      expect(details.fetch(:last_6_hours)).to eq(8)
       expect(details.fetch(:last_12_hours)).to eq(8)
+      expect(details.fetch(:last_24_hours)).to eq(8)
     end
   end
 end

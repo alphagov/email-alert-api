@@ -50,8 +50,8 @@ RSpec.describe "Healthcheck", type: :request do
       queue_size:        { status: "ok", queues: a_kind_of(Hash) },
       redis:             { status: "ok" },
       retry_size:        { status: "ok", retry_size: 0 },
-      status_update:     hash_including(status: "ok", older_than_78_hours: 0),
-      technical_failure: hash_including(status: "ok", last_6_hours: 0),
+      status_update:     hash_including(status: "ok", older_than_96_hours: 0),
+      technical_failure: hash_including(status: "ok", last_12_hours: 0),
     )
   end
 end
