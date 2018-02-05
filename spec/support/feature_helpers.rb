@@ -27,6 +27,7 @@ module FeatureHelpers
   def lookup_subscribable(gov_delivery_id, expected_status: 200)
     get "/subscribables/#{gov_delivery_id}"
     expect(response.status).to eq(expected_status)
+    data.dig(:subscribable, :id)
   end
 
   def lookup_subscriber_list(params, expected_status: 200)
