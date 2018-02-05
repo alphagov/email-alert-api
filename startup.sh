@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 
 bundle install
-bundle exec foreman start
+PORT=${PORT:-3088} bundle exec foreman start

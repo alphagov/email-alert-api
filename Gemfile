@@ -7,6 +7,7 @@ gem 'activerecord-import', '~> 0.22'
 gem 'with_advisory_lock', '~> 3.2'
 
 gem 'faraday', '0.12.2'
+gem 'foreman', '~> 0.84'
 gem 'gds-api-adapters', '~> 51.1'
 gem 'gds-sso', '~> 13.5'
 gem 'govuk_app_config', '~> 1.2'
@@ -23,10 +24,6 @@ group :test do
   gem 'factory_bot_rails'
   gem 'timecop'
   gem 'webmock'
-end
-
-group :development do
-  gem 'foreman', '0.84.0'
 end
 
 group :development, :test do
