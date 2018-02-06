@@ -22,6 +22,13 @@ RSpec.describe StatusUpdateService do
         .to change { delivery_attempt.reload.status }
         .to("temporary_failure")
     end
+
+    it "retries sending the email" do
+      expect(DeliveryRequestWorker).to receive(:perform_in)
+        .with(15.minutes, delivery_attempt.email.id, :default)
+
+      subject.call
+    end
   end
 
   context "with a permanent failure" do
