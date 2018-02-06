@@ -1,7 +1,5 @@
 class Healthcheck
   class StatusUpdateHealthcheck
-    NOTIFY_DELAY = 72 # hours
-
     def name
       :status_update
     end
@@ -9,9 +7,9 @@ class Healthcheck
     def status
       return :ok unless expect_status_update_callbacks?
 
-      if sending_after(critical_time).exists?
+      if proportion_pending >= 0.2
         :critical
-      elsif sending_after(warning_time).exists?
+      elsif proportion_pending >= 0.1
         :warning
       else
         :ok
@@ -19,33 +17,44 @@ class Healthcheck
     end
 
     def details
-      from = NOTIFY_DELAY
-      to = from + 36
-
-      (from..to).step(12).with_object({}) do |n, hash|
-        hash[:"older_than_#{n}_hours"] = sending_after(n.hours).count
-      end
+      {
+        totals: totals,
+        pending: proportion_pending,
+        done: proportion_done,
+      }
     end
 
   private
 
-    def sending_after(hours)
-      @sending_after_cache ||= {}
-      @sending_after_cache[hours] ||= begin
+    def totals
+      @totals ||= begin
         DeliveryAttempt
-          .latest_per_email
-          .where(status: :sending)
-          .where("updated_at < ?", hours.ago)
+          .where("created_at > ? AND created_at <= ?", (1.hour + 10.minutes).ago, 10.minutes.ago)
+          .group("CASE WHEN status = 0 THEN 'pending' ELSE 'done' END")
+          .count
       end
     end
 
-    def critical_time
-      warning_time + 2.hours
+    def total_pending
+      totals.fetch("pending", 0)
     end
 
-    # Both systems use queueing, so build in some tolerance.
-    def warning_time
-      NOTIFY_DELAY.hours + 10.minutes
+    def total_done
+      totals.fetch("done", 0)
+    end
+
+    def total
+      total_pending + total_done
+    end
+
+    def proportion_pending
+      return 0 if total.zero?
+      total_pending.to_f / total.to_f
+    end
+
+    def proportion_done
+      return 1 if total.zero?
+      total_done.to_f / total.to_f
     end
 
     def expect_status_update_callbacks?

@@ -7,9 +7,9 @@ class Healthcheck
     def status
       return :ok unless expect_status_update_callbacks?
 
-      if failures_since(1.hour).exists?
+      if proportion_failing >= 0.1
         :critical
-      elsif failures_since(24.hours).exists?
+      elsif proportion_failing >= 0.05
         :warning
       else
         :ok
@@ -17,21 +17,44 @@ class Healthcheck
     end
 
     def details
-      [1, 12, 24].each_with_object({}) do |n, hash|
-        hash[:"last_#{n}_hours"] = failures_since(n.hours).count
-      end
+      {
+        totals: totals,
+        failing: proportion_failing,
+        other: proportion_other,
+      }
     end
 
   private
 
-    def failures_since(hours)
-      @failures_since_cache ||= {}
-      @failures_since_cache[hours] ||= begin
+    def totals
+      @totals ||= begin
         DeliveryAttempt
-          .latest_per_email
-          .where(status: :technical_failure)
-          .where("updated_at > ?", hours.ago)
+          .where("created_at > ?", 1.hour.ago)
+          .group("CASE WHEN status = 4 THEN 'failing' ELSE 'other' END")
+          .count
       end
+    end
+
+    def total_failing
+      totals.fetch("failing", 0)
+    end
+
+    def total_other
+      totals.fetch("other", 0)
+    end
+
+    def total
+      total_failing + total_other
+    end
+
+    def proportion_failing
+      return 0 if total.zero?
+      total_failing.to_f / total.to_f
+    end
+
+    def proportion_other
+      return 1 if total.zero?
+      total_other.to_f / total.to_f
     end
 
     def expect_status_update_callbacks?
