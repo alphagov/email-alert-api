@@ -6,7 +6,7 @@ class UnsubscribeController < ApplicationController
 private
 
   def subscription
-    Subscription.find_by!(uuid: uuid)
+    Subscription.not_deleted.find_by!(uuid: uuid)
   end
 
   def uuid

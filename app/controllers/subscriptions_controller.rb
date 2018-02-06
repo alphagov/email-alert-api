@@ -7,6 +7,7 @@ class SubscriptionsController < ApplicationController
 
     status = subscription.new_record? ? :created : :ok
 
+    subscription.deleted_at = nil
     subscription.frequency = frequency
     subscription.signon_user_uid = current_user.uid
     subscription.save!

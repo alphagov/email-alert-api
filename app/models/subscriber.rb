@@ -4,7 +4,7 @@ class Subscriber < ApplicationRecord
     validates :address, uniqueness: true
   end
 
-  has_many :subscriptions, dependent: :destroy
+  has_many :subscriptions, -> { not_deleted }
   has_many :subscriber_lists, through: :subscriptions
   has_many :digest_run_subscribers, dependent: :destroy
   has_many :digest_runs, through: :digest_run_subscribers
