@@ -33,10 +33,11 @@ private
     @delivery_attempt ||= DeliveryAttempt.find_by!(reference: reference)
   end
 
+  def email
+    @email ||= delivery_attempt.email
+  end
+
   def subscriber
-    @subscriber ||= begin
-      address = delivery_attempt.email.address
-      Subscriber.find_by(address: address)
-    end
+    @subscriber ||= Subscriber.find_by(address: email.address)
   end
 end
