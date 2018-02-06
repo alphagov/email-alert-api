@@ -3,11 +3,10 @@ RSpec.describe StatusUpdateService do
     create(:delivery_attempt, reference: "ref-123", status: "sending")
   end
 
-  let(:args) do
-    { reference: "ref-123", status: "delivered" }
-  end
+  let(:reference) { "ref-123" }
+  let(:status) { "delivered" }
 
-  subject { described_class.new(**args) }
+  subject { described_class.new(reference: reference, status: status) }
 
   it "updates the delivery attempt's status" do
     expect { subject.call }
@@ -15,25 +14,41 @@ RSpec.describe StatusUpdateService do
       .to("delivered")
   end
 
-  it "underscores statuses" do
-    args[:status] = "temporary-failure"
+  context "with a temporary failure" do
+    let(:status) { "temporary-failure" }
 
-    expect { subject.call }
-      .to change { delivery_attempt.reload.status }
-      .to("temporary_failure")
+    it "underscores statuses" do
+      expect { subject.call }
+        .to change { delivery_attempt.reload.status }
+        .to("temporary_failure")
+    end
   end
 
-  it "raises an error if the delivery attempt doesn't exist" do
-    args[:reference] = "missing"
+  context "with a permanent failure" do
+    let(:status) { "permanent-failure" }
 
-    expect { subject.call }
-      .to raise_error(ActiveRecord::RecordNotFound)
+    it "unsubscribes the subscriber" do
+      create(:subscriber, address: delivery_attempt.email.address)
+
+      expect { subject.call }
+        .to change { Subscriber.last.address }
+        .to(nil)
+    end
   end
 
-  it "raises an error if the status isn't recognised" do
-    args[:status] = "unknown"
+  context "with a missing reference" do
+    let(:reference) { "missing" }
 
-    expect { subject.call }
-      .to raise_error(ArgumentError)
+    it "raises an error" do
+      expect { subject.call }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  context "with an unknown status" do
+    let(:status) { "unknown" }
+
+    it "raises an error" do
+      expect { subject.call }.to raise_error(ArgumentError)
+    end
   end
 end
