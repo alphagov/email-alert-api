@@ -65,14 +65,17 @@ private
   end
 
   class EmailAddressOverrider
-    attr_reader :override_address
+    attr_reader :override_address, :whitelist_addresses
 
     def initialize(config)
       @override_address = config[:email_address_override]
+      @whitelist_addresses = Array(config[:email_address_override_whitelist])
     end
 
     def destination_address(address)
-      override_address || address
+      return address unless override_address
+
+      whitelist_addresses.include?(address) ? address : override_address
     end
   end
 end
