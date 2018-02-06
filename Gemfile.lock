@@ -216,6 +216,7 @@ GEM
     rb-fsevent (0.10.2)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
+    redcarpet (3.4.0)
     redis (4.0.1)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
@@ -341,6 +342,7 @@ DEPENDENCIES
   pry-byebug
   rails (~> 5.1)
   ratelimit (~> 1.0)
+  redcarpet (~> 3.4)
   rspec-rails (= 3.7.2)
   ruby-prof (~> 0.17)
   sidekiq-scheduler (~> 2.2)

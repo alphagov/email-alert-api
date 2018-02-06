@@ -1,3 +1,5 @@
+require 'redcarpet/render_strip'
+
 class ContentChangePresenter
   EMAIL_DATE_FORMAT = "%I:%M %P on %-d %B %Y".freeze
 
@@ -13,7 +15,7 @@ class ContentChangePresenter
     <<~BODY
       [#{title}](#{content_url})
 
-      #{change_note}: #{description}
+      #{strip_markdown(change_note)}: #{strip_markdown(description)}
 
       Updated at #{public_updated_at}
     BODY
@@ -33,5 +35,13 @@ private
 
   def public_updated_at
     content_change.public_updated_at.strftime(EMAIL_DATE_FORMAT)
+  end
+
+  def strip_markdown(string)
+    markdown_stripper.render(string).gsub(/$\n/, "")
+  end
+
+  def markdown_stripper
+    @markdown_stripper ||= Redcarpet::Markdown.new(Redcarpet::Render::StripDown)
   end
 end
