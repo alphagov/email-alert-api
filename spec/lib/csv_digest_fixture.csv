@@ -1,0 +1,3 @@
+"DESTINATION","SUBSCRIBER_TYPE","DIGEST_FOR"
+"foo@example.com","EmailSubscriber",0
+"bar@example.com","EmailSubscriber",1
