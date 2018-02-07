@@ -5,11 +5,13 @@ class ImportGovdeliveryCsv
     new(*args).import
   end
 
-  attr_accessor :csv_path, :output_io
+  attr_reader :csv_path, :digest_csv_path, :fake_import, :output_io
 
-  def initialize(csv_path, output_io = nil)
-    self.csv_path = csv_path
-    self.output_io = output_io
+  def initialize(csv_path, digest_csv_path, fake_import: false, output_io: nil)
+    @csv_path = csv_path
+    @digest_csv_path = digest_csv_path
+    @fake_import = fake_import
+    @output_io = output_io
   end
 
   def import
@@ -22,18 +24,28 @@ class ImportGovdeliveryCsv
     build_report
   end
 
+private
+
   def import_row(row)
     subscriber = find_or_create_subscriber(row)
     subscribable = find_subscribable(row)
+    frequency = digest_data.fetch(subscriber.address)
 
     validate_name(subscribable, row)
 
-    find_or_create_subscription(subscriber, subscribable)
+    find_or_create_subscription(subscriber, subscribable, frequency)
   end
 
   def find_or_create_subscriber(row)
-    destination = row.fetch("DESTINATION")
-    Subscriber.find_or_create_by!(address: destination)
+    Subscriber.find_or_create_by!(address: fetch_address_for_row(row))
+  end
+
+  def fetch_address_for_row(row)
+    address = row.fetch("DESTINATION")
+
+    return "success+#{Digest::SHA1.hexdigest(address)}@simulator.amazonses.com" if fake_import
+
+    address
   end
 
   def find_subscribable(row)
@@ -50,8 +62,32 @@ class ImportGovdeliveryCsv
     raise "Name mismatch: #{expected} != #{actual}" if expected != actual
   end
 
-  def find_or_create_subscription(subscriber, subscribable)
-    subscriber.subscriptions.find_or_create_by!(subscriber_list: subscribable)
+  def digest_data
+    @digest_data ||= begin
+      CSV.foreach(digest_csv_path, headers: true, encoding: "WINDOWS-1252").each_with_object({}) do |row, hash|
+        hash[fetch_address_for_row(row)] = digest_frequency_for_row(row.fetch("DIGEST_FOR"))
+      end
+    end
+  end
+
+  def digest_frequency_for_row(frequency)
+    case frequency.to_i
+    when 0
+      Frequency::IMMEDIATELY
+    when 1
+      Frequency::DAILY
+    when 7
+      Frequency::WEEKLY
+    else
+      raise "Unknown digest frequency: #{frequency}"
+    end
+  end
+
+  def find_or_create_subscription(subscriber, subscribable, frequency)
+    subscriber.subscriptions.find_or_create_by!(
+      subscriber_list: subscribable,
+      frequency: frequency,
+    )
   end
 
   def with_reporting(row)
