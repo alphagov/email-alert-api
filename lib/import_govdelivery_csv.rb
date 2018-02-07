@@ -26,10 +26,11 @@ class ImportGovdeliveryCsv
   def import_row(row)
     subscriber = find_or_create_subscriber(row)
     subscribable = find_subscribable(row)
+    frequency = digest_data.fetch(subscriber.address)
 
     validate_name(subscribable, row)
 
-    find_or_create_subscription(subscriber, subscribable)
+    find_or_create_subscription(subscriber, subscribable, frequency)
   end
 
   def find_or_create_subscriber(row)
@@ -51,8 +52,32 @@ class ImportGovdeliveryCsv
     raise "Name mismatch: #{expected} != #{actual}" if expected != actual
   end
 
-  def find_or_create_subscription(subscriber, subscribable)
-    subscriber.subscriptions.find_or_create_by!(subscriber_list: subscribable)
+  def digest_data
+    @digest_data ||= begin
+      CSV.foreach(digest_csv_path, headers: true, encoding: "WINDOWS-1252").each_with_object({}) do |row, hash|
+        hash[row.fetch("DESTINATION")] = digest_frequency_for_row(row.fetch("DIGEST_FOR"))
+      end
+    end
+  end
+
+  def digest_frequency_for_row(frequency)
+    case frequency.to_i
+    when 0
+      Frequency::IMMEDIATELY
+    when 1
+      Frequency::DAILY
+    when 7
+      Frequency::WEEKLY
+    else
+      raise "Unknown digest frequency: #{frequency}"
+    end
+  end
+
+  def find_or_create_subscription(subscriber, subscribable, frequency)
+    subscriber.subscriptions.find_or_create_by!(
+      subscriber_list: subscribable,
+      frequency: frequency,
+    )
   end
 
   def with_reporting(row)

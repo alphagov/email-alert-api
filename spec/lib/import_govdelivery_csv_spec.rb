@@ -36,6 +36,14 @@ RSpec.describe ImportGovdeliveryCsv do
     expect(Subscription.third.subscriber_list.title).to eq("Second")
   end
 
+  it "sets the frequencies on the subscriptions" do
+    described_class.import("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
+
+    expect(Subscription.first.frequency).to eq(Frequency::IMMEDIATELY)
+    expect(Subscription.second.frequency).to eq(Frequency::DAILY)
+    expect(Subscription.third.frequency).to eq(Frequency::IMMEDIATELY)
+  end
+
   it "is idempotent" do
     described_class.import("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
 
