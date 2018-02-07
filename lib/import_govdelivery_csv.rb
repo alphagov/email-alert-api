@@ -5,11 +5,11 @@ class ImportGovdeliveryCsv
     new(*args).import
   end
 
-  attr_accessor :csv_path, :output_io
+  attr_reader :csv_path, :output_io
 
   def initialize(csv_path, output_io = nil)
-    self.csv_path = csv_path
-    self.output_io = output_io
+    @csv_path = csv_path
+    @output_io = output_io
   end
 
   def import
