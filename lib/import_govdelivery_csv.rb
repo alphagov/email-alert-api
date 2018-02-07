@@ -7,7 +7,7 @@ class ImportGovdeliveryCsv
 
   attr_reader :csv_path, :digest_csv_path, :output_io
 
-  def initialize(csv_path, digest_csv_path, output_io = nil)
+  def initialize(csv_path, digest_csv_path, output_io: nil)
     @csv_path = csv_path
     @digest_csv_path = digest_csv_path
     @output_io = output_io

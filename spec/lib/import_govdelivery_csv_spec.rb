@@ -99,7 +99,7 @@ RSpec.describe ImportGovdeliveryCsv do
     before { second_subscribable.update!(title: "Something else") }
 
     it "logs output to the io object" do
-      described_class.import("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv", io)
+      described_class.import("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv", output_io: io)
       expect(io.string).to eq("..F")
     end
   end
