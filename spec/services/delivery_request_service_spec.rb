@@ -66,6 +66,12 @@ RSpec.describe DeliveryRequestService do
 
         subject.call(email: email)
       end
+
+      it "logs the email address is overriden" do
+        expect(Rails.logger).to receive(:info)
+          .with(match(/Overriding email address/))
+        subject.call(email: email)
+      end
     end
 
     it "prefixes the subject if configured to do so" do
@@ -151,61 +157,63 @@ RSpec.describe DeliveryRequestService do
 
   describe described_class::EmailAddressOverrider do
     let(:config) { EmailAlertAPI.config.email_service }
-    subject { described_class.new(config) }
 
-    describe "#email_address_override" do
-      it "defaults to nil" do
-        expect(subject.email_address_override).to eq(nil)
+    describe "#destination_address" do
+      subject(:destination_address) do
+        described_class.new(config).destination_address(address)
       end
-
-      it "can be configured" do
-        address = "overriden@example.com"
-        subject = described_class.new(config.merge(email_address_override: address))
-
-        expect(subject.email_address_override).to eq(address)
-      end
-    end
-
-    describe "#address" do
-      let(:email) { create(:email, address: "original@example.com") }
 
       context "when an override address is set" do
         let(:config) { { email_address_override: "overriden@example.com" } }
+        let(:address) { "original@example.com" }
 
         it "returns the overridden address" do
-          result = subject.address(email, "subject", "reference")
-          expect(result).to eq("overriden@example.com")
-        end
-
-        it "logs the original and overriden email addresses" do
-          expect(Rails.logger).to receive(:info).with(->(string) {
-            expect(string).to include("Sending email to original@example.com")
-            expect(string).to include("overridden to overriden@example.com")
-          })
-
-          subject.address(email, "subject", "reference")
-        end
-
-        it "logs the subject, reference and email body" do
-          expect(Rails.logger).to receive(:info).with(->(string) {
-            expect(string).to include("Subject: STAGING - subject")
-            expect(string).to include("Reference: ref-123")
-            expect(string).to include("Body: body")
-          })
-
-          subject.address(email, "STAGING - subject", "ref-123")
+          expect(destination_address).to eq("overriden@example.com")
         end
       end
 
       context "when an override address is not set" do
+        let(:address) { "original@example.com" }
+
         it "returns the original address" do
-          result = subject.address(email, "subject", "reference")
-          expect(result).to eq("original@example.com")
+          expect(destination_address).to eq("original@example.com")
+        end
+      end
+
+      context "when an override address is set and whitelist addresses are set" do
+        let(:config) do
+          {
+            email_address_override: "overriden@example.com",
+            email_address_override_whitelist: ["whitelist@example.com"],
+          }
         end
 
-        it "does not log" do
-          expect(Rails.logger).not_to receive(:info)
-          subject.address(email, "subject", "reference")
+        context "when the argument is a whitelist address" do
+          let(:address) { "whitelist@example.com" }
+
+          it "returns the whitelisted address" do
+            expect(destination_address).to eq("whitelist@example.com")
+          end
+        end
+
+        context "when the argument is not a whitelist address" do
+          let(:address) { "original@example.com" }
+
+          it "returns the overriden address" do
+            expect(destination_address).to eq("overriden@example.com")
+          end
+        end
+      end
+
+      context "when an override address is not set and whitelist addresses are set" do
+        let(:config) do
+          { email_address_override_whitelist: ["whitelist@example.com"] }
+        end
+
+        let(:address) { "original@example.com" }
+
+        it "returns the original address" do
+          expect(destination_address).to eq("original@example.com")
         end
       end
     end

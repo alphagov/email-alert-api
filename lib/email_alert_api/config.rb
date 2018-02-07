@@ -26,7 +26,9 @@ module EmailAlertAPI
   private
 
     def environment_config(path:)
-      YAML.safe_load(ERB.new(File.read(path)).result).fetch(@environment)
+      YAML.safe_load(
+        ERB.new(File.read(path)).result, [], [], true
+      ).fetch(@environment)
     end
 
     def gov_delivery_config_path
