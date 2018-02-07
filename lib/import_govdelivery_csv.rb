@@ -23,6 +23,8 @@ class ImportGovdeliveryCsv
     build_report
   end
 
+private
+
   def import_row(row)
     subscriber = find_or_create_subscriber(row)
     subscribable = find_subscribable(row)
