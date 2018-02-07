@@ -110,4 +110,14 @@ RSpec.describe ImportGovdeliveryCsv do
         .to raise_error(/should be WINDOWS-1252/)
     end
   end
+
+  context "when doing a fake import" do
+    it "sets the addresses to AWS success addresses" do
+      described_class.import("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv", fake_import: true)
+
+      expect(Subscription.first.subscriber.address).to eq("success+767e74eab7081c41e0b83630511139d130249666@simulator.amazonses.com")
+      expect(Subscription.second.subscriber.address).to eq("success+1ac2c5ab67ab3279b2de1d2bed879b2a63e59ee7@simulator.amazonses.com")
+      expect(Subscription.third.subscriber.address).to eq("success+767e74eab7081c41e0b83630511139d130249666@simulator.amazonses.com")
+    end
+  end
 end

@@ -5,11 +5,12 @@ class ImportGovdeliveryCsv
     new(*args).import
   end
 
-  attr_reader :csv_path, :digest_csv_path, :output_io
+  attr_reader :csv_path, :digest_csv_path, :fake_import, :output_io
 
-  def initialize(csv_path, digest_csv_path, output_io: nil)
+  def initialize(csv_path, digest_csv_path, fake_import: false, output_io: nil)
     @csv_path = csv_path
     @digest_csv_path = digest_csv_path
+    @fake_import = fake_import
     @output_io = output_io
   end
 
@@ -36,8 +37,15 @@ private
   end
 
   def find_or_create_subscriber(row)
-    destination = row.fetch("DESTINATION")
-    Subscriber.find_or_create_by!(address: destination)
+    Subscriber.find_or_create_by!(address: fetch_address_for_row(row))
+  end
+
+  def fetch_address_for_row(row)
+    address = row.fetch("DESTINATION")
+
+    return "success+#{Digest::SHA1.hexdigest(address)}@simulator.amazonses.com" if fake_import
+
+    address
   end
 
   def find_subscribable(row)
@@ -57,7 +65,7 @@ private
   def digest_data
     @digest_data ||= begin
       CSV.foreach(digest_csv_path, headers: true, encoding: "WINDOWS-1252").each_with_object({}) do |row, hash|
-        hash[row.fetch("DESTINATION")] = digest_frequency_for_row(row.fetch("DIGEST_FOR"))
+        hash[fetch_address_for_row(row)] = digest_frequency_for_row(row.fetch("DIGEST_FOR"))
       end
     end
   end
