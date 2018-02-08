@@ -1,5 +1,4 @@
 class NotificationHandlerService
-  attr_reader :params, :user
   def initialize(params:, user: nil)
     @params = params
     @user = user
@@ -20,7 +19,11 @@ class NotificationHandlerService
     end
   end
 
+  private_class_method :new
+
 private
+
+  attr_reader :params, :user
 
   def content_change_params
     {

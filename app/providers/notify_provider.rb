@@ -1,16 +1,14 @@
 class NotifyProvider
-  attr_accessor :client, :template_id
-
-  def self.call(*args)
-    new.call(*args)
-  end
-
   def initialize(config: EmailAlertAPI.config.notify)
     api_key = config.fetch(:api_key)
     base_url = config.fetch(:base_url)
 
-    self.client = Notifications::Client.new(api_key, base_url)
-    self.template_id = config.fetch(:template_id)
+    @client = Notifications::Client.new(api_key, base_url)
+    @template_id = config.fetch(:template_id)
+  end
+
+  def self.call(*args)
+    new.call(*args)
   end
 
   def call(address:, subject:, body:, reference:)
@@ -29,4 +27,8 @@ class NotifyProvider
     MetricsService.failed_to_send_to_notify
     raise ProviderError
   end
+
+private
+
+  attr_reader :client, :template_id
 end

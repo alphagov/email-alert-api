@@ -1,8 +1,6 @@
 class DeliveryRequestWorker
   include Sidekiq::Worker
 
-  attr_reader :email, :queue
-
   sidekiq_options retry: 3
 
   sidekiq_retry_in do |count|
@@ -40,17 +38,8 @@ class DeliveryRequestWorker
     )
   end
 
-  def rate_limiter
-    Services.rate_limiter
-  end
-
   def increment_rate_limiter
     rate_limiter.add("delivery_request")
-  end
-
-  def reschedule_job
-    GovukStatsd.increment("delivery_request_worker.rescheduled")
-    DeliveryRequestWorker.set(queue: queue).perform_in(30.seconds, email.id, queue)
   end
 
   def rate_limit_threshold
@@ -61,6 +50,19 @@ class DeliveryRequestWorker
   def rate_limit_interval
     minute_in_seconds = 60
     ENV["DELIVERY_REQUEST_INTERVAL"] || minute_in_seconds
+  end
+
+private
+
+  attr_reader :email, :queue
+
+  def rate_limiter
+    Services.rate_limiter
+  end
+
+  def reschedule_job
+    GovukStatsd.increment("delivery_request_worker.rescheduled")
+    DeliveryRequestWorker.set(queue: queue).perform_in(30.seconds, email.id, queue)
   end
 end
 

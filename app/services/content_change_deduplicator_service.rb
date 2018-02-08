@@ -8,6 +8,8 @@ class ContentChangeDeduplicatorService
       .uniq(&:content_id)
   end
 
+  private_class_method :new
+
 private
 
   def reverse_by_public_updated_at(content_changes)

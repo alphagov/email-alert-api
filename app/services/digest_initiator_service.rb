@@ -27,6 +27,8 @@ class DigestInitiatorService
     end
   end
 
+  private_class_method :new
+
 private
 
   attr_reader :range

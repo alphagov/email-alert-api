@@ -6,10 +6,10 @@ RSpec.describe StatusUpdateService do
   let(:reference) { "ref-123" }
   let(:status) { "delivered" }
 
-  subject { described_class.new(reference: reference, status: status) }
+  subject(:status_update) { described_class.call(reference: reference, status: status) }
 
   it "updates the delivery attempt's status" do
-    expect { subject.call }
+    expect { status_update }
       .to change { delivery_attempt.reload.status }
       .to("delivered")
   end
@@ -18,7 +18,7 @@ RSpec.describe StatusUpdateService do
     let(:status) { "temporary-failure" }
 
     it "underscores statuses" do
-      expect { subject.call }
+      expect { status_update }
         .to change { delivery_attempt.reload.status }
         .to("temporary_failure")
     end
@@ -27,7 +27,7 @@ RSpec.describe StatusUpdateService do
       expect(DeliveryRequestWorker).to receive(:perform_in)
         .with(15.minutes, delivery_attempt.email.id, :default)
 
-      subject.call
+      status_update
     end
   end
 
@@ -37,7 +37,7 @@ RSpec.describe StatusUpdateService do
     it "unsubscribes the subscriber" do
       create(:subscriber, address: delivery_attempt.email.address)
 
-      expect { subject.call }
+      expect { status_update }
         .to change { Subscriber.last.address }
         .to(nil)
     end
@@ -47,7 +47,7 @@ RSpec.describe StatusUpdateService do
     let(:reference) { "missing" }
 
     it "raises an error" do
-      expect { subject.call }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { status_update }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
@@ -55,7 +55,7 @@ RSpec.describe StatusUpdateService do
     let(:status) { "unknown" }
 
     it "raises an error" do
-      expect { subject.call }.to raise_error(ArgumentError)
+      expect { status_update }.to raise_error(ArgumentError)
     end
   end
 end
