@@ -15,7 +15,7 @@ RSpec.describe NotifyProvider do
         },
       )
 
-    subject.call(
+    described_class.call(
       address: "email@address.com",
       subject: "subject",
       body: "body",

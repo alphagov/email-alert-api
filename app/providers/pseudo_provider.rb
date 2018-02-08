@@ -16,6 +16,8 @@ class PseudoProvider
     MetricsService.sent_to_pseudo_successfully
   end
 
+  private_class_method :new
+
 private
 
   def logger

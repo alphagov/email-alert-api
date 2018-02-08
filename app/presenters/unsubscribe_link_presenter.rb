@@ -12,6 +12,8 @@ class UnsubscribeLinkPresenter
     "Unsubscribe from [#{title}](#{url})"
   end
 
+  private_class_method :new
+
 private
 
   attr_reader :uuid, :title

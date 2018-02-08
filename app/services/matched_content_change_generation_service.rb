@@ -11,6 +11,8 @@ class MatchedContentChangeGenerationService
     MatchedContentChange.import!(columns, records)
   end
 
+  private_class_method :new
+
 private
 
   attr_reader :content_change

@@ -9,7 +9,7 @@ RSpec.describe PseudoProvider do
       expect(string).to include("Reference: ref-123")
     })
 
-    subject.call(
+    described_class.call(
       address: "email@address.com",
       subject: "subject",
       body: "body",

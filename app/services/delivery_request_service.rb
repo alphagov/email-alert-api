@@ -4,10 +4,6 @@ class DeliveryRequestService
     "pseudo" => PseudoProvider,
   }.freeze
 
-  def self.call(*args)
-    new.call(*args)
-  end
-
   attr_reader :provider_name, :provider, :subject_prefix, :overrider
 
   def initialize(config: EmailAlertAPI.config.email_service)
@@ -15,6 +11,10 @@ class DeliveryRequestService
     @provider = PROVIDERS.fetch(provider_name)
     @subject_prefix = config.fetch(:email_subject_prefix)
     @overrider = EmailAddressOverrider.new(config)
+  end
+
+  def self.call(*args)
+    new.call(*args)
   end
 
   def call(email:)

@@ -7,8 +7,8 @@ class ContentChangePresenter
     @content_change = content_change
   end
 
-  def self.call(content_change)
-    new(content_change).call
+  def self.call(*args)
+    new(*args).call
   end
 
   def call

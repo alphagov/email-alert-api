@@ -27,6 +27,8 @@ class StatusUpdateService
     raise
   end
 
+  private_class_method :new
+
 private
 
   attr_reader :reference, :status, :user
