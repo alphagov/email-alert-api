@@ -9,10 +9,6 @@ module Services
     @content_store ||= GdsApi::ContentStore.new(Plek.new.find("content-store"))
   end
 
-  def self.notify
-    NotifyProvider.new.client
-  end
-
   def self.rate_limiter
     @rate_limiter ||= Ratelimit.new("deliveries")
   end
