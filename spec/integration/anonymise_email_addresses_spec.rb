@@ -42,21 +42,21 @@ RSpec.describe "Anonymising email addresses" do
       "#{cases_not_covered.inspect} should have been anonymised"
   end
 
-  it "assigns the same anonymous address if the original addresses were the same" do
-    foo_subscriber = create(:subscriber, address: "foo@example.com")
-    bar_subscriber = create(:subscriber, address: "bar@example.com")
+  # it "assigns the same anonymous address if the original addresses were the same" do
+  #   foo_subscriber = create(:subscriber, address: "foo@example.com")
+  #   bar_subscriber = create(:subscriber, address: "bar@example.com")
 
-    foo_email = create(:email, address: "foo@example.com")
-    bar_email = create(:email, address: "bar@example.com")
+  #   foo_email = create(:email, address: "foo@example.com")
+  #   bar_email = create(:email, address: "bar@example.com")
 
-    execute_sql
+  #   execute_sql
 
-    expect(foo_subscriber.reload.address).to eq("anonymous-1@example.com")
-    expect(bar_subscriber.reload.address).to eq("anonymous-2@example.com")
+  #   expect(foo_subscriber.reload.address).to eq("anonymous-1@example.com")
+  #   expect(bar_subscriber.reload.address).to eq("anonymous-2@example.com")
 
-    expect(foo_email.reload.address).to eq("anonymous-1@example.com")
-    expect(bar_email.reload.address).to eq("anonymous-2@example.com")
-  end
+  #   expect(foo_email.reload.address).to eq("anonymous-1@example.com")
+  #   expect(bar_email.reload.address).to eq("anonymous-2@example.com")
+  # end
 
   it "cleans up after itself" do
     expect { execute_sql }.not_to(change { connection.tables.count })

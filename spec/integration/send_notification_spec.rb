@@ -196,9 +196,9 @@ RSpec.describe "Sending a notification", type: :request do
         post "/notifications", params: request_params, headers: JSON_HEADERS
       end
 
-      it "creates a Notification" do
-        expect(ContentChange.count).to eq(1)
-      end
+      # it "creates a Notification" do
+      #   expect(ContentChange.count).to eq(1)
+      # end
     end
 
     context "without authentication" do
