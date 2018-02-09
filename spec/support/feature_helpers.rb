@@ -54,7 +54,7 @@ module FeatureHelpers
   def create_content_change(overrides = {})
     params = {
       base_path: "/base-path",
-      content_id: "00000000-0000-0000-0000-000000000000",
+      content_id: SecureRandom.uuid,
       change_note: "Change note",
       description: "Description",
       document_type: "document_type",
