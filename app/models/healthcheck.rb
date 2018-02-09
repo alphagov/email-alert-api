@@ -33,7 +33,6 @@ private
       QueueSizeHealthcheck.new,
       RedisHealthcheck.new,
       RetrySizeHealthcheck.new,
-      StatusUpdateHealthcheck.new,
       TechnicalFailureHealthcheck.new,
     ]
   end
