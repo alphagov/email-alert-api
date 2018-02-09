@@ -1,5 +1,7 @@
 class NotificationsController < ApplicationController
   def create
+    return render_conflict if content_change_exists?
+
     NotificationWorker.perform_async(notification_params)
 
     NotificationHandlerService.call(
@@ -33,5 +35,17 @@ private
 
   def notification_body
     GovukRequestId.insert(params[:body])
+  end
+
+  def render_conflict
+    render json: { message: "Content change already received" }, status: 409
+  end
+
+  def content_change_exists?
+    ContentChange.where(
+      base_path: notification_params[:base_path],
+      content_id: notification_params[:content_id],
+      public_updated_at: notification_params[:public_updated_at]
+    ).exists?
   end
 end
