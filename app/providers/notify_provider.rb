@@ -23,9 +23,9 @@ class NotifyProvider
     )
 
     MetricsService.sent_to_notify_successfully
-  rescue Notifications::Client::RequestError
+  rescue Notifications::Client::RequestError => e
     MetricsService.failed_to_send_to_notify
-    raise ProviderError
+    raise ProviderError, e
   end
 
 private
