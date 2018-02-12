@@ -5,18 +5,18 @@ class ImportGovdeliveryCsv
     new(*args).import
   end
 
-  attr_reader :csv_path, :digest_csv_path, :fake_import
+  attr_reader :subscriptions_csv_path, :digests_csv_path, :fake_import
 
-  def initialize(csv_path, digest_csv_path, fake_import: false)
-    @csv_path = csv_path
-    @digest_csv_path = digest_csv_path
+  def initialize(subscriptions_csv_path, digests_csv_path, fake_import: false)
+    @subscriptions_csv_path = subscriptions_csv_path
+    @digests_csv_path = digests_csv_path
     @fake_import = fake_import
   end
 
   def import
     check_encoding_is_windows_1252
 
-    CSV.foreach(csv_path, headers: true, encoding: "WINDOWS-1252") do |row|
+    CSV.foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252") do |row|
       with_reporting(row) { import_row(row) }
     end
 
@@ -63,7 +63,7 @@ private
 
   def digest_data
     @digest_data ||= begin
-      CSV.foreach(digest_csv_path, headers: true, encoding: "WINDOWS-1252").each_with_object({}) do |row, hash|
+      CSV.foreach(digests_csv_path, headers: true, encoding: "WINDOWS-1252").each_with_object({}) do |row, hash|
         hash[fetch_address_for_row(row)] = digest_frequency_for_row(row.fetch("DIGEST_FOR"))
       end
     end
@@ -112,7 +112,7 @@ private
   end
 
   def check_encoding_is_windows_1252
-    File.readlines(csv_path).each do |line|
+    File.readlines(subscriptions_csv_path).each do |line|
       if line.include?("Principe") && !line.include?("São Tomé and Principe")
         message = "The CSV has the wrong encoding. It should be WINDOWS-1252."
         message += "\nYou can set the encoding in LibreOffice with:"

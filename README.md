@@ -40,10 +40,11 @@ tags via the external services.
 * Check that the configuration in `config/database.yml` is right
 * Run `bundle exec rake db:setup` to load the database
 
-
 ### Running the application
 
-`./startup.sh`
+```bash
+$ ./startup.sh
+```
 
 email-alert-api runs on port 3088
 sidekiq-monitoring for email-alert-api uses 3089
@@ -52,6 +53,16 @@ sidekiq-monitoring for email-alert-api uses 3089
 
 * Run `RAILS_ENV=test bundle exec rake db:setup` to load the database
 * Run `bundle exec rspec` to run the tests
+
+### Tasks
+
+#### Import from GovDelivery export
+
+To import the data from a GovDelivery export, you can use a Rake task:
+
+```bash
+$ bundle exec rake import_govdelivery_csv[subscriptions.csv,digests.csv]
+```
 
 ### GovDelivery interaction
 
@@ -127,6 +138,7 @@ subscription or a `200 OK` if the subscription already exists.
 ### healthcheck API
 
 A queue health check endpoint is available at /healthcheck
+
 ```json
 {
   "checks": {
@@ -153,13 +165,13 @@ In the event of a GovDelivery outage the Email Alert API will enqueue failed not
 in the Sidekiq retry queue.
 The retry queue size can be viewed via Sidekiq monitoring or by issuing the following command in a rails console:
 
-```
+```ruby
 Sidekiq::RetrySet.new.size
 ```
 
 To manually retry all jobs in the retry queue:
 
-```
+```ruby
 Sidekiq::RetrySet.new.retry_all
 ```
 
