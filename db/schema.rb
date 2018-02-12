@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180205165003) do
+ActiveRecord::Schema.define(version: 20180212121358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 20180205165003) do
     t.string "signon_user_uid"
     t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
     t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
+    t.index ["reference"], name: "index_delivery_attempts_on_reference", unique: true
   end
 
   create_table "digest_run_subscribers", force: :cascade do |t|

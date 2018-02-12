@@ -55,7 +55,7 @@ RSpec.describe StatusUpdateService do
     let(:status) { "unknown" }
 
     it "raises an error" do
-      expect { status_update }.to raise_error(ArgumentError)
+      expect { status_update }.to raise_error(ActiveRecord::StatementInvalid)
     end
   end
 end
