@@ -44,7 +44,7 @@ private
   end
 
   def email
-    @email ||= DeliveryAttempt.find_by!(reference: reference).email
+    @email ||= Email.joins(:delivery_attempts).find_by(delivery_attempts: { reference: reference })
   end
 
   def subscriber
