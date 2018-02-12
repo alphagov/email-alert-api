@@ -10,14 +10,16 @@ class StatusUpdateService
   end
 
   def call
-    delivery_attempt.update!(
+    updates = DeliveryAttempt.where(reference: reference).update_all(
       status: status.underscore,
       signon_user_uid: user&.uid,
     )
 
-    if delivery_attempt.permanent_failure? && subscriber
+    raise ActiveRecord::RecordNotFound unless updates == 1
+
+    if permanent_failure? && subscriber
       UnsubscribeService.subscriber!(subscriber)
-    elsif delivery_attempt.temporary_failure?
+    elsif temporary_failure?
       DeliveryRequestWorker.perform_in(15.minutes, email.id, :default)
     end
 
@@ -33,12 +35,16 @@ private
 
   attr_reader :reference, :status, :user
 
-  def delivery_attempt
-    @delivery_attempt ||= DeliveryAttempt.find_by!(reference: reference)
+  def permanent_failure?
+    status == "permanent-failure"
+  end
+
+  def temporary_failure?
+    status == "temporary-failure"
   end
 
   def email
-    @email ||= delivery_attempt.email
+    @email ||= DeliveryAttempt.find_by!(reference: reference).email
   end
 
   def subscriber
