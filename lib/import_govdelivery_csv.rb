@@ -5,13 +5,12 @@ class ImportGovdeliveryCsv
     new(*args).import
   end
 
-  attr_reader :csv_path, :digest_csv_path, :fake_import, :output_io
+  attr_reader :csv_path, :digest_csv_path, :fake_import
 
-  def initialize(csv_path, digest_csv_path, fake_import: false, output_io: nil)
+  def initialize(csv_path, digest_csv_path, fake_import: false)
     @csv_path = csv_path
     @digest_csv_path = digest_csv_path
     @fake_import = fake_import
-    @output_io = output_io
   end
 
   def import
@@ -97,10 +96,8 @@ private
 
     begin
       yield
-      output(".")
       @success_count += 1
     rescue StandardError => error
-      output("F")
       @failed_count += 1
       @failed_rows << [error.message, row.to_h]
     end
@@ -112,10 +109,6 @@ private
       failed_count: @failed_count,
       failed_rows: @failed_rows,
     }
-  end
-
-  def output(message)
-    output_io.print(message) if output_io
   end
 
   def check_encoding_is_windows_1252

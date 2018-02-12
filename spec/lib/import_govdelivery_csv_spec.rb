@@ -93,17 +93,6 @@ RSpec.describe ImportGovdeliveryCsv do
     end
   end
 
-  context "when an io object is provided" do
-    let(:io) { StringIO.new }
-
-    before { second_subscribable.update!(title: "Something else") }
-
-    it "logs output to the io object" do
-      described_class.import("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv", output_io: io)
-      expect(io.string).to eq("..F")
-    end
-  end
-
   context "when the file has the wrong encoding" do
     it "raises an error" do
       expect { described_class.import("spec/lib/csv_fixture_broken.csv", "spec/lib/csv_digest_fixture.csv") }

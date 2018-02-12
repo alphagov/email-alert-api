@@ -1,6 +1,6 @@
 task import_govdelivery_csv: :environment do
   csv_path = ENV.fetch("CSV_PATH")
-  report = ImportGovdeliveryCsv.import(csv_path, $stdout)
+  report = ImportGovdeliveryCsv.import(csv_path)
 
   puts
   puts "Successful rows: #{report.fetch(:success_count)}"
