@@ -1,19 +1,17 @@
 require "csv"
 
 class ImportGovdeliveryCsv
-  def self.import(*args)
-    new(*args).import
-  end
-
-  attr_reader :subscriptions_csv_path, :digests_csv_path, :fake_import
-
   def initialize(subscriptions_csv_path, digests_csv_path, fake_import: false)
     @subscriptions_csv_path = subscriptions_csv_path
     @digests_csv_path = digests_csv_path
     @fake_import = fake_import
   end
 
-  def import
+  def self.call(*args)
+    new(*args).call
+  end
+
+  def call
     check_encoding_is_windows_1252
 
     CSV.foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252") do |row|
@@ -24,6 +22,8 @@ class ImportGovdeliveryCsv
   end
 
 private
+
+  attr_reader :subscriptions_csv_path, :digests_csv_path, :fake_import
 
   def import_row(row)
     subscriber = find_or_create_subscriber(row)
