@@ -37,23 +37,23 @@ private
     end
   end
 
+  def subscriber_for_row(row)
+    Subscriber.find_or_create_by!(address: address_from_row(row))
+  end
+
+  def subscribable_for_row(row)
+    topic_code = row.fetch("TOPIC_CODE")
+    SubscriberList.find_by!(gov_delivery_id: topic_code)
+  end
+
   def import_row(row)
-    subscriber = find_or_create_subscriber(row)
-    subscribable = find_subscribable(row)
-    frequency = digest_data.fetch(subscriber.address)
+    subscriber = subscriber_for_row(row)
+    subscribable = subscribable_for_row(row)
+    frequency = digest_frequencies.fetch(subscriber.address)
 
     validate_name(subscribable, row)
 
     find_or_create_subscription(subscriber, subscribable, frequency)
-  end
-
-  def find_or_create_subscriber(row)
-    Subscriber.find_or_create_by!(address: address_from_row(row))
-  end
-
-  def find_subscribable(row)
-    topic_code = row.fetch("TOPIC_CODE")
-    SubscriberList.find_by!(gov_delivery_id: topic_code)
   end
 
   def validate_name(subscribable, row)
@@ -65,16 +65,25 @@ private
     raise "Name mismatch: #{expected} != #{actual}" if expected != actual
   end
 
-  def digest_data
-    @digest_data ||= begin
+  def find_or_create_subscription(subscriber, subscribable, frequency)
+    subscriber.subscriptions.find_or_create_by!(
+      subscriber_list: subscribable,
+      frequency: frequency,
+    )
+  end
+
+  def digest_frequencies
+    @digest_frequencies ||= begin
       CSV.foreach(digests_csv_path, headers: true, encoding: "WINDOWS-1252").each_with_object({}) do |row, hash|
-        hash[address_from_row(row)] = digest_frequency_for_row(row.fetch("DIGEST_FOR"))
+        hash[address_from_row(row)] = digest_frequency_for_row(row)
       end
     end
   end
 
-  def digest_frequency_for_row(frequency)
-    case frequency.to_i
+  def digest_frequency_for_row(row)
+    digest_for = row.fetch("DIGEST_FOR").to_i
+
+    case digest_for
     when 0
       Frequency::IMMEDIATELY
     when 1
@@ -82,15 +91,8 @@ private
     when 7
       Frequency::WEEKLY
     else
-      raise "Unknown digest frequency: #{frequency}"
+      raise "Unknown digest frequency: #{digest_for}"
     end
-  end
-
-  def find_or_create_subscription(subscriber, subscribable, frequency)
-    subscriber.subscriptions.find_or_create_by!(
-      subscriber_list: subscribable,
-      frequency: frequency,
-    )
   end
 
   def with_reporting(row)
