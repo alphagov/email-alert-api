@@ -26,6 +26,8 @@ private
 
   attr_reader :subscriptions_csv_path, :digests_csv_path, :fake_import
 
+  DEFAULT_DIGEST_FREQUENCY = Frequency::IMMEDIATELY
+
   def address_from_row(row)
     address = row.fetch("DESTINATION")
 
@@ -49,7 +51,7 @@ private
   def import_row(row)
     subscriber = subscriber_for_row(row)
     subscribable = subscribable_for_row(row)
-    frequency = digest_frequencies.fetch(subscriber.address)
+    frequency = digest_frequencies.fetch(subscriber.address, DEFAULT_DIGEST_FREQUENCY)
 
     validate_name(subscribable, row)
 
