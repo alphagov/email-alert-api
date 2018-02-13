@@ -1,4 +1,9 @@
 RSpec.describe ImportGovdeliveryCsv do
+  before do
+    allow($stdin).to receive(:gets).and_return("<enter>")
+    allow($stdout).to receive(:write)
+  end
+
   let!(:first_subscribable) do
     create(:subscriber_list, gov_delivery_id: "UKGOVUK_111", title: "First")
   end

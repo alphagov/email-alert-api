@@ -13,6 +13,7 @@ class ImportGovdeliveryCsv
 
   def call
     check_encoding_is_windows_1252
+    get_user_confirmation
 
     CSV.foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252") do |row|
       with_reporting(row) { import_row(row) }
@@ -124,5 +125,22 @@ private
         raise EncodingError, message
       end
     end
+  end
+
+  def get_user_confirmation
+    puts "You are about to import the following data:"
+    puts " > Subscriptions from #{subscriptions_csv_path}"
+    puts " > Digests from #{digests_csv_path}"
+
+    if fake_import
+      puts " > The email addresses will be anonymised."
+    else
+      puts " > This is a real import. The email addresses will NOT be anonymised."
+    end
+
+    puts
+    puts "Continue? (Press Ctrl+C to cancel)"
+
+    $stdin.gets
   end
 end
