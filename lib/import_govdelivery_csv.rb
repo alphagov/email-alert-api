@@ -25,6 +25,17 @@ private
 
   attr_reader :subscriptions_csv_path, :digests_csv_path, :fake_import
 
+  def address_from_row(row)
+    address = row.fetch("DESTINATION")
+
+    if fake_import
+      hashed_address = Digest::SHA1.hexdigest(address)
+      "success+#{hashed_address}@simulator.amazonses.com"
+    else
+      address
+    end
+  end
+
   def import_row(row)
     subscriber = find_or_create_subscriber(row)
     subscribable = find_subscribable(row)
@@ -36,15 +47,7 @@ private
   end
 
   def find_or_create_subscriber(row)
-    Subscriber.find_or_create_by!(address: fetch_address_for_row(row))
-  end
-
-  def fetch_address_for_row(row)
-    address = row.fetch("DESTINATION")
-
-    return "success+#{Digest::SHA1.hexdigest(address)}@simulator.amazonses.com" if fake_import
-
-    address
+    Subscriber.find_or_create_by!(address: address_from_row(row))
   end
 
   def find_subscribable(row)
@@ -64,7 +67,7 @@ private
   def digest_data
     @digest_data ||= begin
       CSV.foreach(digests_csv_path, headers: true, encoding: "WINDOWS-1252").each_with_object({}) do |row, hash|
-        hash[fetch_address_for_row(row)] = digest_frequency_for_row(row.fetch("DIGEST_FOR"))
+        hash[address_from_row(row)] = digest_frequency_for_row(row.fetch("DIGEST_FOR"))
       end
     end
   end
