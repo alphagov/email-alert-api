@@ -16,9 +16,9 @@ RSpec.describe ContentChangePresenter do
       expected = <<~CONTENT_CHANGE
         [Change title](http://www.dev.gov.uk/government/test-slug)
 
-        Test change note: Test description
+        Test description
 
-        Updated at 10:00 am on 1 January 2018
+        10:00 am on 1 January 2018: Test change note
       CONTENT_CHANGE
 
       expect(described_class.call(content_change)).to eq(expected)
@@ -39,9 +39,9 @@ RSpec.describe ContentChangePresenter do
         expected = <<~CONTENT_CHANGE
           [Change title](http://www.dev.gov.uk/government/test-slug)
 
-          Test change note markdown test (https://gov.uk): more markdown
+          more markdown
 
-          Updated at 10:00 am on 1 January 2018
+          10:00 am on 1 January 2018: Test change note markdown test (https://gov.uk)
         CONTENT_CHANGE
 
         expect(described_class.call(content_change)).to eq(expected)

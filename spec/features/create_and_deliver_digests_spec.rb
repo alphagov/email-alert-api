@@ -18,17 +18,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title one](http://www.dev.gov.uk/base-path)
 
-      Change note one: Description one
+      Description one
 
-      Updated at 10:00 am on 1 January 2017
+      10:00 am on 1 January 2017: Change note one
 
       ---
 
       [Title two](http://www.dev.gov.uk/base-path)
 
-      Change note two: Description two
+      Description two
 
-      Updated at 09:00 am on 1 January 2017
+      09:00 am on 1 January 2017: Change note two
 
       ---
 
@@ -40,17 +40,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title four](http://www.dev.gov.uk/base-path)
 
-      Change note four: Description four
+      Description four
 
-      Updated at 09:30 am on 1 January 2017
+      09:30 am on 1 January 2017: Change note four
 
       ---
 
       [Title three](http://www.dev.gov.uk/base-path)
 
-      Change note three: Description three
+      Description three
 
-      Updated at 09:00 am on 1 January 2017
+      09:00 am on 1 January 2017: Change note three
 
       ---
 
@@ -64,17 +64,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title one](http://www.dev.gov.uk/base-path)
 
-      Change note one: Description one
+      Description one
 
-      Updated at 10:00 am on 1 January 2017
+      10:00 am on 1 January 2017: Change note one
 
       ---
 
       [Title two](http://www.dev.gov.uk/base-path)
 
-      Change note two: Description two
+      Description two
 
-      Updated at 09:00 am on 1 January 2017
+      09:00 am on 1 January 2017: Change note two
 
       ---
 
@@ -224,17 +224,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title one](http://www.dev.gov.uk/base-path)
 
-      Change note one: Description one
+      Description one
 
-      Updated at 10:00 am on 28 December 2016
+      10:00 am on 28 December 2016: Change note one
 
       ---
 
       [Title two](http://www.dev.gov.uk/base-path)
 
-      Change note two: Description two
+      Description two
 
-      Updated at 09:00 am on 27 December 2016
+      09:00 am on 27 December 2016: Change note two
 
       ---
 
@@ -246,17 +246,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title four](http://www.dev.gov.uk/base-path)
 
-      Change note four: Description four
+      Description four
 
-      Updated at 09:30 am on 1 January 2017
+      09:30 am on 1 January 2017: Change note four
 
       ---
 
       [Title three](http://www.dev.gov.uk/base-path)
 
-      Change note three: Description three
+      Description three
 
-      Updated at 09:00 am on 30 December 2016
+      09:00 am on 30 December 2016: Change note three
 
       ---
 
@@ -270,17 +270,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title one](http://www.dev.gov.uk/base-path)
 
-      Change note one: Description one
+      Description one
 
-      Updated at 10:00 am on 28 December 2016
+      10:00 am on 28 December 2016: Change note one
 
       ---
 
       [Title two](http://www.dev.gov.uk/base-path)
 
-      Change note two: Description two
+      Description two
 
-      Updated at 09:00 am on 27 December 2016
+      09:00 am on 27 December 2016: Change note two
 
       ---
 

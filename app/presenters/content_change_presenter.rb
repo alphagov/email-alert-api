@@ -15,9 +15,9 @@ class ContentChangePresenter
     <<~BODY
       [#{title}](#{content_url})
 
-      #{strip_markdown(change_note)}: #{strip_markdown(description)}
+      #{strip_markdown(description)}
 
-      Updated at #{public_updated_at}
+      #{public_updated_at}: #{strip_markdown(change_note)}
     BODY
   end
 
