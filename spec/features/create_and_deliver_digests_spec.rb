@@ -20,7 +20,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description one
 
-      10:00 am on 1 January 2017: Change note one
+      10:00am, 1 January 2017: Change note one
 
       ---
 
@@ -28,7 +28,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description two
 
-      09:00 am on 1 January 2017: Change note two
+       9:00am, 1 January 2017: Change note two
 
       ---
 
@@ -42,7 +42,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description four
 
-      09:30 am on 1 January 2017: Change note four
+       9:30am, 1 January 2017: Change note four
 
       ---
 
@@ -50,7 +50,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description three
 
-      09:00 am on 1 January 2017: Change note three
+       9:00am, 1 January 2017: Change note three
 
       ---
 
@@ -66,7 +66,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description one
 
-      10:00 am on 1 January 2017: Change note one
+      10:00am, 1 January 2017: Change note one
 
       ---
 
@@ -74,7 +74,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description two
 
-      09:00 am on 1 January 2017: Change note two
+       9:00am, 1 January 2017: Change note two
 
       ---
 
@@ -226,7 +226,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description one
 
-      10:00 am on 28 December 2016: Change note one
+      10:00am, 28 December 2016: Change note one
 
       ---
 
@@ -234,7 +234,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description two
 
-      09:00 am on 27 December 2016: Change note two
+       9:00am, 27 December 2016: Change note two
 
       ---
 
@@ -248,7 +248,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description four
 
-      09:30 am on 1 January 2017: Change note four
+       9:30am, 1 January 2017: Change note four
 
       ---
 
@@ -256,7 +256,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description three
 
-      09:00 am on 30 December 2016: Change note three
+       9:00am, 30 December 2016: Change note three
 
       ---
 
@@ -272,7 +272,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description one
 
-      10:00 am on 28 December 2016: Change note one
+      10:00am, 28 December 2016: Change note one
 
       ---
 
@@ -280,7 +280,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Description two
 
-      09:00 am on 27 December 2016: Change note two
+       9:00am, 27 December 2016: Change note two
 
       ---
 

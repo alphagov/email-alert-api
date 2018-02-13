@@ -1,7 +1,7 @@
 require 'redcarpet/render_strip'
 
 class ContentChangePresenter
-  EMAIL_DATE_FORMAT = "%I:%M %P on %-d %B %Y".freeze
+  EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze
 
   def initialize(content_change)
     @content_change = content_change

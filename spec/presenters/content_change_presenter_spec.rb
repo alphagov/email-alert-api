@@ -18,7 +18,7 @@ RSpec.describe ContentChangePresenter do
 
         Test description
 
-        10:00 am on 1 January 2018: Test change note
+        10:00am, 1 January 2018: Test change note
       CONTENT_CHANGE
 
       expect(described_class.call(content_change)).to eq(expected)
@@ -41,7 +41,7 @@ RSpec.describe ContentChangePresenter do
 
           more markdown
 
-          10:00 am on 1 January 2018: Test change note markdown test (https://gov.uk)
+          10:00am, 1 January 2018: Test change note markdown test (https://gov.uk)
         CONTENT_CHANGE
 
         expect(described_class.call(content_change)).to eq(expected)
