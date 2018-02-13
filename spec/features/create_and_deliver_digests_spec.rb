@@ -189,7 +189,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK Daily Update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your daily update")))
       .with(
         body: hash_including(
           personalisation: hash_including(
@@ -201,7 +201,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     second_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-two@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK Daily Update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your daily update")))
       .with(
         body: hash_including(
           personalisation: hash_including(
@@ -393,7 +393,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK Weekly Update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your weekly update")))
       .with(
         body: hash_including(
           personalisation: hash_including(
@@ -405,7 +405,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     second_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-two@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK Weekly Update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your weekly update")))
       .with(
         body: hash_including(
           personalisation: hash_including(

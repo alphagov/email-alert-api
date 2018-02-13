@@ -40,9 +40,9 @@ private
 
   def subject
     if digest_run.daily?
-      "GOV.UK Daily Update"
+      "GOV.UK: your daily update"
     else
-      "GOV.UK Weekly Update"
+      "GOV.UK: your weekly update"
     end
   end
 

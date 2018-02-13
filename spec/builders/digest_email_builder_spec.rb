@@ -111,14 +111,14 @@ RSpec.describe DigestEmailBuilder do
 
   context "daily" do
     it "sets the subject" do
-      expect(email.subject).to eq("GOV.UK Daily Update")
+      expect(email.subject).to eq("GOV.UK: your daily update")
     end
   end
 
   context "weekly" do
     let(:digest_run) { double(daily?: false) }
     it "sets the subject" do
-      expect(email.subject).to eq("GOV.UK Weekly Update")
+      expect(email.subject).to eq("GOV.UK: your weekly update")
     end
   end
 end
