@@ -7,6 +7,8 @@ class ImmediateEmailGenerationWorker
 
   def perform
     ensure_only_running_once do
+      GC.start
+
       subscription_contents.find_in_batches do |group|
         to_queue = []
 
@@ -27,6 +29,8 @@ class ImmediateEmailGenerationWorker
 
         queue_delivery_request_workers(to_queue)
       end
+
+      GC.start
     end
   end
 

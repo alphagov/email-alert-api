@@ -12,11 +12,12 @@ class DeliveryRequestWorker
   end
 
   def perform(email_id, queue)
-    @email = Email.find(email_id)
+    @email_id = email_id
     @queue = queue
     check_rate_limit!
     increment_rate_limiter
-    DeliveryRequestService.call(email: @email)
+    email = Email.find(email_id)
+    DeliveryRequestService.call(email: email)
   end
 
   def self.perform_async_in_queue(*args, queue:)
@@ -54,7 +55,7 @@ class DeliveryRequestWorker
 
 private
 
-  attr_reader :email, :queue
+  attr_reader :email_id, :queue
 
   def rate_limiter
     Services.rate_limiter
@@ -62,7 +63,7 @@ private
 
   def reschedule_job
     GovukStatsd.increment("delivery_request_worker.rescheduled")
-    DeliveryRequestWorker.set(queue: queue).perform_in(30.seconds, email.id, queue)
+    DeliveryRequestWorker.set(queue: queue).perform_in(30.seconds, email_id, queue)
   end
 end
 
