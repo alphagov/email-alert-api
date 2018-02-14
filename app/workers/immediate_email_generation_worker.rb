@@ -5,26 +5,40 @@ class ImmediateEmailGenerationWorker
 
   LOCK_NAME = "immediate_email_generation_worker".freeze
 
+  attr_reader :content_changes
+
   def perform
+    @content_changes = {}
+
     ensure_only_running_once do
       GC.start
 
-      subscription_contents.find_in_batches do |group|
+      subscribers.find_in_batches do |group|
         to_queue = []
 
-        SubscriptionContent.transaction do
-          email_ids = import_emails(group).ids
+        subscription_contents = grouped_subscription_contents(group.pluck(:id))
 
-          values = group.zip(email_ids).map do |subscription_content, email_id|
-            to_queue << [email_id, subscription_content.content_change.priority.to_sym]
-            "(#{subscription_content.id}, #{email_id})"
+        update_content_change_cache(subscription_contents)
+
+        Subscriber.transaction do
+          values = []
+
+          email_ids = import_emails(group, subscription_contents, content_changes).ids
+          subscriber_id_content_change_id_in_order = subscription_contents.flat_map { |k, v| v.map { |x, _y| [k, x] } }
+
+          email_ids.each_with_index do |email_id, i|
+            subscriber_id = subscriber_id_content_change_id_in_order[i][0]
+            content_change_id = subscriber_id_content_change_id_in_order[i][1]
+            subscription_contents_in_this_email = subscription_contents[subscriber_id][content_change_id]
+
+            to_queue << [email_id, content_changes[content_change_id].priority.to_sym]
+
+            subscription_contents_in_this_email.each do |subscription_content|
+              values << "(#{subscription_content.id}, #{email_id})"
+            end
           end
 
-          ActiveRecord::Base.connection.execute(%(
-            UPDATE subscription_contents SET email_id = v.email_id
-            FROM (VALUES #{values.join(',')}) AS v(id, email_id)
-            WHERE subscription_contents.id = v.id
-          ))
+          update_subscription_contents(values)
         end
 
         queue_delivery_request_workers(to_queue)
@@ -36,8 +50,20 @@ class ImmediateEmailGenerationWorker
 
 private
 
+  def update_content_change_cache(subscription_contents)
+    content_change_ids = subscription_contents.flat_map { |_k, v| v.keys }.uniq
+    existing_content_change_ids = content_changes.keys
+    missing_content_change_ids = content_change_ids - existing_content_change_ids
+
+    if missing_content_change_ids.any?
+      ContentChange.where(id: missing_content_change_ids).each do |cc|
+        content_changes[cc.id] = cc
+      end
+    end
+  end
+
   def ensure_only_running_once
-    SubscriptionContent.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
+    Subscriber.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
       yield
     end
   end
@@ -60,22 +86,35 @@ private
     end
   end
 
-  def subscription_contents
-    SubscriptionContent
-      .joins(:content_change, subscription: { subscriber: { subscriptions: :subscriber_list } })
-      .includes(:content_change, subscription: { subscriber: { subscriptions: :subscriber_list } })
-      .where.not(subscribers: { address: nil })
-      .where(email: nil)
+  def grouped_subscription_contents(subscriber_ids)
+    UnprocessedSubscriptionContentsBySubscriberQuery.call(subscriber_ids)
   end
 
-  def import_emails(subscription_contents)
-    subscription_content_changes = subscription_contents.map do |subscription_content|
-      {
-        subscription: subscription_content.subscription,
-        content_change: subscription_content.content_change,
-      }
+  def subscribers
+    SubscribersForImmediateEmailQuery.call
+  end
+
+  def import_emails(subscribers, subscription_contents, content_changes)
+    email_params = subscribers.flat_map do |subscriber|
+      subscription_contents[subscriber.id].keys.map do |content_change_id|
+        {
+          address: subscriber.address,
+          content_change: content_changes[content_change_id],
+          subscriptions: subscription_contents[subscriber.id][content_change_id].map(&:subscription)
+        }
+      end
     end
 
-    ImmediateEmailBuilder.call(subscription_content_changes)
+    ImmediateEmailBuilder.call(email_params)
+  end
+
+  def update_subscription_contents(values)
+    ActiveRecord::Base.connection.execute(
+      %(
+        UPDATE subscription_contents SET email_id = v.email_id
+        FROM (VALUES #{values.join(',')}) AS v(id, email_id)
+        WHERE subscription_contents.id = v.id
+      )
+    )
   end
 end

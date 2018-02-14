@@ -17,6 +17,31 @@ RSpec.describe ImmediateEmailGenerationWorker do
       end
     end
 
+    context "with subscribers that have duplicate subscription contents" do
+      it "deduplicates when creating the emails" do
+        subscriber_one = create(:subscriber)
+        subscription_one = create(:subscription, subscriber: subscriber_one)
+        subscription_two = create(:subscription, subscriber: subscriber_one)
+        content_change = create(:content_change)
+
+        create(
+          :subscription_content,
+          subscription: subscription_one,
+          content_change: content_change
+        )
+
+        create(
+          :subscription_content,
+          subscription: subscription_two,
+          content_change: content_change
+        )
+
+        described_class.new.perform
+
+        expect(Email.count).to eq(1)
+      end
+    end
+
     context "with many subscription contents" do
       before do
         50.times do
