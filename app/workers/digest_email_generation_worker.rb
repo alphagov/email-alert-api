@@ -4,7 +4,7 @@ class DigestEmailGenerationWorker
   sidekiq_options queue: :email_generation_digest
 
   def perform(digest_run_subscriber_id)
-    @digest_run_subscriber = DigestRunSubscriber.find(digest_run_subscriber_id)
+    @digest_run_subscriber = DigestRunSubscriber.includes(:subscriber, :digest_run).find(digest_run_subscriber_id)
     @subscriber = digest_run_subscriber.subscriber
     @digest_run = digest_run_subscriber.digest_run
 

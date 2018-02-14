@@ -88,6 +88,8 @@ RSpec.describe DigestEmailGenerationWorker do
         subscriber_id: subscriber.id
       )
 
+      allow(DigestRunSubscriber).to receive(:includes).and_return(DigestRunSubscriber)
+
       allow(DigestRunSubscriber).to receive(:find)
         .with(1)
         .and_return(digest_run_subscriber)
