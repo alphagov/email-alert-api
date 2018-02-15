@@ -52,6 +52,21 @@ RSpec.describe Subscriber, type: :model do
 
       subject.address = "foo@bar.com"
       expect(subject).to be_invalid
+
+      expect {
+        subject.save!(validate: false)
+      }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it "is invalid if an email address is already taken but with a different case" do
+      create(:subscriber, address: "FOO@BAR.com")
+
+      subject.address = "foo@bar.com"
+      expect(subject).to be_invalid
+
+      expect {
+        subject.save!(validate: false)
+      }.to raise_error(ActiveRecord::RecordNotUnique)
     end
 
     it "is valid to have more than one nil email address" do
