@@ -63,6 +63,14 @@ FactoryBot.define do
     sequence(:gov_delivery_id) { |n| "UKGOVUK_#{n}" }
     tags(topics: ["motoring/road_rage"])
     created_at { 1.year.ago }
+
+    trait :travel_advice do
+      links countries: [SecureRandom.uuid]
+    end
+
+    trait :medical_safety_alert do
+      tags format: ["medical_safety_alert"], alert_type: %w(devices drugs field-safety-notices company-led-drugs)
+    end
   end
 
   factory :subscription do
