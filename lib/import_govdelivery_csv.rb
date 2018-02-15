@@ -88,6 +88,14 @@ private
     nil
   end
 
+  def frequency_for_subscription(subscribable, subscriber)
+    if subscribable.is_travel_advice? || subscribable.is_medical_safety_alert?
+      Frequency::IMMEDIATELY
+    else
+      digest_frequencies.fetch(subscriber.address, Frequency::DAILY)
+    end
+  end
+
   def import_subscriptions
     puts "Loading new subscriptions from file..."
 
@@ -101,7 +109,7 @@ private
 
         next unless subscribable
 
-        frequency = digest_frequencies.fetch(subscriber.address, Frequency::DAILY)
+        frequency = frequency_for_subscription(subscribable, subscriber)
 
         next if Subscription.where(
           subscriber_id: subscriber.id,

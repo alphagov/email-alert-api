@@ -49,6 +49,30 @@ RSpec.describe ImportGovdeliveryCsv do
     expect(Subscription.third.frequency).to eq(Frequency::IMMEDIATELY)
   end
 
+  context "when the subscriber list is travel advice" do
+    let!(:first_subscribable) do
+      create(:subscriber_list, :travel_advice, gov_delivery_id: "UKGOVUK_111", title: "First")
+    end
+
+    it "sets the frequency to immediate" do
+      described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
+
+      expect(Subscription.second.frequency).to eq(Frequency::IMMEDIATELY)
+    end
+  end
+
+  context "when the subscriber list is a medical safety alery" do
+    let!(:first_subscribable) do
+      create(:subscriber_list, :medical_safety_alert, gov_delivery_id: "UKGOVUK_111", title: "First")
+    end
+
+    it "sets the frequency to immediate" do
+      described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
+
+      expect(Subscription.second.frequency).to eq(Frequency::IMMEDIATELY)
+    end
+  end
+
   it "is idempotent" do
     described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
 
