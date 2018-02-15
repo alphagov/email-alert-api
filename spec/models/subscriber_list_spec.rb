@@ -69,6 +69,14 @@ RSpec.describe SubscriberList, type: :model do
       expect(subject).to be_invalid
       expect(subject.errors[:links]).to include("All link values must be sent as Arrays")
     end
+
+    it "is not recognised as travel advice" do
+      expect(subject.is_travel_advice?).to be false
+    end
+
+    it "is not recognised as medical safety alert" do
+      expect(subject.is_medical_safety_alert?).to be false
+    end
   end
 
   context "with a subscription" do
@@ -84,6 +92,22 @@ RSpec.describe SubscriberList, type: :model do
       expect {
         subject.destroy
       }.to raise_error(ActiveRecord::InvalidForeignKey)
+    end
+  end
+
+  context "with a travel advice subscriber list" do
+    subject { build(:subscriber_list, :travel_advice) }
+
+    it "is recognised as travel advice" do
+      expect(subject.is_travel_advice?).to be true
+    end
+  end
+
+  context "with a medical safety alert subscriber list" do
+    subject { build(:subscriber_list, :medical_safety_alert) }
+
+    it "is recognised as a medical safety alert" do
+      expect(subject.is_medical_safety_alert?).to be true
     end
   end
 
