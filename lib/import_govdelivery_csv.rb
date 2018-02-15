@@ -93,7 +93,9 @@ private
 
     records = CSV
       .foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252")
-      .map do |row|
+      .with_index(1).map do |row, i|
+        puts "Processed #{i} records" if (i % 10000).zero?
+
         subscriber = subscriber_for_row(row)
         subscribable = subscribable_for_row(row)
 
