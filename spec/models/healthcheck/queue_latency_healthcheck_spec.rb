@@ -7,12 +7,12 @@ RSpec.describe Healthcheck::QueueLatencyHealthcheck do
   end
 
   context "when the warning threshold is reached" do
-    let(:latency) { 275 }
+    let(:latency) { 750 }
     specify { expect(subject.status).to eq(:warning) }
   end
 
   context "when the critical threshold is reached" do
-    let(:latency) { 500 }
+    let(:latency) { 1000 }
     specify { expect(subject.status).to eq(:critical) }
   end
 end
