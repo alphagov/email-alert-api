@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180212121358) do
+ActiveRecord::Schema.define(version: 20180215144634) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,7 +126,7 @@ ActiveRecord::Schema.define(version: 20180212121358) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "signon_user_uid"
-    t.index ["address"], name: "index_subscribers_on_address", unique: true
+    t.index "lower((address)::text)", name: "index_subscribers_on_lower_address", unique: true
   end
 
   create_table "subscription_contents", force: :cascade do |t|
