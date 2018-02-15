@@ -1,12 +1,6 @@
-task import_govdelivery_csv: :environment do
-  csv_path = ENV.fetch("CSV_PATH")
-  report = ImportGovdeliveryCsv.import(csv_path, $stdout)
+task :import_govdelivery_csv, %i(subscriptions_csv_path digests_csv_path) => :environment do |_, args|
+  raise "Missing subscriptions CSV path." if args[:subscriptions_csv_path].nil?
+  raise "Missing digests CSV path." if args[:digests_csv_path].nil?
 
-  puts
-  puts "Successful rows: #{report.fetch(:success_count)}"
-  puts "Failed rows: #{report.fetch(:failed_count)}"
-
-  report.fetch(:failed_rows).each do |failure|
-    puts " - #{failure.inspect}"
-  end
+  ImportGovdeliveryCsv.call(args[:subscriptions_csv_path], args[:digests_csv_path])
 end

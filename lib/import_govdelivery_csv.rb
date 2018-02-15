@@ -1,77 +1,144 @@
 require "csv"
 
 class ImportGovdeliveryCsv
-  def self.import(*args)
-    new(*args).import
-  end
-
-  attr_reader :csv_path, :digest_csv_path, :fake_import, :output_io
-
-  def initialize(csv_path, digest_csv_path, fake_import: false, output_io: nil)
-    @csv_path = csv_path
-    @digest_csv_path = digest_csv_path
+  def initialize(subscriptions_csv_path, digests_csv_path, fake_import: false)
+    @subscriptions_csv_path = subscriptions_csv_path
+    @digests_csv_path = digests_csv_path
     @fake_import = fake_import
-    @output_io = output_io
+    @failed_topics = Set.new
   end
 
-  def import
+  def self.call(*args)
+    new(*args).call
+  end
+
+  def call
     check_encoding_is_windows_1252
+    get_user_confirmation
 
-    CSV.foreach(csv_path, headers: true, encoding: "WINDOWS-1252") do |row|
-      with_reporting(row) { import_row(row) }
-    end
-
-    build_report
+    import_subscribers
+    import_subscriptions
   end
 
 private
 
-  def import_row(row)
-    subscriber = find_or_create_subscriber(row)
-    subscribable = find_subscribable(row)
-    frequency = digest_data.fetch(subscriber.address)
+  attr_reader :subscriptions_csv_path, :digests_csv_path, :fake_import, :failed_topics
 
-    validate_name(subscribable, row)
+  DEFAULT_DIGEST_FREQUENCY = Frequency::IMMEDIATELY
 
-    find_or_create_subscription(subscriber, subscribable, frequency)
-  end
-
-  def find_or_create_subscriber(row)
-    Subscriber.find_or_create_by!(address: fetch_address_for_row(row))
-  end
-
-  def fetch_address_for_row(row)
+  def address_from_row(row)
     address = row.fetch("DESTINATION")
 
-    return "success+#{Digest::SHA1.hexdigest(address)}@simulator.amazonses.com" if fake_import
-
-    address
+    if fake_import
+      hashed_address = Digest::SHA1.hexdigest(address)
+      "success+#{hashed_address}@simulator.amazonses.com"
+    else
+      address
+    end
   end
 
-  def find_subscribable(row)
+  def import_subscribers
+    puts "Loading subscribers from file..."
+
+    addresses = CSV
+      .foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252")
+      .map { |row| address_from_row(row) }
+      .uniq
+
+    existing_addresses = Subscriber.where(address: addresses).pluck(:address)
+
+    puts "Identifying new subscribers..."
+
+    new_addresses = addresses - existing_addresses
+
+    columns = %w(address)
+    records = new_addresses.map { |address| [address] }
+
+    puts "Importing records..."
+
+    count = Subscriber.import!(columns, records).ids.count
+
+    puts "#{count} subscribers imported!"
+  end
+
+  def all_subscribers
+    @all_subscribers ||= begin
+      puts "Loading all subscribers from database..."
+      Subscriber.all.index_by(&:address)
+    end
+  end
+
+  def subscriber_for_row(row)
+    address = address_from_row(row)
+    all_subscribers.fetch(address)
+  end
+
+  def all_subscribables
+    @all_subscribables ||= begin
+      puts "Loading all subscribables from database..."
+      SubscriberList.all.index_by(&:gov_delivery_id)
+    end
+  end
+
+  def subscribable_for_row(row)
     topic_code = row.fetch("TOPIC_CODE")
-    SubscriberList.find_by!(gov_delivery_id: topic_code)
+    all_subscribables.fetch(topic_code)
+  rescue KeyError
+    failed_topics.add(topic_code)
+    nil
   end
 
-  def validate_name(subscribable, row)
-    topic_name = row.fetch("TOPIC_NAME")
+  def import_subscriptions
+    puts "Loading new subscriptions from file..."
 
-    expected = topic_name.strip
-    actual = subscribable.title.strip
+    records = CSV
+      .foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252")
+      .with_index(1).map do |row, i|
+        puts "Processed #{i} records" if (i % 10000).zero?
 
-    raise "Name mismatch: #{expected} != #{actual}" if expected != actual
+        subscriber = subscriber_for_row(row)
+        subscribable = subscribable_for_row(row)
+
+        next unless subscribable
+
+        frequency = digest_frequencies.fetch(subscriber.address, Frequency::DAILY)
+
+        next if Subscription.where(
+          subscriber_id: subscriber.id,
+          subscriber_list_id: subscribable.id,
+          frequency: frequency
+        ).exists?
+
+        [subscriber.id, subscribable.id, frequency, SecureRandom.uuid]
+      end
+
+    records = records.compact
+
+    columns = %w(subscriber_id subscriber_list_id frequency uuid)
+
+    puts "Importing records..."
+
+    count = Subscription.import!(columns, records).ids.count
+
+    puts "#{count} subscriptions imported!"
+
+    puts "Unable to match #{failed_topics.count} topics:"
+    p failed_topics
   end
 
-  def digest_data
-    @digest_data ||= begin
-      CSV.foreach(digest_csv_path, headers: true, encoding: "WINDOWS-1252").each_with_object({}) do |row, hash|
-        hash[fetch_address_for_row(row)] = digest_frequency_for_row(row.fetch("DIGEST_FOR"))
+  def digest_frequencies
+    @digest_frequencies ||= begin
+      puts "Loading digest frequencies from file..."
+      CSV.foreach(digests_csv_path, headers: true, encoding: "WINDOWS-1252").each_with_object({}) do |row, hash|
+        hash[address_from_row(row)] = digest_frequency_for_row(row)
       end
     end
   end
 
-  def digest_frequency_for_row(frequency)
-    case frequency.to_i
+  def digest_frequency_for_row(row)
+    digest_for = row.fetch("DIGEST_FOR").to_i
+
+    case digest_for
     when 0
       Frequency::IMMEDIATELY
     when 1
@@ -79,47 +146,12 @@ private
     when 7
       Frequency::WEEKLY
     else
-      raise "Unknown digest frequency: #{frequency}"
+      raise "Unknown digest frequency: #{digest_for}"
     end
-  end
-
-  def find_or_create_subscription(subscriber, subscribable, frequency)
-    subscriber.subscriptions.find_or_create_by!(
-      subscriber_list: subscribable,
-      frequency: frequency,
-    )
-  end
-
-  def with_reporting(row)
-    @success_count ||= 0
-    @failed_count ||= 0
-    @failed_rows ||= []
-
-    begin
-      yield
-      output(".")
-      @success_count += 1
-    rescue StandardError => error
-      output("F")
-      @failed_count += 1
-      @failed_rows << [error.message, row.to_h]
-    end
-  end
-
-  def build_report
-    {
-      success_count: @success_count,
-      failed_count: @failed_count,
-      failed_rows: @failed_rows,
-    }
-  end
-
-  def output(message)
-    output_io.print(message) if output_io
   end
 
   def check_encoding_is_windows_1252
-    File.readlines(csv_path).each do |line|
+    File.readlines(subscriptions_csv_path).each do |line|
       if line.include?("Principe") && !line.include?("São Tomé and Principe")
         message = "The CSV has the wrong encoding. It should be WINDOWS-1252."
         message += "\nYou can set the encoding in LibreOffice with:"
@@ -128,5 +160,22 @@ private
         raise EncodingError, message
       end
     end
+  end
+
+  def get_user_confirmation
+    puts "You are about to import the following data:"
+    puts " > Subscriptions from #{subscriptions_csv_path}"
+    puts " > Digests from #{digests_csv_path}"
+
+    if fake_import
+      puts " > The email addresses will be anonymised."
+    else
+      puts " > This is a real import. The email addresses will NOT be anonymised."
+    end
+
+    puts
+    puts "Continue? (Press Ctrl+C to cancel)"
+
+    $stdin.gets
   end
 end
