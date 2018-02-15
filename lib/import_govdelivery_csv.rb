@@ -99,7 +99,7 @@ private
 
         next unless subscribable
 
-        frequency = digest_frequencies.fetch(subscriber.address, Frequency::IMMEDIATELY)
+        frequency = digest_frequencies.fetch(subscriber.address, Frequency::DAILY)
 
         next if Subscription.where(
           subscriber_id: subscriber.id,
