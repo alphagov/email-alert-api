@@ -5,7 +5,7 @@ class ImportGovdeliveryCsv
     @subscriptions_csv_path = subscriptions_csv_path
     @digests_csv_path = digests_csv_path
     @fake_import = fake_import
-    @imported_count = 0
+    @failed_topics = Set.new
   end
 
   def self.call(*args)
@@ -17,17 +17,12 @@ class ImportGovdeliveryCsv
     get_user_confirmation
 
     import_subscribers
-
-    CSV.foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252") do |row|
-      import_row(row)
-    end
-
-    puts "Imported #{@imported_count} subscriptions."
+    import_subscriptions
   end
 
 private
 
-  attr_reader :subscriptions_csv_path, :digests_csv_path, :fake_import
+  attr_reader :subscriptions_csv_path, :digests_csv_path, :fake_import, :failed_topics
 
   DEFAULT_DIGEST_FREQUENCY = Frequency::IMMEDIATELY
 
@@ -43,7 +38,7 @@ private
   end
 
   def import_subscribers
-    puts "Loading subscribers..."
+    puts "Loading subscribers from file..."
 
     addresses = CSV
       .foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252")
@@ -53,56 +48,85 @@ private
     existing_addresses = Subscriber.where(address: addresses).pluck(:address)
 
     puts "Identifying new subscribers..."
+
     new_addresses = addresses - existing_addresses
 
     columns = %w(address)
     records = new_addresses.map { |address| [address] }
 
     puts "Importing records..."
+
     count = Subscriber.import!(columns, records).ids.count
 
     puts "#{count} subscribers imported!"
   end
 
+  def all_subscribers
+    @all_subscribers ||= begin
+      puts "Loading all subscribers from database..."
+      Subscriber.all.index_by(&:address)
+    end
+  end
+
   def subscriber_for_row(row)
-    Subscriber.find_by!(address: address_from_row(row))
+    address = address_from_row(row)
+    all_subscribers.fetch(address)
+  end
+
+  def all_subscribables
+    @all_subscribables ||= begin
+      puts "Loading all subscribables from database..."
+      SubscriberList.all.index_by(&:gov_delivery_id)
+    end
   end
 
   def subscribable_for_row(row)
     topic_code = row.fetch("TOPIC_CODE")
-    SubscriberList.find_by!(gov_delivery_id: topic_code)
+    all_subscribables.fetch(topic_code)
+  rescue KeyError
+    failed_topics.add(topic_code)
+    nil
   end
 
-  def import_row(row)
-    subscriber = subscriber_for_row(row)
-    subscribable = subscribable_for_row(row)
-    frequency = digest_frequencies.fetch(subscriber.address, DEFAULT_DIGEST_FREQUENCY)
+  def import_subscriptions
+    puts "Loading new subscriptions from file..."
 
-    validate_name(subscribable, row)
+    records = CSV
+      .foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252")
+      .map do |row|
+        subscriber = subscriber_for_row(row)
+        subscribable = subscribable_for_row(row)
 
-    find_or_create_subscription(subscriber, subscribable, frequency)
+        next unless subscribable
 
-    @imported_count += 1
-  end
+        frequency = digest_frequencies.fetch(subscriber.address, Frequency::IMMEDIATELY)
 
-  def validate_name(subscribable, row)
-    topic_name = row.fetch("TOPIC_NAME")
+        next if Subscription.where(
+          subscriber_id: subscriber.id,
+          subscriber_list_id: subscribable.id,
+          frequency: frequency
+        ).exists?
 
-    expected = topic_name.strip
-    actual = subscribable.title.strip
+        [subscriber.id, subscribable.id, frequency, SecureRandom.uuid]
+      end
 
-    raise "Name mismatch: #{expected} != #{actual}" if expected != actual
-  end
+    records = records.compact
 
-  def find_or_create_subscription(subscriber, subscribable, frequency)
-    subscriber.subscriptions.find_or_create_by!(
-      subscriber_list: subscribable,
-      frequency: frequency,
-    )
+    columns = %w(subscriber_id subscriber_list_id frequency uuid)
+
+    puts "Importing records..."
+
+    count = Subscription.import!(columns, records).ids.count
+
+    puts "#{count} subscriptions imported!"
+
+    puts "Unable to match #{failed_topics.count} topics:"
+    p failed_topics
   end
 
   def digest_frequencies
     @digest_frequencies ||= begin
+      puts "Loading digest frequencies from file..."
       CSV.foreach(digests_csv_path, headers: true, encoding: "WINDOWS-1252").each_with_object({}) do |row, hash|
         hash[address_from_row(row)] = digest_frequency_for_row(row)
       end

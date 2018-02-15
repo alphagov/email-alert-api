@@ -57,15 +57,6 @@ RSpec.describe ImportGovdeliveryCsv do
       .and change(Subscription, :count).by(0)
   end
 
-  context "when the subscribable name doesn't match the csv" do
-    before { second_subscribable.update!(title: "Something else") }
-
-    it "should raise an exception" do
-      expect { described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv") }
-        .to raise_error(/Name mismatch/)
-    end
-  end
-
   context "when the file has the wrong encoding" do
     it "raises an error" do
       expect { described_class.call("spec/lib/csv_fixture_broken.csv", "spec/lib/csv_digest_fixture.csv") }
