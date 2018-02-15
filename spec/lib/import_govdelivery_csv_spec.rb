@@ -57,44 +57,12 @@ RSpec.describe ImportGovdeliveryCsv do
       .and change(Subscription, :count).by(0)
   end
 
-  it "returns a report of imported rows" do
-    report = described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
-
-    expect(report).to eq(
-      success_count: 3,
-      failed_count: 0,
-      failed_rows: [],
-    )
-  end
-
   context "when the subscribable name doesn't match the csv" do
     before { second_subscribable.update!(title: "Something else") }
 
-    it "does not import a subscription for that subscribable" do
+    it "should raise an exception" do
       expect { described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv") }
-        .to change(Subscription, :count).by(2)
-    end
-
-    it "includes the failed rows in the report" do
-      report = described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
-
-      expect(report).to eq(
-        success_count: 2,
-        failed_count: 1,
-        failed_rows: [
-          [
-            "Name mismatch: Second != Something else",
-            {
-              "TOPIC_ID" => "67890",
-              "TOPIC_NAME" => "Second",
-              "TOPIC_CODE" => "UKGOVUK_222",
-              "TOPIC_VISIBILITY" => "1",
-              "SUBSCRIBER_ID" => "1111111111",
-              "DESTINATION" => "foo@example.com"
-            },
-          ],
-        ]
-      )
+        .to raise_error(/Name mismatch/)
     end
   end
 

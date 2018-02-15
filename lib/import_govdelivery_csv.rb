@@ -5,6 +5,7 @@ class ImportGovdeliveryCsv
     @subscriptions_csv_path = subscriptions_csv_path
     @digests_csv_path = digests_csv_path
     @fake_import = fake_import
+    @imported_count = 0
   end
 
   def self.call(*args)
@@ -16,10 +17,10 @@ class ImportGovdeliveryCsv
     get_user_confirmation
 
     CSV.foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252") do |row|
-      with_reporting(row) { import_row(row) }
+      import_row(row)
     end
 
-    build_report
+    puts "Imported #{@imported_count} subscriptions."
   end
 
 private
@@ -56,6 +57,8 @@ private
     validate_name(subscribable, row)
 
     find_or_create_subscription(subscriber, subscribable, frequency)
+
+    @imported_count += 1
   end
 
   def validate_name(subscribable, row)
@@ -95,28 +98,6 @@ private
     else
       raise "Unknown digest frequency: #{digest_for}"
     end
-  end
-
-  def with_reporting(row)
-    @success_count ||= 0
-    @failed_count ||= 0
-    @failed_rows ||= []
-
-    begin
-      yield
-      @success_count += 1
-    rescue StandardError => error
-      @failed_count += 1
-      @failed_rows << [error.message, row.to_h]
-    end
-  end
-
-  def build_report
-    {
-      success_count: @success_count,
-      failed_count: @failed_count,
-      failed_rows: @failed_rows,
-    }
   end
 
   def check_encoding_is_windows_1252
