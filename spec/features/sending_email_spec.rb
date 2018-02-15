@@ -17,11 +17,11 @@ RSpec.describe "Sending an email", type: :request do
     body = email_data.dig(:personalisation, :body)
 
     expect(address).to eq("test@test.com")
-    expect(subject).to eq("GOV.UK Update - Title")
+    expect(subject).to eq("GOV.UK update - Title")
 
-    expect(body).to include("Change note: Description")
+    expect(body).to include("Description")
     expect(body).to include("gov.uk/base-path")
-    expect(body).to include("Updated at 12:00 am on 1 January 2017")
+    expect(body).to include("12:00am, 1 January 2017: Change note")
 
     expect(body).to include("Unsubscribe from [Example]")
     expect(body).to include("gov.uk/email/unsubscribe/")

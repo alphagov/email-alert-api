@@ -18,17 +18,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title one](http://www.dev.gov.uk/base-path)
 
-      Change note one: Description one
+      Description one
 
-      Updated at 10:00 am on 1 January 2017
+      10:00am, 1 January 2017: Change note one
 
       ---
 
       [Title two](http://www.dev.gov.uk/base-path)
 
-      Change note two: Description two
+      Description two
 
-      Updated at 09:00 am on 1 January 2017
+       9:00am, 1 January 2017: Change note two
 
       ---
 
@@ -40,17 +40,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title four](http://www.dev.gov.uk/base-path)
 
-      Change note four: Description four
+      Description four
 
-      Updated at 09:30 am on 1 January 2017
+       9:30am, 1 January 2017: Change note four
 
       ---
 
       [Title three](http://www.dev.gov.uk/base-path)
 
-      Change note three: Description three
+      Description three
 
-      Updated at 09:00 am on 1 January 2017
+       9:00am, 1 January 2017: Change note three
 
       ---
 
@@ -64,17 +64,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title one](http://www.dev.gov.uk/base-path)
 
-      Change note one: Description one
+      Description one
 
-      Updated at 10:00 am on 1 January 2017
+      10:00am, 1 January 2017: Change note one
 
       ---
 
       [Title two](http://www.dev.gov.uk/base-path)
 
-      Change note two: Description two
+      Description two
 
-      Updated at 09:00 am on 1 January 2017
+       9:00am, 1 January 2017: Change note two
 
       ---
 
@@ -189,7 +189,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK Daily Update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your daily update")))
       .with(
         body: hash_including(
           personalisation: hash_including(
@@ -201,7 +201,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     second_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-two@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK Daily Update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your daily update")))
       .with(
         body: hash_including(
           personalisation: hash_including(
@@ -224,17 +224,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title one](http://www.dev.gov.uk/base-path)
 
-      Change note one: Description one
+      Description one
 
-      Updated at 10:00 am on 28 December 2016
+      10:00am, 28 December 2016: Change note one
 
       ---
 
       [Title two](http://www.dev.gov.uk/base-path)
 
-      Change note two: Description two
+      Description two
 
-      Updated at 09:00 am on 27 December 2016
+       9:00am, 27 December 2016: Change note two
 
       ---
 
@@ -246,17 +246,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title four](http://www.dev.gov.uk/base-path)
 
-      Change note four: Description four
+      Description four
 
-      Updated at 09:30 am on 1 January 2017
+       9:30am, 1 January 2017: Change note four
 
       ---
 
       [Title three](http://www.dev.gov.uk/base-path)
 
-      Change note three: Description three
+      Description three
 
-      Updated at 09:00 am on 30 December 2016
+       9:00am, 30 December 2016: Change note three
 
       ---
 
@@ -270,17 +270,17 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       [Title one](http://www.dev.gov.uk/base-path)
 
-      Change note one: Description one
+      Description one
 
-      Updated at 10:00 am on 28 December 2016
+      10:00am, 28 December 2016: Change note one
 
       ---
 
       [Title two](http://www.dev.gov.uk/base-path)
 
-      Change note two: Description two
+      Description two
 
-      Updated at 09:00 am on 27 December 2016
+       9:00am, 27 December 2016: Change note two
 
       ---
 
@@ -393,7 +393,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK Weekly Update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your weekly update")))
       .with(
         body: hash_including(
           personalisation: hash_including(
@@ -405,7 +405,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     second_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-two@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK Weekly Update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your weekly update")))
       .with(
         body: hash_including(
           personalisation: hash_including(

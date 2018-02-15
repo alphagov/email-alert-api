@@ -1,7 +1,7 @@
 require 'redcarpet/render_strip'
 
 class ContentChangePresenter
-  EMAIL_DATE_FORMAT = "%I:%M %P on %-d %B %Y".freeze
+  EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze
 
   def initialize(content_change)
     @content_change = content_change
@@ -15,9 +15,9 @@ class ContentChangePresenter
     <<~BODY
       [#{title}](#{content_url})
 
-      #{strip_markdown(change_note)}: #{strip_markdown(description)}
+      #{strip_markdown(description)}
 
-      Updated at #{public_updated_at}
+      #{public_updated_at}: #{strip_markdown(change_note)}
     BODY
   end
 

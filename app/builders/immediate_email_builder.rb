@@ -41,7 +41,7 @@ private
   end
 
   def subject(content_change)
-    "GOV.UK Update - #{content_change.title}"
+    "GOV.UK update - #{content_change.title}"
   end
 
   def body(content_change, subscription)
