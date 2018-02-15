@@ -16,6 +16,8 @@ class ImportGovdeliveryCsv
     check_encoding_is_windows_1252
     get_user_confirmation
 
+    import_subscribers
+
     CSV.foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252") do |row|
       import_row(row)
     end
@@ -40,8 +42,30 @@ private
     end
   end
 
+  def import_subscribers
+    puts "Loading subscribers..."
+
+    addresses = CSV
+      .foreach(subscriptions_csv_path, headers: true, encoding: "WINDOWS-1252")
+      .map { |row| address_from_row(row) }
+      .uniq
+
+    existing_addresses = Subscriber.where(address: addresses).pluck(:address)
+
+    puts "Identifying new subscribers..."
+    new_addresses = addresses - existing_addresses
+
+    columns = %w(address)
+    records = new_addresses.map { |address| [address] }
+
+    puts "Importing records..."
+    count = Subscriber.import!(columns, records).ids.count
+
+    puts "#{count} subscribers imported!"
+  end
+
   def subscriber_for_row(row)
-    Subscriber.find_or_create_by!(address: address_from_row(row))
+    Subscriber.find_by!(address: address_from_row(row))
   end
 
   def subscribable_for_row(row)
