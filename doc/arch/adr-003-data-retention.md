@@ -150,6 +150,11 @@ Both ContentChange and SubscriptionList should not require changes to them in
 order to allow us to build up a full analytics picture. However they would
 require an intention not to delete either of them.
 
+Despite this a small change is suggested for ContentChange to switch the
+primary key type from being an auto-incrementing number to a uuid. This is to
+allow this to be sent out as part of analytics tracking without revealing state
+or ordering information of the underlying system.
+
 As a SubscriberList can be updated the only way we can determine the historical
 number of ContentChanges with accuracy is to have the ContentChanges
 available (to perform the look up between them).
@@ -163,6 +168,7 @@ SubscriptionLists don't currently have the ability to be deleted by apps, and
 it's likely if they gained that ability that would need to be some form of
 archiving so it could still be communicated to users that the list they had a
 subscription to is no longer available.
+
 
 #### Subscriber and Subscription
 
@@ -236,6 +242,7 @@ numerical id.
 
 #### ContentChange
 
+- Primary key should change to a uuid
 - Should not be deleted, as part of analytics picture
 
 #### SubscriberList
