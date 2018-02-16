@@ -151,7 +151,7 @@ order to allow us to build up a full analytics picture. However they would
 require an intention not to delete either of them.
 
 As a SubscriberList can be updated the only way we can determine the historical
-number of ContentChanges with accuracty is to have the ContentChanges
+number of ContentChanges with accuracy is to have the ContentChanges
 available (to perform the look up between them).
 
 It is likely that over time ContentChanges may reach an infeasible number and
@@ -166,15 +166,15 @@ subscription to is no longer available.
 
 #### Subscriber and Subscription
 
-Currently when a subscription is ended or we discover an email address is not
-valid we delete the subscriber and all subscriptions. This means we lose the
-ability to query to get a picture of data in the past; we lose information that
-can help debug account issues; and lose long term statistics on information on
-why/how people subscribe.
+Previously when a subscription ended they would be deleted and when the last
+subscription was removed the subscriber would have an address nullified. This
+was later iterated to using a temporary soft delete on subscriptions to not
+remove them while we worked out whether they have a long term value.
 
-The suggestion for tackling this is for us to persist the information related
-to Subscriptions and Subscribers indefinitely. As this is a somewhat low volume
-of data this shouldn't pose a huge issue storage wise.
+By looking at the use cases and support queries we've been able to determine
+that is useful to store both sets of data indefinitely and that it would be
+useful for support queries to not remove the email address until after a
+reasonable support window for diagnostic purposes.
 
 A field would be added to subscriber of `deactivated_at` which would be used to
 determine whether a subscriber is activated. Once a Subscriber has been
@@ -197,11 +197,12 @@ used as part of the unique index on this to ensure a user can only have one
 active subscription at a time. This exception would not make it fully append
 anly.
 
-An additional change will be to add a timestamp, `ended_at`, which is used to
-record the time that the subscription ended at. Which will enable queries which
-determine the number of subscriptions at particular time periods. Additionally
-the suggestion is to include fields of the source of creating the subscription
-and to include the reason the subscription was ended.
+An additional change will be to rename the `deleted_at` field to `ended_at`, as
+it is used to record the time that the subscription ended at. The purpose of
+this field is to enable queries which determine the number of subscriptions at
+particular time periods. Additionally the suggestion is to include fields of
+the source of creating the subscription and to include the reason the
+subscription was ended.
 
 Finally we have a uuid field stored on subscription, it would likely be better
 for us to have a primary key that is the uuid and then not have a second
@@ -243,16 +244,14 @@ numerical id.
 
 #### Subscriber
 
-- These should not be deleted
 - Add a `deactivated_at` timestamp field
-- Support a null value for address
 - Should not be deleted, as part of analytics picture
 
 #### Subscription
 
 - Change primary key to be a uuid
 - Drop existing `uuid` field
-- Create an `ended_at` field
+- Replace the `deleted_at` field with an `ended_at` field.
 - Create an enum field for source (ideas are imported, user_signup,
   frequency_change)
 - Create an enum field for end (ideas are user_unsubscribe, non_existant_email,
