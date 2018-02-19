@@ -14,16 +14,18 @@ class DigestInitiatorService
     MetricsService.digest_initiator_service(range) do
       subscriber_ids = DigestRunSubscriberQuery.call(digest_run: digest_run).pluck(:id)
 
-      digest_run_subscriber_params = build_digest_run_subscriber_params(
-        digest_run.id,
-        subscriber_ids
-      )
+      subscriber_ids.each_slice(1000) do |subscriber_ids_chunk|
+        digest_run_subscriber_params = build_digest_run_subscriber_params(
+          digest_run.id,
+          subscriber_ids_chunk
+        )
 
-      digest_run_subscriber_ids = import_digest_run_subscribers(
-        digest_run_subscriber_params
-      )
+        digest_run_subscriber_ids = import_digest_run_subscribers(
+          digest_run_subscriber_params
+        )
 
-      enqueue_jobs(digest_run_subscriber_ids)
+        enqueue_jobs(digest_run_subscriber_ids)
+      end
     end
   end
 
