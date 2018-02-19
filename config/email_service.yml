@@ -1,7 +1,6 @@
 <% app_domain = ENV.fetch("GOVUK_APP_DOMAIN", "") %>
 <% env = %w(integration staging).detect { |s| app_domain.include?(s) } %>
 <% email_subject_prefix = "#{env.upcase} - " if env %>
-<% expect_status_update_callbacks = !env %>
 
 default: &default
   provider: <%= ENV["EMAIL_SERVICE_PROVIDER"] || "PSEUDO" %>
@@ -12,6 +11,7 @@ default: &default
     <% whitelist.each do |email| %>
       - <%= email %>
     <% end %>
+  expect_status_update_callbacks: true
 
 development:
   <<: *default
@@ -19,8 +19,6 @@ development:
 
 test:
   <<: *default
-  expect_status_update_callbacks: true
 
 production:
   <<: *default
-  expect_status_update_callbacks: <%= expect_status_update_callbacks %>
