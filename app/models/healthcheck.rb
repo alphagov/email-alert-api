@@ -29,7 +29,6 @@ private
     @all ||= [
       DatabaseHealthcheck.new,
       GovdeliveryHealthcheck.new,
-      QueueLatencyHealthcheck.new,
       QueueSizeHealthcheck.new,
       RedisHealthcheck.new,
       RetrySizeHealthcheck.new,
