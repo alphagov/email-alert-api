@@ -1,10 +1,12 @@
 RSpec.describe "Receiving a status update", type: :request do
+  let(:reference) { "b6589b2b-8f8e-457b-9ddf-237b62438ad1" }
+
   let!(:delivery_attempt) do
-    create(:delivery_attempt, reference: "ref-123", status: "sending")
+    create(:delivery_attempt, reference: reference, status: "sending")
   end
 
   describe "#create" do
-    let(:params) { { reference: "ref-123", status: "delivered" } }
+    let(:params) { { reference: reference, status: "delivered" } }
 
     context "when a user does not have 'status_updates' permission" do
       before do
@@ -24,7 +26,7 @@ RSpec.describe "Receiving a status update", type: :request do
 
       it "calls the status update service" do
         expect(StatusUpdateService).to receive(:call).with(
-          reference: "ref-123",
+          reference: reference,
           status: "delivered",
           user: user,
         )

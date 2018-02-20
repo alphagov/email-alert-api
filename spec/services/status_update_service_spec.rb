@@ -1,9 +1,9 @@
 RSpec.describe StatusUpdateService do
   let!(:delivery_attempt) do
-    create(:delivery_attempt, reference: "ref-123", status: "sending")
+    create(:delivery_attempt, reference: "b6589b2b-8f8e-457b-9ddf-237b62438ad1", status: "sending")
   end
 
-  let(:reference) { "ref-123" }
+  let(:reference) { "b6589b2b-8f8e-457b-9ddf-237b62438ad1" }
   let(:status) { "delivered" }
 
   subject(:status_update) { described_class.call(reference: reference, status: status) }
