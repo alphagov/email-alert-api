@@ -22,27 +22,31 @@ class DeliveryRequestService
     reference = SecureRandom.uuid
     address = determine_address(email, reference)
 
-    MetricsService.email_send_request(provider_name) do
-      provider.call(
-        address: address,
-        subject: subject,
-        body: email.body,
+    return if address.nil?
+
+    begin
+      MetricsService.email_send_request(provider_name) do
+        provider.call(
+          address: address,
+          subject: subject,
+          body: email.body,
+          reference: reference,
+        )
+      end
+
+      status = :sending
+    rescue ProviderError
+      status = :technical_failure
+    ensure
+      MetricsService.first_delivery_attempt(email, Time.now.utc)
+
+      DeliveryAttempt.create!(
+        email: email,
+        status: status,
+        provider: provider_name,
         reference: reference,
       )
     end
-
-    status = :sending
-  rescue ProviderError
-    status = :technical_failure
-  ensure
-    MetricsService.first_delivery_attempt(email, Time.now.utc)
-
-    DeliveryAttempt.create!(
-      email: email,
-      status: status,
-      provider: provider_name,
-      reference: reference,
-    )
   end
 
 private
