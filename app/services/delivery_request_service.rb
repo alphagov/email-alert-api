@@ -18,8 +18,6 @@ class DeliveryRequestService
   end
 
   def call(email:)
-    raise ArgumentError, "email cannot be nil" if email.nil?
-
     subject = "#{subject_prefix}#{email.subject}"
     reference = SecureRandom.uuid
     address = determine_address(email, reference)
