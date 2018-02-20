@@ -24,8 +24,8 @@ RSpec.describe DeliveryRequestService do
   end
 
   describe "#subject_prefix" do
-    it "defaults to nil" do
-      expect(subject.subject_prefix).to eq(nil)
+    it "defaults to be an empty string" do
+      expect(subject.subject_prefix).to eq("")
     end
 
     it "can be configured" do
