@@ -87,16 +87,6 @@ RSpec.describe DeliveryRequestService do
       subject.call(email: email)
     end
 
-    it "sets the reference to something that might make debugging easier" do
-      expected = "delivery-attempt-for-email-#{email.id}-sent-to-notify-at-2017-01-01T00:00:00+00:00"
-
-      expect(subject.provider).to receive(:call).with(->(params) {
-        expect(params.fetch(:reference)).to eq(expected)
-      })
-
-      subject.call(email: email)
-    end
-
     it "creates a delivery attempt" do
       expect { subject.call(email: email) }
         .to change(DeliveryAttempt, :count).by(1)

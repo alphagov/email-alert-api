@@ -21,7 +21,7 @@ class DeliveryRequestService
     raise ArgumentError, "email cannot be nil" if email.nil?
 
     subject = "#{subject_prefix}#{email.subject}"
-    reference = generate_reference(email)
+    reference = SecureRandom.uuid
     address = determine_address(email, reference)
 
     MetricsService.email_send_request(provider_name) do
@@ -48,11 +48,6 @@ class DeliveryRequestService
   end
 
 private
-
-  def generate_reference(email)
-    timestamp = Time.now.to_s(:iso8601)
-    "delivery-attempt-for-email-#{email.id}-sent-to-notify-at-#{timestamp}"
-  end
 
   def determine_address(email, reference)
     overrider.destination_address(email.address).tap do |address|
