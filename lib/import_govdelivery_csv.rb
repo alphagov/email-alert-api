@@ -45,9 +45,9 @@ private
       .map { |row| address_from_row(row) }
       .uniq
 
-    existing_addresses = Subscriber.where(address: addresses).pluck(:address)
-
     puts "Identifying new subscribers..."
+
+    existing_addresses = Subscriber.where(address: addresses).pluck(:address)
 
     new_addresses = addresses - existing_addresses
 
