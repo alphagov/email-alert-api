@@ -1,15 +1,17 @@
 RSpec.describe ImmediateEmailBuilder do
   let(:subscriber) { build(:subscriber, address: "test@example.com") }
 
+  let(:subscription_one) {
+    build(
+      :subscription,
+      uuid: "bef9b608-05ba-46ce-abb7-8567f4180a25",
+      subscriber: subscriber,
+      subscriber_list: build(:subscriber_list, title: "First Subscription")
+    )
+  }
   let(:subscriptions) do
     [
-      build(
-        :subscription,
-        uuid: "bef9b608-05ba-46ce-abb7-8567f4180a25",
-        subscriber: subscriber,
-        subscriber_list: build(:subscriber_list, title: "First Subscription")
-      ),
-
+      subscription_one,
       build(
         :subscription,
         uuid: "69ca6fce-34f5-4ebd-943c-83bd1b2e70fb",
@@ -31,11 +33,21 @@ RSpec.describe ImmediateEmailBuilder do
   end
 
   describe ".call" do
-    let(:subscription_contents) do
-      [{ subscriber: subscriber, content_change: content_change }]
+    let(:subscription_content) do
+      double(subscription: subscription_one, content_change: content_change)
     end
 
-    subject(:email_import) { described_class.call(subscription_contents) }
+    let(:params) {
+      [
+        {
+          address: subscriber.address,
+          content_change: content_change,
+          subscriptions: []
+        }
+      ]
+    }
+
+    subject(:email_import) { described_class.call(params) }
 
     let(:email) { Email.find(email_import.ids.first) }
 
@@ -59,9 +71,23 @@ RSpec.describe ImmediateEmailBuilder do
     end
 
     context "with a subscription" do
-      let(:subscription_contents) do
-        [{ subscription: subscriptions.first, content_change: content_change }]
+      let(:subscription_content) do
+        double(subscription: subscription_one, content_change: content_change)
       end
+
+      let(:params) {
+        [
+          {
+            address: subscriber.address,
+            content_change: content_change,
+            subscriptions: [subscription_one]
+          }
+        ]
+      }
+
+      subject(:email_import) { described_class.call(params) }
+
+      let(:email) { Email.find(email_import.ids.first) }
 
       it "sets the body and unsubscribe links" do
         expect(UnsubscribeLinkPresenter).to receive(:call).with(

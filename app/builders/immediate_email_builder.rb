@@ -1,6 +1,6 @@
 class ImmediateEmailBuilder
-  def initialize(subscription_content_changes)
-    @subscription_content_changes = subscription_content_changes
+  def initialize(recipients_and_content)
+    @recipients_and_content = recipients_and_content
   end
 
   def self.call(*args)
@@ -15,11 +15,15 @@ class ImmediateEmailBuilder
 
 private
 
-  attr_reader :subscription_content_changes
+  attr_reader :recipients_and_content
 
   def records
-    subscription_content_changes.map do |subscription_content_change|
-      single_email_record(subscription_content_change)
+    recipients_and_content.map do |recipient_and_content|
+      [
+        recipient_and_content.fetch(:address),
+        subject(recipient_and_content.fetch(:content_change)),
+        body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions))
+      ]
     end
   end
 
@@ -27,33 +31,20 @@ private
     %i(address subject body)
   end
 
-  def single_email_record(subscription_content_change)
-    content_change = subscription_content_change.fetch(:content_change)
-    subscription = subscription_content_change[:subscription]
-
-    subscriber = if subscription
-                   subscription.subscriber
-                 else
-                   subscription_content_change.fetch(:subscriber)
-                 end
-
-    [subscriber.address, subject(content_change), body(content_change, subscription)]
-  end
-
   def subject(content_change)
     "GOV.UK update - #{content_change.title}"
   end
 
-  def body(content_change, subscription)
-    if subscription
+  def body(content_change, subscriptions)
+    if Array(subscriptions).empty?
+      presented_content_change(content_change)
+    else
       <<~BODY
         #{presented_content_change(content_change)}
         ---
 
-        #{presented_unsubscribe_link(subscription)}
+        #{presented_unsubscribe_links(subscriptions)}
       BODY
-    else
-      presented_content_change(content_change)
     end
   end
 
@@ -61,10 +52,14 @@ private
     ContentChangePresenter.call(content_change)
   end
 
-  def presented_unsubscribe_link(subscription)
-    UnsubscribeLinkPresenter.call(
-      uuid: subscription.uuid,
-      title: subscription.subscriber_list.title,
-    )
+  def presented_unsubscribe_links(subscriptions)
+    links_array = subscriptions.map do |subscription|
+      UnsubscribeLinkPresenter.call(
+        uuid: subscription.uuid,
+        title: subscription.subscriber_list.title,
+      )
+    end
+
+    links_array.join("\n")
   end
 end
