@@ -18,41 +18,38 @@ class DeliveryRequestService
   end
 
   def call(email:)
-    raise ArgumentError, "email cannot be nil" if email.nil?
-
     subject = "#{subject_prefix}#{email.subject}"
-    reference = generate_reference(email)
+    reference = SecureRandom.uuid
     address = determine_address(email, reference)
 
-    MetricsService.email_send_request(provider_name) do
-      provider.call(
-        address: address,
-        subject: subject,
-        body: email.body,
+    return if address.nil?
+
+    begin
+      MetricsService.email_send_request(provider_name) do
+        provider.call(
+          address: address,
+          subject: subject,
+          body: email.body,
+          reference: reference,
+        )
+      end
+
+      status = :sending
+    rescue ProviderError
+      status = :technical_failure
+    ensure
+      MetricsService.first_delivery_attempt(email, Time.now.utc)
+
+      DeliveryAttempt.create!(
+        email: email,
+        status: status,
+        provider: provider_name,
         reference: reference,
       )
     end
-
-    status = :sending
-  rescue ProviderError
-    status = :technical_failure
-  ensure
-    MetricsService.first_delivery_attempt(email, Time.now.utc)
-
-    DeliveryAttempt.create!(
-      email: email,
-      status: status,
-      provider: provider_name,
-      reference: reference,
-    )
   end
 
 private
-
-  def generate_reference(email)
-    timestamp = Time.now.to_s(:iso8601)
-    "delivery-attempt-for-email-#{email.id}-sent-to-notify-at-#{timestamp}"
-  end
 
   def determine_address(email, reference)
     overrider.destination_address(email.address).tap do |address|
@@ -65,17 +62,22 @@ private
   end
 
   class EmailAddressOverrider
-    attr_reader :override_address, :whitelist_addresses
+    attr_reader :override_address, :whitelist_addresses, :whitelist_only
 
     def initialize(config)
       @override_address = config[:email_address_override]
       @whitelist_addresses = Array(config[:email_address_override_whitelist])
+      @whitelist_only = config[:email_address_override_whitelist_only]
     end
 
     def destination_address(address)
       return address unless override_address
 
-      whitelist_addresses.include?(address) ? address : override_address
+      if whitelist_addresses.include?(address)
+        address
+      else
+        whitelist_only ? nil : override_address
+      end
     end
   end
 end

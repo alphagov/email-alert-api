@@ -24,8 +24,8 @@ RSpec.describe DeliveryRequestService do
   end
 
   describe "#subject_prefix" do
-    it "defaults to nil" do
-      expect(subject.subject_prefix).to eq(nil)
+    it "defaults to be an empty string" do
+      expect(subject.subject_prefix).to eq("")
     end
 
     it "can be configured" do
@@ -83,16 +83,6 @@ RSpec.describe DeliveryRequestService do
           subject: "STAGING - subject",
         )
       )
-
-      subject.call(email: email)
-    end
-
-    it "sets the reference to something that might make debugging easier" do
-      expected = "delivery-attempt-for-email-#{email.id}-sent-to-notify-at-2017-01-01T00:00:00+00:00"
-
-      expect(subject.provider).to receive(:call).with(->(params) {
-        expect(params.fetch(:reference)).to eq(expected)
-      })
 
       subject.call(email: email)
     end
@@ -201,6 +191,32 @@ RSpec.describe DeliveryRequestService do
 
           it "returns the overriden address" do
             expect(destination_address).to eq("overriden@example.com")
+          end
+        end
+      end
+
+      context "when an override address is set and whitelist addresses are set and only whitelist emails should be sent" do
+        let(:config) do
+          {
+            email_address_override: "overriden@example.com",
+            email_address_override_whitelist: ["whitelist@example.com"],
+            email_address_override_whitelist_only: true,
+          }
+        end
+
+        context "when the argument is a whitelist address" do
+          let(:address) { "whitelist@example.com" }
+
+          it "returns the whitelisted address" do
+            expect(destination_address).to eq("whitelist@example.com")
+          end
+        end
+
+        context "when the argument is not a whitelist address" do
+          let(:address) { "original@example.com" }
+
+          it "returns a nil address" do
+            expect(destination_address).to be_nil
           end
         end
       end
