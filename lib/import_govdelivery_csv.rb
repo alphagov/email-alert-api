@@ -45,9 +45,9 @@ private
       .map { |row| address_from_row(row) }
       .uniq
 
-    existing_addresses = Subscriber.where(address: addresses).pluck(:address)
-
     puts "Identifying new subscribers..."
+
+    existing_addresses = Subscriber.where(address: addresses).pluck(:address)
 
     new_addresses = addresses - existing_addresses
 
@@ -126,9 +126,10 @@ private
 
     puts "Importing records..."
 
-    count = Subscription.import!(columns, records).ids.count
-
-    puts "#{count} subscriptions imported!"
+    records.each_slice(50000) do |records_chunk|
+      count = Subscription.import!(columns, records_chunk).ids.count
+      puts "#{count} subscriptions imported..."
+    end
 
     puts "Unable to match #{failed_topics.count} topics:"
     p failed_topics
