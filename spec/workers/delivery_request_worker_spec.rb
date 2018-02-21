@@ -61,7 +61,7 @@ RSpec.describe DeliveryRequestWorker do
 
       it "returns ENV['DELIVERY_REQUEST_THRESHOLD'] if set" do
         ENV["DELIVERY_REQUEST_THRESHOLD"] = "10"
-        expect(subject.rate_limit_threshold).to eq("10")
+        expect(subject.rate_limit_threshold).to eq(10)
       end
 
       it "is 21600 by default" do
@@ -76,7 +76,7 @@ RSpec.describe DeliveryRequestWorker do
 
       it "returns ENV['DELIVERY_REQUEST_INTERVAL'] if set" do
         ENV["DELIVERY_REQUEST_INTERVAL"] = "20"
-        expect(subject.rate_limit_interval).to eq("20")
+        expect(subject.rate_limit_interval).to eq(20)
       end
 
       it "is 60 by default" do

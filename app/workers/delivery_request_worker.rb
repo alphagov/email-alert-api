@@ -44,13 +44,13 @@ class DeliveryRequestWorker
   end
 
   def rate_limit_threshold
-    per_minute_to_allow_360_per_second = 21600
-    ENV["DELIVERY_REQUEST_THRESHOLD"] || per_minute_to_allow_360_per_second
+    per_minute_to_allow_360_per_second = "21600"
+    ENV.fetch("DELIVERY_REQUEST_THRESHOLD", per_minute_to_allow_360_per_second).to_i
   end
 
   def rate_limit_interval
-    minute_in_seconds = 60
-    ENV["DELIVERY_REQUEST_INTERVAL"] || minute_in_seconds
+    minute_in_seconds = "60"
+    ENV.fetch("DELIVERY_REQUEST_INTERVAL", minute_in_seconds).to_i
   end
 
 private
