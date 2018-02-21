@@ -4,8 +4,10 @@ namespace :deploy do
     ActiveRecord::Base.connection.execute("TRUNCATE emails, subscribers, content_changes, digest_runs RESTART IDENTITY CASCADE;")
 
     puts "** Sanity check row counts ** "
-    [Email, DeliveryAttempt, SubscriptionContent, Subscriber, Subscription, DigestRun, DigestRunSubscriber, ContentChange, MatchedContentChange].each do |table|
-      puts "#{table}: #{table.count}"
+    ActiveRecord::Base.connection.tables.each do |table|
+      next if %w(ar_internal_metadata schema_migrations).include?(table)
+      klass = table.classify.constantize
+      puts "#{klass}: #{klass.count}"
     end
   end
 end
