@@ -1,5 +1,7 @@
 class SubscriptionsController < ApplicationController
   def create
+    return render json: { id: 0 }, status: :created if smoke_test_address?
+
     subscription = Subscription.find_or_initialize_by(
       subscriber: subscriber,
       subscriber_list: subscribable,
@@ -11,21 +13,27 @@ class SubscriptionsController < ApplicationController
     subscription.frequency = frequency
     subscription.signon_user_uid = current_user.uid
     subscription.save!
-
     render json: { id: subscription.id }, status: status
   end
 
 private
 
+  def smoke_test_address?
+    address.end_with?("@notifications.service.gov.uk")
+  end
+
   def subscriber
     @subscriber ||= begin
-                      address = subscription_params.require(:address)
                       found = Subscriber.find_by(address: address)
                       found || Subscriber.create!(
                         address: address,
                         signon_user_uid: current_user.uid,
                       )
                     end
+  end
+
+  def address
+    subscription_params.require(:address)
   end
 
   def subscribable

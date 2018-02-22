@@ -39,6 +39,15 @@ RSpec.describe "Creating a subscription", type: :request do
             expect(Subscription.first.weekly?).to be_truthy
           end
         end
+
+        context "with a notify email address" do
+          it "returns a 201 but doesn't create a subscriber or subscription" do
+            params = JSON.dump(address: "simulate-delivered@notifications.service.gov.uk", subscribable_id: subscribable.id, frequency: "daily")
+            expect { post "/subscriptions", params: params, headers: JSON_HEADERS }.to_not change(Subscriber, :count)
+
+            expect(response.status).to eq(201)
+          end
+        end
       end
     end
   end
