@@ -26,6 +26,8 @@ class DigestInitiatorService
 
         enqueue_jobs(digest_run_subscriber_ids)
       end
+
+      digest_run.update(subscriber_count: subscriber_ids.count)
     end
   end
 
