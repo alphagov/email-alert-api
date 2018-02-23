@@ -4,4 +4,5 @@ GDS::SSO.config do |config|
   config.oauth_secret = ENV.fetch('OAUTH_SECRET', "secret")
   config.oauth_root_url = Plek.find("signon")
   config.cache = Rails.cache
+  config.additional_mock_permissions_required = ["internal_app"]
 end
