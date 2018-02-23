@@ -47,6 +47,24 @@ RSpec.describe Subscriber, type: :model do
       expect(subject).to be_invalid
     end
 
+    it "is invalid for an email address which doesn't have a . in the domain" do
+      subject.address = "me@localhost"
+
+      expect(subject).to be_invalid
+    end
+
+    it "is invalid for an email address which contains a newline" do
+      subject.address = "foo@bar.com\nfoo@baz.com"
+
+      expect(subject).to be_invalid
+    end
+
+    it "is invalid for multiple email addresses" do
+      subject.address = "foo@bar.com,foo@baz.com"
+
+      expect(subject).to be_invalid
+    end
+
     it "is invalid if an email address is already taken" do
       create(:subscriber, address: "foo@bar.com")
 

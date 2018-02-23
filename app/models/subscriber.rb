@@ -1,6 +1,6 @@
 class Subscriber < ApplicationRecord
   with_options allow_nil: true do
-    validates :address, format: { with: /@/, message: "is not an email address" }
+    validates_with EmailAddressValidator, fields: [:address]
     validates_uniqueness_of :address, case_sensitive: false
   end
 
