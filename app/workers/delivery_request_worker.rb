@@ -8,7 +8,12 @@ class DeliveryRequestWorker
   end
 
   sidekiq_retries_exhausted do |msg, _e|
-    reschedule_job if msg["error_class"] == "RatelimitExceededError"
+    if msg["error_class"] == "RatelimitExceededError"
+      email_id = msg["args"].first
+      queue = msg["args"].second
+      GovukStatsd.increment("delivery_request_worker.rescheduled")
+      DeliveryRequestWorker.set(queue: queue).perform_in(30.seconds, email_id, queue)
+    end
   end
 
   def perform(email_id, queue)
@@ -59,11 +64,6 @@ private
 
   def rate_limiter
     Services.rate_limiter
-  end
-
-  def reschedule_job
-    GovukStatsd.increment("delivery_request_worker.rescheduled")
-    DeliveryRequestWorker.set(queue: queue).perform_in(30.seconds, email_id, queue)
   end
 end
 
