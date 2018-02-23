@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180222142356) do
+ActiveRecord::Schema.define(version: 20180223095104) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
-  create_table "content_changes", force: :cascade do |t|
+  create_table "content_changes", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid "content_id", null: false
     t.text "title", null: false
     t.text "base_path", null: false
@@ -36,14 +37,14 @@ ActiveRecord::Schema.define(version: 20180222142356) do
     t.string "signon_user_uid"
   end
 
-  create_table "delivery_attempts", force: :cascade do |t|
-    t.bigint "email_id", null: false
+  create_table "delivery_attempts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.integer "status", null: false
     t.integer "provider", null: false
     t.uuid "reference", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "signon_user_uid"
+    t.uuid "email_id", null: false
     t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
     t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
     t.index ["reference"], name: "index_delivery_attempts_on_reference", unique: true
@@ -68,7 +69,7 @@ ActiveRecord::Schema.define(version: 20180222142356) do
     t.integer "subscriber_count"
   end
 
-  create_table "emails", force: :cascade do |t|
+  create_table "emails", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string "subject", null: false
     t.text "body", null: false
     t.datetime "created_at", null: false
@@ -77,10 +78,10 @@ ActiveRecord::Schema.define(version: 20180222142356) do
   end
 
   create_table "matched_content_changes", force: :cascade do |t|
-    t.bigint "content_change_id", null: false
     t.bigint "subscriber_list_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "content_change_id", null: false
     t.index ["content_change_id", "subscriber_list_id"], name: "index_matched_content_changes_content_change_subscriber_list", unique: true
     t.index ["content_change_id"], name: "index_matched_content_changes_on_content_change_id"
     t.index ["subscriber_list_id"], name: "index_matched_content_changes_on_subscriber_list_id"
@@ -131,26 +132,26 @@ ActiveRecord::Schema.define(version: 20180222142356) do
   end
 
   create_table "subscription_contents", force: :cascade do |t|
-    t.bigint "subscription_id"
-    t.bigint "content_change_id", null: false
-    t.bigint "email_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "digest_run_subscriber_id"
+    t.uuid "email_id"
+    t.uuid "subscription_id"
+    t.uuid "content_change_id", null: false
     t.index ["content_change_id"], name: "index_subscription_contents_on_content_change_id"
     t.index ["digest_run_subscriber_id"], name: "index_subscription_contents_on_digest_run_subscriber_id"
     t.index ["email_id"], name: "index_subscription_contents_on_email_id"
     t.index ["subscription_id"], name: "index_subscription_contents_on_subscription_id"
   end
 
-  create_table "subscriptions", force: :cascade do |t|
+  create_table "subscriptions", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.bigint "subscriber_id", null: false
     t.bigint "subscriber_list_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "uuid", null: false
-    t.string "signon_user_uid"
     t.integer "frequency", default: 0, null: false
+    t.string "signon_user_uid"
     t.datetime "deleted_at"
     t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true
     t.index ["subscriber_id"], name: "index_subscriptions_on_subscriber_id"
@@ -172,9 +173,9 @@ ActiveRecord::Schema.define(version: 20180222142356) do
   add_foreign_key "delivery_attempts", "emails", on_delete: :cascade
   add_foreign_key "digest_run_subscribers", "digest_runs", on_delete: :cascade
   add_foreign_key "digest_run_subscribers", "subscribers", on_delete: :cascade
-  add_foreign_key "matched_content_changes", "content_changes"
+  add_foreign_key "matched_content_changes", "content_changes", on_delete: :restrict
   add_foreign_key "matched_content_changes", "subscriber_lists"
-  add_foreign_key "subscription_contents", "content_changes"
+  add_foreign_key "subscription_contents", "content_changes", on_delete: :restrict
   add_foreign_key "subscription_contents", "digest_run_subscribers", on_delete: :cascade
   add_foreign_key "subscription_contents", "emails", on_delete: :nullify
   add_foreign_key "subscription_contents", "subscriptions", on_delete: :nullify
