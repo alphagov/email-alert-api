@@ -135,6 +135,11 @@ and it will create a new subscription between the email address and the
 subscriber list. It will respond with a `201 Created` if it's a new
 subscription or a `200 OK` if the subscription already exists.
 
+### Using test email addresses for signup
+
+Using any email address that ends with '@notifications.service.gov.uk'
+will not create a subscriber or a subscription, however will return a `201 Created`.
+
 ### healthcheck API
 
 A queue health check endpoint is available at /healthcheck
