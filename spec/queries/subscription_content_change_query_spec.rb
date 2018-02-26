@@ -92,17 +92,17 @@ RSpec.describe SubscriptionContentChangeQuery do
     end
 
     let!(:subscription_2) do
-      create(:subscription, id: 2, subscriber_list: subscriber_list_2, subscriber: subscriber)
+      create(:subscription, id: "b8c3fd84-5f00-460d-a812-edb628f28c8f", subscriber_list: subscriber_list_2, subscriber: subscriber)
     end
 
     let!(:subscription_1) do
-      create(:subscription, id: 1, subscriber_list: subscriber_list_1, subscriber: subscriber)
+      create(:subscription, id: "b0f887f1-20b1-4386-881d-f909c98c373b", subscriber_list: subscriber_list_1, subscriber: subscriber)
     end
 
     let(:content_change_1) do
       create(
         :content_change,
-        id: 1,
+        id: "d5ee8e1a-72c1-4525-94f0-23d58af8a6c5",
         tags: { topics: ["oil-and-gas/licensing"] },
         created_at: starts_at,
       )
@@ -111,7 +111,7 @@ RSpec.describe SubscriptionContentChangeQuery do
     let(:content_change_2) do
       create(
         :content_change,
-        id: 2,
+        id: "70ac31fa-505e-4060-b7bb-bfa15028cc99",
         tags: { topics: ["oil-and-gas/drilling"] },
         created_at: starts_at,
       )
@@ -132,13 +132,13 @@ RSpec.describe SubscriptionContentChangeQuery do
     end
 
     it "returns correctly ordered" do
-      expect(subject.first.subscription_id).to eq(1)
+      expect(subject.first.subscription_id).to eq("b0f887f1-20b1-4386-881d-f909c98c373b")
       expect(subject.first.subscriber_list_title).to eq("list-1")
-      expect(subject.first.content_changes.first.id).to eq(1)
+      expect(subject.first.content_changes.first.id).to eq("d5ee8e1a-72c1-4525-94f0-23d58af8a6c5")
 
-      expect(subject.second.subscription_id).to eq(2)
+      expect(subject.second.subscription_id).to eq("b8c3fd84-5f00-460d-a812-edb628f28c8f")
       expect(subject.second.subscriber_list_title).to eq("list-2")
-      expect(subject.second.content_changes.first.id).to eq(2)
+      expect(subject.second.content_changes.first.id).to eq("70ac31fa-505e-4060-b7bb-bfa15028cc99")
     end
   end
 end

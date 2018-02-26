@@ -93,7 +93,7 @@ RSpec.describe ImmediateEmailGenerationWorker do
 
         it "should queue a delivery email job with a high priority" do
           expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
-            .with(an_instance_of(Integer), queue: :delivery_immediate_high)
+            .with(an_instance_of(String), queue: :delivery_immediate_high)
 
           perform_with_fake_sidekiq
         end
