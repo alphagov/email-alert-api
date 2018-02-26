@@ -32,7 +32,7 @@ class ImmediateEmailGenerationWorker
             to_queue << [email_id, content_changes[content_change_id].priority.to_sym]
 
             subscription_contents_in_this_email.each do |subscription_content|
-              values << "(#{subscription_content.id}, #{email_id})"
+              values << "(#{subscription_content.id}, '#{email_id}'::UUID)"
             end
           end
 
