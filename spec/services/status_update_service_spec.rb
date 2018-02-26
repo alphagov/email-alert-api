@@ -56,7 +56,19 @@ RSpec.describe StatusUpdateService do
     let(:status) { "unknown" }
 
     it "raises an error" do
-      expect { status_update }.to raise_error(ActiveRecord::StatementInvalid)
+      expect { status_update }
+        .to raise_error(StatusUpdateService::DeliveryAttemptInvalidStatusError)
+    end
+  end
+
+  context "when the delivery attempt already has a non waiting status" do
+    before do
+      delivery_attempt.update!(status: "delivered")
+    end
+
+    it "raises an error" do
+      expect { status_update }
+        .to raise_error(StatusUpdateService::DeliveryAttemptStatusConflictError)
     end
   end
 end

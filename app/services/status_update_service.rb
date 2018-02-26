@@ -3,6 +3,7 @@ class StatusUpdateService
     @reference = reference
     @status = status
     @user = user
+    @delivery_attempt = find_delivery_attempt(reference)
   end
 
   def self.call(*args)
@@ -10,16 +11,22 @@ class StatusUpdateService
   end
 
   def call
-    updates = DeliveryAttempt.where(reference: reference).update_all(
-      status: status.underscore,
-      signon_user_uid: user&.uid,
-    )
+    begin
+      delivery_attempt.update!(
+        status: status.underscore,
+        signon_user_uid: user&.uid,
+      )
+    rescue ArgumentError
+      # This is because Rails doesn't currently do validations for enums
+      # see: https://github.com/rails/rails/issues/13971
+      error = "'#{status}' is not a supported status"
+      GovukError.notify(error)
+      raise DeliveryAttemptInvalidStatusError, error
+    end
 
-    raise ActiveRecord::RecordNotFound unless updates == 1
-
-    if permanent_failure? && subscriber
+    if delivery_attempt.permanent_failure? && subscriber
       UnsubscribeService.subscriber!(subscriber)
-    elsif temporary_failure?
+    elsif delivery_attempt.temporary_failure?
       DeliveryRequestWorker.perform_in(15.minutes, email.id, :default)
     end
 
@@ -33,21 +40,26 @@ class StatusUpdateService
 
 private
 
-  attr_reader :reference, :status, :user
-
-  def permanent_failure?
-    status == "permanent-failure"
-  end
-
-  def temporary_failure?
-    status == "temporary-failure"
-  end
-
-  def email
-    @email ||= Email.joins(:delivery_attempts).find_by(delivery_attempts: { reference: reference })
-  end
+  attr_reader :delivery_attempt, :reference, :status, :user
+  delegate :email, to: :delivery_attempt
 
   def subscriber
     @subscriber ||= Subscriber.find_by(address: email.address)
   end
+
+  def find_delivery_attempt(reference)
+    attempt = DeliveryAttempt
+                .includes(:email)
+                .joins(:email)
+                .find_by!(reference: reference)
+
+    if !attempt.sending?
+      raise DeliveryAttemptStatusConflictError, "Status update already received"
+    end
+
+    attempt
+  end
+
+  class DeliveryAttemptInvalidStatusError < RuntimeError; end
+  class DeliveryAttemptStatusConflictError < RuntimeError; end
 end
