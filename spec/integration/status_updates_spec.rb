@@ -20,7 +20,7 @@ RSpec.describe "Receiving a status update", type: :request do
       end
     end
 
-    context "when a user does not have 'status_updates' permission" do
+    context "when a user does have 'status_updates' permission" do
       let(:user) { create(:user, permissions: %w[signin status_updates]) }
       before { login_as(user) }
 
