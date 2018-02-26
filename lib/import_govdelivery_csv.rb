@@ -126,7 +126,7 @@ private
 
     puts "Importing records..."
 
-    records.each_slice(50000) do |records_chunk|
+    records.each_slice(150000) do |records_chunk|
       count = Subscription.import!(columns, records_chunk).ids.count
       puts "#{count} subscriptions imported..."
     end
