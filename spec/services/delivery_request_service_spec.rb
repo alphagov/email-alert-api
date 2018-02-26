@@ -42,13 +42,15 @@ RSpec.describe DeliveryRequestService do
     end
 
     it "calls the provider" do
-      expect(subject.provider).to receive(:call).with(
-        hash_including(
-          address: "test@example.com",
-          subject: "subject",
-          body: "body",
+      expect(subject.provider).to receive(:call)
+        .with(
+          hash_including(
+            address: "test@example.com",
+            subject: "subject",
+            body: "body",
+          )
         )
-      )
+        .and_return(:sending)
 
       subject.call(email: email)
     end
@@ -63,6 +65,7 @@ RSpec.describe DeliveryRequestService do
       it "calls the provider with the overridden email address" do
         expect(subject.provider).to receive(:call)
           .with(hash_including(address: address))
+          .and_return(:sending)
 
         subject.call(email: email)
       end
@@ -78,11 +81,13 @@ RSpec.describe DeliveryRequestService do
       subject = described_class.new(config: config.merge(email_subject_prefix: "STAGING - "))
       expect(subject.subject_prefix).to eq("STAGING - ")
 
-      expect(subject.provider).to receive(:call).with(
-        hash_including(
-          subject: "STAGING - subject",
+      expect(subject.provider).to receive(:call)
+        .with(
+          hash_including(
+            subject: "STAGING - subject",
+          )
         )
-      )
+        .and_return(:sending)
 
       subject.call(email: email)
     end
@@ -97,9 +102,10 @@ RSpec.describe DeliveryRequestService do
       expect(DeliveryAttempt.last.email).to eq(email)
     end
 
-    it "sets the delivery attempt's status to sending" do
+    it "sets the delivery attempt's status to provider response" do
+      allow(subject.provider).to receive(:call).and_return(:delivered)
       subject.call(email: email)
-      expect(DeliveryAttempt.last).to be_sending
+      expect(DeliveryAttempt.last).to be_delivered
     end
 
     it "sets the delivery attempt's provider to the name of the provider" do
@@ -109,25 +115,14 @@ RSpec.describe DeliveryRequestService do
 
     it "sets the reference to same string that was sent the provider" do
       reference = nil
-      expect(subject.provider).to receive(:call).with(->(params) {
-        reference = params.fetch(:reference)
-      })
+      expect(subject.provider).to receive(:call)
+        .with(->(params) { reference = params.fetch(:reference) })
+        .and_return(:sending)
 
       subject.call(email: email)
 
       expect(reference).to be_present
       expect(DeliveryAttempt.last.reference).to eq(reference)
-    end
-
-    context "when the provider errors" do
-      before do
-        allow(subject.provider).to receive(:call).and_raise(ProviderError)
-      end
-
-      it "sets the delivery attempt's status to technical_failure" do
-        subject.call(email: email)
-        expect(DeliveryAttempt.last).to be_technical_failure
-      end
     end
 
     it "records a metric for the delivery attempt" do

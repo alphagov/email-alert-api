@@ -18,34 +18,22 @@ class DeliveryRequestService
   end
 
   def call(email:)
-    subject = "#{subject_prefix}#{email.subject}"
     reference = SecureRandom.uuid
     address = determine_address(email, reference)
 
     return if address.nil?
 
-    begin
-      MetricsService.email_send_request(provider_name) do
-        provider.call(
-          address: address,
-          subject: subject,
-          body: email.body,
-          reference: reference,
-        )
-      end
+    delivery_attempt = create_delivery_attempt(email, reference)
 
-      status = :sending
-    rescue ProviderError
-      status = :technical_failure
-    ensure
-      MetricsService.first_delivery_attempt(email, Time.now.utc)
-
-      DeliveryAttempt.create!(
-        email: email,
-        status: status,
-        provider: provider_name,
+    MetricsService.email_send_request(provider_name) do
+      status = provider.call(
+        address: address,
+        subject: subject_prefix + email.subject,
+        body: email.body,
         reference: reference,
       )
+
+      delivery_attempt.update!(status: status) if status != :sending
     end
   end
 
@@ -59,6 +47,17 @@ private
         For email with reference: #{reference}
       INFO
     end
+  end
+
+  def create_delivery_attempt(email, reference)
+    MetricsService.first_delivery_attempt(email, Time.now.utc)
+
+    DeliveryAttempt.create!(
+      email: email,
+      status: :sending,
+      provider: provider_name,
+      reference: reference,
+    )
   end
 
   class EmailAddressOverrider

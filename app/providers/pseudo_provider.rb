@@ -14,6 +14,7 @@ class PseudoProvider
     INFO
 
     MetricsService.sent_to_pseudo_successfully
+    :delivered
   end
 
   private_class_method :new
