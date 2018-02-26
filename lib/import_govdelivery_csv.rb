@@ -16,6 +16,7 @@ class ImportGovdeliveryCsv
     check_encoding_is_windows_1252
     get_user_confirmation
 
+    sanity_check_csv
     import_subscribers
     import_subscriptions
   end
@@ -25,6 +26,15 @@ private
   attr_reader :subscriptions_csv_path, :digests_csv_path, :fake_import, :failed_topics
 
   DEFAULT_DIGEST_FREQUENCY = Frequency::IMMEDIATELY
+
+  def sanity_check_csv
+    err = []
+    subscription_csv_headers = CSV.open(subscriptions_csv_path, 'r').first
+    digests_csv_headers = CSV.open(digests_csv_path, 'r').first
+    err << "Your subscription csv is incorrect." unless subscription_csv_headers.map(&:downcase).include?("topic_code")
+    err << "Your digest csv is incorrect." unless digests_csv_headers.map(&:downcase).include?("digest_for")
+    raise err.join(' ') unless err.empty?
+  end
 
   def address_from_row(row)
     address = row.fetch("DESTINATION")
