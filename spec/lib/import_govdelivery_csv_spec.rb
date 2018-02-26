@@ -12,6 +12,23 @@ RSpec.describe ImportGovdeliveryCsv do
     create(:subscriber_list, gov_delivery_id: "UKGOVUK_222", title: "Second")
   end
 
+  context "with the wrong csvs" do
+    it "raises an error if subscription csv does not include 'topic_code'" do
+      expect { described_class.call("spec/lib/csv_digest_fixture.csv", "spec/lib/csv_digest_fixture.csv") }
+        .to raise_error(RuntimeError, "Your subscription csv is incorrect.")
+    end
+
+    it "raises an error if the digest csv does not include 'digest_for'" do
+      expect { described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_fixture.csv") }
+        .to raise_error(RuntimeError, "Your digest csv is incorrect.")
+    end
+
+    it "raises an error if the digest csv does not include 'digest_for' and the subscription csv does not include 'topic_code'" do
+      expect { described_class.call("spec/lib/csv_digest_fixture.csv", "spec/lib/csv_fixture.csv") }
+        .to raise_error(RuntimeError, "Your subscription csv is incorrect. Your digest csv is incorrect.")
+    end
+  end
+
   it "creates subscribers and subscriptions" do
     expect { described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv") }
       .to change(Subscriber, :count).by(2)
