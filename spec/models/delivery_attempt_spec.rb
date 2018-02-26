@@ -38,4 +38,31 @@ RSpec.describe DeliveryAttempt, type: :model do
       expect(subject.should_report_failure?).to be_truthy
     end
   end
+
+  describe ".final_status?" do
+    subject { described_class.final_status?(status) }
+    context "when given a final status" do
+      let(:status) { :delivered }
+      it { is_expected.to be true }
+    end
+
+    context "when given a non final status" do
+      let(:status) { :sending }
+      it { is_expected.to be false }
+    end
+  end
+
+  describe ".has_final_status?" do
+    subject { build(:delivery_attempt, status: status).has_final_status? }
+
+    context "when it has a final status" do
+      let(:status) { "delivered" }
+      it { is_expected.to be true }
+    end
+
+    context "when it has a non final status" do
+      let(:status) { "sending" }
+      it { is_expected.to be false }
+    end
+  end
 end
