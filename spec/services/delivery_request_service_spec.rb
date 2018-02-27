@@ -102,11 +102,22 @@ RSpec.describe DeliveryRequestService do
       expect(DeliveryAttempt.last.email).to eq(email)
     end
 
-    it "sets the delivery attempt's status to provider response" do
-      allow(subject.provider).to receive(:call).and_return(:delivered)
-      subject.call(email: email)
-      expect(DeliveryAttempt.last).to be_delivered
+    context "when the delivery attempt returns a final status" do
+      before { allow(subject.provider).to receive(:call).and_return(:delivered) }
+
+      it "sets the delivery attempt's status to provider response" do
+        subject.call(email: email)
+        expect(DeliveryAttempt.last).to be_delivered
+      end
+
+      it "marks the email as being finished sending" do
+        expect { subject.call(email: email) }
+          .to change { email.finished_sending_at }
+          .from(nil)
+          .to(an_instance_of(ActiveSupport::TimeWithZone))
+      end
     end
+
 
     it "sets the delivery attempt's provider to the name of the provider" do
       subject.call(email: email)

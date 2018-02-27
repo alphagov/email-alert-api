@@ -33,7 +33,11 @@ class DeliveryRequestService
         reference: reference,
       )
 
-      delivery_attempt.update!(status: status) if status != :sending
+      ActiveRecord::Base.transaction do
+        delivery_attempt.update!(status: status) if status != :sending
+
+        email.finish_sending(delivery_attempt) if delivery_attempt.has_final_status?
+      end
     end
   end
 

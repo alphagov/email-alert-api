@@ -14,6 +14,13 @@ RSpec.describe StatusUpdateService do
       .to("delivered")
   end
 
+  it "updates the emails finished_sending_at timestamp" do
+    expect { status_update }
+      .to change { delivery_attempt.reload.email.finished_sending_at }
+      .from(nil)
+      .to(an_instance_of(ActiveSupport::TimeWithZone))
+  end
+
   context "with a temporary failure" do
     let(:status) { "temporary-failure" }
 
@@ -28,6 +35,11 @@ RSpec.describe StatusUpdateService do
         .with(15.minutes, delivery_attempt.email.id, :default)
 
       status_update
+    end
+
+    it "does not update the emails finished_sending_at timestamp" do
+      expect { status_update }
+        .to_not change { delivery_attempt.reload.email.finished_sending_at }
     end
   end
 

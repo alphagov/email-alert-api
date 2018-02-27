@@ -16,6 +16,8 @@ class StatusUpdateService
         status: status.underscore,
         signon_user_uid: user&.uid,
       )
+
+      email.finish_sending(delivery_attempt) if delivery_attempt.has_final_status?
     rescue ArgumentError
       # This is because Rails doesn't currently do validations for enums
       # see: https://github.com/rails/rails/issues/13971
