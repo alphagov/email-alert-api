@@ -39,7 +39,7 @@ RSpec.describe StatusUpdateService do
 
     it "does not update the emails finished_sending_at timestamp" do
       expect { status_update }
-        .to_not change { delivery_attempt.reload.email.finished_sending_at }
+        .to_not(change { delivery_attempt.reload.email.finished_sending_at })
     end
   end
 
