@@ -30,6 +30,7 @@ private
   DEFAULT_DIGEST_FREQUENCY = Frequency::IMMEDIATELY
 
   def sanity_check_csv
+    puts "Sanity checking the files..."
     err = []
     subscription_csv_headers = CSV.open(subscriptions_csv_path, 'r').first
     digests_csv_headers = CSV.open(digests_csv_path, 'r').first
