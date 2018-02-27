@@ -17,6 +17,7 @@ development:
 test:
   <<: *default
   database: email-alert-api_test
+  url: <%= ENV["TEST_DATABASE_URL"] %>
 
 production:
   <<: *default
