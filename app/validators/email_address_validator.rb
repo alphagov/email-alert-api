@@ -12,7 +12,7 @@ private
     contains_one_at_sign?(email_address) &&
       contains_a_valid_domain?(email_address) &&
       is_a_single_email_address?(email_address) &&
-      does_not_contain_newline_characters?(email_address)
+      does_not_contain_whitespace?(email_address)
   end
 
   def contains_one_at_sign?(email_address)
@@ -30,8 +30,8 @@ private
     email_address.scan(',').empty?
   end
 
-  def does_not_contain_newline_characters?(email_address)
-    email_address !~ /\n/
+  def does_not_contain_whitespace?(email_address)
+    email_address !~ /\s/
   end
 
   def domain_contains_at_least_one_dot?(domain)
