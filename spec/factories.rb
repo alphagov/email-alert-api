@@ -37,10 +37,19 @@ FactoryBot.define do
     subscriber
   end
 
-  factory :email do
+  factory :email, aliases: [:unarchivable_email] do
     address "test@example.com"
     subject "subject"
     body "body"
+
+    factory :archivable_email do
+      finished_sending_at { 2.days.ago }
+    end
+
+    factory :archived_email do
+      finished_sending_at { 2.days.ago }
+      archived_at { 1.day.ago }
+    end
   end
 
   factory :notification_log do
@@ -107,6 +116,10 @@ FactoryBot.define do
   factory :subscription_content do
     subscription
     content_change
+
+    trait :with_archivable_email do
+      association :email, factory: :archivable_email
+    end
   end
 
   factory :matched_content_change do
