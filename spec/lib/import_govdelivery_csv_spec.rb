@@ -38,32 +38,29 @@ RSpec.describe ImportGovdeliveryCsv do
   it "sets the subscriber address from the csv" do
     described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
 
-    expect(Subscriber.first.address).to eq("foo@example.com")
-    expect(Subscriber.second.address).to eq("bar@example.com")
+    expect(Subscriber.pluck(:address)).to match_array(%w(foo@example.com bar@example.com))
   end
 
-  it "associates the subscriptions with the subscribers" do
-    described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
-
-    expect(Subscription.first.subscriber.address).to eq("foo@example.com")
-    expect(Subscription.second.subscriber.address).to eq("bar@example.com")
-    expect(Subscription.third.subscriber.address).to eq("foo@example.com")
+  def find_subscription(address, title)
+    Subscription
+      .joins(:subscriber, :subscriber_list)
+      .find_by(subscribers: { address: address }, subscriber_lists: { title: title })
   end
 
-  it "associates the subscriptions with the subscribables" do
+  it "associates the subscriptions with the subscribers and subscribables" do
     described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
 
-    expect(Subscription.first.subscriber_list.title).to eq("First")
-    expect(Subscription.second.subscriber_list.title).to eq("First")
-    expect(Subscription.third.subscriber_list.title).to eq("Second")
+    expect(find_subscription("foo@example.com", "First")).to_not be_nil
+    expect(find_subscription("bar@example.com", "First")).to_not be_nil
+    expect(find_subscription("foo@example.com", "Second")).to_not be_nil
   end
 
   it "sets the frequencies on the subscriptions" do
     described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
 
-    expect(Subscription.first.frequency).to eq(Frequency::IMMEDIATELY)
-    expect(Subscription.second.frequency).to eq(Frequency::DAILY)
-    expect(Subscription.third.frequency).to eq(Frequency::IMMEDIATELY)
+    expect(find_subscription("foo@example.com", "First").frequency).to eq(Frequency::IMMEDIATELY)
+    expect(find_subscription("bar@example.com", "First").frequency).to eq(Frequency::DAILY)
+    expect(find_subscription("foo@example.com", "Second").frequency).to eq(Frequency::IMMEDIATELY)
   end
 
   context "when the subscriber list is travel advice" do
@@ -74,7 +71,7 @@ RSpec.describe ImportGovdeliveryCsv do
     it "sets the frequency to immediate" do
       described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
 
-      expect(Subscription.second.frequency).to eq(Frequency::IMMEDIATELY)
+      expect(find_subscription("bar@example.com", "First").frequency).to eq(Frequency::IMMEDIATELY)
     end
   end
 
@@ -86,7 +83,7 @@ RSpec.describe ImportGovdeliveryCsv do
     it "sets the frequency to immediate" do
       described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
 
-      expect(Subscription.second.frequency).to eq(Frequency::IMMEDIATELY)
+      expect(find_subscription("bar@example.com", "First").frequency).to eq(Frequency::IMMEDIATELY)
     end
   end
 
@@ -109,9 +106,9 @@ RSpec.describe ImportGovdeliveryCsv do
     it "sets the addresses to AWS success addresses" do
       described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv", fake_import: true)
 
-      expect(Subscription.first.subscriber.address).to eq("success+767e74eab7081c41e0b83630511139d130249666@simulator.amazonses.com")
-      expect(Subscription.second.subscriber.address).to eq("success+1ac2c5ab67ab3279b2de1d2bed879b2a63e59ee7@simulator.amazonses.com")
-      expect(Subscription.third.subscriber.address).to eq("success+767e74eab7081c41e0b83630511139d130249666@simulator.amazonses.com")
+      expect(find_subscription("success+767e74eab7081c41e0b83630511139d130249666@simulator.amazonses.com", "First")).to_not be_nil
+      expect(find_subscription("success+1ac2c5ab67ab3279b2de1d2bed879b2a63e59ee7@simulator.amazonses.com", "First")).to_not be_nil
+      expect(find_subscription("success+767e74eab7081c41e0b83630511139d130249666@simulator.amazonses.com", "Second")).to_not be_nil
     end
   end
 end

@@ -15,15 +15,15 @@ RSpec.describe UnprocessedSubscriptionContentsBySubscriberQuery do
   subject { described_class.call(Subscriber.pluck(:id)) }
 
   it "returns a hash keyed by subscriber_id" do
-    expect(subject.keys).to eq(Subscriber.pluck(:id))
+    expect(subject.keys).to match_array(Subscriber.pluck(:id))
   end
 
   it "creates a hash keyed by content_change_id per subscriber key" do
-    expect(subject[subscriber_one.id].keys).to eq(ContentChange.pluck(:id))
+    expect(subject[subscriber_one.id].keys).to match_array(ContentChange.pluck(:id))
   end
 
   it "creates an array of subscription contents at each content change key" do
     expect(subject[subscriber_one.id][content_change_one.id])
-      .to eq(SubscriptionContent.where(content_change: content_change_one))
+      .to match_array(SubscriptionContent.where(content_change: content_change_one))
   end
 end

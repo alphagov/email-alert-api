@@ -3,7 +3,9 @@ require 'rails_helper'
 RSpec.describe DigestEmailGenerationWorker do
   describe ".perform_async" do
     before do
-      described_class.perform_async
+      Sidekiq::Testing.fake! do
+        described_class.perform_async
+      end
     end
 
     it "gets put on the email_generation_digest queue" do
@@ -14,26 +16,26 @@ RSpec.describe DigestEmailGenerationWorker do
   describe ".perform" do
     let(:subscriber) { create(:subscriber, id: 1) }
     let!(:subscription_one) {
-      create(:subscription, id: 1, subscriber_id: subscriber.id)
+      create(:subscription, id: "7879434f-d83c-47d2-b04b-b3dd69c1931e", subscriber_id: subscriber.id)
     }
     let!(:subscription_two) {
-      create(:subscription, id: 2, subscriber_id: subscriber.id)
+      create(:subscription, id: "e4704303-a1b1-4a26-a231-4efecd9d21be", subscriber_id: subscriber.id)
     }
     let!(:digest_run) { create(:digest_run, id: 10) }
 
     let(:subscription_content_change_query_results) {
       [
         double(
-          subscription_id: 1,
-          subscription_uuid: "ABC1",
+          subscription_id: subscription_one.id,
+          subscription_uuid: subscription_one.uuid,
           subscriber_list_title: "Test title 1",
           content_changes: [
             create(:content_change, public_updated_at: "1/1/2016 10:00"),
           ],
         ),
         double(
-          subscription_id: 2,
-          subscription_uuid: "ABC2",
+          subscription_id: subscription_two.id,
+          subscription_uuid: subscription_two.uuid,
           subscriber_list_title: "Test title 2",
           content_changes: [
             create(:content_change, public_updated_at: "4/1/2016 10:00"),
@@ -65,7 +67,7 @@ RSpec.describe DigestEmailGenerationWorker do
 
     it "enqueues delivery" do
       expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
-        .with(instance_of(Integer), queue: :delivery_digest)
+        .with(instance_of(String), queue: :delivery_digest)
 
       create(:digest_run_subscriber, id: 1)
 
