@@ -14,6 +14,7 @@ class Subscriber < ApplicationRecord
   scope :activated, -> { where(deactivated_at: nil) }
   scope :deactivated, -> { where.not(deactivated_at: nil) }
   scope :nullified, -> { where(address: nil) }
+  scope :not_nullified, -> { where.not(address: nil) }
 
   def activated?
     deactivated_at.nil?
