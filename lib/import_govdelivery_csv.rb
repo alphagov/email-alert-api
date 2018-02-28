@@ -16,9 +16,10 @@ class ImportGovdeliveryCsv
 
   def call
     check_encoding_is_windows_1252
+    sanity_check_csv
+
     get_user_confirmation
 
-    sanity_check_csv
     import_subscribers
     import_subscriptions
   end
@@ -142,7 +143,7 @@ private
     tally = 0
     total_records = records.length
     start_time = Time.now
-    records.each_slice(150000) do |records_chunk|
+    records.each_slice(500000) do |records_chunk|
       count = Subscription.import!(columns, records_chunk).ids.count
       tally += count
       puts "#{number_with_delimiter(tally)}/#{number_with_delimiter(total_records)} subscriptions imported...Time remaining: #{time_remaining(start_time, tally, total_records)}"
