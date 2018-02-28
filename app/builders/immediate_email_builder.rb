@@ -55,7 +55,7 @@ private
   def presented_unsubscribe_links(subscriptions)
     links_array = subscriptions.map do |subscription|
       UnsubscribeLinkPresenter.call(
-        uuid: subscription.uuid,
+        id: subscription.id,
         title: subscription.subscriber_list.title,
       )
     end

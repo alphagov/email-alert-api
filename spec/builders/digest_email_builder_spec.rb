@@ -5,8 +5,7 @@ RSpec.describe DigestEmailBuilder do
   let(:subscription_content_change_results) {
     [
       double(
-        subscription_id: 1,
-        subscription_uuid: "ABC1",
+        subscription_id: "ABC1",
         subscriber_list_title: "Test title 1",
         content_changes: [
           build(:content_change, public_updated_at: "1/1/2016 10:00"),
@@ -15,8 +14,7 @@ RSpec.describe DigestEmailBuilder do
         ],
       ),
       double(
-        subscription_id: 2,
-        subscription_uuid: "ABC2",
+        subscription_id: "ABC2",
         subscriber_list_title: "Test title 2",
         content_changes: [
           build(:content_change, public_updated_at: "4/1/2016 10:00"),
@@ -45,12 +43,12 @@ RSpec.describe DigestEmailBuilder do
 
   it "adds an entry to body for each content change" do
     expect(UnsubscribeLinkPresenter).to receive(:call).with(
-      uuid: "ABC1",
+      id: "ABC1",
       title: "Test title 1"
     ).and_return("unsubscribe_link_1")
 
     expect(UnsubscribeLinkPresenter).to receive(:call).with(
-      uuid: "ABC2",
+      id: "ABC2",
       title: "Test title 2"
     ).and_return("unsubscribe_link_2")
 

@@ -11,6 +11,6 @@ Rails.application.routes.draw do
 
     get "/healthcheck", to: "healthcheck#check"
 
-    post "/unsubscribe/:uuid", to: "unsubscribe#unsubscribe"
+    post "/unsubscribe/:id", to: "unsubscribe#unsubscribe"
   end
 end

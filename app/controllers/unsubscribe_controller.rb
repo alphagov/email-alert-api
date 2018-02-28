@@ -6,10 +6,10 @@ class UnsubscribeController < ApplicationController
 private
 
   def subscription
-    Subscription.not_deleted.find_by!(uuid: uuid)
+    Subscription.not_deleted.find_by!(id: id)
   end
 
-  def uuid
-    params.fetch(:uuid)
+  def id
+    params.fetch(:id)
   end
 end

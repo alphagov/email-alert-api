@@ -46,8 +46,8 @@ module FeatureHelpers
     expect(response.status).to eq(expected_status)
   end
 
-  def unsubscribe_from_subscribable(uuid, expected_status: 204)
-    post "/unsubscribe/#{uuid}"
+  def unsubscribe_from_subscribable(id, expected_status: 204)
+    post "/unsubscribe/#{id}"
     expect(response.status).to eq(expected_status)
   end
 
