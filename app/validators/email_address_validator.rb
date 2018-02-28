@@ -35,7 +35,7 @@ private
   end
 
   def domain_contains_at_least_one_dot?(domain)
-    !domain.scan('.').empty?
+    !domain.start_with?('.') && !domain.scan('.').empty?
   end
 
   def domain_is_an_ip_address?(domain)

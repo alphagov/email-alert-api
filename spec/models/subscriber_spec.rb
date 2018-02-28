@@ -53,6 +53,12 @@ RSpec.describe Subscriber, type: :model do
       expect(subject).to be_invalid
     end
 
+    it "is invalid for an email address which has a domain starting with a ." do
+      subject.address = "me@.invalid"
+
+      expect(subject).to be_invalid
+    end
+
     it "is invalid for an email address which contains a newline" do
       subject.address = "foo@bar.com\nfoo@baz.com"
 
