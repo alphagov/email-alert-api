@@ -16,9 +16,10 @@ class ImportGovdeliveryCsv
 
   def call
     check_encoding_is_windows_1252
+    sanity_check_csv
+
     get_user_confirmation
 
-    sanity_check_csv
     import_subscribers
     import_subscriptions
   end
