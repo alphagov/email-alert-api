@@ -17,6 +17,7 @@ module UnsubscribeService
         subscriptions.each(&:destroy)
 
         if no_other_subscriptions?(subscriber, subscriptions)
+          subscriber.deactivate!
           subscriber.nullify!
         end
       end

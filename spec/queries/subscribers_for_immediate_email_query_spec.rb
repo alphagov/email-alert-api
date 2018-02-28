@@ -11,8 +11,13 @@ RSpec.describe SubscribersForImmediateEmailQuery do
     expect(described_class.call.count).to eq(0)
   end
 
-  it "does not return Subscriber for subscribers with nil addresses" do
-    create(:subscription_content, subscription: create(:subscription, subscriber: create(:subscriber, address: nil)))
+  it "does not return Subscriber for nullified subscribers" do
+    create(:subscription_content, subscription: create(:subscription, subscriber: create(:subscriber, :nullified)))
+    expect(described_class.call.count).to eq(0)
+  end
+
+  it "does not return Subscriber for deactivates subscribers" do
+    create(:subscription_content, subscription: create(:subscription, subscriber: create(:subscriber, :deactivated)))
     expect(described_class.call.count).to eq(0)
   end
 

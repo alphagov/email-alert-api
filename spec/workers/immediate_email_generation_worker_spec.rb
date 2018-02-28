@@ -66,7 +66,7 @@ RSpec.describe ImmediateEmailGenerationWorker do
 
       before do
         create(:subscription_content, email: create(:email))
-        create(:subscription_content, subscription: create(:subscription, subscriber: create(:subscriber, address: nil)))
+        create(:subscription_content, subscription: create(:subscription, subscriber: create(:subscriber, :nullified)))
       end
 
       it "should create an email" do
