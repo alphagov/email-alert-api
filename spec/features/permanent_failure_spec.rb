@@ -20,7 +20,7 @@ RSpec.describe "Failing to deliver an email via Notify (permanent failure)", typ
     3.times { create_content_change }
     expect_an_email_was_not_sent
 
-    uuid = extract_unsubscribe_uuid(email_data)
-    unsubscribe_from_subscribable(uuid, expected_status: 404)
+    id = extract_unsubscribe_id(email_data)
+    unsubscribe_from_subscribable(id, expected_status: 404)
   end
 end

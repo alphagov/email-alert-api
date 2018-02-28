@@ -27,7 +27,6 @@ RSpec.describe DigestEmailGenerationWorker do
       [
         double(
           subscription_id: subscription_one.id,
-          subscription_uuid: subscription_one.uuid,
           subscriber_list_title: "Test title 1",
           content_changes: [
             create(:content_change, public_updated_at: "1/1/2016 10:00"),
@@ -35,7 +34,6 @@ RSpec.describe DigestEmailGenerationWorker do
         ),
         double(
           subscription_id: subscription_two.id,
-          subscription_uuid: subscription_two.uuid,
           subscriber_list_title: "Test title 2",
           content_changes: [
             create(:content_change, public_updated_at: "4/1/2016 10:00"),

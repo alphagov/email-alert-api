@@ -54,7 +54,7 @@ private
                 .includes(:email)
                 .joins(:email)
                 .lock
-                .find_by!(id: reference)
+                .find(reference)
 
     if !attempt.sending?
       raise DeliveryAttemptStatusConflictError, "Status update already received"
