@@ -16,6 +16,7 @@ FactoryBot.define do
   end
 
   factory :delivery_attempt do
+    id { SecureRandom.uuid }
     email
     status :sending
     provider :notify

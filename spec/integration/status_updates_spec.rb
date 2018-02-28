@@ -2,7 +2,7 @@ RSpec.describe "Receiving a status update", type: :request do
   let(:reference) { "b6589b2b-8f8e-457b-9ddf-237b62438ad1" }
 
   let!(:delivery_attempt) do
-    create(:delivery_attempt, reference: reference, status: "sending")
+    create(:delivery_attempt, id: reference, status: "sending")
   end
 
   let(:permissions) { %w[signin status_updates] }
