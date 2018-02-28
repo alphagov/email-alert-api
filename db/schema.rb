@@ -84,6 +84,8 @@ ActiveRecord::Schema.define(version: 20180302090154) do
     t.datetime "updated_at", null: false
     t.string "address", null: false
     t.datetime "finished_sending_at"
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_emails_on_archived_at"
     t.index ["finished_sending_at"], name: "index_emails_on_finished_sending_at"
   end
 
