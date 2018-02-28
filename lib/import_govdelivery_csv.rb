@@ -1,6 +1,8 @@
 require "csv"
 
 class ImportGovdeliveryCsv
+  include ActionView::Helpers::NumberHelper
+
   def initialize(subscriptions_csv_path, digests_csv_path, fake_import: false)
     @subscriptions_csv_path = subscriptions_csv_path
     @digests_csv_path = digests_csv_path
@@ -28,6 +30,7 @@ private
   DEFAULT_DIGEST_FREQUENCY = Frequency::IMMEDIATELY
 
   def sanity_check_csv
+    puts "Sanity checking the files..."
     err = []
     subscription_csv_headers = CSV.open(subscriptions_csv_path, 'r').first
     digests_csv_headers = CSV.open(digests_csv_path, 'r').first
@@ -136,13 +139,25 @@ private
 
     puts "Importing records..."
 
+    tally = 0
+    total_records = records.length
+    start_time = Time.now
     records.each_slice(150000) do |records_chunk|
       count = Subscription.import!(columns, records_chunk).ids.count
-      puts "#{count} subscriptions imported..."
+      tally += count
+      puts "#{number_with_delimiter(tally)}/#{number_with_delimiter(total_records)} subscriptions imported...Time remaining: #{time_remaining(start_time, tally, total_records)}"
     end
 
     puts "Unable to match #{failed_topics.count} topics:"
     p failed_topics
+  end
+
+  def time_remaining(start_time, completed, total)
+    seconds_elapsed = Time.now.to_i - start_time.to_i
+    per_second = seconds_elapsed.to_f / completed
+    remaining_time = per_second * (total - completed)
+    # This won't work if it's over 24 hours, but that's probably a bigger problem
+    Time.at(remaining_time).utc.strftime("%H:%M:%S")
   end
 
   def digest_frequencies
