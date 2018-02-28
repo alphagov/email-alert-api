@@ -11,34 +11,46 @@ class Subscriber < ApplicationRecord
   has_many :digest_run_subscribers, dependent: :destroy
   has_many :digest_runs, through: :digest_run_subscribers
 
-  scope :nullified, -> { where(address: nil) }
-  scope :deactivated, -> { where.not(deactivated_at: nil) }
   scope :activated, -> { where(deactivated_at: nil) }
+  scope :deactivated, -> { where.not(deactivated_at: nil) }
+  scope :nullified, -> { where(address: nil) }
 
-  def nullify!
-    raise "Already nullified." if address.nil?
-    raise "Must be deactivated first." if deactivated_at.nil?
+  def activated?
+    deactivated_at.nil?
+  end
 
-    update!(address: nil)
+  def activate!
+    raise "Cannot activate if nullified." if nullified?
+    raise "Already activated." if activated?
+
+    update!(deactivated_at: nil)
+  end
+
+  def deactivated?
+    deactivated_at.present?
   end
 
   def deactivate!(datetime: nil)
-    raise "Already deactivated." unless deactivated_at.nil?
+    raise "Already deactivated." if deactivated?
 
     update!(deactivated_at: datetime || Time.now)
   end
 
-  def activate!
-    raise "Cannot activate as the address is nil." if address.nil?
-    raise "Already activated." if deactivated_at.nil?
+  def nullified?
+    address.nil?
+  end
 
-    update!(deactivated_at: nil)
+  def nullify!
+    raise "Already nullified." if nullified?
+    raise "Must be deactivated first." unless deactivated?
+
+    update!(address: nil)
   end
 
 private
 
   def not_nullified_and_activated
-    if address.nil? && deactivated_at.nil?
+    if nullified? && !deactivated?
       errors.add(:deactivated_at, "should be set to the deactivation date")
     end
   end

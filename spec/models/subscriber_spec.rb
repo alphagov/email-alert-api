@@ -123,35 +123,6 @@ RSpec.describe Subscriber, type: :model do
     end
   end
 
-  describe "#nullify!" do
-    subject(:subscriber) { create(:subscriber, :deactivated, address: "foo@bar.com") }
-
-    it "sets the address to nil and saves the record" do
-      expect { subscriber.nullify! }
-        .to change { subscriber.reload.address }
-        .from("foo@bar.com")
-        .to(nil)
-    end
-
-    it "appears in the nullified scope" do
-      subscriber.nullify!
-      expect(Subscriber.nullified.count).to eq(1)
-    end
-
-    it "doesn't appear in the activated scope" do
-      subscriber.nullify!
-      expect(Subscriber.activated.count).to eq(0)
-    end
-
-    context "already nullified" do
-      it "refuses to nullify again" do
-        subscriber.nullify!
-
-        expect { subscriber.nullify! }.to raise_error(/Already nullified/)
-      end
-    end
-  end
-
   describe "#activate!" do
     context "when activated" do
       subject(:subscriber) { create(:subscriber, :activated) }
@@ -171,6 +142,8 @@ RSpec.describe Subscriber, type: :model do
           .to change { subscriber.reload.deactivated_at }
           .from(deactivated_at)
           .to(nil)
+
+        expect(subscriber.reload.activated?).to be true
       end
 
       it "appears in the activated scope" do
@@ -203,6 +176,8 @@ RSpec.describe Subscriber, type: :model do
             .to change { subscriber.reload.deactivated_at }
             .from(nil)
             .to(Time.parse("1/1/2017"))
+
+          expect(subscriber.reload.deactivated?).to be true
         end
       end
 
@@ -222,6 +197,37 @@ RSpec.describe Subscriber, type: :model do
 
       it "refuses to deactivate" do
         expect { subscriber.deactivate! }.to raise_error(/Already deactivated/)
+      end
+    end
+  end
+
+  describe "#nullify!" do
+    subject(:subscriber) { create(:subscriber, :deactivated, address: "foo@bar.com") }
+
+    it "sets the address to nil and saves the record" do
+      expect { subscriber.nullify! }
+        .to change { subscriber.reload.address }
+        .from("foo@bar.com")
+        .to(nil)
+
+      expect(subscriber.reload.nullified?).to be true
+    end
+
+    it "appears in the nullified scope" do
+      subscriber.nullify!
+      expect(Subscriber.nullified.count).to eq(1)
+    end
+
+    it "doesn't appear in the activated scope" do
+      subscriber.nullify!
+      expect(Subscriber.activated.count).to eq(0)
+    end
+
+    context "already nullified" do
+      it "refuses to nullify again" do
+        subscriber.nullify!
+
+        expect { subscriber.nullify! }.to raise_error(/Already nullified/)
       end
     end
   end
