@@ -7,7 +7,7 @@ class StatusUpdateService
   end
 
   def self.call(*args)
-    new(*args).call
+    DeliveryAttempt.transaction { new(*args).call }
   end
 
   def call
@@ -53,6 +53,7 @@ private
     attempt = DeliveryAttempt
                 .includes(:email)
                 .joins(:email)
+                .lock
                 .find_by!(reference: reference)
 
     if !attempt.sending?
