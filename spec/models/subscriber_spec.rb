@@ -65,6 +65,12 @@ RSpec.describe Subscriber, type: :model do
       expect(subject).to be_invalid
     end
 
+    it "is invalid for an email address which contains a space" do
+      subject.address = "foo @ bar.com"
+
+      expect(subject).to be_invalid
+    end
+
     it "is invalid for multiple email addresses" do
       subject.address = "foo@bar.com,foo@baz.com"
 
