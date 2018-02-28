@@ -1,6 +1,10 @@
 class Email < ApplicationRecord
   has_many :delivery_attempts
 
+  scope :archivable, lambda {
+    where(archived_at: nil).where.not(finished_sending_at: nil)
+  }
+
   validates :address, :subject, :body, presence: true
 
   # Mark an email to indicate the process of sending it is complete
