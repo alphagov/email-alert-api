@@ -51,11 +51,11 @@ RSpec.describe "Anonymising email addresses" do
 
     execute_sql
 
-    expect(foo_subscriber.reload.address).to eq("anonymous-1@example.com")
-    expect(bar_subscriber.reload.address).to eq("anonymous-2@example.com")
+    expect(foo_email.reload.address).to eq(foo_subscriber.reload.address)
+    expect(foo_email.reload.address).to_not eq(bar_subscriber.reload.address)
 
-    expect(foo_email.reload.address).to eq("anonymous-1@example.com")
-    expect(bar_email.reload.address).to eq("anonymous-2@example.com")
+    expect(bar_email.reload.address).to eq(bar_subscriber.reload.address)
+    expect(bar_subscriber.reload.address).to_not eq(foo_subscriber.reload.address)
   end
 
   it "cleans up after itself" do
