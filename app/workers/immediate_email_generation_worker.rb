@@ -12,39 +12,42 @@ class ImmediateEmailGenerationWorker
 
     ensure_only_running_once do
       subscribers.find_in_batches do |group|
-        to_queue = []
-
         subscription_contents = grouped_subscription_contents(group.pluck(:id))
-
         update_content_change_cache(subscription_contents)
-
-        Subscriber.transaction do
-          values = []
-
-          email_ids = import_emails(group, subscription_contents, content_changes).ids
-          subscriber_id_content_change_id_in_order = subscription_contents.flat_map { |k, v| v.map { |x, _y| [k, x] } }
-
-          email_ids.each_with_index do |email_id, i|
-            subscriber_id = subscriber_id_content_change_id_in_order[i][0]
-            content_change_id = subscriber_id_content_change_id_in_order[i][1]
-            subscription_contents_in_this_email = subscription_contents[subscriber_id][content_change_id]
-
-            to_queue << [email_id, content_changes[content_change_id].priority.to_sym]
-
-            subscription_contents_in_this_email.each do |subscription_content|
-              values << "(#{subscription_content.id}, '#{email_id}'::UUID)"
-            end
-          end
-
-          update_subscription_contents(values)
-        end
-
-        queue_delivery_request_workers(to_queue)
+        import_and_associate_emails(group, subscription_contents)
       end
     end
   end
 
 private
+
+  def import_and_associate_emails(subscribers, subscription_contents)
+    queue = []
+
+    Subscriber.transaction do
+      values = []
+
+      email_ids = import_emails(subscribers, subscription_contents).ids
+
+      subscriber_id_content_change_id_in_order = subscription_contents.flat_map { |k, v| v.map { |x, _y| [k, x] } }
+
+      email_ids.each_with_index do |email_id, i|
+        subscriber_id = subscriber_id_content_change_id_in_order[i][0]
+        content_change_id = subscriber_id_content_change_id_in_order[i][1]
+        subscription_contents_in_this_email = subscription_contents[subscriber_id][content_change_id]
+
+        queue << [email_id, content_changes[content_change_id].priority.to_sym]
+
+        subscription_contents_in_this_email.each do |subscription_content|
+          values << "(#{subscription_content.id}, '#{email_id}'::UUID)"
+        end
+      end
+
+      update_subscription_contents(values)
+    end
+
+    queue_delivery_request_workers(queue)
+  end
 
   def update_content_change_cache(subscription_contents)
     content_change_ids = subscription_contents.flat_map { |_k, v| v.keys }.uniq
@@ -90,7 +93,7 @@ private
     SubscribersForImmediateEmailQuery.call
   end
 
-  def import_emails(subscribers, subscription_contents, content_changes)
+  def import_emails(subscribers, subscription_contents)
     email_params = subscribers.flat_map do |subscriber|
       subscription_contents[subscriber.id].keys.map do |content_change_id|
         {
