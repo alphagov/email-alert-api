@@ -19,7 +19,6 @@ FactoryBot.define do
     email
     status :sending
     provider :notify
-    reference { SecureRandom.uuid }
   end
 
   factory :digest_run do
