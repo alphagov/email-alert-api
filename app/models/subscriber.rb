@@ -11,10 +11,11 @@ class Subscriber < ApplicationRecord
   has_many :digest_run_subscribers, dependent: :destroy
   has_many :digest_runs, through: :digest_run_subscribers
 
+  scope :nullified, -> { where(address: nil) }
   scope :deactivated, -> { where.not(deactivated_at: nil) }
   scope :activated, -> { where(deactivated_at: nil) }
 
-  def nullify_address!
+  def nullify!
     raise "Already nullified." if address.nil?
     raise "Must be deactivated first." if deactivated_at.nil?
 

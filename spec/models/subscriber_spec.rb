@@ -103,7 +103,7 @@ RSpec.describe Subscriber, type: :model do
       create(:subscriber, :nullified)
 
       subject.deactivate!
-      subject.nullify_address!
+      subject.nullify!
       expect(subject).to be_valid
     end
   end
@@ -123,21 +123,31 @@ RSpec.describe Subscriber, type: :model do
     end
   end
 
-  describe "#nullify_address!" do
+  describe "#nullify!" do
     subject(:subscriber) { create(:subscriber, :deactivated, address: "foo@bar.com") }
 
     it "sets the address to nil and saves the record" do
-      expect { subscriber.nullify_address! }
+      expect { subscriber.nullify! }
         .to change { subscriber.reload.address }
         .from("foo@bar.com")
         .to(nil)
     end
 
+    it "appears in the nullified scope" do
+      subscriber.nullify!
+      expect(Subscriber.nullified.count).to eq(1)
+    end
+
+    it "doesn't appear in the activated scope" do
+      subscriber.nullify!
+      expect(Subscriber.activated.count).to eq(0)
+    end
+
     context "already nullified" do
       it "refuses to nullify again" do
-        subscriber.nullify_address!
+        subscriber.nullify!
 
-        expect { subscriber.nullify_address! }.to raise_error(/Already nullified/)
+        expect { subscriber.nullify! }.to raise_error(/Already nullified/)
       end
     end
   end
