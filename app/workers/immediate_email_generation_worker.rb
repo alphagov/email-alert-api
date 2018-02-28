@@ -29,7 +29,9 @@ private
 
       email_ids = import_emails(subscribers, subscription_contents).ids
 
-      subscriber_id_content_change_id_in_order = subscription_contents.flat_map { |k, v| v.map { |x, _y| [k, x] } }
+      subscriber_id_content_change_id_in_order = map_subscriber_content_change_id_in_order(subscribers, subscription_contents) do |subscriber, content_change_id|
+        [subscriber.id, content_change_id]
+      end
 
       email_ids.each_with_index do |email_id, i|
         subscriber_id = subscriber_id_content_change_id_in_order[i][0]
@@ -93,15 +95,21 @@ private
     SubscribersForImmediateEmailQuery.call
   end
 
-  def import_emails(subscribers, subscription_contents)
-    email_params = subscribers.flat_map do |subscriber|
+  def map_subscriber_content_change_id_in_order(subscribers, subscription_contents)
+    subscribers.flat_map do |subscriber|
       subscription_contents[subscriber.id].keys.map do |content_change_id|
-        {
-          address: subscriber.address,
-          content_change: content_changes[content_change_id],
-          subscriptions: subscription_contents[subscriber.id][content_change_id].map(&:subscription)
-        }
+        yield subscriber, content_change_id
       end
+    end
+  end
+
+  def import_emails(subscribers, subscription_contents)
+    email_params = map_subscriber_content_change_id_in_order(subscribers, subscription_contents) do |subscriber, content_change_id|
+      {
+        address: subscriber.address,
+        content_change: content_changes[content_change_id],
+        subscriptions: subscription_contents[subscriber.id][content_change_id].map(&:subscription)
+      }
     end
 
     ImmediateEmailBuilder.call(email_params)
