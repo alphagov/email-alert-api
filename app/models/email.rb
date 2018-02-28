@@ -5,6 +5,10 @@ class Email < ApplicationRecord
     where(archived_at: nil).where.not(finished_sending_at: nil)
   }
 
+  scope :deleteable, lambda {
+    where.not(archived_at: nil).where("finished_sending_at < ?", 14.days.ago)
+  }
+
   validates :address, :subject, :body, presence: true
 
   # Mark an email to indicate the process of sending it is complete
