@@ -1,7 +1,9 @@
 RSpec.describe ImmediateEmailGenerationWorker do
   describe ".perform_async" do
     before do
-      described_class.perform_async
+      Sidekiq::Testing.fake! do
+        described_class.perform_async
+      end
     end
 
     it "gets put on the email_generation_immediate queue" do
@@ -52,7 +54,7 @@ RSpec.describe ImmediateEmailGenerationWorker do
       it "should match up with the right emails" do
         perform_with_fake_sidekiq
 
-        SubscriptionContent.all.find_each do |subscription_content|
+        SubscriptionContent.includes(:email, subscription: :subscriber).find_each do |subscription_content|
           expect(subscription_content.email.address)
             .to eq(subscription_content.subscription.subscriber.address)
         end
