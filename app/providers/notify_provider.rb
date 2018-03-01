@@ -23,9 +23,11 @@ class NotifyProvider
     )
 
     MetricsService.sent_to_notify_successfully
-  rescue Notifications::Client::RequestError => e
+    :sending
+  rescue StandardError => e
     MetricsService.failed_to_send_to_notify
-    raise ProviderError, e
+    GovukError.notify(e, tags: { provider: "notify" })
+    :technical_failure
   end
 
 private

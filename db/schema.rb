@@ -75,6 +75,8 @@ ActiveRecord::Schema.define(version: 20180228132051) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "address", null: false
+    t.datetime "finished_sending_at"
+    t.index ["finished_sending_at"], name: "index_emails_on_finished_sending_at"
   end
 
   create_table "matched_content_changes", force: :cascade do |t|

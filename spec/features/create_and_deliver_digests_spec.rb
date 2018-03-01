@@ -6,6 +6,8 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     allow_any_instance_of(DeliveryRequestService)
       .to receive(:provider_name).and_return("notify")
+
+    stub_notify
   end
 
   after do

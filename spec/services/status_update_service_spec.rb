@@ -14,6 +14,13 @@ RSpec.describe StatusUpdateService do
       .to("delivered")
   end
 
+  it "updates the emails finished_sending_at timestamp" do
+    expect { status_update }
+      .to change { delivery_attempt.reload.email.finished_sending_at }
+      .from(nil)
+      .to(an_instance_of(ActiveSupport::TimeWithZone))
+  end
+
   context "with a temporary failure" do
     let(:status) { "temporary-failure" }
 
@@ -28,6 +35,11 @@ RSpec.describe StatusUpdateService do
         .with(15.minutes, delivery_attempt.email.id, :default)
 
       status_update
+    end
+
+    it "does not update the emails finished_sending_at timestamp" do
+      expect { status_update }
+        .to_not(change { delivery_attempt.reload.email.finished_sending_at })
     end
   end
 
@@ -56,7 +68,19 @@ RSpec.describe StatusUpdateService do
     let(:status) { "unknown" }
 
     it "raises an error" do
-      expect { status_update }.to raise_error(ActiveRecord::StatementInvalid)
+      expect { status_update }
+        .to raise_error(StatusUpdateService::DeliveryAttemptInvalidStatusError)
+    end
+  end
+
+  context "when the delivery attempt already has a non waiting status" do
+    before do
+      delivery_attempt.update!(status: "delivered")
+    end
+
+    it "raises an error" do
+      expect { status_update }
+        .to raise_error(StatusUpdateService::DeliveryAttemptStatusConflictError)
     end
   end
 end
