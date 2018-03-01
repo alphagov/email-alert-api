@@ -1,19 +1,23 @@
 RSpec.describe Subscription, type: :model do
   describe "validations" do
-    subject { build(:subscription) }
+    subject { create(:subscription) }
 
     it "is valid for the default factory" do
       expect(subject).to be_valid
     end
 
+    it "has no ended reason" do
+      expect(subject.ended_reason).to be_nil
+    end
+
     it "must be unique between subscriber and subscriber lists" do
-      create(
+      new_subscription = build(
         :subscription,
         subscriber: subject.subscriber,
         subscriber_list: subject.subscriber_list
       )
 
-      expect(subject).to be_invalid
+      expect(new_subscription).to be_invalid
     end
 
     it "is an immediate email" do
