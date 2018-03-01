@@ -34,12 +34,13 @@ RSpec.describe StatusUpdateService do
   context "with a permanent failure" do
     let(:status) { "permanent-failure" }
 
-    it "unsubscribes the subscriber" do
+    it "deactivates the subscriber" do
       create(:subscriber, address: delivery_attempt.email.address)
 
       expect { status_update }
-        .to change { Subscriber.last.address }
-        .to(nil)
+        .to change { Subscriber.last.deactivated? }
+        .from(false)
+        .to(true)
     end
   end
 

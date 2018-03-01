@@ -1,10 +1,10 @@
 class SubscribersForImmediateEmailQuery
   def self.call
     Subscriber
+      .activated
       .where(
         unprocessed_subscription_contents_exist_for_subscribers
        )
-       .where.not(address: nil)
   end
 
   def self.unprocessed_subscription_contents_exist_for_subscribers

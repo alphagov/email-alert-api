@@ -10,6 +10,7 @@
   - [default, 3]
   - [delivery_digest, 2]
   - [email_generation_digest, 1]
+  - cleanup
 :schedule:
   immediate_email_generation:
     every: '5s'
@@ -20,3 +21,6 @@
   weekly_digest_initiator:
     cron: '30 8 * * 6' # every Saturday at 8:30am
     class: WeeklyDigestInitiatorWorker
+  nullify_deactivated_subscribers:
+    every: '1h'
+    class: NullifyDeactivatedSubscribersWorker

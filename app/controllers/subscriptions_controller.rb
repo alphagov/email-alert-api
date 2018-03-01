@@ -7,6 +7,8 @@ class SubscriptionsController < ApplicationController
       subscriber_list: subscribable,
     )
 
+    subscriber.activate! if subscriber.deactivated?
+
     status = subscription.new_record? ? :created : :ok
 
     subscription.deleted_at = nil

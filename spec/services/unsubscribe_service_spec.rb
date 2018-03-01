@@ -2,11 +2,11 @@ RSpec.describe UnsubscribeService do
   describe ".subscriber!" do
     let!(:subscriber) { create(:subscriber, address: "foo@bar.com") }
 
-    it "nullifies the email address" do
+    it "deactivates the subscriber" do
       expect { subject.subscriber!(subscriber) }
-        .to change { subscriber.reload.address }
-        .from("foo@bar.com")
-        .to(nil)
+        .to change { subscriber.reload.deactivated? }
+        .from(false)
+        .to(true)
     end
 
     context "when the subscriber has subscriptions" do
@@ -53,9 +53,9 @@ RSpec.describe UnsubscribeService do
     end
 
     context "when it is the only remaining subscription for the subscriber" do
-      it "nullifies the email address of the subscriber" do
+      it "deactivates the subscriber" do
         expect { subject.subscription!(subscription) }
-          .to change { subscriber.reload.address.nil? }
+          .to change { subscriber.reload.deactivated? }
           .from(false)
           .to(true)
       end

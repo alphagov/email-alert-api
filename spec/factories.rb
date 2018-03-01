@@ -56,6 +56,17 @@ FactoryBot.define do
 
   factory :subscriber do
     sequence(:address) { |i| "test-#{i}@example.com" }
+
+    trait :activated
+
+    trait :deactivated do
+      deactivated_at { Time.now }
+    end
+
+    trait :nullified do
+      address nil
+      deactivated_at { Time.now }
+    end
   end
 
   factory :subscriber_list do
