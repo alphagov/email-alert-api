@@ -14,7 +14,7 @@ RSpec.describe ImmediateEmailBuilder do
       subscription_one,
       build(
         :subscription,
-        uuid: "69ca6fce-34f5-4ebd-943c-83bd1b2e70fb",
+        id: "69ca6fce-34f5-4ebd-943c-83bd1b2e70fb",
         subscriber: subscriber,
         subscriber_list: build(:subscriber_list, title: "Second Subscription")
       ),

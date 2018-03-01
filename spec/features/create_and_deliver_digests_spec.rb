@@ -57,6 +57,11 @@ RSpec.describe "creating and delivering digests", type: :request do
       ---
 
       Unsubscribe from [Subscriber list two](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id}?title=Subscriber%20list%20two)
+
+      You’re getting this email because you subscribed to these topic updates on GOV.UK.
+
+
+      ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY
   end
 
@@ -81,6 +86,11 @@ RSpec.describe "creating and delivering digests", type: :request do
       ---
 
       Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?title=Subscriber%20list%20one)
+
+      You’re getting this email because you subscribed to these topic updates on GOV.UK.
+
+
+      ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY
   end
 
@@ -264,6 +274,11 @@ RSpec.describe "creating and delivering digests", type: :request do
       ---
 
       Unsubscribe from [Subscriber list two](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id}?title=Subscriber%20list%20two)
+
+      You’re getting this email because you subscribed to these topic updates on GOV.UK.
+
+
+      ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY
   end
 
@@ -288,6 +303,11 @@ RSpec.describe "creating and delivering digests", type: :request do
       ---
 
       Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?title=Subscriber%20list%20one)
+
+      You’re getting this email because you subscribed to these topic updates on GOV.UK.
+
+
+      ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY
   end
   scenario "weekly digest run" do
