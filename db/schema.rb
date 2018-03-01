@@ -152,7 +152,6 @@ ActiveRecord::Schema.define(version: 20180302090154) do
     t.datetime "updated_at", null: false
     t.integer "frequency", default: 0, null: false
     t.string "signon_user_uid"
-    t.datetime "deleted_at"
     t.integer "source", default: 0, null: false
     t.datetime "ended_at"
     t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true
