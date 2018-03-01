@@ -63,6 +63,13 @@ RSpec.describe ImportGovdeliveryCsv do
     expect(find_subscription("foo@example.com", "Second").frequency).to eq(Frequency::IMMEDIATELY)
   end
 
+  it "sets the source on the subscriptions" do
+    described_class.call("spec/lib/csv_fixture.csv", "spec/lib/csv_digest_fixture.csv")
+
+    expect(Subscription.where(source: :user_signed_up).count).to eq(0)
+    expect(Subscription.where(source: :imported).count).to eq(3)
+  end
+
   context "when the subscriber list is travel advice" do
     let!(:first_subscribable) do
       create(:subscriber_list, :travel_advice, gov_delivery_id: "UKGOVUK_111", title: "First")
