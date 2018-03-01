@@ -21,25 +21,6 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
-  describe "callbacks" do
-    subject { build(:subscription) }
-
-    it "sets a uuid before validation" do
-      expect(subject.uuid).to be_nil
-
-      expect(subject).to be_valid
-      expect(subject.uuid).not_to be_nil
-    end
-
-    it "preserves the same uuid" do
-      subject.valid?
-      uuid = subject.uuid
-
-      subject.valid?
-      expect(subject.uuid).to eq(uuid)
-    end
-  end
-
   describe "destroy" do
     subject { create(:subscription) }
 

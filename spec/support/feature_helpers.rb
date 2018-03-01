@@ -46,8 +46,8 @@ module FeatureHelpers
     expect(response.status).to eq(expected_status)
   end
 
-  def unsubscribe_from_subscribable(uuid, expected_status: 204)
-    post "/unsubscribe/#{uuid}"
+  def unsubscribe_from_subscribable(id, expected_status: 204)
+    post "/unsubscribe/#{id}"
     expect(response.status).to eq(expected_status)
   end
 
@@ -87,7 +87,7 @@ module FeatureHelpers
     expect(a_request(:post, /fake-notify/)).not_to have_been_made
   end
 
-  def extract_unsubscribe_uuid(email_data)
+  def extract_unsubscribe_id(email_data)
     body = email_data.dig(:personalisation, :body)
     body[%r{/unsubscribe/(.*)\?}, 1]
   end

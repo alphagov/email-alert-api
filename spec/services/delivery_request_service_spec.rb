@@ -118,7 +118,6 @@ RSpec.describe DeliveryRequestService do
       end
     end
 
-
     it "sets the delivery attempt's provider to the name of the provider" do
       subject.call(email: email)
       expect(DeliveryAttempt.last.provider).to eq("pseudo")
@@ -133,7 +132,7 @@ RSpec.describe DeliveryRequestService do
       subject.call(email: email)
 
       expect(reference).to be_present
-      expect(DeliveryAttempt.last.reference).to eq(reference)
+      expect(DeliveryAttempt.last.id).to eq(reference)
     end
 
     it "records a metric for the delivery attempt" do

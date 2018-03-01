@@ -19,8 +19,8 @@ class DeliveryRequestService
 
   def call(email:)
     reference = SecureRandom.uuid
-    address = determine_address(email, reference)
 
+    address = determine_address(email, reference)
     return if address.nil?
 
     delivery_attempt = create_delivery_attempt(email, reference)
@@ -57,6 +57,7 @@ private
     MetricsService.first_delivery_attempt(email, Time.now.utc)
 
     DeliveryAttempt.create!(
+      id: reference,
       email: email,
       status: :sending,
       provider: provider_name,

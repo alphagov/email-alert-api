@@ -66,7 +66,7 @@ private
 
   def unsubscribe_link(result)
     UnsubscribeLinkPresenter.call(
-      uuid: result.subscription_uuid,
+      id: result.subscription_id,
       title: result.subscriber_list_title
     )
   end

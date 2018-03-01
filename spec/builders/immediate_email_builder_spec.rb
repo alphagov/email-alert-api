@@ -4,7 +4,7 @@ RSpec.describe ImmediateEmailBuilder do
   let(:subscription_one) {
     build(
       :subscription,
-      uuid: "bef9b608-05ba-46ce-abb7-8567f4180a25",
+      id: "bef9b608-05ba-46ce-abb7-8567f4180a25",
       subscriber: subscriber,
       subscriber_list: build(:subscriber_list, title: "First Subscription")
     )
@@ -91,7 +91,7 @@ RSpec.describe ImmediateEmailBuilder do
 
       it "sets the body and unsubscribe links" do
         expect(UnsubscribeLinkPresenter).to receive(:call).with(
-          uuid: "bef9b608-05ba-46ce-abb7-8567f4180a25",
+          id: "bef9b608-05ba-46ce-abb7-8567f4180a25",
           title: "First Subscription"
         ).and_return("unsubscribe_link")
 

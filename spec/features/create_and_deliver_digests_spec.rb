@@ -34,7 +34,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription_one.uuid}?title=Subscriber%20list%20one)
+      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription_one.id}?title=Subscriber%20list%20one)
 
       &nbsp;
 
@@ -56,7 +56,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list two](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.uuid}?title=Subscriber%20list%20two)
+      Unsubscribe from [Subscriber list two](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id}?title=Subscriber%20list%20two)
     BODY
   end
 
@@ -80,7 +80,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription.uuid}?title=Subscriber%20list%20one)
+      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?title=Subscriber%20list%20one)
     BODY
   end
 
@@ -168,6 +168,7 @@ RSpec.describe "creating and delivering digests", type: :request do
         change_note: "Change note three",
         public_updated_at: "2017-01-01 09:00:00",
         links: {
+
           topics: [list_two_topic_id]
         }
       )
@@ -240,7 +241,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription_one.uuid}?title=Subscriber%20list%20one)
+      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription_one.id}?title=Subscriber%20list%20one)
 
       &nbsp;
 
@@ -262,7 +263,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list two](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.uuid}?title=Subscriber%20list%20two)
+      Unsubscribe from [Subscriber list two](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id}?title=Subscriber%20list%20two)
     BODY
   end
 
@@ -286,7 +287,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription.uuid}?title=Subscriber%20list%20one)
+      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?title=Subscriber%20list%20one)
     BODY
   end
   scenario "weekly digest run" do

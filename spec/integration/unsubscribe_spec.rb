@@ -9,7 +9,7 @@ RSpec.describe "Unsubscribing", type: :request do
         let(:subscription) { create(:subscription) }
 
         before do
-          post "/unsubscribe/#{subscription.uuid}"
+          post "/unsubscribe/#{subscription.id}"
         end
 
         it "deletes the subscription" do
