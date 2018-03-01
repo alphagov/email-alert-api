@@ -155,7 +155,7 @@ ActiveRecord::Schema.define(version: 20180302090154) do
     t.integer "source", default: 0, null: false
     t.datetime "ended_at"
     t.integer "ended_reason"
-    t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true
+    t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true, where: "(ended_at IS NULL)"
     t.index ["subscriber_id"], name: "index_subscriptions_on_subscriber_id"
     t.index ["subscriber_list_id"], name: "index_subscriptions_on_subscriber_list_id"
   end

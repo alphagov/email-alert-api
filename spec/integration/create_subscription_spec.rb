@@ -44,8 +44,16 @@ RSpec.describe "Creating a subscription", type: :request do
 
             expect(response.status).to eq(200)
 
-            expect(Subscription.first.weekly?).to be_truthy
-            expect(Subscription.first.source_frequency_changed?).to be true
+            old_subscription = Subscription.order(:created_at).first
+            expect(old_subscription.weekly?).to be false
+            expect(old_subscription.ended?).to be true
+            expect(old_subscription.ended_frequency_changed?).to be true
+
+            new_subscription = Subscription.order(:created_at).last
+            expect(new_subscription.weekly?).to be true
+            expect(new_subscription.source_frequency_changed?).to be true
+
+            expect(Subscription.active.count).to eq(1)
           end
         end
 
