@@ -40,14 +40,12 @@ ActiveRecord::Schema.define(version: 20180301132513) do
   create_table "delivery_attempts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.integer "status", null: false
     t.integer "provider", null: false
-    t.uuid "reference", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "signon_user_uid"
     t.uuid "email_id", null: false
     t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
     t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
-    t.index ["reference"], name: "index_delivery_attempts_on_reference", unique: true
   end
 
   create_table "digest_run_subscribers", force: :cascade do |t|
@@ -152,7 +150,6 @@ ActiveRecord::Schema.define(version: 20180301132513) do
     t.bigint "subscriber_list_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "uuid", null: false
     t.integer "frequency", default: 0, null: false
     t.string "signon_user_uid"
     t.datetime "deleted_at"
@@ -161,7 +158,6 @@ ActiveRecord::Schema.define(version: 20180301132513) do
     t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true
     t.index ["subscriber_id"], name: "index_subscriptions_on_subscriber_id"
     t.index ["subscriber_list_id"], name: "index_subscriptions_on_subscriber_list_id"
-    t.index ["uuid"], name: "index_subscriptions_on_uuid", unique: true
   end
 
   create_table "users", force: :cascade do |t|

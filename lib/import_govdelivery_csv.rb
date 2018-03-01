@@ -131,12 +131,12 @@ private
           frequency: frequency
         ).exists?
 
-        [subscriber.id, subscribable.id, frequency, SecureRandom.uuid, :imported]
+        [subscriber.id, subscribable.id, frequency, :imported]
       end
 
     records = records.compact
 
-    columns = %w(subscriber_id subscriber_list_id frequency uuid source)
+    columns = %w(subscriber_id subscriber_list_id frequency source)
 
     puts "Importing records..."
 

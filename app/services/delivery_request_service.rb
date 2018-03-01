@@ -61,7 +61,6 @@ private
       email: email,
       status: :sending,
       provider: provider_name,
-      reference: reference,
     )
   end
 
