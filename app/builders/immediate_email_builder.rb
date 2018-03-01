@@ -32,7 +32,7 @@ private
   end
 
   def subject(content_change)
-    "GOV.UK update - #{content_change.title}"
+    "GOV.UK update – #{content_change.title}"
   end
 
   def body(content_change, subscriptions)
@@ -42,8 +42,12 @@ private
       <<~BODY
         #{presented_content_change(content_change)}
         ---
+        You’re getting this email because you subscribed to #{subscriptions.first.subscriber_list.title} updates on GOV.UK.
 
         #{presented_unsubscribe_links(subscriptions)}
+
+
+        ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
       BODY
     end
   end
