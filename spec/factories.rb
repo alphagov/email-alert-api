@@ -22,7 +22,7 @@ FactoryBot.define do
   end
 
   factory :digest_run do
-    date { Date.current }
+    date { 1.day.ago }
     range Frequency::DAILY
 
     trait :daily
