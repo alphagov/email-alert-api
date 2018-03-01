@@ -9,7 +9,7 @@ class Subscription < ApplicationRecord
 
   validates :subscriber, uniqueness: { scope: :subscriber_list }
 
-  scope :not_deleted, -> { where(ended_at: nil) }
+  scope :active, -> { where(ended_at: nil) }
 
   def destroy
     update_attributes!(ended_at: Time.now)

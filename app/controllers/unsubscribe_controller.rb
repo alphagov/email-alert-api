@@ -6,7 +6,7 @@ class UnsubscribeController < ApplicationController
 private
 
   def subscription
-    Subscription.not_deleted.find(id)
+    Subscription.active.find(id)
   end
 
   def id

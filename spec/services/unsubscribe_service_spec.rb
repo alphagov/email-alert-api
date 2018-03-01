@@ -39,7 +39,7 @@ RSpec.describe UnsubscribeService do
 
     it "removes the subscription" do
       subject.subscription!(subscription)
-      expect(Subscription.not_deleted.find_by(id: subscription.id)).to be_nil
+      expect(Subscription.active.find_by(id: subscription.id)).to be_nil
     end
 
     it "does not remove the subscription if the email address update fails" do

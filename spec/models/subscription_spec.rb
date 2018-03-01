@@ -37,15 +37,15 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
-  describe ".not_deleted" do
+  describe ".active" do
     it "returns subscriptions with ended_at nil" do
       create(:subscription)
-      expect(Subscription.not_deleted.count).to eq(1)
+      expect(Subscription.active.count).to eq(1)
     end
 
     it "doesn't return subscriptions with ended_at" do
       create(:subscription, ended_at: Time.now)
-      expect(Subscription.not_deleted.count).to eq(0)
+      expect(Subscription.active.count).to eq(0)
     end
   end
 end
