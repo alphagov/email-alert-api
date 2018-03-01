@@ -29,22 +29,22 @@ RSpec.describe Subscription, type: :model do
       expect(described_class.find(subject.id)).to eq(subject)
     end
 
-    it "sets deleted_at to Time.now" do
+    it "sets ended_at to Time.now" do
       Timecop.freeze do
         subject.destroy
-        expect(subject.deleted_at).to eq(Time.now)
+        expect(subject.ended_at).to eq(Time.now)
       end
     end
   end
 
   describe ".not_deleted" do
-    it "returns subscriptions with deleted_at nil" do
+    it "returns subscriptions with ended_at nil" do
       create(:subscription)
       expect(Subscription.not_deleted.count).to eq(1)
     end
 
-    it "doesn't return subscriptions with deleted_at" do
-      create(:subscription, deleted_at: Time.now)
+    it "doesn't return subscriptions with ended_at" do
+      create(:subscription, ended_at: Time.now)
       expect(Subscription.not_deleted.count).to eq(0)
     end
   end
