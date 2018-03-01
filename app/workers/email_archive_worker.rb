@@ -26,7 +26,7 @@ private
     to_import = batch.as_json.map { |e| build_email_archive(e, archived_at) }
     columns = to_import.first.keys.map(&:to_s)
     values = to_import.map(&:values)
-    EmailArchive.import!(columns, values)
+    EmailArchive.import(columns, values, validate: false)
   end
 
   def build_email_archive(email_data, archived_at)
