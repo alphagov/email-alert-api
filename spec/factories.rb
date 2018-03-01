@@ -97,6 +97,11 @@ FactoryBot.define do
     trait :weekly do
       frequency Frequency::WEEKLY
     end
+
+    trait :ended do
+      ended_at { Time.now }
+      ended_reason :unsubscribed
+    end
   end
 
   factory :subscription_content do

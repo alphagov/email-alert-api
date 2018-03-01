@@ -12,9 +12,12 @@ class SubscriptionsController < ApplicationController
     status = subscription.new_record? ? :created : :ok
 
     subscription.ended_at = nil
+    subscription.ended_reason = nil
+
     subscription.frequency = frequency
     subscription.signon_user_uid = current_user.uid
     subscription.source = subscription.new_record? ? :user_signed_up : :frequency_changed
+
     subscription.save!
 
     render json: { id: subscription.id }, status: status

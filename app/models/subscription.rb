@@ -12,7 +12,20 @@ class Subscription < ApplicationRecord
 
   scope :active, -> { where(ended_at: nil) }
 
-  def destroy
-    update_attributes!(ended_at: Time.now)
+  def active?
+    ended_at.nil?
+  end
+
+  def ended?
+    ended_at.present?
+  end
+
+  def end(reason:, datetime: nil)
+    raise "Already ended." if ended?
+
+    update!(
+      ended_reason: reason,
+      ended_at: datetime || Time.now,
+    )
   end
 end

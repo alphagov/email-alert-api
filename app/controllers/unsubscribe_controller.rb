@@ -1,6 +1,6 @@
 class UnsubscribeController < ApplicationController
   def unsubscribe
-    UnsubscribeService.subscription!(subscription)
+    UnsubscribeService.subscription!(subscription, :unsubscribed)
   end
 
 private

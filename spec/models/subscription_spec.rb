@@ -25,17 +25,17 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
-  describe "destroy" do
+  describe "end" do
     subject { create(:subscription) }
 
     it "doesn't delete the record" do
-      subject.destroy
+      subject.end(reason: :unsubscribed)
       expect(described_class.find(subject.id)).to eq(subject)
     end
 
     it "sets ended_at to Time.now" do
       Timecop.freeze do
-        subject.destroy
+        subject.end(reason: :unsubscribed)
         expect(subject.ended_at).to eq(Time.now)
       end
     end
@@ -48,7 +48,7 @@ RSpec.describe Subscription, type: :model do
     end
 
     it "doesn't return subscriptions with ended_at" do
-      create(:subscription, ended_at: Time.now)
+      create(:subscription, :ended)
       expect(Subscription.active.count).to eq(0)
     end
   end
