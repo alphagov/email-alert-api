@@ -7,9 +7,16 @@ class EmailArchiveWorker
 
   def perform
     Email.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
+      start_time = Time.zone.now
+      archived_count = 0
+
       EmailArchiveQuery.call.in_batches do |batch|
-        Email.transaction { archive_batch(batch) }
+        Email.transaction do
+          archived_count += archive_batch(batch)
+        end
       end
+
+      log_complete(archived_count, start_time, Time.zone.now)
     end
   end
 
@@ -70,4 +77,9 @@ private
     email_data.fetch("subscriber_ids").first
   end
 
+  def log_complete(archived, start_time, end_time)
+    seconds = (end_time - start_time).round(2)
+    message = "Archived #{archived} emails in #{seconds} seconds"
+    logger.info(message)
+  end
 end
