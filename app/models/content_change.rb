@@ -8,4 +8,12 @@ class ContentChange < ApplicationRecord
   def mark_processed!
     update!(processed_at: Time.now)
   end
+
+  def is_travel_advice?
+    links.include?(:countries)
+  end
+
+  def is_medical_safety_alert?
+    tags.fetch(:format, []).include?("medical_safety_alert")
+  end
 end
