@@ -114,7 +114,7 @@ RSpec.describe Subscriber, type: :model do
     end
   end
 
-  context "with a subscriber list" do
+  context "with a subscription" do
     subject { create(:subscriber) }
 
     before { create(:subscription, subscriber: subject) }
@@ -123,9 +123,8 @@ RSpec.describe Subscriber, type: :model do
       expect(subject.subscriber_lists.size).to eq(1)
     end
 
-    it "can be deleted and won't delete the subscriber list" do
-      expect { subject.destroy }.not_to raise_error
-      expect(SubscriberList.all.size).to eq(1)
+    it "cannot be deleted" do
+      expect { subject.destroy }.to raise_error(ActiveRecord::InvalidForeignKey)
     end
   end
 
