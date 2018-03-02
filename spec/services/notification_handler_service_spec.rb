@@ -61,17 +61,13 @@ RSpec.describe NotificationHandlerService do
       described_class.call(params: params)
     end
 
-    it "reports ContentChange errors to Sentry and swallows them" do
+    it "Raises errors if the ContentChange is invalid" do
       allow(ContentChange).to receive(:create!).and_raise(
         ActiveRecord::RecordInvalid
       )
-      expect(Raven).to receive(:capture_exception).with(
-        instance_of(ActiveRecord::RecordInvalid),
-        tags: { version: 2 }
-      )
 
       expect { described_class.call(params: params) }
-        .not_to raise_error
+        .to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 end
