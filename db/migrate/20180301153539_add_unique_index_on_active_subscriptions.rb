@@ -1,5 +1,5 @@
 class AddUniqueIndexOnActiveSubscriptions < ActiveRecord::Migration[5.1]
-  disable_ddl_transactions!
+  disable_ddl_transaction!
 
   def up
     add_index :subscriptions,
