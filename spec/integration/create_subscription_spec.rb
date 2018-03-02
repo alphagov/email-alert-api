@@ -18,7 +18,7 @@ RSpec.describe "Creating a subscription", type: :request do
         params = JSON.dump(address: "test@example.com", subscribable_id: subscribable.id)
         post "/subscriptions", params: params, headers: JSON_HEADERS
 
-        expect(Subscription.first.user_signed_up?).to be true
+        expect(Subscription.first.source_user_signed_up?).to be true
       end
 
       context "with a frequency setting" do
@@ -29,7 +29,7 @@ RSpec.describe "Creating a subscription", type: :request do
           expect(response.status).to eq(201)
 
           expect(Subscription.first.daily?).to be_truthy
-          expect(Subscription.first.user_signed_up?).to be true
+          expect(Subscription.first.source_user_signed_up?).to be true
         end
 
         context "with an existing subscription" do
@@ -44,8 +44,16 @@ RSpec.describe "Creating a subscription", type: :request do
 
             expect(response.status).to eq(200)
 
-            expect(Subscription.first.weekly?).to be_truthy
-            expect(Subscription.first.frequency_changed?).to be true
+            old_subscription = Subscription.order(:created_at).first
+            expect(old_subscription.weekly?).to be false
+            expect(old_subscription.ended?).to be true
+            expect(old_subscription.ended_frequency_changed?).to be true
+
+            new_subscription = Subscription.order(:created_at).last
+            expect(new_subscription.weekly?).to be true
+            expect(new_subscription.source_frequency_changed?).to be true
+
+            expect(Subscription.active.count).to eq(1)
           end
         end
 

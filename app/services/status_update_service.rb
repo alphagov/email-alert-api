@@ -27,7 +27,7 @@ class StatusUpdateService
     end
 
     if delivery_attempt.permanent_failure? && subscriber
-      UnsubscribeService.subscriber!(subscriber)
+      UnsubscribeService.subscriber!(subscriber, :non_existant_email)
     elsif delivery_attempt.temporary_failure?
       DeliveryRequestWorker.perform_in(15.minutes, email.id, :default)
     end

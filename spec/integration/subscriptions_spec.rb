@@ -28,26 +28,33 @@ RSpec.describe "Subscriptions", type: :request do
         post "/subscriptions", params: { subscribable_id: subscribable.id, address: subscriber.address }
       end
 
-      it "doesn't create a new subscription" do
-        expect { create_subscription }.not_to change(Subscription, :count)
+      it "creates a new subscription" do
+        expect { create_subscription }.to change(Subscription, :count)
       end
 
-      it "returns status code 201" do
+      it "returns status code 200" do
         create_subscription
         expect(response.status).to eq(200)
       end
 
-      it "returns the ID of the existing subscription" do
+      it "returns the ID of the new subscription" do
         create_subscription
-        expect(data[:id]).to eq(subscription.id)
+        expect(data[:id]).to_not eq(subscription.id)
       end
 
-      context "with a deleted subscription" do
-        let!(:subscription) { create(:subscription, subscriber_list: subscribable, subscriber: subscriber, ended_at: 1.day.ago) }
+      it "marks the existing subscription as ended" do
+        create_subscription
+        expect(subscription.reload.ended?).to be true
+      end
 
-        it "undeletes the subscription" do
+      context "with an ended subscription" do
+        let!(:subscription) { create(:subscription, :ended, subscriber_list: subscribable, subscriber: subscriber) }
+
+        it "leaves the subscription as ended" do
           create_subscription
-          expect(Subscription.find(subscription.id).ended_at).to be_nil
+
+          expect(subscription.reload.active?).to be false
+          expect(subscription.reload.ended?).to be true
         end
       end
     end

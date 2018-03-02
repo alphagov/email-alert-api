@@ -1,12 +1,12 @@
 class UnsubscribeController < ApplicationController
   def unsubscribe
-    UnsubscribeService.subscription!(subscription)
+    UnsubscribeService.subscription!(subscription, :unsubscribed)
   end
 
 private
 
   def subscription
-    Subscription.not_deleted.find(id)
+    Subscription.active.find(id)
   end
 
   def id

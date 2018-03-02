@@ -1,20 +1,22 @@
 module UnsubscribeService
   class << self
-    def subscriber!(subscriber)
-      unsubscribe!(subscriber, subscriber.subscriptions)
+    def subscriber!(subscriber, reason)
+      unsubscribe!(subscriber, subscriber.subscriptions, reason)
     end
 
-    def subscription!(subscription)
-      unsubscribe!(subscription.subscriber, [subscription])
+    def subscription!(subscription, reason)
+      unsubscribe!(subscription.subscriber, [subscription], reason)
     end
 
   private
 
-    def unsubscribe!(subscriber, subscriptions)
+    def unsubscribe!(subscriber, subscriptions, reason)
       ActiveRecord::Base.transaction do
         nullify_references_to_subscriptions!(subscriptions)
 
-        subscriptions.each(&:destroy)
+        subscriptions.each do |subscription|
+          subscription.end(reason: reason)
+        end
 
         if no_other_subscriptions?(subscriber, subscriptions)
           subscriber.deactivate!

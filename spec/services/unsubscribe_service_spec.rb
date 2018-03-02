@@ -3,7 +3,7 @@ RSpec.describe UnsubscribeService do
     let!(:subscriber) { create(:subscriber, address: "foo@bar.com") }
 
     it "deactivates the subscriber" do
-      expect { subject.subscriber!(subscriber) }
+      expect { subject.subscriber!(subscriber, :unsubscribed) }
         .to change { subscriber.reload.deactivated? }
         .from(false)
         .to(true)
@@ -15,7 +15,7 @@ RSpec.describe UnsubscribeService do
       end
 
       it "removes them" do
-        expect { subject.subscriber!(subscriber) }
+        expect { subject.subscriber!(subscriber, :unsubscribed) }
           .to change(subscriber.subscriptions, :count)
           .from(3)
           .to(0)
@@ -25,7 +25,7 @@ RSpec.describe UnsubscribeService do
         allow_any_instance_of(Subscriber).
           to receive(:valid?).and_raise("failed")
 
-        expect { subject.subscriber!(subscriber) }
+        expect { subject.subscriber!(subscriber, :unsubscribed) }
           .to raise_error("failed")
           .and change(subscriber.subscriptions, :count)
           .by(0)
@@ -38,15 +38,15 @@ RSpec.describe UnsubscribeService do
     let(:subscriber) { subscription.subscriber }
 
     it "removes the subscription" do
-      subject.subscription!(subscription)
-      expect(Subscription.not_deleted.find_by(id: subscription.id)).to be_nil
+      subject.subscription!(subscription, :unsubscribed)
+      expect(Subscription.active.find_by(id: subscription.id)).to be_nil
     end
 
     it "does not remove the subscription if the email address update fails" do
       allow_any_instance_of(Subscriber).
         to receive(:valid?).and_raise("failed")
 
-      expect { subject.subscriber!(subscriber) }
+      expect { subject.subscriber!(subscriber, :unsubscribed) }
         .to raise_error("failed")
         .and change(subscriber.subscriptions, :count)
         .by(0)
@@ -54,7 +54,7 @@ RSpec.describe UnsubscribeService do
 
     context "when it is the only remaining subscription for the subscriber" do
       it "deactivates the subscriber" do
-        expect { subject.subscription!(subscription) }
+        expect { subject.subscription!(subscription, :unsubscribed) }
           .to change { subscriber.reload.deactivated? }
           .from(false)
           .to(true)
@@ -69,7 +69,7 @@ RSpec.describe UnsubscribeService do
       it "does not nullify the email address of the subscriber" do
         subscriber = subscription.subscriber
 
-        subject.subscription!(subscription)
+        subject.subscription!(subscription, :unsubscribed)
         expect(subscriber.reload.address).not_to be_nil
       end
     end
@@ -80,7 +80,7 @@ RSpec.describe UnsubscribeService do
       end
 
       it "nullifies the subscription on the subscription_content" do
-        expect { subject.subscription!(subscription) }
+        expect { subject.subscription!(subscription, :unsubscribed) }
           .to change { subscription_content.reload.subscription }
           .from(subscription)
           .to(nil)
