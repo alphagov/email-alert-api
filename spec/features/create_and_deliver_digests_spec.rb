@@ -60,6 +60,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
 
+      &nbsp;
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY
@@ -89,6 +90,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
 
+      &nbsp;
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY
@@ -277,6 +279,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
 
+      &nbsp;
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY
@@ -306,6 +309,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
 
+      &nbsp;
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY

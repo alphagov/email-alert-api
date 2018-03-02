@@ -46,6 +46,7 @@ private
 
         #{presented_unsubscribe_links(subscriptions)}
 
+        &nbsp;
 
         ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
       BODY
