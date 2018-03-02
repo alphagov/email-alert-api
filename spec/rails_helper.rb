@@ -26,6 +26,7 @@ WebMock.disable_net_connect!(allow_localhost: true)
 
 Sidekiq::Testing.inline!
 Sidekiq::Worker.clear_all
+Sidekiq::Logging.logger = nil
 
 JSON_HEADERS = {
   "CONTENT_TYPE" => "application/json",

@@ -24,3 +24,9 @@
   nullify_deactivated_subscribers:
     every: '1h'
     class: NullifyDeactivatedSubscribersWorker
+  email_archiver:
+    every: '1h'
+    class: EmailArchiveWorker
+  email_deleter:
+    every: '1h'
+    class: EmailDeletionWorker
