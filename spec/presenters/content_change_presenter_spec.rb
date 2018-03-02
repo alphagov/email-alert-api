@@ -24,6 +24,20 @@ RSpec.describe ContentChangePresenter do
       expect(described_class.call(content_change)).to eq(expected)
     end
 
+    context "when the content change is travel advice" do
+      let(:content_change) { create(:content_change, :travel_advice, public_updated_at: Time.parse("10:00 1/1/2018")) }
+
+      it "doesn't include the description" do
+        expected = <<~CONTENT_CHANGE
+          [title](http://www.dev.gov.uk/government/base_path)
+
+          10:00am, 1 January 2018: change note
+        CONTENT_CHANGE
+
+        expect(described_class.call(content_change)).to eq(expected)
+      end
+    end
+
     context "when content change contains markdown" do
       let(:content_change) {
         build(

@@ -12,13 +12,21 @@ class ContentChangePresenter
   end
 
   def call
-    <<~BODY
-      [#{title}](#{content_url})
+    if include_description?
+      <<~BODY
+        #{title_markdown}
 
-      #{strip_markdown(description)}
+        #{description_markdown}
 
-      #{public_updated_at}: #{strip_markdown(change_note)}
-    BODY
+        #{change_note_markdown}
+      BODY
+    else
+      <<~BODY
+        #{title_markdown}
+
+        #{change_note_markdown}
+      BODY
+    end
   end
 
   private_class_method :new
@@ -43,5 +51,21 @@ private
 
   def markdown_stripper
     @markdown_stripper ||= Redcarpet::Markdown.new(Redcarpet::Render::StripDown)
+  end
+
+  def title_markdown
+    "[#{title}](#{content_url})"
+  end
+
+  def description_markdown
+    strip_markdown(description)
+  end
+
+  def change_note_markdown
+    "#{public_updated_at}: #{strip_markdown(change_note)}"
+  end
+
+  def include_description?
+    !content_change.is_travel_advice?
   end
 end
