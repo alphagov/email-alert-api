@@ -29,7 +29,7 @@ private
 
   def presented_result(result)
     <<~RESULT
-      ##{result.subscriber_list_title}
+      ##{result.subscriber_list_title}&nbsp;
 
       #{deduplicate_and_present(result.content_changes)}
       ---
