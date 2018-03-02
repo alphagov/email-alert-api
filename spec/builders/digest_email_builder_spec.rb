@@ -98,6 +98,12 @@ RSpec.describe DigestEmailBuilder do
         ---
 
         unsubscribe_link_2
+
+        You’re getting this email because you subscribed to these topic updates on GOV.UK.
+
+        &nbsp;
+
+        ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
       BODY
     )
   end

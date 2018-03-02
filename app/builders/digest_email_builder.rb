@@ -24,10 +24,14 @@ private
   attr_reader :subscriber, :digest_run, :results
 
   def body
-    results.map { |result| presented_result(result) }.join("\n&nbsp;\n\n")
+    presented_results.concat("\n").concat(spam_prevention_survey_links)
   end
 
-  def presented_result(result)
+  def presented_results
+    results.map { |result| presented_segment(result) }.join("\n&nbsp;\n\n")
+  end
+
+  def presented_segment(result)
     <<~RESULT
       ##{result.subscriber_list_title}&nbsp;
 
@@ -36,6 +40,16 @@ private
 
       #{unsubscribe_link(result)}
     RESULT
+  end
+
+  def spam_prevention_survey_links
+    <<~BODY
+      You’re getting this email because you subscribed to these topic updates on GOV.UK.
+
+      &nbsp;
+
+      ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
+    BODY
   end
 
   def subject

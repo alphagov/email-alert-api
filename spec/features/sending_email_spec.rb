@@ -17,7 +17,7 @@ RSpec.describe "Sending an email", type: :request do
     body = email_data.dig(:personalisation, :body)
 
     expect(address).to eq("test@test.com")
-    expect(subject).to eq("GOV.UK update - Title")
+    expect(subject).to eq("GOV.UK update – Title")
 
     expect(body).to include("Description")
     expect(body).to include("gov.uk/base-path")
