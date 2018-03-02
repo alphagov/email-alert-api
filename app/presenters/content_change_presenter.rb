@@ -12,21 +12,12 @@ class ContentChangePresenter
   end
 
   def call
-    if include_description?
-      <<~BODY
-        #{title_markdown}
-
-        #{description_markdown}
-
-        #{change_note_markdown}
-      BODY
-    else
-      <<~BODY
-        #{title_markdown}
-
-        #{change_note_markdown}
-      BODY
-    end
+    [
+      title_markdown,
+      include_description? ? description_markdown : nil,
+      change_note_markdown,
+      include_mhra_line? ? mhra_line_markdown : nil,
+    ].compact.join("\n\n") + "\n"
   end
 
   private_class_method :new
@@ -67,5 +58,13 @@ private
 
   def include_description?
     !content_change.is_travel_advice?
+  end
+
+  def include_mhra_line?
+    content_change.is_medical_safety_alert?
+  end
+
+  def mhra_line_markdown
+    "Do not reply to this email. To contact MHRA, email [email.support@mhra.gov.uk](mailto:email.support@mhra.gov.uk)"
   end
 end

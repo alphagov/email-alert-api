@@ -38,6 +38,24 @@ RSpec.describe ContentChangePresenter do
       end
     end
 
+    context "when the content change is medical safety alert" do
+      let(:content_change) { create(:content_change, :medical_safety_alert, public_updated_at: Time.parse("10:00 1/1/2018")) }
+
+      it "includes the MHRA line" do
+        expected = <<~CONTENT_CHANGE
+          [title](http://www.dev.gov.uk/government/base_path)
+
+          description
+
+          10:00am, 1 January 2018: change note
+
+          Do not reply to this email. To contact MHRA, email [email.support@mhra.gov.uk](mailto:email.support@mhra.gov.uk)
+        CONTENT_CHANGE
+
+        expect(described_class.call(content_change)).to eq(expected)
+      end
+    end
+
     context "when content change contains markdown" do
       let(:content_change) {
         build(
