@@ -54,6 +54,24 @@ sidekiq-monitoring for email-alert-api uses 3089
 * Run `RAILS_ENV=test bundle exec rake db:setup` to load the database
 * Run `bundle exec rspec` to run the tests
 
+### PG::InsufficientPrivilege on development VM
+
+Email alert api relies on Postgresql's uuid-ossp module. This is not available
+by default and you might find running migrations results in the following error:
+
+```
+PG::InsufficientPrivilege: ERROR:  permission denied to create extension "uuid-ossp"
+```
+
+This can be solved by:
+
+```
+> sudo -upostgres psql email-alert-api_development
+psql> CREATE EXTENSION "uuid-ossp";
+```
+
+and then repeating for `email-alert-api_test`
+
 ### Tasks
 
 #### Import from GovDelivery export
