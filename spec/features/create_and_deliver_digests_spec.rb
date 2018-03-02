@@ -16,7 +16,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
   def first_expected_daily_email_body(subscription_one, subscription_two)
     <<~BODY
-      #Subscriber list one
+      #Subscriber list one&nbsp;
 
       [Title one](http://www.dev.gov.uk/base-path)
 
@@ -38,7 +38,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       &nbsp;
 
-      #Subscriber list two
+      #Subscriber list two&nbsp;
 
       [Title four](http://www.dev.gov.uk/base-path)
 
@@ -62,7 +62,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
   def second_expected_daily_email_body(subscription)
     <<~BODY
-      #Subscriber list one
+      #Subscriber list one&nbsp;
 
       [Title one](http://www.dev.gov.uk/base-path)
 
@@ -223,7 +223,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
   def first_expected_weekly_email_body(subscription_one, subscription_two)
     <<~BODY
-      #Subscriber list one
+      #Subscriber list one&nbsp;
 
       [Title one](http://www.dev.gov.uk/base-path)
 
@@ -245,7 +245,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       &nbsp;
 
-      #Subscriber list two
+      #Subscriber list two&nbsp;
 
       [Title four](http://www.dev.gov.uk/base-path)
 
@@ -269,7 +269,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
   def second_expected_weekly_email_body(subscription)
     <<~BODY
-      #Subscriber list one
+      #Subscriber list one&nbsp;
 
       [Title one](http://www.dev.gov.uk/base-path)
 

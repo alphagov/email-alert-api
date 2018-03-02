@@ -73,7 +73,7 @@ RSpec.describe DigestEmailBuilder do
 
     expect(email.body).to eq(
       <<~BODY
-        #Test title 1
+        #Test title 1&nbsp;
 
         presented_content_change
 
@@ -87,7 +87,7 @@ RSpec.describe DigestEmailBuilder do
 
         &nbsp;
 
-        #Test title 2
+        #Test title 2&nbsp;
 
         presented_content_change
 
