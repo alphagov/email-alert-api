@@ -13,6 +13,14 @@ FactoryBot.define do
     sequence(:govuk_request_id) { |i| "request-id-#{i}" }
     document_type "document type"
     publishing_app "publishing app"
+
+    trait :travel_advice do
+      links countries: [SecureRandom.uuid]
+    end
+
+    trait :medical_safety_alert do
+      tags format: ["medical_safety_alert"], alert_type: %w(devices drugs field-safety-notices company-led-drugs)
+    end
   end
 
   factory :delivery_attempt do
