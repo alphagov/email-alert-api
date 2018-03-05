@@ -140,6 +140,10 @@ and it will respond with the JSON response for the `GET` call above.
 and it will respond with `202 Accepted` (the call is queued to prevent slowness
 in the external notifications API).
 
+The following fields are accepted on this endpoint: `subject`, `from_address_id`, `urgent`, `header`, `footer`,
+`document_type`, `content_id`, `public_updated_at`, `publishing_app`, `email_document_supertype`,
+`government_document_supertype`, `title`, `description`, `change_note`, `base_path`, `priority` and `footnote`.
+
 * `POST /subscriptions` with data:
 
 ```json
