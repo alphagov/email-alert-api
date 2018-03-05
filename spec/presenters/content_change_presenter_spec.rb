@@ -47,5 +47,24 @@ RSpec.describe ContentChangePresenter do
         expect(described_class.call(content_change)).to eq(expected)
       end
     end
+
+    context "when the content change has no description" do
+      let(:content_change) {
+        build(
+          :content_change, description: "",
+          public_updated_at: Time.parse("10:00 1/1/2018")
+        )
+      }
+
+      it "doesn't leave an empty gap" do
+        expected = <<~CONTENT_CHANGE
+          [title](http://www.dev.gov.uk/government/base_path)
+
+          10:00am, 1 January 2018: change note
+        CONTENT_CHANGE
+
+        expect(described_class.call(content_change)).to eq(expected)
+      end
+    end
   end
 end

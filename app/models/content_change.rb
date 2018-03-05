@@ -1,7 +1,7 @@
 class ContentChange < ApplicationRecord
   include SymbolizeJSON
 
-  validates_presence_of :content_id, :title, :base_path, :change_note, :description,
+  validates_presence_of :content_id, :title, :base_path, :change_note,
     :public_updated_at, :email_document_supertype, :government_document_supertype,
     :govuk_request_id, :document_type, :publishing_app
 

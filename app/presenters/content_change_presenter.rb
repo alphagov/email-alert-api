@@ -12,13 +12,11 @@ class ContentChangePresenter
   end
 
   def call
-    <<~BODY
-      [#{title}](#{content_url})
-
-      #{strip_markdown(description)}
-
-      #{public_updated_at}: #{strip_markdown(change_note)}
-    BODY
+    [
+      title_markdown,
+      description_markdown,
+      change_note_markdown,
+    ].compact.join("\n\n") + "\n"
   end
 
   private_class_method :new
@@ -43,5 +41,18 @@ private
 
   def markdown_stripper
     @markdown_stripper ||= Redcarpet::Markdown.new(Redcarpet::Render::StripDown)
+  end
+
+  def title_markdown
+    "[#{title}](#{content_url})"
+  end
+
+  def description_markdown
+    return nil if description.blank?
+    strip_markdown(description)
+  end
+
+  def change_note_markdown
+    "#{public_updated_at}: #{strip_markdown(change_note)}"
   end
 end
