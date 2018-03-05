@@ -16,6 +16,7 @@ class ContentChangePresenter
       title_markdown,
       description_markdown,
       change_note_markdown,
+      footnote_markdown,
     ].compact.join("\n\n") + "\n"
   end
 
@@ -25,7 +26,7 @@ private
 
   attr_reader :content_change
 
-  delegate :title, :description, :change_note, to: :content_change
+  delegate :title, :description, :change_note, :footnote, to: :content_change
 
   def content_url
     PublicUrlService.url_for(base_path: content_change.base_path)
@@ -54,5 +55,10 @@ private
 
   def change_note_markdown
     "#{public_updated_at}: #{strip_markdown(change_note)}"
+  end
+
+  def footnote_markdown
+    return nil if footnote.blank?
+    strip_markdown(footnote)
   end
 end

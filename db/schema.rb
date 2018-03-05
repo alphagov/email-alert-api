@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180305091124) do
+ActiveRecord::Schema.define(version: 20180305094418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 20180305091124) do
     t.datetime "processed_at"
     t.integer "priority", default: 0
     t.string "signon_user_uid"
+    t.text "footnote", default: "", null: false
   end
 
   create_table "delivery_attempts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|

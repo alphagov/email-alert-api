@@ -38,6 +38,7 @@ private
       publishing_app: params[:publishing_app],
       priority: params.fetch(:priority, "normal").to_sym,
       signon_user_uid: user&.uid,
+      footnote: params.fetch(:footnote, ""),
     }
   end
 end
