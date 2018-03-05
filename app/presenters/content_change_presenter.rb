@@ -48,6 +48,7 @@ private
   end
 
   def description_markdown
+    return nil if description.blank?
     strip_markdown(description)
   end
 
