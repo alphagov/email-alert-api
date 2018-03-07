@@ -41,6 +41,7 @@ private
       .select("content_changes.*", "subscriptions.id AS subscription_id", "subscriber_lists.title AS subscriber_list_title")
       .joins(matched_content_changes: { subscriber_list: { subscriptions: :subscriber } })
       .where(subscribers: { id: subscriber.id })
+      .where(subscriptions: { frequency: Subscription.frequencies[digest_run.range] })
       .where("content_changes.created_at >= ?", digest_run.starts_at)
       .where("content_changes.created_at < ?", digest_run.ends_at)
       .merge(Subscription.active)
