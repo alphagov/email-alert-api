@@ -25,11 +25,11 @@ class Healthcheck
     end
 
     def critical_size
-      ENV.fetch("SIDEKIQ_RETRY_SIZE_CRITICAL", 10).to_i
+      ENV.fetch("SIDEKIQ_RETRY_SIZE_CRITICAL", 15000).to_i
     end
 
     def warning_size
-      ENV.fetch("SIDEKIQ_RETRY_SIZE_WARNING", 5).to_i
+      ENV.fetch("SIDEKIQ_RETRY_SIZE_WARNING", 10000).to_i
     end
   end
 end
