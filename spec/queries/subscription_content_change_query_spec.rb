@@ -45,6 +45,16 @@ RSpec.describe SubscriptionContentChangeQuery do
         it "returns one result" do
           expect(subject.first.content_changes.count).to eq(1)
         end
+
+        context "with an ended subscription" do
+          before do
+            subscription.end(reason: :unsubscribed)
+          end
+
+          it "returns no results" do
+            expect(subject.count).to eq(0)
+          end
+        end
       end
 
       context "with two matched content changes" do

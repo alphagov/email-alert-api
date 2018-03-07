@@ -43,6 +43,7 @@ private
       .where(subscribers: { id: subscriber.id })
       .where("content_changes.created_at >= ?", digest_run.starts_at)
       .where("content_changes.created_at < ?", digest_run.ends_at)
+      .merge(Subscription.active)
       .order("subscriber_list_title ASC", "content_changes.title ASC")
   end
 end
