@@ -7,12 +7,12 @@ RSpec.describe Healthcheck::RetrySizeHealthcheck do
   end
 
   context "when the warning threshold is reached" do
-    let(:size) { 10005 }
+    let(:size) { 40005 }
     specify { expect(subject.status).to eq(:warning) }
   end
 
   context "when the critical threshold is reached" do
-    let(:size) { 15010 }
+    let(:size) { 50010 }
     specify { expect(subject.status).to eq(:critical) }
   end
 
