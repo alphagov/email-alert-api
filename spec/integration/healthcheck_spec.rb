@@ -43,6 +43,7 @@ RSpec.describe "Healthcheck", type: :request do
 
     expect(data.fetch(:checks)).to include(
       database:          { status: "ok" },
+      queue_latency:     { status: "ok", queues: a_kind_of(Hash) },
       queue_size:        { status: "ok", queues: a_kind_of(Hash) },
       redis:             { status: "ok" },
       retry_size:        { status: "ok", retry_size: 0 },

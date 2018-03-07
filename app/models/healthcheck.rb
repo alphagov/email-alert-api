@@ -28,6 +28,7 @@ private
   def all
     @all ||= [
       DatabaseHealthcheck.new,
+      QueueLatencyHealthcheck.new,
       QueueSizeHealthcheck.new,
       RedisHealthcheck.new,
       RetrySizeHealthcheck.new,
