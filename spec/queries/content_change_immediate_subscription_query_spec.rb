@@ -28,6 +28,16 @@ RSpec.describe ContentChangeImmediateSubscriptionQuery do
       end
     end
 
+    context "with an ended subscription" do
+      before do
+        create(:subscription, :ended, subscriber_list: subscriber_list)
+      end
+
+      it "returns no subscriptions" do
+        expect(subject.count).to eq(0)
+      end
+    end
+
     context "with two subscriptions" do
       before do
         create(:subscription, subscriber_list: subscriber_list)
