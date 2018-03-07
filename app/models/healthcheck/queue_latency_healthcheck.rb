@@ -5,9 +5,9 @@ class Healthcheck
     end
 
     def status
-      if queue_latencies.any? { |s| s >= critical_size }
+      if queues.values.any? { |queue| queue.fetch(:critical) }
         :critical
-      elsif queue_latencies.any? { |s| s >= warning_size }
+      elsif queues.values.any? { |queue| queue.fetch(:warning) }
         :warning
       else
         :ok
@@ -20,13 +20,12 @@ class Healthcheck
 
   private
 
-    def queue_latencies
-      queues.values
-    end
-
     def queues
-      @queues ||= queue_names.each.with_object({}) do |name, hash|
-        hash[name] = latency_for(name)
+      @queues ||= thresholds_for_queues.each_with_object({}) do |(name, threshold), hash|
+        latency = latency_for(name)
+        critical = latency > threshold.fetch(:critical)
+        warning = latency > threshold.fetch(:warning)
+        hash[name] = { latency: latency, critical: critical, warning: warning }
       end
     end
 
@@ -34,16 +33,28 @@ class Healthcheck
       Sidekiq::Queue.new(name).latency
     end
 
-    def queue_names
-      @queues ||= Sidekiq::Stats.new.queues.keys
+    def thresholds_for_queues
+      {
+        delivery_immediate_high: { critical: immediate_critical_size, warning: immediate_warning_size },
+        delivery_immediate: { critical: immediate_critical_size, warning: immediate_warning_size },
+        delivery_digest: { critical: digest_critical_size, warning: digest_warning_size },
+      }
     end
 
-    def critical_size
-      ENV.fetch("SIDEKIQ_QUEUE_LATENCY_CRITICAL", 15 * 60).to_i
+    def immediate_critical_size
+      ENV.fetch("SIDEKIQ_IMMEDIATE_QUEUE_LATENCY_CRITICAL", 5 * 60).to_i
     end
 
-    def warning_size
-      ENV.fetch("SIDEKIQ_QUEUE_LATENCY_WARNING", 10 * 60).to_i
+    def immediate_warning_size
+      ENV.fetch("SIDEKIQ_IMMEDIATE_QUEUE_LATENCY_WARNING", 2.5 * 60).to_i
+    end
+
+    def digest_critical_size
+      ENV.fetch("SIDEKIQ_DIGEST_QUEUE_LATENCY_CRITICAL", 90 * 60).to_i
+    end
+
+    def digest_warning_size
+      ENV.fetch("SIDEKIQ_DIGEST_QUEUE_LATENCY_CRITICAL", 60 * 60).to_i
     end
   end
 end
