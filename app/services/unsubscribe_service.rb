@@ -18,7 +18,7 @@ module UnsubscribeService
           subscription.end(reason: reason)
         end
 
-        if no_other_subscriptions?(subscriber, subscriptions)
+        if !subscriber.deactivated? && no_other_subscriptions?(subscriber, subscriptions)
           subscriber.deactivate!
         end
       end
