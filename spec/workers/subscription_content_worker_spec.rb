@@ -37,6 +37,24 @@ RSpec.describe SubscriptionContentWorker do
     end
   end
 
+  context "with more subscriptions than the batch size" do
+    let(:subscriber) { create(:subscriber) }
+    let(:content_change) { create(:content_change) }
+
+    before do
+      2.times do
+        subscription = create(:subscription, subscriber: subscriber)
+        create(:matched_content_change, subscriber_list: subscription.subscriber_list, content_change: content_change)
+      end
+    end
+
+    it "calls SubscriptionContent.import! once" do
+      expect(SubscriptionContent).to receive(:import!).once
+
+      subject.perform(content_change.id, 1)
+    end
+  end
+
   context "with a courtesy subscription" do
     let!(:subscriber) do
       create(:subscriber, address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk")
