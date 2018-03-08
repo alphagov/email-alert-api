@@ -19,10 +19,12 @@ class DeliveryRequestWorker
   def perform(email_id, queue)
     @email_id = email_id
     @queue = queue
+
     check_rate_limit!
-    increment_rate_limiter
+
     email = Email.find(email_id)
-    DeliveryRequestService.call(email: email)
+    attempted = DeliveryRequestService.call(email: email)
+    increment_rate_limiter if attempted
   end
 
   def self.perform_async_in_queue(*args, queue:)

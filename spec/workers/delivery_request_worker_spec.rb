@@ -12,7 +12,8 @@ RSpec.describe DeliveryRequestWorker do
 
     context "with an email and a subscriber" do
       it "calls the DeliveryRequestService" do
-        expect(DeliveryRequestService).to receive(:call).with(email: email)
+        expect(DeliveryRequestService).to receive(:call).with(email: email).and_return(true)
+        expect(subject).to receive(:increment_rate_limiter)
         subject.perform(email.id, queue)
       end
     end
