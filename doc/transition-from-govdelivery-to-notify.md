@@ -7,16 +7,6 @@ It will be safe to remove this once the migration has been completed.
 
 ## ENV vars
 
-### `DISABLE_GOVDELIVERY_EMAILS`
-
-By setting a value for this notification changes will no longer be sent to
-govdelivery. This is set within the [app/notifications_worker.rb][worker].
-
-When this is set jobs will still be scheduled to sidekiq but they will all not
-be executed. No data will be saved about jobs aborted.
-
-[worker]: ../app/notifications_worker.rb
-
 ### `USE_EMAIL_ALERT_FRONTEND_FOR_EMAIL_COLLECTION`
 
 When this environment variable set the redirect location that is returned
@@ -52,4 +42,3 @@ This can be used to send emails to a select group of testers while the rest of
 the emails are sent to a smoke test address. The intention is to use this in
 the build up to launch so we can be testing real emails internally until the
 switchover.
-

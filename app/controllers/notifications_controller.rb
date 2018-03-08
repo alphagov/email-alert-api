@@ -2,8 +2,6 @@ class NotificationsController < ApplicationController
   def create
     return render_conflict if content_change_exists?
 
-    NotificationWorker.perform_async(notification_params)
-
     NotificationHandlerService.call(
       params: notification_params,
       user: current_user,

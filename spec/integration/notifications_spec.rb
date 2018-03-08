@@ -44,9 +44,10 @@ RSpec.describe "Receiving a notification", type: :request do
           .and_return(govuk_request_id: "12345-67890")
       end
 
-      it "serializes the tags and passes them to the NotificationWorker" do
-        expect(NotificationWorker).to receive(:perform_async).with(
-          expected_notification_params
+      it "serializes the tags and passes them to the NotificationHandlerService" do
+        expect(NotificationHandlerService).to receive(:call).with(
+          params: expected_notification_params,
+          user: anything,
         )
 
         post "/notifications", params: notification_params.merge(format: :json)
@@ -54,8 +55,9 @@ RSpec.describe "Receiving a notification", type: :request do
 
       it "allows an optional document_type parameter" do
         notification_params[:document_type] = "travel_advice"
-        expect(NotificationWorker).to receive(:perform_async).with(
-          expected_notification_params
+        expect(NotificationHandlerService).to receive(:call).with(
+          params: expected_notification_params,
+          user: anything,
         )
 
         post "/notifications", params: notification_params.merge(format: :json)
@@ -63,8 +65,9 @@ RSpec.describe "Receiving a notification", type: :request do
 
       it "allows an optional email_document_supertype parameter" do
         notification_params[:email_document_supertype] = "travel_advice"
-        expect(NotificationWorker).to receive(:perform_async).with(
-          expected_notification_params
+        expect(NotificationHandlerService).to receive(:call).with(
+          params: expected_notification_params,
+          user: anything,
         )
 
         post "/notifications", params: notification_params.merge(format: :json)
@@ -72,8 +75,9 @@ RSpec.describe "Receiving a notification", type: :request do
 
       it "allows an optional government_document_supertype parameter" do
         notification_params[:government_document_supertype] = "travel_advice"
-        expect(NotificationWorker).to receive(:perform_async).with(
-          expected_notification_params
+        expect(NotificationHandlerService).to receive(:call).with(
+          params: expected_notification_params,
+          user: anything,
         )
 
         post "/notifications", params: notification_params.merge(format: :json)
@@ -92,11 +96,6 @@ RSpec.describe "Receiving a notification", type: :request do
         it "returns a 409" do
           post "/notifications", params: notification_params.merge(format: :json)
           expect(response.status).to eq(409)
-        end
-
-        it "doesn't queue a NotificationWorker job" do
-          expect(NotificationWorker).not_to receive(:perform_async)
-          post "/notifications", params: notification_params.merge(format: :json)
         end
 
         it "doesn't call NotificationHandlerService" do
