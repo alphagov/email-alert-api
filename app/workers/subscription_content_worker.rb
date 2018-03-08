@@ -19,11 +19,7 @@ private
         [content_change_id, subscription_id]
       end
 
-      begin
-        SubscriptionContent.import!(columns, records)
-      rescue StandardError => ex
-        Raven.capture_exception(ex, tags: { version: 2 })
-      end
+      SubscriptionContent.import!(columns, records)
 
       ImmediateEmailGenerationWorker.perform_async
     end
@@ -35,17 +31,13 @@ private
     ]
 
     Subscriber.where(address: addresses).find_each do |subscriber|
-      begin
-        email_id = ImmediateEmailBuilder.call([
-          { address: subscriber.address, subscriptions: [], content_change: content_change }
-        ]).ids.first
+      email_id = ImmediateEmailBuilder.call([
+        { address: subscriber.address, subscriptions: [], content_change: content_change }
+      ]).ids.first
 
-        DeliveryRequestWorker.perform_async_in_queue(
-          email_id, queue: :delivery_immediate,
-        )
-      rescue StandardError => ex
-        Raven.capture_exception(ex, tags: { version: 2 })
-      end
+      DeliveryRequestWorker.perform_async_in_queue(
+        email_id, queue: :delivery_immediate,
+      )
     end
   end
 
