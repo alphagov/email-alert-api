@@ -162,8 +162,8 @@ ActiveRecord::Schema.define(version: 20180308105331) do
     t.bigint "subscriber_list_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "signon_user_uid"
     t.integer "frequency", default: 0, null: false
+    t.string "signon_user_uid"
     t.integer "source", default: 0, null: false
     t.datetime "ended_at"
     t.integer "ended_reason"
