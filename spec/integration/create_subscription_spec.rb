@@ -57,6 +57,20 @@ RSpec.describe "Creating a subscription", type: :request do
           end
         end
 
+        context "with an existing subscription but a different case" do
+          it "returns a successful response" do
+            params = JSON.dump(address: "Test@example.com", subscribable_id: subscribable.id, frequency: "daily")
+            post "/subscriptions", params: params, headers: JSON_HEADERS
+
+            expect(response.status).to eq(201)
+
+            params = JSON.dump(address: "test@example.com", subscribable_id: subscribable.id, frequency: "weekly")
+            post "/subscriptions", params: params, headers: JSON_HEADERS
+
+            expect(response.status).to eq(200)
+          end
+        end
+
         context "with a notify email address" do
           it "returns a 201 but doesn't create a subscriber or subscription" do
             params = JSON.dump(address: "simulate-delivered@notifications.service.gov.uk", subscribable_id: subscribable.id, frequency: "daily")
