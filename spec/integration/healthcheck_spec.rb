@@ -1,6 +1,4 @@
 RSpec.describe "Healthcheck", type: :request do
-  before { stub_request(:get, /govdelivery/).to_return(status: 200) }
-
   it "responds with json" do
     get "/healthcheck"
 
@@ -45,7 +43,6 @@ RSpec.describe "Healthcheck", type: :request do
 
     expect(data.fetch(:checks)).to include(
       database:          { status: "ok" },
-      govdelivery:       { status: "ok", ping_status: 200 },
       queue_size:        { status: "ok", queues: a_kind_of(Hash) },
       redis:             { status: "ok" },
       retry_size:        { status: "ok", retry_size: 0 },
