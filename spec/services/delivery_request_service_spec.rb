@@ -52,7 +52,8 @@ RSpec.describe DeliveryRequestService do
         )
         .and_return(:sending)
 
-      subject.call(email: email)
+      attempted = subject.call(email: email)
+      expect(attempted).to be true
     end
 
     context "when the email address is overridden" do
@@ -74,6 +75,21 @@ RSpec.describe DeliveryRequestService do
         expect(Rails.logger).to receive(:info)
           .with(match(/Overriding email address/))
         subject.call(email: email)
+      end
+    end
+
+    context "when the email address isn't whitelisted" do
+      let(:subject) do
+        described_class.new(config: config.merge(
+          email_address_override: "overridden@example.com", email_address_override_whitelist_only: true
+        ))
+      end
+
+      it "doesn't call the provider with the overridden email address" do
+        expect(subject.provider).to_not receive(:call)
+
+        attempted = subject.call(email: email)
+        expect(attempted).to be false
       end
     end
 
