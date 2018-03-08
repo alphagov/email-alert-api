@@ -40,7 +40,7 @@ subscribers to those tags via the external services.
 
 ### Dependencies
 
-* Postgres database (9.3 or higher - requires `json` with `json_object_keys` method)
+* PostgreSQL database (9.3 or higher - requires `json` with `json_object_keys` method)
 * Redis (for [Sidekiq](http://sidekiq.org/))
 * GOV.UK Notify API key and other details (see
   [`email_service.yml`](config/email_service.yml) for required fields)
@@ -71,7 +71,7 @@ will not create a subscriber or a subscription, however will return a `201 Creat
 
 ### Fixing "PG::InsufficientPrivilege" error in the development VM
 
-Email alert api relies on PostgreSQL's `uuid-ossp` module. This is not
+email-alert-api relies on PostgreSQL's `uuid-ossp` module. This is not
 available by default and you might find running migrations results in
 the following error:
 
@@ -128,9 +128,7 @@ other columns will be ignored.
 
 #### application API
 
-* `GET /subscriber-lists?tags[organisation]=cabinet-office` - gets a stored
-  subscriber list that's relevant to just the `cabinet-office` organisation, in
-  the form:
+* `GET /subscriber-lists?tags[organisation]=cabinet-office` - gets a stored subscriber list that's relevant to just the `cabinet-office` organisation, in the form:
 
 ```json
 {
@@ -194,7 +192,7 @@ subscription or a `200 OK` if the subscription already exists.
 
 #### healthcheck API
 
-A queue health check endpoint is available at /healthcheck
+A queue health check endpoint is available at `/healthcheck`.
 
 ```json
 {
@@ -229,10 +227,6 @@ Sidekiq::RetrySet.new.retry_all
 
 See the [Sidekiq docs](https://github.com/mperham/sidekiq/wiki/API)
 for more information.
-
-### Integration and staging environments
-
-- [Overview of the integration and staging synchronisation process](doc/integration-staging-sync.md)
 
 ## Licence
 
