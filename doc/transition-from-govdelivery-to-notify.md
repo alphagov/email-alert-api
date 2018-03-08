@@ -7,13 +7,6 @@ It will be safe to remove this once the migration has been completed.
 
 ## ENV vars
 
-### `USE_EMAIL_ALERT_FRONTEND_FOR_EMAIL_COLLECTION`
-
-When this environment variable set the redirect location that is returned
-as part of a subscriber list JSON serialization. Once this is returning
-frontend apps will redirect users to the Email Alert Frontend signup which
-does not use govdelivery.
-
 ### `EMAIL_ADDRESS_OVERRIDE`
 
 By setting this environment variable all emails sent will have their address

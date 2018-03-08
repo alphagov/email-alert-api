@@ -13,19 +13,6 @@ module PublicUrlService
       "#{website_root}/email/subscriptions/new?#{params}"
     end
 
-    # This url is for the page mid-way through the signup journey where the user
-    # enters their email address. This is where we handover to govdelivery.
-    def deprecated_subscription_url(gov_delivery_id:)
-      config = EmailAlertAPI.config.gov_delivery
-
-      proto = config.fetch(:protocol)
-      host = config.fetch(:public_hostname)
-      code = config.fetch(:account_code)
-      params = param(:topic_id, gov_delivery_id)
-
-      "#{proto}://#{host}/accounts/#{code}/subscriber/new?#{params}"
-    end
-
   private
 
     def website_root
