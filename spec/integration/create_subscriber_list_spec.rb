@@ -1,29 +1,7 @@
 RSpec.describe "Creating a subscriber list", type: :request do
   context "with authentication and authorisation" do
-    let(:base_url) do
-      config = EmailAlertAPI.config.gov_delivery
-      "http://#{config.fetch(:hostname)}/api/account/#{config.fetch(:account_code)}"
-    end
-
-    let(:http_auth) do
-      config = EmailAlertAPI.config.gov_delivery
-      Base64.strict_encode64("#{config.fetch(:username)}:#{config.fetch(:password)}")
-    end
-
     before do
       login_with_internal_app
-
-      stub_request(:post, base_url + "/topics.xml")
-        .with(headers: { "Authorization" => "Basic #{http_auth}" })
-        .with(body: /This is a sample title/)
-        .to_return(body: %{
-          <?xml version="1.0" encoding="UTF-8"?>
-          <topic>
-            <to-param>UKGOVUK_1234</to-param>
-            <topic-uri>/api/account/UKGOVUK/topics/UKGOVUK_1234.xml</topic-uri>
-            <link rel="self" href="/api/account/UKGOVUK/topics/UKGOVUK_1234"/>
-          </topic>
-        })
     end
 
     it "creates a subscriber_list" do

@@ -11,10 +11,6 @@ module EmailAlertAPI
       Rails.root
     end
 
-    def gov_delivery
-      @gov_delivery ||= gov_delivery_environment_config.symbolize_keys.freeze
-    end
-
     def notify
       @notify ||= notify_environment_config.symbolize_keys.freeze
     end
@@ -29,14 +25,6 @@ module EmailAlertAPI
       YAML.safe_load(
         ERB.new(File.read(path)).result, [], [], true
       ).fetch(@environment)
-    end
-
-    def gov_delivery_config_path
-      File.join(app_root, "config", "gov_delivery.yml")
-    end
-
-    def gov_delivery_environment_config
-      environment_config(path: gov_delivery_config_path)
     end
 
     def notify_config_path

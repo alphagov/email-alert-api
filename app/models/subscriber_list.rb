@@ -45,8 +45,4 @@ private
       self.errors.add(:links, "All link values must be sent as Arrays")
     end
   end
-
-  def gov_delivery_config
-    EmailAlertAPI.config.gov_delivery
-  end
 end
