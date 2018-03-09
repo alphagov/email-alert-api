@@ -12,18 +12,6 @@ class SubscriberList < ApplicationRecord
   has_many :subscribers, through: :subscriptions
   has_many :matched_content_changes
 
-  def self.build_from(params:, gov_delivery_id:)
-    new(
-      title: params[:title],
-      tags:  params[:tags],
-      links: params[:links],
-      document_type: params[:document_type],
-      email_document_supertype: params[:email_document_supertype],
-      government_document_supertype: params[:government_document_supertype],
-      gov_delivery_id: gov_delivery_id,
-    )
-  end
-
   def subscription_url
     PublicUrlService.subscription_url(gov_delivery_id: gov_delivery_id)
   end
