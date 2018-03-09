@@ -11,11 +11,11 @@ class NotificationsController < ApplicationController
   end
 
   def index
-    render json: Services.gov_delivery.fetch_bulletins(params[:start_at])
+    render json: {}
   end
 
   def show
-    render json: Services.gov_delivery.fetch_bulletin(params[:id])
+    render json: {}
   end
 
 private
