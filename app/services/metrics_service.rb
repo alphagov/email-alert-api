@@ -16,10 +16,6 @@ class MetricsService
       increment("content_changes_created")
     end
 
-    def govdelivery_topic_response(status)
-      increment("responses.#{status}")
-    end
-
     def email_send_request(provider_name, &block)
       time("#{provider_name}.email_send_request.timing", &block)
     end
