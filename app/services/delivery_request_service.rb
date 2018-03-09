@@ -21,7 +21,7 @@ class DeliveryRequestService
     reference = SecureRandom.uuid
 
     address = determine_address(email, reference)
-    return if address.nil?
+    return false if address.nil?
 
     delivery_attempt = create_delivery_attempt(email, reference)
 
@@ -39,6 +39,8 @@ class DeliveryRequestService
         email.finish_sending(delivery_attempt) if delivery_attempt.has_final_status?
       end
     end
+
+    true
   end
 
 private
