@@ -1,10 +1,6 @@
 require "gov_delivery/client"
 
 class SubscriberListsController < ApplicationController
-  rescue_from GovDelivery::Client::TopicAlreadyExistsError do
-    render json: { error: { message: "topic already exists" } }, status: :conflict
-  end
-
   def show
     subscriber_list = FindExactQuery.new(find_exact_query_params).exact_match
     if subscriber_list
@@ -26,15 +22,18 @@ class SubscriberListsController < ApplicationController
 private
 
   def subscriber_list_params
+    title = params.fetch(:title)
+
     find_exact_query_params.merge(
-      title: params[:title],
-      gov_delivery_id: gov_delivery_id,
+      title: title,
+      gov_delivery_id: slugify(title),
       signon_user_uid: current_user.uid,
     )
   end
 
   def find_exact_query_params
     permitted_params = params.permit!.to_h
+
     {
       tags: permitted_params.fetch(:tags, {}),
       links: permitted_params.fetch(:links, {}),
@@ -45,7 +44,15 @@ private
     }
   end
 
-  def gov_delivery_id
-    Services.gov_delivery.create_topic(params[:title]).to_param
+  def slugify(title)
+    slug = title.parameterize
+    index = 1
+
+    while SubscriberList.where(gov_delivery_id: slug).exists?
+      index += 1
+      slug = "#{title.parameterize}-#{index}"
+    end
+
+    slug
   end
 end

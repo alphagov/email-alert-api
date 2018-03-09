@@ -26,42 +26,32 @@ RSpec.describe "Creating a subscriber list", type: :request do
         })
     end
 
-    it "creates the topic on gov delivery" do
-      create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
-
-      body = <<-XML.strip_heredoc
-        <?xml version="1.0" encoding="utf-8"?>
-        <topic>
-          <name>This is a sample title</name>
-          <short-name>This is a sample title</short-name>
-          <visibility>Unlisted</visibility>
-          <pagewatch-enabled type="boolean">false</pagewatch-enabled>
-          <rss-feed-url nil="true"/>
-          <rss-feed-title nil="true"/>
-          <rss-feed-description nil="true"/>
-        </topic>
-      XML
-
-      assert_requested(
-        :post,
-        base_url + "/topics.xml",
-        headers: { 'Content-Type' => 'application/xml' },
-        body: body,
-        times: 1
-      )
-    end
-
     it "creates a subscriber_list" do
       create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
 
-      subscriber_list = SubscriberList.last
-      expect(subscriber_list).to have_attributes(gov_delivery_id: 'UKGOVUK_1234')
+      expect(SubscriberList.count).to eq(1)
     end
 
     it "returns a 201" do
       create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
 
       expect(response.status).to eq(201)
+    end
+
+    context "with an existing subsciber list with the same slug" do
+      before do
+        create(:subscriber_list, gov_delivery_id: "oil-and-gas")
+      end
+
+      it "creates another subscriber list with a different slug" do
+        create_subscriber_list(title: "oil and gas", tags: { topics: ["oil-and-gas/licensing"] })
+
+        expect(response.status).to eq(201)
+
+        response_hash = JSON.parse(response.body)
+        subscriber_list = response_hash["subscriber_list"]
+        expect(subscriber_list["gov_delivery_id"]).to eq("oil-and-gas-2")
+      end
     end
 
     it "returns the created subscriber list" do
@@ -106,20 +96,10 @@ RSpec.describe "Creating a subscriber list", type: :request do
     end
 
     it "returns an error if creating the same topic" do
-      stub_request(:post, base_url + "/topics.xml")
-        .with(headers: { "Authorization" => "Basic #{http_auth}" })
-        .with(body: /This is a sample title/)
-        .to_return(body: %{
-          <?xml version="1.0" encoding="UTF-8"?>
-          <topic>
-            <code>GD-14004</code>
-            <error>conflict</error>
-          </topic>
-        })
+      create_subscriber_list(title: "oil and gas", tags: { topics: ["oil-and-gas/licensing"] })
+      create_subscriber_list(title: "oil and gas", tags: { topics: ["oil-and-gas/licensing"] })
 
-      create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
-
-      expect(response.status).to eq(409)
+      expect(response.status).to eq(422)
     end
 
     it "returns an error if link isn't an array" do
