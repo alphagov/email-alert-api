@@ -19,7 +19,7 @@ RSpec.describe SubscriptionContentChangeQuery do
     end
 
     let!(:subscription) do
-      create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber)
+      create(:subscription, :daily, subscriber_list: subscriber_list, subscriber: subscriber)
     end
 
     def create_and_match_content_change(created_at: starts_at, title: nil)
@@ -37,6 +37,17 @@ RSpec.describe SubscriptionContentChangeQuery do
     end
 
     describe ".call" do
+      context "with a mismatched frequency and digest range" do
+        before do
+          subscription.update_attributes(frequency: Frequency::WEEKLY)
+          create_and_match_content_change
+        end
+
+        it "does not return a result" do
+          expect(subject).to be_empty
+        end
+      end
+
       context "with a matched content change" do
         before do
           create_and_match_content_change
@@ -102,11 +113,11 @@ RSpec.describe SubscriptionContentChangeQuery do
     end
 
     let!(:subscription_2) do
-      create(:subscription, id: "b8c3fd84-5f00-460d-a812-edb628f28c8f", subscriber_list: subscriber_list_2, subscriber: subscriber)
+      create(:subscription, :daily, id: "b8c3fd84-5f00-460d-a812-edb628f28c8f", subscriber_list: subscriber_list_2, subscriber: subscriber)
     end
 
     let!(:subscription_1) do
-      create(:subscription, id: "b0f887f1-20b1-4386-881d-f909c98c373b", subscriber_list: subscriber_list_1, subscriber: subscriber)
+      create(:subscription, :daily, id: "b0f887f1-20b1-4386-881d-f909c98c373b", subscriber_list: subscriber_list_1, subscriber: subscriber)
     end
 
     let(:content_change_1) do
