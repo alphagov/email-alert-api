@@ -3,8 +3,11 @@ class SubscriptionContentWorker
 
   def perform(content_change_id, batch_size = 1000)
     content_change = ContentChange.find(content_change_id)
+    return if content_change.processed?
+
     queue_delivery_to_subscribers(content_change, batch_size: batch_size)
     queue_delivery_to_courtesy_subscribers(content_change)
+
     content_change.mark_processed!
   end
 

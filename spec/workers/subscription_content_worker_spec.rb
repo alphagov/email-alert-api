@@ -77,4 +77,15 @@ RSpec.describe SubscriptionContentWorker do
       subject.perform(content_change.id)
     end
   end
+
+  context "with an already processed content change" do
+    before do
+      content_change.mark_processed!
+    end
+
+    it "should return immediate" do
+      expect(content_change).to_not receive(:mark_processed!)
+      subject.perform(content_change.id)
+    end
+  end
 end
