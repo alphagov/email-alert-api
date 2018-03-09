@@ -5,6 +5,5 @@ class ContentChangeImmediateSubscriptionQuery
       .where(matched_content_changes: { content_change_id: content_change.id })
       .where(frequency: "immediately")
       .active
-      .distinct
   end
 end

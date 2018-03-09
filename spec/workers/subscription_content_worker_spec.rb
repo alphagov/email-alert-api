@@ -23,25 +23,6 @@ RSpec.describe SubscriptionContentWorker do
       end
     end
 
-    context "when we error" do
-      it "reports errors when creating a SubscriptionContent in the database to Sentry and swallows them" do
-        allow(SubscriptionContent)
-          .to receive(:import!)
-          .and_raise(ActiveRecord::RecordInvalid)
-
-        expect(Raven)
-          .to receive(:capture_exception)
-          .with(
-            instance_of(ActiveRecord::RecordInvalid),
-            tags: { version: 2 }
-          )
-
-        expect {
-          subject.perform(content_change.id)
-        }.not_to raise_error
-      end
-    end
-
     it "creates subscription content for the content change" do
       expect(SubscriptionContent)
         .to receive(:import!)
@@ -53,6 +34,24 @@ RSpec.describe SubscriptionContentWorker do
     it "marks the content_change as processed" do
       expect(content_change).to receive(:mark_processed!)
       subject.perform(content_change.id)
+    end
+  end
+
+  context "with more subscriptions than the batch size" do
+    let(:subscriber) { create(:subscriber) }
+    let(:content_change) { create(:content_change) }
+
+    before do
+      2.times do
+        subscription = create(:subscription, subscriber: subscriber)
+        create(:matched_content_change, subscriber_list: subscription.subscriber_list, content_change: content_change)
+      end
+    end
+
+    it "calls SubscriptionContent.import! once" do
+      expect(SubscriptionContent).to receive(:import!).once
+
+      subject.perform(content_change.id, 1)
     end
   end
 
@@ -75,6 +74,17 @@ RSpec.describe SubscriptionContentWorker do
         .to receive(:perform_async_in_queue)
         .with(kind_of(String), queue: :delivery_immediate)
 
+      subject.perform(content_change.id)
+    end
+  end
+
+  context "with an already processed content change" do
+    before do
+      content_change.mark_processed!
+    end
+
+    it "should return immediate" do
+      expect(content_change).to_not receive(:mark_processed!)
       subject.perform(content_change.id)
     end
   end

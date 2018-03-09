@@ -12,4 +12,8 @@ class ContentChange < ApplicationRecord
   def mark_processed!
     update!(processed_at: Time.now)
   end
+
+  def processed?
+    processed_at.present?
+  end
 end
