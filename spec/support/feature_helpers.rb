@@ -1,9 +1,4 @@
 module FeatureHelpers
-  def stub_govdelivery(gov_delivery_id)
-    body = "<topic><to-param>#{gov_delivery_id}</to-param></topic>"
-    stub_request(:any, /govdelivery/).to_return(body: body)
-  end
-
   def stub_notify
     allow_any_instance_of(DeliveryRequestService)
       .to receive(:provider_name).and_return("notify")

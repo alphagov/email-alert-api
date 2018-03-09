@@ -103,12 +103,10 @@ RSpec.describe "creating and delivering digests", type: :request do
     list_one_topic_id = "0eb5d0f0-d384-4f27-9da8-3f9e9b22a820"
     list_two_topic_id = "a915e039-070b-4633-813d-187af61cad7a"
 
-    stub_govdelivery("TEST123")
     subscribable_one_id = create_subscribable(title: "Subscriber list one", links: {
       topics: [list_one_topic_id]
     })
 
-    stub_govdelivery("TEST456")
     subscribable_two_id = create_subscribable(title: "Subscriber list two", links: {
       topics: [list_two_topic_id]
     })
@@ -321,12 +319,10 @@ RSpec.describe "creating and delivering digests", type: :request do
     list_one_topic_id = "0eb5d0f0-d384-4f27-9da8-3f9e9b22a820"
     list_two_topic_id = "a915e039-070b-4633-813d-187af61cad7a"
 
-    stub_govdelivery("TEST123")
     subscribable_one_id = create_subscribable(title: "Subscriber list one", links: {
       topics: [list_one_topic_id]
     })
 
-    stub_govdelivery("TEST456")
     subscribable_two_id = create_subscribable(title: "Subscriber list two", links: {
       topics: [list_two_topic_id]
     })
