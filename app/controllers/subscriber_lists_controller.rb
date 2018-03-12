@@ -1,5 +1,3 @@
-require "gov_delivery/client"
-
 class SubscriberListsController < ApplicationController
   def show
     subscriber_list = FindExactQuery.new(find_exact_query_params).exact_match

@@ -1,6 +1,5 @@
 RSpec.describe "Failing to deliver an email via Notify (permanent failure)", type: :request do
   before do
-    stub_govdelivery("UKGOVUK_1234")
     stub_notify
   end
 

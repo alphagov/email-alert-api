@@ -1,6 +1,5 @@
 RSpec.describe "Sending an email", type: :request do
   before do
-    stub_govdelivery("UKGOVUK_1234")
     stub_notify
   end
 

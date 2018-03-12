@@ -1,6 +1,5 @@
 RSpec.describe "Unsubscribing from a subscribable", type: :request do
   before do
-    stub_govdelivery("UKGOVUK_1234")
     stub_notify
   end
 
