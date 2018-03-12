@@ -37,6 +37,25 @@ RSpec.describe SubscriptionContentWorker do
     end
   end
 
+  context "benchmarking" do
+    let(:subscriber) { create(:subscriber) }
+    let(:content_change) { create(:content_change) }
+
+    before do
+      1000.times do
+        subscription = create(:subscription, subscriber: subscriber)
+        create(:matched_content_change, subscriber_list: subscription.subscriber_list, content_change: content_change)
+      end
+    end
+
+    it "reports the benchmark" do
+      r = Benchmark.measure do
+        subject.perform(content_change.id)
+      end
+      pp r
+    end
+  end
+
   context "with more subscriptions than the batch size" do
     let(:subscriber) { create(:subscriber) }
     let(:content_change) { create(:content_change) }
