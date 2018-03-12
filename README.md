@@ -56,8 +56,8 @@ subscribers to those tags via the external services.
 $ ./startup.sh
 ```
 
-email-alert-api runs on port 3088
-sidekiq-monitoring for email-alert-api uses 3089
+* email-alert-api runs on port 3088
+* sidekiq-monitoring for email-alert-api uses 3089
 
 ### Running the test suite
 
@@ -66,7 +66,7 @@ sidekiq-monitoring for email-alert-api uses 3089
 
 ### Using test email addresses for signup
 
-Using any email address that ends with '@notifications.service.gov.uk'
+Using any email address that ends with `@notifications.service.gov.uk`
 will not create a subscriber or a subscription, however will return a `201 Created` response.
 
 ### Fixing "PG::InsufficientPrivilege" error in the development VM
@@ -81,7 +81,7 @@ PG::InsufficientPrivilege: ERROR:  permission denied to create extension "uuid-o
 
 This can be solved by:
 
-```
+```bash
 > sudo -upostgres psql email-alert-api_development
 psql> CREATE EXTENSION "uuid-ossp";
 ```
@@ -112,17 +112,29 @@ have subscribed to.
 To unsubscribe a single subscriber:
 
 ```bash
-$ bundle exec rake unsubscribe:single[<email_address>]
+$ bundle exec rake manage:unsubscribe_single[<email_address>]
 ```
 
 To unsubscribe a set of subscribers in bulk from a CSV file:
 
 ```bash
-$ bundle exec rake unsubscribe:bulk_from_csv[<path_to_csv_file>]
+$ bundle exec rake manage:unsubscribe_bulk_from_csv[<path_to_csv_file>]
 ```
 
 The CSV file should have email addresses in the first column. All
 other columns will be ignored.
+
+#### Move subscribers from one list to another
+
+This task moves all subscribers from one subscriber list to another one.
+It is useful for organisation or taxonomy changes.
+
+```bash
+$ bundle exec rake manage:move_all_subscribers[<from_gov_delivery_id>, <to_gov_delivery_id>]
+```
+
+You need to supply the `gov_delivery_id` for the source and destination
+subscriber lists.
 
 ### Available endpoints
 
