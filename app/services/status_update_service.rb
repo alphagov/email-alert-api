@@ -1,7 +1,9 @@
 class StatusUpdateService
-  def initialize(reference:, status:, user: nil)
+  def initialize(reference:, status:, completed_at:, sent_at:, user: nil)
     @reference = reference
     @status = status
+    @completed_at = completed_at
+    @sent_at = sent_at
     @user = user
     @delivery_attempt = find_delivery_attempt(reference)
   end
@@ -13,6 +15,8 @@ class StatusUpdateService
   def call
     begin
       delivery_attempt.update!(
+        sent_at: sent_at,
+        completed_at: completed_at,
         status: status.underscore,
         signon_user_uid: user&.uid,
       )
@@ -42,7 +46,7 @@ class StatusUpdateService
 
 private
 
-  attr_reader :delivery_attempt, :reference, :status, :user
+  attr_reader :delivery_attempt, :reference, :status, :user, :completed_at, :sent_at
   delegate :email, to: :delivery_attempt
 
   def subscriber

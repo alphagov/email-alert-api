@@ -15,8 +15,10 @@ RSpec.describe "Failing to deliver an email via Notify (technical failure)", typ
     expect(data.fetch(:status)).to eq("ok")
 
     reference = email_data.fetch(:reference)
-    send_status_update(reference, "technical-failure", expected_status: 204)
+    completed_at = Time.parse("2017-05-14T12:15:30.000000Z")
+    sent_at = completed_at
 
+    send_status_update(reference, "technical-failure", completed_at, sent_at, expected_status: 204)
     check_health_of_the_app
     expect(data.fetch(:status)).to eq("critical")
 

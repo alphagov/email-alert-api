@@ -6,8 +6,10 @@ RSpec.describe StatusUpdateService do
   end
 
   let(:status) { "delivered" }
+  let(:completed_at) { Time.parse("2017-05-14T12:15:30.000000Z") }
+  let(:sent_at) { Time.parse("2017-05-14T12:15:30.000000Z") }
 
-  subject(:status_update) { described_class.call(reference: reference, status: status) }
+  subject(:status_update) { described_class.call(reference: reference, status: status, completed_at: completed_at, sent_at: sent_at) }
 
   it "updates the delivery attempt's status" do
     expect { status_update }
@@ -15,11 +17,23 @@ RSpec.describe StatusUpdateService do
       .to("delivered")
   end
 
+  it "updates the completed_at field" do
+    expect { status_update }
+      .to change { delivery_attempt.reload.completed_at }
+      .to(completed_at)
+  end
+
+  it "updates the sent_at field on delivery" do
+    expect { status_update }
+      .to change { delivery_attempt.reload.sent_at }
+      .to(sent_at)
+  end
+
   it "updates the emails finished_sending_at timestamp" do
     expect { status_update }
       .to change { delivery_attempt.reload.email.finished_sending_at }
       .from(nil)
-      .to(an_instance_of(ActiveSupport::TimeWithZone))
+      .to(sent_at)
   end
 
   context "with a temporary failure" do
