@@ -84,7 +84,7 @@ FactoryBot.define do
 
   factory :subscriber_list do
     sequence(:title) { |n| "title #{n}" }
-    sequence(:gov_delivery_id) { |n| "UKGOVUK_#{n}" }
+    sequence(:gov_delivery_id) { |n| "title-#{n}" }
     tags(topics: ["motoring/road_rage"])
     created_at { 1.year.ago }
 
