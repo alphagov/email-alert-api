@@ -25,7 +25,6 @@ private
 
     find_exact_query_params.merge(
       title: title,
-      gov_delivery_id: slug,
       slug: slug,
       signon_user_uid: current_user.uid,
     )
