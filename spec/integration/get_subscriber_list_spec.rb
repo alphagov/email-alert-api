@@ -171,9 +171,9 @@ RSpec.describe "Getting a subscriber list", type: :request do
       end
 
       it "finds the subscriber list if the gov_delivery_id matches" do
-        _alpha = create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "alpha")
-        beta = create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "beta")
-        _gamma = create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "gamma")
+        _alpha = create(:subscriber_list, tags: { topics: ["vat-rates"] }, slug: "alpha")
+        beta = create(:subscriber_list, tags: { topics: ["vat-rates"] }, slug: "beta")
+        _gamma = create(:subscriber_list, tags: { topics: ["vat-rates"] }, slug: "gamma")
 
         get_subscriber_list(
           tags: { topics: ["vat-rates"] },
