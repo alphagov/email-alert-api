@@ -57,16 +57,6 @@ FactoryBot.define do
     end
   end
 
-  factory :notification_log do
-    sequence(:govuk_request_id) { |i| "request-id-#{i}" }
-    sequence(:content_id) { |i| "content-id-#{i}" }
-    public_updated_at Time.now.to_s
-    links {}
-    tags {}
-    document_type "announcement"
-    gov_delivery_ids %w(TOPIC_123 TOPIC_456)
-  end
-
   factory :subscriber do
     sequence(:address) { |i| "test-#{i}@example.com" }
 
