@@ -6,7 +6,7 @@ class SubscribablesController < ApplicationController
 private
 
   def subscribable
-    @subscribable ||= SubscriberList.find_by(gov_delivery_id: params[:gov_delivery_id])
+    @subscribable ||= SubscriberList.find_by(slug: params[:slug])
   end
 
   def subscribable_attributes

@@ -6,7 +6,7 @@ RSpec.describe "Getting a subscribable", type: :request do
       end
 
       context "the subscribable exists" do
-        let!(:subscribable) { create(:subscriber_list, gov_delivery_id: "test135") }
+        let!(:subscribable) { create(:subscriber_list, slug: "test135") }
 
         it "returns it" do
           get "/subscribables/test135"
