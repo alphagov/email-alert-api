@@ -189,6 +189,50 @@ The following fields are accepted on this endpoint: `subject`, `from_address_id`
 `document_type`, `content_id`, `public_updated_at`, `publishing_app`, `email_document_supertype`,
 `government_document_supertype`, `title`, `description`, `change_note`, `base_path`, `priority` and `footnote`.
 
+* `GET /subscribers/test@example.com/subscriptions` - gets a subscriber's subscriptions, in the form:
+
+```json
+{
+  "subscriber": {
+    "id": 1,
+    "address": "test@example.com",
+    "created_at": "Wed, 07 Mar 2018 17:04:28 UTC +00:00",
+    "updated_at": "Wed, 07 Mar 2018 17:04:28 UTC +00:00",
+    "signon_user_uid": null,
+    "deactivated_at": null
+  },
+  "subscriptions": [
+    {
+      "subscriber_id": 1,
+      "subscriber_list_id": 4232,
+      "created_at": "Wed, 07 Mar 2018 18:52:25 UTC +00:00",
+      "updated_at": "Wed, 07 Mar 2018 18:52:25 UTC +00:00",
+      "frequency": "daily",
+      "signon_user_uid": null,
+      "id": "476e1439-f5ba-4d7a-b4aa-1090563c5c36",
+      "source": "imported",
+      "ended_at": null,
+      "ended_reason": null,
+      "subscriber_list": {
+        "id": 4232,
+        "title": "All types of document about all topics by Foreign & Commonwealth Office",
+        "created_at": "Thu, 01 Aug 2013 12:53:34 UTC +00:00",
+        "updated_at": "Tue, 13 Mar 2018 15:11:29 UTC +00:00",
+        "document_type": "",
+        "tags": {},
+        "links": {
+          "organisations": ["9adfc4ed-9f6c-4976-a6d8-18d34356367c"]
+        },
+        "email_document_supertype": "",
+        "government_document_supertype": "",
+        "signon_user_uid": null,
+        "slug": "all-types-of-document-about-all-topics-by-foreign-commonwealth-office"
+      }
+    }
+  ]
+}
+```
+
 * `POST /subscriptions` with data:
 
 ```json
@@ -222,9 +266,9 @@ A queue health check endpoint is available at `/healthcheck`.
 
 ### Manually retrying failed notification jobs
 
-In the event of a GovDelivery outage, the Email Alert API will enqueue
-failed notification jobs in the Sidekiq retry queue. The retry queue
-size can be viewed via Sidekiq monitoring or by running the following
+In the event of an outage, the Email Alert API will enqueue failed
+notification jobs in the Sidekiq retry queue. The retry queue size
+can be viewed via Sidekiq monitoring or by running the following
 command in a rails console:
 
 ```ruby
