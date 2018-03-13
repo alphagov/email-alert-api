@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180308105331) do
+ActiveRecord::Schema.define(version: 20180313081630) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,7 +119,7 @@ ActiveRecord::Schema.define(version: 20180308105331) do
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
     t.string "title", limit: 1000, null: false
-    t.string "gov_delivery_id", limit: 255
+    t.string "gov_delivery_id", limit: 255, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "document_type", default: "", null: false
