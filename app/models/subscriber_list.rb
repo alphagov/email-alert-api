@@ -15,7 +15,7 @@ class SubscriberList < ApplicationRecord
   has_many :matched_content_changes
 
   def subscription_url
-    PublicUrlService.subscription_url(gov_delivery_id: gov_delivery_id)
+    PublicUrlService.subscription_url(slug: slug)
   end
 
   def to_json(options = {})

@@ -8,8 +8,8 @@ module PublicUrlService
     # enters their email address. At present, multiple frontends start the
     # journey, e.g. collections, but eventually all these will be consolidated
     # into email-alert-frontend and this URL will no longer be needed.
-    def subscription_url(gov_delivery_id:)
-      params = param(:topic_id, gov_delivery_id)
+    def subscription_url(slug:)
+      params = param(:topic_id, slug)
       "#{website_root}/email/subscriptions/new?#{params}"
     end
 

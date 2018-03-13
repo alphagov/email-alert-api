@@ -93,7 +93,7 @@ RSpec.describe SubscriberList, type: :model do
   end
 
   describe "#subscription_url" do
-    subject { SubscriberList.new(gov_delivery_id: "UKGOVUK_4567") }
+    subject { SubscriberList.new(slug: "UKGOVUK_4567") }
 
     it "returns the correct subscription URL" do
       expect(subject.subscription_url).to eq(
