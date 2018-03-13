@@ -48,7 +48,7 @@ private
     slug = title.parameterize
     index = 1
 
-    while SubscriberList.where(gov_delivery_id: slug).exists?
+    while SubscriberList.where(slug: slug).exists?
       index += 1
       slug = "#{title.parameterize}-#{index}"
     end

@@ -68,7 +68,8 @@ RSpec.describe "Getting a subscriber list", type: :request do
         links: database_subscriber_list.links,
         tags: database_subscriber_list.tags,
         document_type: database_subscriber_list.document_type,
-        gov_delivery_id: database_subscriber_list.gov_delivery_id,
+        gov_delivery_id: database_subscriber_list.slug,
+        slug: database_subscriber_list.slug,
         subscription_url: database_subscriber_list.subscription_url,
         title: database_subscriber_list.title,
       )

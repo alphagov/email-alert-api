@@ -18,7 +18,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
     context "with an existing subsciber list with the same slug" do
       before do
-        create(:subscriber_list, gov_delivery_id: "oil-and-gas")
+        create(:subscriber_list, slug: "oil-and-gas")
       end
 
       it "creates another subscriber list with a different slug" do
