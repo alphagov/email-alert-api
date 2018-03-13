@@ -128,7 +128,7 @@ ActiveRecord::Schema.define(version: 20180313090745) do
     t.string "email_document_supertype", default: "", null: false
     t.string "government_document_supertype", default: "", null: false
     t.string "signon_user_uid"
-    t.string "slug", limit: 1000
+    t.string "slug", limit: 1000, null: false
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
     t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
     t.index ["gov_delivery_id"], name: "index_subscriber_lists_on_gov_delivery_id", unique: true
