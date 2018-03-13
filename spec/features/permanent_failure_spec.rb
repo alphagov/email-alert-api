@@ -12,8 +12,10 @@ RSpec.describe "Failing to deliver an email via Notify (permanent failure)", typ
     email_data = expect_an_email_was_sent
 
     reference = email_data.fetch(:reference)
-    send_status_update(reference, "permanent-failure", expected_status: 204)
+    completed_at = Time.parse("2017-05-14T12:15:30.000000Z")
+    sent_at = completed_at
 
+    send_status_update(reference, "permanent-failure", completed_at, sent_at, expected_status: 204)
     clear_any_requests_that_have_been_recorded!
 
     3.times { create_content_change }

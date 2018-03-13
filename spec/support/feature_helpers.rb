@@ -65,8 +65,8 @@ module FeatureHelpers
     expect(response.status).to eq(202)
   end
 
-  def send_status_update(reference, status, expected_status: 204)
-    params = { reference: reference, status: status }
+  def send_status_update(reference, status, completed_at, sent_at, expected_status: 204)
+    params = { reference: reference, status: status, completed_at: completed_at, sent_at: sent_at }
     post "/status-updates", params: params.to_json, headers: JSON_HEADERS
     expect(response.status).to eq(expected_status)
   end

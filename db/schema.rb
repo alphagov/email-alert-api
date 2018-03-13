@@ -45,6 +45,8 @@ ActiveRecord::Schema.define(version: 20180313090745) do
     t.datetime "updated_at", null: false
     t.string "signon_user_uid"
     t.uuid "email_id", null: false
+    t.datetime "completed_at"
+    t.datetime "sent_at"
     t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
     t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
   end

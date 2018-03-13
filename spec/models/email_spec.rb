@@ -14,14 +14,16 @@ RSpec.describe Email do
   describe "#finish_sending" do
     context "when delivery attempt is for same email" do
       let(:email) { create(:email) }
-      let(:delivery_attempt) { create(:delivery_attempt, email: email) }
+      let(:completed_at) { Time.parse("2017-05-14T12:15:30.000000Z") }
+      let(:sent_at) { Time.parse("2017-05-14T12:15:30.000000Z") }
+      let(:delivery_attempt) { create(:delivery_attempt, email: email, completed_at: completed_at, sent_at: sent_at) }
 
       it "sets the finished_sending_at field" do
         Timecop.freeze do
           expect { email.finish_sending(delivery_attempt) }
             .to change { email.finished_sending_at }
             .from(nil)
-            .to(Time.now)
+            .to(sent_at)
         end
       end
     end

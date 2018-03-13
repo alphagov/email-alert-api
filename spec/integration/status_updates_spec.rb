@@ -7,11 +7,21 @@ RSpec.describe "Receiving a status update", type: :request do
   before { login_as(user) }
 
   describe "#create" do
-    let(:params) { { reference: reference, status: "delivered" } }
+    let(:params) do
+      {
+        sent_at: Time.parse("2017-05-14T12:15:30.000000Z"),
+        completed_at: Time.parse("2017-05-14T12:15:30.000000Z"),
+        reference: reference,
+        status: "delivered"
+      }
+    end
+
     let(:permissions) { %w[signin status_updates] }
 
     it "calls the status update service" do
       expect(StatusUpdateService).to receive(:call).with(
+        sent_at: Time.parse("2017-05-14T12:15:30.000000Z"),
+        completed_at: Time.parse("2017-05-14T12:15:30.000000Z"),
         reference: reference,
         status: "delivered",
         user: user,
