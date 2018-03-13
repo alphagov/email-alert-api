@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180308105331) do
+ActiveRecord::Schema.define(version: 20180313090745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,7 +119,7 @@ ActiveRecord::Schema.define(version: 20180308105331) do
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
     t.string "title", limit: 1000, null: false
-    t.string "gov_delivery_id", limit: 255
+    t.string "gov_delivery_id", limit: 1000, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "document_type", default: "", null: false
@@ -128,10 +128,12 @@ ActiveRecord::Schema.define(version: 20180308105331) do
     t.string "email_document_supertype", default: "", null: false
     t.string "government_document_supertype", default: "", null: false
     t.string "signon_user_uid"
+    t.string "slug", limit: 1000
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
     t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
     t.index ["gov_delivery_id"], name: "index_subscriber_lists_on_gov_delivery_id", unique: true
     t.index ["government_document_supertype"], name: "index_subscriber_lists_on_government_document_supertype"
+    t.index ["slug"], name: "index_subscriber_lists_on_slug", unique: true
     t.index ["title"], name: "index_subscriber_lists_on_title", unique: true
   end
 

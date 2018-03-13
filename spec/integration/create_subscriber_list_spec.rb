@@ -34,6 +34,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
     it "returns the created subscriber list" do
       create_subscriber_list(
+        title: "oil and gas licensing",
         tags: { topics: ["oil-and-gas/licensing"] },
         links: { topics: ["uuid-888"] }
       )
@@ -44,6 +45,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
         %w{
           id
           title
+          slug
           document_type
           subscription_url
           gov_delivery_id
@@ -55,6 +57,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
           government_document_supertype
         }.to_set
       )
+
       expect(subscriber_list).to include(
         "tags" => {
           "topics" => ["oil-and-gas/licensing"]
@@ -63,6 +66,9 @@ RSpec.describe "Creating a subscriber list", type: :request do
           "topics" => ["uuid-888"]
         }
       )
+
+      expect(subscriber_list["gov_delivery_id"]).to eq("oil-and-gas-licensing")
+      expect(subscriber_list["slug"]).to eq("oil-and-gas-licensing")
     end
 
     it "returns an error if tag isn't an array" do

@@ -21,10 +21,12 @@ private
 
   def subscriber_list_params
     title = params.fetch(:title)
+    slug = slugify(title)
 
     find_exact_query_params.merge(
       title: title,
-      gov_delivery_id: slugify(title),
+      gov_delivery_id: slug,
+      slug: slug,
       signon_user_uid: current_user.uid,
     )
   end
