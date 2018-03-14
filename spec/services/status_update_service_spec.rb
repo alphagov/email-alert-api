@@ -53,8 +53,17 @@ RSpec.describe StatusUpdateService do
     end
 
     it "does not update the emails finished_sending_at timestamp" do
-      expect { status_update }
-        .to_not(change { delivery_attempt.reload.email.finished_sending_at })
+      # We set `inline!` in rails_helper which causes jobs to fire immediately.
+      # Since DeliveryRequestWorker is fired on temporary_failure, this has the side effect of
+      # successfully sending the email and setting `finished_sending_at`.
+      # In reality, DeliveryRequestWorker is set to perform in 15 minutes time, so to mimic this
+      # we set `fake!` which pushes it on to an array instead. For the sake of this test
+      # we don't want it to perform since we are testing the state between the start of temporary
+      # failure and 15 minutes time when we try again.
+      Sidekiq::Testing.fake! do
+        expect { status_update }
+          .to_not(change { delivery_attempt.reload.email.finished_sending_at })
+      end
     end
   end
 
