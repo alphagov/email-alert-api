@@ -68,7 +68,8 @@ RSpec.describe "Getting a subscriber list", type: :request do
         links: database_subscriber_list.links,
         tags: database_subscriber_list.tags,
         document_type: database_subscriber_list.document_type,
-        gov_delivery_id: database_subscriber_list.gov_delivery_id,
+        gov_delivery_id: database_subscriber_list.slug,
+        slug: database_subscriber_list.slug,
         subscription_url: database_subscriber_list.subscription_url,
         title: database_subscriber_list.title,
       )
@@ -171,9 +172,9 @@ RSpec.describe "Getting a subscriber list", type: :request do
       end
 
       it "finds the subscriber list if the gov_delivery_id matches" do
-        _alpha = create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "alpha")
-        beta = create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "beta")
-        _gamma = create(:subscriber_list, tags: { topics: ["vat-rates"] }, gov_delivery_id: "gamma")
+        _alpha = create(:subscriber_list, tags: { topics: ["vat-rates"] }, slug: "alpha")
+        beta = create(:subscriber_list, tags: { topics: ["vat-rates"] }, slug: "beta")
+        _gamma = create(:subscriber_list, tags: { topics: ["vat-rates"] }, slug: "gamma")
 
         get_subscriber_list(
           tags: { topics: ["vat-rates"] },

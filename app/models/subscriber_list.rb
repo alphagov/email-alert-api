@@ -8,19 +8,23 @@ class SubscriberList < ApplicationRecord
 
   validates :title, presence: true
   validates_uniqueness_of :title
-  validates_uniqueness_of :gov_delivery_id
+  validates_uniqueness_of :slug
 
   has_many :subscriptions
   has_many :subscribers, through: :subscriptions
   has_many :matched_content_changes
 
   def subscription_url
-    PublicUrlService.subscription_url(gov_delivery_id: gov_delivery_id)
+    PublicUrlService.subscription_url(slug: slug)
+  end
+
+  def gov_delivery_id
+    slug
   end
 
   def to_json(options = {})
     options[:except] ||= %i{signon_user_uid}
-    options[:methods] ||= %i{subscription_url}
+    options[:methods] ||= %i{subscription_url gov_delivery_id}
     super(options)
   end
 

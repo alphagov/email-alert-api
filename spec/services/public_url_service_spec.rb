@@ -8,7 +8,7 @@ RSpec.describe PublicUrlService do
 
   describe ".subscription_url" do
     it "returns the GOV.UK for the new subscription page" do
-      result = subject.subscription_url(gov_delivery_id: "foo_bar")
+      result = subject.subscription_url(slug: "foo_bar")
       expect(result).to eq("http://www.dev.gov.uk/email/subscriptions/new?topic_id=foo_bar")
     end
   end

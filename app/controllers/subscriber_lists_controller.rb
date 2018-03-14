@@ -25,7 +25,6 @@ private
 
     find_exact_query_params.merge(
       title: title,
-      gov_delivery_id: slug,
       slug: slug,
       signon_user_uid: current_user.uid,
     )
@@ -40,7 +39,7 @@ private
       document_type: permitted_params.fetch(:document_type, ""),
       email_document_supertype: permitted_params.fetch(:email_document_supertype, ""),
       government_document_supertype: permitted_params.fetch(:government_document_supertype, ""),
-      gov_delivery_id: params[:gov_delivery_id],
+      slug: params[:gov_delivery_id],
     }
   end
 
@@ -48,7 +47,7 @@ private
     slug = title.parameterize
     index = 1
 
-    while SubscriberList.where(gov_delivery_id: slug).exists?
+    while SubscriberList.where(slug: slug).exists?
       index += 1
       slug = "#{title.parameterize}-#{index}"
     end
