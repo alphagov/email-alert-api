@@ -1,6 +1,17 @@
 require 'csv'
 
 namespace :manage do
+  def change_email_address(old_email_address:, new_email_address:)
+    subscriber = Subscriber.find_by("LOWER(address) = ?", old_email_address.downcase)
+    raise "Cannot find subscriber with email address #{old_email_address}" if subscriber.nil?
+    subscriber.address = new_email_address
+    if subscriber.save!
+      puts "Changed email address for #{old_email_address} to #{new_email_address}"
+    else
+      puts "Error changing email address for #{old_email_address} to #{new_email_address}"
+    end
+  end
+
   def unsubscribe(email_address:)
     subscriber = Subscriber.find_by(address: email_address)
     if subscriber.nil?
@@ -47,6 +58,11 @@ namespace :manage do
     end
 
     puts "#{subscribers.count} active subscribers moved from #{from_slug} to #{to_slug}"
+  end
+
+  desc "Change the email address of a subscriber"
+  task :change_email_address, %i[old_email_address new_email_address] => :environment do |_t, args|
+    change_email_address(old_email_address: args[:old_email_address], new_email_address: args[:new_email_address])
   end
 
   desc "Unsubscribe a single subscriber"

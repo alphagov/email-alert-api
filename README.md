@@ -104,6 +104,14 @@ To send a test email to an email address (doesn't have to be subscribed to anyth
 $ bundle exec rake deliver:to_test_email[<email_address>]
 ```
 
+#### Change a subscriber's email address
+
+This task changes a subscriber's email address.
+
+```bash
+$ bundle exec rake manage:change_email_address[<old_email_address>, <new_email_address>]
+```
+
 #### Manually unsubscribe subscribers
 
 This task unsubscribes one or more subscribers from everything they
