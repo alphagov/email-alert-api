@@ -130,10 +130,10 @@ This task moves all subscribers from one subscriber list to another one.
 It is useful for organisation or taxonomy changes.
 
 ```bash
-$ bundle exec rake manage:move_all_subscribers[<from_gov_delivery_id>, <to_gov_delivery_id>]
+$ bundle exec rake manage:move_all_subscribers[<from_slug>, <to_slug>]
 ```
 
-You need to supply the `gov_delivery_id` for the source and destination
+You need to supply the `slug` for the source and destination
 subscriber lists.
 
 ### Available endpoints
