@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180313093530) do
+ActiveRecord::Schema.define(version: 20180313152401) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -100,23 +100,6 @@ ActiveRecord::Schema.define(version: 20180313093530) do
     t.index ["content_change_id", "subscriber_list_id"], name: "index_matched_content_changes_content_change_subscriber_list", unique: true
     t.index ["content_change_id"], name: "index_matched_content_changes_on_content_change_id"
     t.index ["subscriber_list_id"], name: "index_matched_content_changes_on_subscriber_list_id"
-  end
-
-  create_table "notification_logs", id: :serial, force: :cascade do |t|
-    t.string "govuk_request_id", default: ""
-    t.string "content_id", default: ""
-    t.datetime "public_updated_at"
-    t.json "links", default: {}
-    t.json "tags", default: {}
-    t.string "document_type", default: ""
-    t.json "gov_delivery_ids", default: []
-    t.string "publishing_app", default: ""
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "email_document_supertype", default: ""
-    t.string "government_document_supertype", default: ""
-    t.index ["content_id", "public_updated_at"], name: "index_notification_logs_on_content_id_and_public_updated_at"
-    t.index ["govuk_request_id"], name: "index_notification_logs_on_govuk_request_id"
   end
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
