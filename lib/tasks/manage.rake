@@ -11,15 +11,15 @@ namespace :manage do
     end
   end
 
-  def move_all_subscribers(from_gov_delivery_id:, to_gov_delivery_id:)
-    source_subscriber_list = SubscriberList.find_by(gov_delivery_id: from_gov_delivery_id)
-    raise "Source subscriber list #{from_gov_delivery_id} does not exist" if source_subscriber_list.nil?
+  def move_all_subscribers(from_slug:, to_slug:)
+    source_subscriber_list = SubscriberList.find_by(slug: from_slug)
+    raise "Source subscriber list #{from_slug} does not exist" if source_subscriber_list.nil?
     source_subscriptions = Subscription.active.find_by(subscriber_list_id: source_subscriber_list.id)
-    raise "No active subscriptions to move from #{from_gov_delivery_id}" if source_subscriptions.nil?
-    destination_subscriber_list = SubscriberList.find_by(gov_delivery_id: to_gov_delivery_id)
-    raise "Destination subscriber list #{to_gov_delivery_id} does not exist" if destination_subscriber_list.nil?
+    raise "No active subscriptions to move from #{from_slug}" if source_subscriptions.nil?
+    destination_subscriber_list = SubscriberList.find_by(slug: to_slug)
+    raise "Destination subscriber list #{to_slug} does not exist" if destination_subscriber_list.nil?
     subscribers = source_subscriber_list.subscribers.activated
-    puts "#{subscribers.count} active subscribers moving from #{from_gov_delivery_id} to #{to_gov_delivery_id}"
+    puts "#{subscribers.count} active subscribers moving from #{from_slug} to #{to_slug}"
 
     subscribers.each do |subscriber|
       Subscription.transaction do
@@ -46,7 +46,7 @@ namespace :manage do
       end
     end
 
-    puts "#{subscribers.count} active subscribers moved from #{from_gov_delivery_id} to #{to_gov_delivery_id}"
+    puts "#{subscribers.count} active subscribers moved from #{from_slug} to #{to_slug}"
   end
 
   desc "Unsubscribe a single subscriber"
@@ -63,7 +63,7 @@ namespace :manage do
   end
 
   desc "Move all subscribers from one subscriber list to another"
-  task :move_all_subscribers, %i[from_gov_delivery_id to_gov_delivery_id] => :environment do |_t, args|
-    move_all_subscribers(from_gov_delivery_id: args[:from_gov_delivery_id], to_gov_delivery_id: args[:to_gov_delivery_id])
+  task :move_all_subscribers, %i[from_slug to_slug] => :environment do |_t, args|
+    move_all_subscribers(from_slug: args[:from_slug], to_slug: args[:to_slug])
   end
 end
