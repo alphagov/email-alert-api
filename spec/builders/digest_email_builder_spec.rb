@@ -41,6 +41,10 @@ RSpec.describe DigestEmailBuilder do
     expect(email).to be_a(Email)
   end
 
+  it "sets the subscriber id on the email" do
+    expect(email.subscriber_id).to eq(subscriber.id)
+  end
+
   it "adds an entry to body for each content change" do
     expect(UnsubscribeLinkPresenter).to receive(:call).with(
       id: "ABC1",
