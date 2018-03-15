@@ -9,6 +9,14 @@
 # Please make changes to this script in email-alert-api where it is tested.
 # Then copy it to the env-sync-and-backup repository.
 
+# Deletes all email_archives that are older than 1 day old.
+DELETE FROM email_archives
+WHERE created_at < current_timestamp - interval '1 day';
+
+# Deletes all emails that are older than 1 day old.
+DELETE FROM emails
+WHERE created_at < current_timestamp - interval '1 day';
+
 # Create a table to store all email addresses.
 CREATE TABLE addresses (id SERIAL, address VARCHAR NOT NULL);
 

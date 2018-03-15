@@ -9,6 +9,21 @@ RSpec.describe "Anonymising email addresses" do
     ActiveRecord::Base.connection.execute(sql.gsub(/#.*$/, ""))
   end
 
+  it "deletes an email older than a day old" do
+    email = create(:email, address: "foo@example.com", created_at: Time.parse('13/03/2018 16:30:17'))
+    execute_sql
+
+    expect { email.reload }
+      .to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "doesn't delete an email thats a day old or less" do
+    email = create(:email, address: "foo@example.com")
+    execute_sql
+
+    expect(email).to be_present
+  end
+
   it "anonymises addresses in the subscribers table" do
     subscriber = create(:subscriber, address: "foo@example.com")
 
