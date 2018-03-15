@@ -88,6 +88,7 @@ ActiveRecord::Schema.define(version: 20180315084923) do
     t.string "address", null: false
     t.datetime "finished_sending_at"
     t.datetime "archived_at"
+    t.bigint "subscriber_id"
     t.index ["archived_at"], name: "index_emails_on_archived_at"
     t.index ["finished_sending_at"], name: "index_emails_on_finished_sending_at"
   end
