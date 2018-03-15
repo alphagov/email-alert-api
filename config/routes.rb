@@ -11,8 +11,11 @@ Rails.application.routes.draw do
 
     get "/healthcheck", to: "healthcheck#check"
 
-    get "/subscribers/:address/subscriptions", to: "subscribers#subscriptions",
-      constraints: { address: /.+@.+\..+/ }
+    constraints address: /.+@.+\..+/ do
+      patch "/subscribers/:address", to: "subscribers#change_address"
+      get "/subscribers/:address/subscriptions", to: "subscribers#subscriptions"
+    end
+
     post "/unsubscribe/:id", to: "unsubscribe#unsubscribe"
   end
 end

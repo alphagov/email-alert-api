@@ -168,6 +168,7 @@ subscriber lists.
 ```
 
 * `POST /subscriber-lists` with data:
+
 ```json
 {
   "title": "My title",
@@ -176,6 +177,7 @@ subscriber lists.
   }
 }
 ```
+
 and it will respond with the JSON response for the `GET` call above.
 
 * `POST /notifications` with data:
@@ -240,6 +242,17 @@ The following fields are accepted on this endpoint: `subject`, `from_address_id`
   ]
 }
 ```
+
+* `PATCH /subscribers/test@example.com` with data:
+
+```json
+{
+  "new_address": "test2@example.com"
+}
+```
+
+and it will respond with the details of the subscriber including the
+new email address.
 
 * `POST /subscriptions` with data:
 
