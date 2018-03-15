@@ -114,6 +114,10 @@ FactoryBot.define do
 
     trait :with_archivable_email do
       association :email, factory: :archivable_email
+
+      after(:create) do |subscription_content, _evaluator|
+        subscription_content.email.update(subscriber_id: subscription_content.subscription.subscriber.id)
+      end
     end
   end
 

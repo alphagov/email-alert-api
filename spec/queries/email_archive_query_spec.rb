@@ -20,8 +20,8 @@ RSpec.describe EmailArchiveQuery do
     end
 
     context "when an email is associated with content changes" do
-      let!(:email) { create(:archivable_email) }
       let!(:subscriber) { create(:subscriber) }
+      let!(:email) { create(:archivable_email, subscriber_id: subscriber.id) }
       let!(:subscription_contents) do
         [
           create(
@@ -37,12 +37,12 @@ RSpec.describe EmailArchiveQuery do
         ]
       end
 
-      it "has subscriber_ids, subscription_ids and content_change_ids" do
+      it "has subscriber_id, subscription_ids and content_change_ids" do
         first = scope.first
         subscription_ids = subscription_contents.map(&:subscription_id)
         content_change_ids = subscription_contents.map(&:content_change_id)
 
-        expect(first.subscriber_ids).to match_array(subscriber.id)
+        expect(first.subscriber_id).to eq(subscriber.id)
         expect(first.subscription_ids).to match_array(subscription_ids)
         expect(first.content_change_ids).to match_array(content_change_ids)
       end
@@ -51,9 +51,9 @@ RSpec.describe EmailArchiveQuery do
     context "when an email is not associated with content changes" do
       before { create(:archivable_email) }
 
-      it "has empty subscriber_ids, subscription_ids and content_change_ids" do
+      it "has nil subscriber_id and emptpy subscription_ids and content_change_ids" do
         first = scope.first
-        expect(first.subscriber_ids).to be_empty
+        expect(first.subscriber_id).to be_nil
         expect(first.subscription_ids).to be_empty
         expect(first.content_change_ids).to be_empty
       end
