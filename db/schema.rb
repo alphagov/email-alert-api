@@ -88,8 +88,10 @@ ActiveRecord::Schema.define(version: 20180315084923) do
     t.string "address", null: false
     t.datetime "finished_sending_at"
     t.datetime "archived_at"
+    t.bigint "subscriber_id"
     t.index ["archived_at"], name: "index_emails_on_archived_at"
     t.index ["finished_sending_at"], name: "index_emails_on_finished_sending_at"
+    t.index ["subscriber_id"], name: "index_emails_on_subscriber_id"
   end
 
   create_table "matched_content_changes", force: :cascade do |t|
@@ -172,6 +174,7 @@ ActiveRecord::Schema.define(version: 20180315084923) do
   add_foreign_key "delivery_attempts", "emails", on_delete: :cascade
   add_foreign_key "digest_run_subscribers", "digest_runs", on_delete: :cascade
   add_foreign_key "digest_run_subscribers", "subscribers", on_delete: :cascade
+  add_foreign_key "emails", "subscribers", on_delete: :restrict
   add_foreign_key "matched_content_changes", "content_changes", on_delete: :cascade
   add_foreign_key "matched_content_changes", "subscriber_lists", on_delete: :cascade
   add_foreign_key "subscription_contents", "content_changes", on_delete: :restrict
