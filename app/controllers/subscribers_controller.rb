@@ -9,10 +9,19 @@ class SubscribersController < ApplicationController
     render json: { subscriber: subscriber.as_json, subscriptions: subscriptions }
   end
 
+  def change_address
+    subscriber.update!(address: new_address)
+    render json: { subscriber: subscriber }
+  end
+
 private
 
   def subscriber
     @subscriber ||= Subscriber.find_by!("LOWER(address) = ?", address.downcase)
+  end
+
+  def new_address
+    subscriber_params.require(:new_address)
   end
 
   def address
@@ -20,6 +29,6 @@ private
   end
 
   def subscriber_params
-    params.permit(:address)
+    params.permit(:address, :new_address)
   end
 end

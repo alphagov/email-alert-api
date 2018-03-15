@@ -33,6 +33,30 @@ RSpec.describe "Subscriptions", type: :request do
         end
       end
     end
+
+    context "when changing a subscriber's email address" do
+      context "with an existing subscriber" do
+        let!(:subscriber) { create(:subscriber) }
+
+        it "changes the email address if the new email address is valid" do
+          patch "/subscribers/#{subscriber.address}", params: { new_address: "new-test@example.com" }
+          expect(response.status).to eq(200)
+          expect(data[:subscriber][:address]).to eq("new-test@example.com")
+        end
+
+        it "returns an error message if the new email address is invalid" do
+          patch "/subscribers/#{subscriber.address}", params: { new_address: "invalid" }
+          expect(response.status).to eq(422)
+        end
+      end
+
+      context "without an existing subscriber" do
+        it "returns a 404" do
+          patch "/subscribers/doesnotexist@example.com", params: { new_address: "new-doesnotexist@example.com" }
+          expect(response.status).to eq(404)
+        end
+      end
+    end
   end
 
   context "without authentication" do
