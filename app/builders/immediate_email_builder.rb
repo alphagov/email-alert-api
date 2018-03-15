@@ -22,13 +22,14 @@ private
       [
         recipient_and_content.fetch(:address),
         subject(recipient_and_content.fetch(:content_change)),
-        body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions))
+        body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions)),
+        recipient_and_content.fetch(:subscriber_id),
       ]
     end
   end
 
   def columns
-    %i(address subject body)
+    %i(address subject body subscriber_id)
   end
 
   def subject(content_change)

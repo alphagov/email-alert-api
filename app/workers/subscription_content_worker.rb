@@ -69,7 +69,12 @@ private
 
     Subscriber.where(address: addresses).find_each do |subscriber|
       email_id = ImmediateEmailBuilder.call([
-        { address: subscriber.address, subscriptions: [], content_change: content_change }
+        {
+          address: subscriber.address,
+          subscriptions: [],
+          content_change: content_change,
+          subscriber_id: subscriber.id,
+        }
       ]).ids.first
 
       DeliveryRequestWorker.perform_async_in_queue(
