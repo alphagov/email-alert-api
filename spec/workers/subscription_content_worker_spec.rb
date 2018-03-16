@@ -35,16 +35,6 @@ RSpec.describe SubscriptionContentWorker do
       expect(content_change).to receive(:mark_processed!)
       subject.perform(content_change.id)
     end
-
-    context "when the subscription content has already been imported" do
-      before { create(:subscription_content, content_change: content_change, subscription: subscription) }
-
-      it "doesn't create another subscription content" do
-        expect { subject.perform(content_change.id) }
-          .to_not change { SubscriptionContent.count }
-          .from(1)
-      end
-    end
   end
 
   context "with more subscriptions than the batch size" do
@@ -62,17 +52,6 @@ RSpec.describe SubscriptionContentWorker do
       expect(SubscriptionContent).to receive(:import!).once
 
       subject.perform(content_change.id, 1)
-    end
-
-    context "when one subscription content has already been imported" do
-      before { create(:subscription_content, content_change: content_change, subscription: Subscription.first) }
-
-      it "only creates one additional content change" do
-        expect { subject.perform(content_change.id) }
-          .to change { SubscriptionContent.count }
-          .from(1)
-          .to(2)
-      end
     end
   end
 
