@@ -108,8 +108,7 @@ private
       {
         address: subscriber.address,
         content_change: content_changes[content_change_id],
-        subscriptions: subscription_contents[subscriber.id][content_change_id].map(&:subscription),
-        subscriber_id: subscriber.id,
+        subscriptions: subscription_contents[subscriber.id][content_change_id].map(&:subscription)
       }
     end
 

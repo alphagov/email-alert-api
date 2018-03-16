@@ -13,8 +13,7 @@ class DigestEmailBuilder
     Email.create!(
       subject: subject,
       body: body,
-      address: subscriber.address,
-      subscriber_id: subscriber.id,
+      address: subscriber.address
     )
   end
 
