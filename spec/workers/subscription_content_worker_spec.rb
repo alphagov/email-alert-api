@@ -86,6 +86,11 @@ RSpec.describe SubscriptionContentWorker do
         .to receive(:call)
         .with([hash_including(address: subscriber.address)])
         .and_return(double(ids: [0]))
+        .and_return(double(ids: ["9a6fa854-9d73-4769-aff7-f340729cf524"]))
+
+      allow(DeliveryRequestWorker)
+        .to receive(:perform_async_in_queue)
+        .and_return(true)
 
       subject.perform(content_change.id)
     end

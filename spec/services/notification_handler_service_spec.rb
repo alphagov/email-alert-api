@@ -1,11 +1,10 @@
 RSpec.describe NotificationHandlerService do
-  before do
-    Timecop.freeze(Time.local(2017, 1, 1, 9))
-    Sidekiq::Testing.fake!
-  end
-
-  after do
-    Timecop.return
+  around(:example) do |example|
+    Timecop.freeze(Time.local(2017, 1, 1, 9)) do
+      Sidekiq::Testing.fake! do
+        example.run
+      end
+    end
   end
 
   let(:params) {
