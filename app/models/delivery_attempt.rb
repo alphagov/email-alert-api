@@ -24,6 +24,10 @@ class DeliveryAttempt < ApplicationRecord
     self.class.final_status?(status)
   end
 
+  def finished_sending_at
+    sent_at || completed_at
+  end
+
   def self.final_status?(status)
     FINAL_STATUSES.include?(status.to_sym)
   end

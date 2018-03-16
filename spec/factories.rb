@@ -15,10 +15,34 @@ FactoryBot.define do
     publishing_app "publishing app"
   end
 
-  factory :delivery_attempt do
+  factory :delivery_attempt, aliases: [:sending_delivery_attempt] do
     email
     status :sending
     provider :notify
+
+    factory :delivered_delivery_attempt do
+      status :delivered
+      sent_at { Time.zone.now }
+      completed_at { Time.zone.now }
+    end
+
+    factory :temporary_failure_delivery_attempt do
+      status :temporary_failure
+      sent_at nil
+      completed_at { Time.zone.now }
+    end
+
+    factory :permanent_failure_delivery_attempt do
+      status :temporary_failure
+      sent_at nil
+      completed_at { Time.zone.now }
+    end
+
+    factory :technical_failure_delivery_attempt do
+      status :technical_failure
+      sent_at nil
+      completed_at { Time.zone.now }
+    end
   end
 
   factory :digest_run do

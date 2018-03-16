@@ -14,6 +14,6 @@ class Email < ApplicationRecord
   # Mark an email to indicate the process of sending it is complete
   def finish_sending(delivery_attempt)
     raise ArgumentError, "DeliveryAttempt for different email" if delivery_attempt.email_id != id
-    update!(finished_sending_at: delivery_attempt.sent_at)
+    update!(finished_sending_at: delivery_attempt.finished_sending_at)
   end
 end
