@@ -88,13 +88,7 @@ RSpec.describe EmailArchiveQuery do
     end
 
     context "when an email is sent" do
-      before do
-        create(
-          :delivery_attempt,
-          status: "delivered",
-          email: create(:archivable_email),
-        )
-      end
+      before { create(:archivable_email, status: :sent) }
 
       it "is available in the result" do
         expect(scope.first.sent).to be true
@@ -102,13 +96,7 @@ RSpec.describe EmailArchiveQuery do
     end
 
     context "when an email is not sent" do
-      before do
-        create(
-          :delivery_attempt,
-          status: "technical_failure",
-          email: create(:archivable_email),
-        )
-      end
+      before { create(:archivable_email, status: :failed) }
 
       it "is available in the result" do
         expect(scope.first.sent).to be false
