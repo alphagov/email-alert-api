@@ -33,7 +33,7 @@ class StatusUpdateService
     if delivery_attempt.permanent_failure? && subscriber
       UnsubscribeService.subscriber!(subscriber, :non_existant_email)
     elsif delivery_attempt.temporary_failure?
-      DeliveryRequestWorker.perform_in(15.minutes, email.id, :default)
+      redeliver_email(email)
     end
 
     GovukStatsd.increment("status_update.success")
@@ -65,6 +65,28 @@ private
     end
 
     attempt
+  end
+
+  def redelivery_delay(email)
+    case email.delivery_attempts.count
+    when 1
+      5.minutes
+    when 2
+      1.hour
+    when 3
+      24.hours
+    end
+  end
+
+  def redeliver_email(email)
+    delay = redelivery_delay(email)
+
+    if delay.nil?
+      Rails.logger.info("Given up trying to send #{email}.")
+      return
+    end
+
+    DeliveryRequestWorker.perform_in(delay, email.id, :default)
   end
 
   class DeliveryAttemptInvalidStatusError < RuntimeError; end

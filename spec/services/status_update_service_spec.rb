@@ -5,6 +5,8 @@ RSpec.describe StatusUpdateService do
     create(:delivery_attempt, id: reference, status: "sending")
   end
 
+  let(:email) { delivery_attempt.email }
+
   let(:status) { "delivered" }
   let(:completed_at) { Time.parse("2017-05-14T12:15:30.000000Z") }
   let(:sent_at) { Time.parse("2017-05-14T12:15:30.000000Z") }
@@ -31,7 +33,7 @@ RSpec.describe StatusUpdateService do
 
   it "updates the emails finished_sending_at timestamp" do
     expect { status_update }
-      .to change { delivery_attempt.reload.email.finished_sending_at }
+      .to change { email.reload.finished_sending_at }
       .from(nil)
       .to(sent_at)
   end
@@ -45,11 +47,37 @@ RSpec.describe StatusUpdateService do
         .to("temporary_failure")
     end
 
-    it "retries sending the email" do
-      expect(DeliveryRequestWorker).to receive(:perform_in)
-        .with(15.minutes, delivery_attempt.email.id, :default)
+    shared_examples "retries sending the email" do |delay|
+      it "retries sending the email in #{delay}" do
+        expect(DeliveryRequestWorker).to receive(:perform_in)
+          .with(delay, email.id, :default)
 
-      status_update
+        status_update
+      end
+    end
+
+    context "with one delivery attempt" do
+      include_examples "retries sending the email", 5.minutes
+    end
+
+    context "with two delivery attempts" do
+      before { create(:delivery_attempt, email: email) }
+      include_examples "retries sending the email", 1.hour
+    end
+
+    context "with three delivery attempts" do
+      before { 2.times { create(:delivery_attempt, email: email) } }
+      include_examples "retries sending the email", 24.hours
+    end
+
+    context "with four delivery attempts" do
+      before { 3.times { create(:delivery_attempt, email: email) } }
+
+      it "doesn't retry sending the email" do
+        expect(DeliveryRequestWorker).to_not receive(:perform_in)
+
+        status_update
+      end
     end
 
     it "does not update the emails finished_sending_at timestamp" do
@@ -62,7 +90,7 @@ RSpec.describe StatusUpdateService do
       # failure and 15 minutes time when we try again.
       Sidekiq::Testing.fake! do
         expect { status_update }
-          .to_not(change { delivery_attempt.reload.email.finished_sending_at })
+          .to_not(change { email.reload.finished_sending_at })
       end
     end
   end
@@ -71,7 +99,7 @@ RSpec.describe StatusUpdateService do
     let(:status) { "permanent-failure" }
 
     it "deactivates the subscriber" do
-      create(:subscriber, address: delivery_attempt.email.address)
+      create(:subscriber, address: email.address)
 
       expect { status_update }
         .to change { Subscriber.last.deactivated? }
