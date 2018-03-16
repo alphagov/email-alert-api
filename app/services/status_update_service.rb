@@ -33,7 +33,7 @@ class StatusUpdateService
     if delivery_attempt.permanent_failure? && subscriber
       UnsubscribeService.subscriber!(subscriber, :non_existant_email)
     elsif delivery_attempt.temporary_failure?
-      DeliveryRequestWorker.perform_in(15.minutes, email.id, :default)
+      DeliveryRequestWorker.perform_in(3.hours, email.id, :default)
     end
 
     GovukStatsd.increment("status_update.success")

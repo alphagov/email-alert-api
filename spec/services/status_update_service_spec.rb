@@ -47,7 +47,7 @@ RSpec.describe StatusUpdateService do
 
     it "retries sending the email" do
       expect(DeliveryRequestWorker).to receive(:perform_in)
-        .with(15.minutes, delivery_attempt.email.id, :default)
+        .with(3.hours, delivery_attempt.email.id, :default)
 
       status_update
     end
@@ -56,10 +56,10 @@ RSpec.describe StatusUpdateService do
       # We set `inline!` in rails_helper which causes jobs to fire immediately.
       # Since DeliveryRequestWorker is fired on temporary_failure, this has the side effect of
       # successfully sending the email and setting `finished_sending_at`.
-      # In reality, DeliveryRequestWorker is set to perform in 15 minutes time, so to mimic this
+      # In reality, DeliveryRequestWorker is set to perform in 3 hours time, so to mimic this
       # we set `fake!` which pushes it on to an array instead. For the sake of this test
       # we don't want it to perform since we are testing the state between the start of temporary
-      # failure and 15 minutes time when we try again.
+      # failure and 3 hours time when we try again.
       Sidekiq::Testing.fake! do
         expect { status_update }
           .to_not(change { delivery_attempt.reload.email.finished_sending_at })
