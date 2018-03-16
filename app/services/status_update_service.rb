@@ -21,7 +21,7 @@ class StatusUpdateService
         signon_user_uid: user&.uid,
       )
 
-      email.finish_sending(delivery_attempt) if delivery_attempt.has_final_status?
+      UpdateEmailStatusService.call(delivery_attempt)
     rescue ArgumentError
       # This is because Rails doesn't currently do validations for enums
       # see: https://github.com/rails/rails/issues/13971
@@ -32,7 +32,8 @@ class StatusUpdateService
 
     if delivery_attempt.permanent_failure? && subscriber
       UnsubscribeService.subscriber!(subscriber, :non_existant_email)
-    elsif delivery_attempt.temporary_failure?
+    # We check for a status of nil here too in case email hasn't had a status set
+    elsif delivery_attempt.temporary_failure? && ["pending", nil].include?(email.status)
       DeliveryRequestWorker.perform_in(3.hours, email.id, :default)
     end
 
