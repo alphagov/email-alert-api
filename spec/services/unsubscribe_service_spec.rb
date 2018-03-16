@@ -73,18 +73,5 @@ RSpec.describe UnsubscribeService do
         expect(subscriber.reload.address).not_to be_nil
       end
     end
-
-    context "when there are subscription contents for the subscription" do
-      let!(:subscription_content) do
-        create(:subscription_content, subscription: subscription)
-      end
-
-      it "nullifies the subscription on the subscription_content" do
-        expect { subject.subscription!(subscription, :unsubscribed) }
-          .to change { subscription_content.reload.subscription }
-          .from(subscription)
-          .to(nil)
-      end
-    end
   end
 end
