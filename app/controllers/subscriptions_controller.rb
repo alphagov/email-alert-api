@@ -28,6 +28,35 @@ class SubscriptionsController < ApplicationController
     render json: { id: subscription.id }, status: status
   end
 
+  def change_frequency
+    existing_subscription = nil
+    subscription = nil
+
+    Subscription.transaction do
+      existing_subscription = Subscription.active.lock.find(
+        subscription_params.require(:subscription_id)
+      )
+
+      existing_subscription.end(reason: :frequency_changed)
+
+      begin
+        subscription = Subscription.create!(
+          subscriber: existing_subscription.subscriber,
+          subscriber_list: existing_subscription.subscriber_list,
+          frequency: frequency,
+          signon_user_uid: current_user.uid,
+          source: :frequency_changed
+        )
+      rescue ArgumentError
+        # This happens if a frequency is provided that isn't included
+        # in the enum which is in the Subscription model
+        raise ActiveRecord::RecordInvalid
+      end
+    end
+
+    render json: { subscription: subscription }, status: :ok
+  end
+
 private
 
   def smoke_test_address?
@@ -57,6 +86,6 @@ private
   end
 
   def subscription_params
-    params.permit(:address, :subscribable_id, :frequency)
+    params.permit(:address, :subscribable_id, :frequency, :subscription_id)
   end
 end

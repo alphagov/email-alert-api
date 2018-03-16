@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     resources :notifications, only: %i[create index show]
     resources :status_updates, path: "status-updates", only: %i[create]
     resources :subscriptions, only: %i[create]
+    patch "/subscriptions/:subscription_id", to: "subscriptions#change_frequency"
 
     get "/healthcheck", to: "healthcheck#check"
 
