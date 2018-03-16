@@ -134,7 +134,7 @@ ActiveRecord::Schema.define(version: 20180313152401) do
     t.datetime "updated_at", null: false
     t.integer "digest_run_subscriber_id"
     t.uuid "email_id"
-    t.uuid "subscription_id"
+    t.uuid "subscription_id", null: false
     t.uuid "content_change_id", null: false
     t.index ["content_change_id"], name: "index_subscription_contents_on_content_change_id"
     t.index ["digest_run_subscriber_id"], name: "index_subscription_contents_on_digest_run_subscriber_id"
