@@ -1,17 +1,15 @@
 namespace :deliver do
-  def test_email(address, subscriber_id)
+  def test_email(address)
     Email.create(
       address: address,
       subject: "Test email",
-      body: "This is a test email.",
-      subscriber_id: subscriber_id,
+      body: "This is a test email."
     )
   end
 
   desc "Send a test email to a subscriber by id"
   task :to_subscriber, [:id] => :environment do |_t, args|
-    subscriber = Subscriber.find(args[:id])
-    email = test_email(subscriber.address, subscriber.id)
+    email = test_email(Subscriber.find(args[:id]).address)
     DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_immediate)
   end
 
