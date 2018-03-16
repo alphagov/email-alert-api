@@ -104,6 +104,8 @@ RSpec.describe ImmediateEmailBuilder do
         expect(ContentChangePresenter).to receive(:call)
           .and_return("presented_content_change\n")
 
+        expect(email.status).to eq "pending"
+
         expect(email.body).to eq(
           <<~BODY
             presented_content_change

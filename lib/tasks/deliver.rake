@@ -1,6 +1,7 @@
 namespace :deliver do
   def test_email(address, subscriber_id = nil)
     Email.create(
+      status: :pending,
       address: address,
       subject: "Test email",
       body: "This is a test email.",
