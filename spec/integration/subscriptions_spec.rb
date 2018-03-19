@@ -104,6 +104,30 @@ RSpec.describe "Subscriptions", type: :request do
           expect(data[:id]).not_to be_nil
         end
       end
+
+      context "when changing a subscription's frequency" do
+        context "with an existing subscription" do
+          let!(:subscription) { create(:subscription, frequency: "immediately") }
+
+          it "changes the frequency if the new frequency is valid" do
+            patch "/subscriptions/#{subscription.id}", params: { frequency: "weekly" }
+            expect(response.status).to eq(200)
+            expect(data[:subscription][:frequency]).to eq("weekly")
+          end
+
+          it "returns an error message if the new frequency is invalid" do
+            patch "/subscriptions/#{subscription.id}", params: { frequency: "monthly" }
+            expect(response.status).to eq(422)
+          end
+        end
+
+        context "without an existing subscription" do
+          it "returns a 404" do
+            patch "/subscriptions/xxxx", params: { frequency: "daily" }
+            expect(response.status).to eq(404)
+          end
+        end
+      end
     end
 
     context "with an invalid email address" do

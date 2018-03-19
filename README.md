@@ -267,6 +267,17 @@ and it will create a new subscription between the email address and the
 subscriber list. It will respond with a `201 Created` if it's a new
 subscription or a `200 OK` if the subscription already exists.
 
+* `PATCH /subscriptions/xxxx` with data:
+
+```json
+{
+  "frequency": "weekly"
+}
+```
+
+and it will respond with the details of the subscription including the
+new frequency.
+
 #### healthcheck API
 
 A queue health check endpoint is available at `/healthcheck`.
