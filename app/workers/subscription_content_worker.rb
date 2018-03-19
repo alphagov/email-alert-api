@@ -35,8 +35,25 @@ private
 
   def import_subscription_contents_batch(batch)
     columns = %i(content_change_id subscription_id)
-    SubscriptionContent.import!(columns, batch)
+
+    begin
+      SubscriptionContent.transaction do
+        SubscriptionContent.import!(columns, batch)
+      end
+    rescue ActiveRecord::RecordNotUnique
+      handle_failed_subscription_content_import(batch)
+    end
+
     ImmediateEmailGenerationWorker.perform_async
+  end
+
+  def handle_failed_subscription_content_import(batch)
+    SubscriptionContent.transaction do
+      batch.each do |(content_change_id, subscription_id)|
+        params = { content_change_id: content_change_id, subscription_id: subscription_id }
+        SubscriptionContent.create!(params) unless SubscriptionContent.where(params).exists?
+      end
+    end
   end
 
   def grouped_subscription_ids_by_subscriber(content_change)
