@@ -42,7 +42,8 @@ RSpec.describe ImmediateEmailBuilder do
         {
           address: subscriber.address,
           content_change: content_change,
-          subscriptions: []
+          subscriptions: [],
+          subscriber_id: subscriber.id,
         }
       ]
     }
@@ -70,6 +71,10 @@ RSpec.describe ImmediateEmailBuilder do
       )
     end
 
+    it "sets the subscriber id" do
+      expect(email.subscriber_id).to eq(subscriber.id)
+    end
+
     context "with a subscription" do
       let(:subscription_content) do
         double(subscription: subscription_one, content_change: content_change)
@@ -80,7 +85,8 @@ RSpec.describe ImmediateEmailBuilder do
           {
             address: subscriber.address,
             content_change: content_change,
-            subscriptions: [subscription_one]
+            subscriptions: [subscription_one],
+            subscriber_id: subscriber.id,
           }
         ]
       }
