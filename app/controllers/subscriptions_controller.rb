@@ -28,13 +28,18 @@ class SubscriptionsController < ApplicationController
     render json: { id: subscription.id }, status: status
   end
 
-  def change_frequency
+  def show
+    subscription = Subscription.find(subscription_params.require(:id))
+    render json: { subscription: subscription }
+  end
+
+  def update
     existing_subscription = nil
     subscription = nil
 
     Subscription.transaction do
       existing_subscription = Subscription.active.lock.find(
-        subscription_params.require(:subscription_id)
+        subscription_params.require(:id)
       )
 
       existing_subscription.end(reason: :frequency_changed)
@@ -86,6 +91,6 @@ private
   end
 
   def subscription_params
-    params.permit(:address, :subscribable_id, :frequency, :subscription_id)
+    params.permit(:id, :address, :subscribable_id, :frequency)
   end
 end

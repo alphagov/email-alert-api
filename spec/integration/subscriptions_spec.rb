@@ -57,6 +57,22 @@ RSpec.describe "Subscriptions", type: :request do
           expect(subscription.reload.ended?).to be true
         end
       end
+
+      it "lets you query the subscription" do
+        get "/subscriptions/#{subscription.id}"
+        expect(response.status).to eq(200)
+        expect(data[:subscription].keys).to match_array(%i(
+          id
+          subscriber_list
+          subscriber
+          created_at
+          updated_at
+          ended_at
+          ended_reason
+          frequency
+          source
+        ))
+      end
     end
 
     context "without an existing subscription" do
@@ -127,6 +143,11 @@ RSpec.describe "Subscriptions", type: :request do
             expect(response.status).to eq(404)
           end
         end
+      end
+
+      it "raises a 404 querying a non-existing subscription" do
+        get "/subscriptions/3c926708-ecfa-4165-889d-c0d45cbdc01c"
+        expect(response.status).to eq(404)
       end
     end
 
