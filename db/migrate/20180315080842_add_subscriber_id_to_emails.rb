@@ -1,6 +1,6 @@
 class AddSubscriberIdToEmails < ActiveRecord::Migration[5.1]
   def up
-    add_reference :emails, :subscriber
+    add_reference :emails, :subscriber, index: false
 
     execute %(
       ALTER TABLE "emails"
