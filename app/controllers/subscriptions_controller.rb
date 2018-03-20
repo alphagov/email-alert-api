@@ -28,6 +28,11 @@ class SubscriptionsController < ApplicationController
     render json: { id: subscription.id }, status: status
   end
 
+  def show
+    subscription = Subscription.find(subscription_params.require(:id))
+    render json: { subscription: subscription }
+  end
+
   def change_frequency
     existing_subscription = nil
     subscription = nil
@@ -86,6 +91,6 @@ private
   end
 
   def subscription_params
-    params.permit(:address, :subscribable_id, :frequency, :subscription_id)
+    params.permit(:id, :address, :subscribable_id, :frequency, :subscription_id)
   end
 end
