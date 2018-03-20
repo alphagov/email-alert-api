@@ -33,7 +33,7 @@ FactoryBot.define do
     end
 
     factory :permanent_failure_delivery_attempt do
-      status :temporary_failure
+      status :permanent_failure
       sent_at nil
       completed_at { Time.zone.now }
     end
