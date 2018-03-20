@@ -36,8 +36,10 @@ RSpec.describe StatusUpdateService do
       .to(sent_at)
   end
 
-  context "with a temporary failure" do
+  context "with first temporary failure" do
     let(:status) { "temporary-failure" }
+    let(:completed_at) { Time.zone.now }
+    let(:sent_at) { nil }
 
     it "underscores statuses" do
       expect { status_update }
@@ -64,6 +66,31 @@ RSpec.describe StatusUpdateService do
         expect { status_update }
           .to_not(change { delivery_attempt.reload.email.finished_sending_at })
       end
+    end
+  end
+
+  context "with a temporary failure after previous one a day ago" do
+    let(:status) { "temporary-failure" }
+    let(:completed_at) { Time.zone.now }
+    let(:sent_at) { nil }
+    before do
+      create(
+        :temporary_failure_delivery_attempt,
+        email: delivery_attempt.email,
+        completed_at: 26.hours.ago,
+      )
+    end
+
+    it "doesn't retry sending the email" do
+      expect(DeliveryRequestWorker).not_to receive(:perform_in)
+      status_update
+    end
+
+    it "marks the email status as failed" do
+      expect { status_update }
+        .to change { delivery_attempt.reload.email.status }
+        .from("pending")
+        .to("failed")
     end
   end
 
