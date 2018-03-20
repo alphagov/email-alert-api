@@ -1,5 +1,5 @@
 namespace :deliver do
-  def test_email(address, subscriber_id)
+  def test_email(address, subscriber_id = nil)
     Email.create(
       address: address,
       subject: "Test email",
