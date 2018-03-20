@@ -47,7 +47,7 @@ private
       id: email_data.fetch("id"),
       sent: email_data.fetch("sent"),
       subject: email_data.fetch("subject"),
-      subscriber_id: build_subscriber_id(email_data),
+      subscriber_id: email_data.fetch("subscriber_id"),
     }
   end
 
@@ -65,16 +65,6 @@ private
       digest_run_id: email_data.fetch("digest_run_ids").first,
       subscription_ids: email_data.fetch("subscription_ids"),
     }
-  end
-
-  def build_subscriber_id(email_data)
-    if email_data.fetch("subscriber_ids").count > 1
-      error = "Email with id: #{email_data['id']} is associated with "\
-        "multiple subscribers: #{email_data['subscribers'].join(', ')}"
-      GovukError.notify(error)
-    end
-
-    email_data.fetch("subscriber_ids").first
   end
 
   def log_complete(archived, start_time, end_time)

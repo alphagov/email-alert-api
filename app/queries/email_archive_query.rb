@@ -17,21 +17,12 @@ private
       :subject,
       :finished_sending_at,
       :created_at,
-      subscriber_ids,
+      :subscriber_id,
       subscription_ids,
       content_change_ids,
       digest_run_ids,
       sent,
     ]
-  end
-
-  def subscriber_ids
-    query = Subscription
-      .joins(:subscription_contents)
-      .where("subscription_contents.email_id = emails.id")
-      .distinct
-      .select(:subscriber_id)
-    "ARRAY(#{query.to_sql}) AS subscriber_ids"
   end
 
   def subscription_ids
