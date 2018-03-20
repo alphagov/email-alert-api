@@ -29,6 +29,12 @@ RSpec.describe DeliveryAttempt, type: :model do
     include_examples "is marked as a failure"
   end
 
+  context "with a retries_exhausted_failure" do
+    subject { create(:delivery_attempt, status: :retries_exhausted_failure) }
+
+    include_examples "is marked as a failure"
+  end
+
   context "with a technical failure" do
     subject { create(:delivery_attempt, status: :technical_failure) }
 

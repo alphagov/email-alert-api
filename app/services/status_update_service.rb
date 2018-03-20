@@ -17,7 +17,7 @@ class StatusUpdateService
       delivery_attempt.update!(
         sent_at: sent_at,
         completed_at: completed_at,
-        status: status.underscore,
+        status: determine_status(status),
         signon_user_uid: user&.uid,
       )
 
@@ -65,6 +65,28 @@ private
     end
 
     attempt
+  end
+
+  # If we've had temporary failures for longer than a day then we mark a
+  # delivery attempt as having a status of retries_exhausted_failure which is
+  # a final status of a DeliveryAttempt.
+  #
+  # This is a bit of a bodge really as it is no different from another
+  # technical failure and shouldn't really have a different state on a
+  # DeliveryAttempt.
+  def determine_status(status)
+    status = status.underscore
+    return status if status != "temporary_failure"
+
+    first_completed = DeliveryAttempt
+                        .where(email: email)
+                        .minimum(:completed_at)
+
+    if first_completed && first_completed < 1.days.ago
+      "retries_exhausted_failure"
+    else
+      status
+    end
   end
 
   class DeliveryAttemptInvalidStatusError < RuntimeError; end

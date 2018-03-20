@@ -107,4 +107,44 @@ RSpec.describe StatusUpdateService do
         .to raise_error(StatusUpdateService::DeliveryAttemptStatusConflictError)
     end
   end
+
+  context "when a delivery attempts is a temporary failure and the first "\
+    "delivery attempt was less than a day ago" do
+    let(:status) { "temporary-failure" }
+    let(:completed_at) { Time.zone.now.rfc3339 }
+
+    before do
+      create(
+        :delivery_attempt,
+        email: delivery_attempt.email,
+        completed_at: 20.hours.ago,
+      )
+    end
+
+    it "sets the delivery attempt status to temporary_failure" do
+      expect { status_update }
+        .to change { delivery_attempt.reload.status }
+        .to("temporary_failure")
+    end
+  end
+
+  context "when a delivery attempts is a temporary failure and the first "\
+    "delivery attempt was more than a day ago" do
+    let(:status) { "temporary-failure" }
+    let(:completed_at) { Time.zone.now.rfc3339 }
+
+    before do
+      create(
+        :delivery_attempt,
+        email: delivery_attempt.email,
+        completed_at: 25.hours.ago,
+      )
+    end
+
+    it "sets the delivery attempt status to retries_exhausted_failure" do
+      expect { status_update }
+        .to change { delivery_attempt.reload.status }
+        .to("retries_exhausted_failure")
+    end
+  end
 end
