@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180321101329) do
+ActiveRecord::Schema.define(version: 20180321103043) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(version: 20180321101329) do
     t.bigint "subscriber_id"
     t.integer "status"
     t.integer "failure_reason"
+    t.index ["address"], name: "index_emails_on_address"
     t.index ["archived_at"], name: "index_emails_on_archived_at"
     t.index ["created_at"], name: "index_emails_on_created_at"
     t.index ["failure_reason"], name: "index_emails_on_failure_reason"
