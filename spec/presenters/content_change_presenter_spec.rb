@@ -14,7 +14,7 @@ RSpec.describe ContentChangePresenter do
   describe ".call" do
     it "returns a presenter content change" do
       expected = <<~CONTENT_CHANGE
-        [Change title](http://www.dev.gov.uk/government/test-slug)
+        [Change title](http://www.dev.gov.uk/government/test-slug?#{utm_params(content_change.id, 'immediate')})
 
         Test description
 
@@ -37,7 +37,7 @@ RSpec.describe ContentChangePresenter do
 
       it "strips markdown" do
         expected = <<~CONTENT_CHANGE
-          [Change title](http://www.dev.gov.uk/government/test-slug)
+          [Change title](http://www.dev.gov.uk/government/test-slug?#{utm_params(content_change.id, 'immediate')})
 
           more markdown
 
@@ -58,7 +58,7 @@ RSpec.describe ContentChangePresenter do
 
       it "doesn't leave an empty gap" do
         expected = <<~CONTENT_CHANGE
-          [title](http://www.dev.gov.uk/government/base_path)
+          [title](http://www.dev.gov.uk/government/base_path?#{utm_params(content_change.id, 'immediate')})
 
           10:00am, 1 January 2018: change note
         CONTENT_CHANGE
@@ -77,7 +77,7 @@ RSpec.describe ContentChangePresenter do
 
       it "includes the footnote at the bottom" do
         expected = <<~CONTENT_CHANGE
-          [title](http://www.dev.gov.uk/government/base_path)
+          [title](http://www.dev.gov.uk/government/base_path?#{utm_params(content_change.id, 'immediate')})
 
           description
 

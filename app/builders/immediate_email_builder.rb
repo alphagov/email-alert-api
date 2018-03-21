@@ -56,7 +56,7 @@ private
   end
 
   def presented_content_change(content_change)
-    ContentChangePresenter.call(content_change)
+    ContentChangePresenter.call(content_change, frequency: "immediate")
   end
 
   def presented_unsubscribe_links(subscriptions)
