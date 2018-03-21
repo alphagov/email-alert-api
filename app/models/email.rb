@@ -9,11 +9,8 @@ class Email < ApplicationRecord
     where.not(archived_at: nil).where("finished_sending_at < ?", 14.days.ago)
   }
 
-  validates :address, :subject, :body, presence: true
+  enum status: { pending: 0, sent: 1, failed: 2 }
+  enum failure_reason: { permanent_failure: 0, retries_exhausted_failure: 1 }
 
-  # Mark an email to indicate the process of sending it is complete
-  def finish_sending(delivery_attempt)
-    raise ArgumentError, "DeliveryAttempt for different email" if delivery_attempt.email_id != id
-    update!(finished_sending_at: delivery_attempt.finished_sending_at)
-  end
+  validates :address, :subject, :body, presence: true
 end

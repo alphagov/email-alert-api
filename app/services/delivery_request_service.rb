@@ -35,8 +35,7 @@ class DeliveryRequestService
 
       ActiveRecord::Base.transaction do
         delivery_attempt.update!(status: status) if status != :sending
-
-        email.finish_sending(delivery_attempt) if delivery_attempt.has_final_status?
+        UpdateEmailStatusService.call(delivery_attempt)
       end
     end
 

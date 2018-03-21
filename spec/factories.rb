@@ -33,7 +33,7 @@ FactoryBot.define do
     end
 
     factory :permanent_failure_delivery_attempt do
-      status :temporary_failure
+      status :permanent_failure
       sent_at nil
       completed_at { Time.zone.now }
     end
@@ -61,21 +61,25 @@ FactoryBot.define do
     subscriber
   end
 
-  factory :email, aliases: [:unarchivable_email] do
+  factory :email, aliases: %i[unarchivable_email pending_email] do
     address "test@example.com"
     subject "subject"
     body "body"
+    status :pending
 
     factory :archivable_email do
+      status :sent
       finished_sending_at { 2.days.ago }
     end
 
     factory :archived_email do
+      status :sent
       finished_sending_at { 2.days.ago }
       archived_at { 1.day.ago }
     end
 
     factory :deleteable_email do
+      status :sent
       finished_sending_at { 15.days.ago }
       archived_at { 14.days.ago }
     end
