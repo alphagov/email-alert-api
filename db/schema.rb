@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180316120328) do
+ActiveRecord::Schema.define(version: 20180321104249) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,8 @@ ActiveRecord::Schema.define(version: 20180316120328) do
     t.integer "priority", default: 0
     t.string "signon_user_uid"
     t.text "footnote", default: "", null: false
+    t.index ["created_at"], name: "index_content_changes_on_created_at"
+    t.index ["updated_at"], name: "index_content_changes_on_updated_at"
   end
 
   create_table "delivery_attempts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -47,8 +49,10 @@ ActiveRecord::Schema.define(version: 20180316120328) do
     t.uuid "email_id", null: false
     t.datetime "completed_at"
     t.datetime "sent_at"
+    t.index ["created_at"], name: "index_delivery_attempts_on_created_at"
     t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
     t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
+    t.index ["updated_at"], name: "index_delivery_attempts_on_updated_at"
   end
 
   create_table "digest_run_subscribers", force: :cascade do |t|
@@ -91,10 +95,11 @@ ActiveRecord::Schema.define(version: 20180316120328) do
     t.bigint "subscriber_id"
     t.integer "status"
     t.integer "failure_reason"
+    t.index ["address"], name: "index_emails_on_address"
     t.index ["archived_at"], name: "index_emails_on_archived_at"
-    t.index ["failure_reason"], name: "index_emails_on_failure_reason"
+    t.index ["created_at"], name: "index_emails_on_created_at"
     t.index ["finished_sending_at"], name: "index_emails_on_finished_sending_at"
-    t.index ["status"], name: "index_emails_on_status"
+    t.index ["updated_at"], name: "index_emails_on_updated_at"
   end
 
   create_table "matched_content_changes", force: :cascade do |t|
@@ -158,9 +163,11 @@ ActiveRecord::Schema.define(version: 20180316120328) do
     t.integer "source", default: 0, null: false
     t.datetime "ended_at"
     t.integer "ended_reason"
+    t.index ["created_at"], name: "index_subscriptions_on_created_at"
     t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true, where: "(ended_at IS NULL)"
     t.index ["subscriber_id"], name: "index_subscriptions_on_subscriber_id"
     t.index ["subscriber_list_id"], name: "index_subscriptions_on_subscriber_list_id"
+    t.index ["updated_at"], name: "index_subscriptions_on_updated_at"
   end
 
   create_table "users", force: :cascade do |t|
