@@ -8,7 +8,7 @@ gem 'with_advisory_lock', '~> 3.2'
 
 gem 'faraday', '0.12.2'
 gem 'foreman', '~> 0.84'
-gem 'gds-api-adapters', '~> 52.1'
+gem 'gds-api-adapters', '~> 52.2'
 gem 'gds-sso', '~> 13.6'
 gem 'govuk_app_config', '~> 1.4'
 gem 'nokogiri', '~> 1.8'
