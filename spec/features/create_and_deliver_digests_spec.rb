@@ -14,11 +14,11 @@ RSpec.describe "creating and delivering digests", type: :request do
     Timecop.return
   end
 
-  def first_expected_daily_email_body(subscription_one, subscription_two)
+  def first_expected_daily_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four)
     <<~BODY
       #Subscriber list one&nbsp;
 
-      [Title one](http://www.dev.gov.uk/base-path)
+      [Title one](http://www.dev.gov.uk/base-path?#{utm_params(content_change_one.id, 'daily')})
 
       Description one
 
@@ -26,7 +26,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      [Title two](http://www.dev.gov.uk/base-path)
+      [Title two](http://www.dev.gov.uk/base-path?#{utm_params(content_change_two.id, 'daily')})
 
       Description two
 
@@ -40,7 +40,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       #Subscriber list two&nbsp;
 
-      [Title four](http://www.dev.gov.uk/base-path)
+      [Title four](http://www.dev.gov.uk/base-path?#{utm_params(content_change_four.id, 'daily')})
 
       Description four
 
@@ -48,7 +48,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      [Title three](http://www.dev.gov.uk/base-path)
+      [Title three](http://www.dev.gov.uk/base-path?#{utm_params(content_change_three.id, 'daily')})
 
       Description three
 
@@ -66,11 +66,11 @@ RSpec.describe "creating and delivering digests", type: :request do
     BODY
   end
 
-  def second_expected_daily_email_body(subscription)
+  def second_expected_daily_email_body(subscription, content_change_one, content_change_two)
     <<~BODY
       #Subscriber list one&nbsp;
 
-      [Title one](http://www.dev.gov.uk/base-path)
+      [Title one](http://www.dev.gov.uk/base-path?#{utm_params(content_change_one.id, 'daily')})
 
       Description one
 
@@ -78,7 +78,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      [Title two](http://www.dev.gov.uk/base-path)
+      [Title two](http://www.dev.gov.uk/base-path?#{utm_params(content_change_two.id, 'daily')})
 
       Description two
 
@@ -199,6 +199,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     #TODO retrieve this via the API when we have an endpoint
     subscriptions = Subscription.all
+    content_changes = ContentChange.all
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
@@ -206,7 +207,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => first_expected_daily_email_body(subscriptions[0], subscriptions[1])
+            "body" => first_expected_daily_email_body(subscriptions[0], subscriptions[1], content_changes[0], content_changes[1], content_changes[2], content_changes[3])
           )
         )
       )
@@ -218,7 +219,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => second_expected_daily_email_body(subscriptions[2])
+            "body" => second_expected_daily_email_body(subscriptions[2], content_changes[0], content_changes[1])
           )
         )
       )
@@ -231,11 +232,11 @@ RSpec.describe "creating and delivering digests", type: :request do
     expect(second_digest_stub).to have_been_requested
   end
 
-  def first_expected_weekly_email_body(subscription_one, subscription_two)
+  def first_expected_weekly_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four)
     <<~BODY
       #Subscriber list one&nbsp;
 
-      [Title one](http://www.dev.gov.uk/base-path)
+      [Title one](http://www.dev.gov.uk/base-path?#{utm_params(content_change_one.id, 'weekly')})
 
       Description one
 
@@ -243,7 +244,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      [Title two](http://www.dev.gov.uk/base-path)
+      [Title two](http://www.dev.gov.uk/base-path?#{utm_params(content_change_two.id, 'weekly')})
 
       Description two
 
@@ -257,7 +258,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       #Subscriber list two&nbsp;
 
-      [Title four](http://www.dev.gov.uk/base-path)
+      [Title four](http://www.dev.gov.uk/base-path?#{utm_params(content_change_four.id, 'weekly')})
 
       Description four
 
@@ -265,7 +266,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      [Title three](http://www.dev.gov.uk/base-path)
+      [Title three](http://www.dev.gov.uk/base-path?#{utm_params(content_change_three.id, 'weekly')})
 
       Description three
 
@@ -283,11 +284,11 @@ RSpec.describe "creating and delivering digests", type: :request do
     BODY
   end
 
-  def second_expected_weekly_email_body(subscription)
+  def second_expected_weekly_email_body(subscription, content_change_one, content_change_two)
     <<~BODY
       #Subscriber list one&nbsp;
 
-      [Title one](http://www.dev.gov.uk/base-path)
+      [Title one](http://www.dev.gov.uk/base-path?#{utm_params(content_change_one.id, 'weekly')})
 
       Description one
 
@@ -295,7 +296,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      [Title two](http://www.dev.gov.uk/base-path)
+      [Title two](http://www.dev.gov.uk/base-path?#{utm_params(content_change_two.id, 'weekly')})
 
       Description two
 
@@ -413,6 +414,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     #TODO retrieve this via the API when we have an endpoint
     subscriptions = Subscription.all
+    content_changes = ContentChange.all
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
@@ -420,7 +422,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => first_expected_weekly_email_body(subscriptions[0], subscriptions[1])
+            "body" => first_expected_weekly_email_body(subscriptions[0], subscriptions[1], content_changes[0], content_changes[1], content_changes[2], content_changes[3])
           )
         )
       )
@@ -432,7 +434,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => second_expected_weekly_email_body(subscriptions[2])
+            "body" => second_expected_weekly_email_body(subscriptions[2], content_changes[0], content_changes[1])
           )
         )
       )

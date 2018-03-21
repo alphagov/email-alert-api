@@ -3,8 +3,9 @@ require 'redcarpet/render_strip'
 class ContentChangePresenter
   EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze
 
-  def initialize(content_change)
+  def initialize(content_change, frequency: "immediate")
     @content_change = content_change
+    @frequency = frequency
   end
 
   def self.call(*args)
@@ -24,12 +25,17 @@ class ContentChangePresenter
 
 private
 
-  attr_reader :content_change
+  attr_reader :content_change, :frequency
 
   delegate :title, :description, :change_note, :footnote, to: :content_change
 
   def content_url
-    PublicUrlService.url_for(base_path: content_change.base_path)
+    utm_source = content_change.id
+    utm_medium = "email"
+    utm_campaign = "govuk-notifications"
+    utm_content = frequency
+    base_path = "#{content_change.base_path}?utm_source=#{utm_source}&utm_medium=#{utm_medium}&utm_campaign=#{utm_campaign}&utm_content=#{utm_content}"
+    PublicUrlService.url_for(base_path: base_path)
   end
 
   def public_updated_at

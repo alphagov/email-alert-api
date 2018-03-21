@@ -74,7 +74,8 @@ private
 
   def presented_content_changes(content_changes)
     changes = content_changes.map do |content_change|
-      ContentChangePresenter.call(content_change)
+      frequency = digest_run.daily? ? "daily" : "weekly"
+      ContentChangePresenter.call(content_change, frequency: frequency)
     end
 
     changes.join("\n---\n\n")
