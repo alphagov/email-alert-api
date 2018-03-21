@@ -20,7 +20,6 @@ private
   def records
     recipients_and_content.map do |recipient_and_content|
       [
-        :pending,
         recipient_and_content.fetch(:address),
         subject(recipient_and_content.fetch(:content_change)),
         body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions)),
@@ -30,7 +29,7 @@ private
   end
 
   def columns
-    %i(status address subject body subscriber_id)
+    %i(address subject body subscriber_id)
   end
 
   def subject(content_change)

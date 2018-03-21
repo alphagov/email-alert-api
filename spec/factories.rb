@@ -65,7 +65,6 @@ FactoryBot.define do
     address "test@example.com"
     subject "subject"
     body "body"
-    status :pending
 
     factory :archivable_email do
       status :sent
