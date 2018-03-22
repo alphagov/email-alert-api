@@ -22,6 +22,10 @@ module EmailAlertAPI
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
     config.eager_load_paths << Rails.root.join('lib')
+
+    unless Rails.application.secrets.email_alert_auth_token
+      raise "Email Alert Auth Token is not configured. See config/secrets.yml"
+    end
   end
 
   cattr_accessor :config
