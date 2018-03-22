@@ -13,15 +13,15 @@ private
 
   def fields
     [
-      :id,
-      :subject,
-      :finished_sending_at,
       :created_at,
-      :subscriber_id,
-      subscription_ids,
       content_change_ids,
       digest_run_ids,
+      :finished_sending_at,
+      :id,
       sent,
+      :subject,
+      :subscriber_id,
+      subscription_ids,
     ]
   end
 
@@ -51,9 +51,10 @@ private
   end
 
   def sent
-    query = DeliveryAttempt
-      .where(status: :delivered)
-      .where("email_id = emails.id")
-    "EXISTS(#{query.to_sql}) AS sent"
+    "CASE\
+      WHEN status=#{Email.statuses['sent']}\
+      THEN true\
+      ELSE false\
+    END AS sent"
   end
 end

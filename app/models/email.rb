@@ -2,11 +2,11 @@ class Email < ApplicationRecord
   has_many :delivery_attempts
 
   scope :archivable, lambda {
-    where(archived_at: nil).where.not(finished_sending_at: nil)
+    where(archived_at: nil).where.not(status: :pending)
   }
 
   scope :deleteable, lambda {
-    where.not(archived_at: nil).where("finished_sending_at < ?", 14.days.ago)
+    where.not(status: :pending).where("archived_at < ?", 14.days.ago)
   }
 
   enum status: { pending: 0, sent: 1, failed: 2 }

@@ -11,7 +11,6 @@ class DigestEmailBuilder
 
   def call
     Email.create!(
-      status: :pending,
       subject: subject,
       body: body,
       address: subscriber.address,
