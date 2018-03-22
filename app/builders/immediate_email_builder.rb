@@ -46,7 +46,7 @@ private
         You’re getting this email because you subscribed to ‛#{subscriptions.first.subscriber_list.title}’ updates on GOV.UK.
 
         #{presented_unsubscribe_links(subscriptions)}
-        [View and manage your subscriptions](/magic-manage-link)
+        #{presented_manage_subscriptions_links}
 
         \u00A0
 
@@ -57,6 +57,13 @@ private
 
   def presented_content_change(content_change)
     ContentChangePresenter.call(content_change, frequency: "immediate")
+  end
+
+  def presented_manage_subscriptions_links
+    address = recipients_and_content.map do |recipient_and_content|
+      recipient_and_content.fetch(:subscriber_id)
+    end.join
+    ManageSubscriptionsLinkPresenter.call(subscriber_id: subscriber_id)
   end
 
   def presented_unsubscribe_links(subscriptions)

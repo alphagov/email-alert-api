@@ -46,8 +46,8 @@ private
   def spam_prevention_survey_links
     <<~BODY
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
-      [View and manage your subscriptions](/magic-manage-link)
-      
+      #{presented_manage_subscriptions_links}
+
       \u00A0
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
@@ -86,5 +86,9 @@ private
       id: result.subscription_id,
       title: result.subscriber_list_title
     )
+  end
+
+  def presented_manage_subscriptions_links
+    ManageSubscriptionsLinkPresenter.call(subscriber_id: subscriber.id)
   end
 end
