@@ -58,6 +58,11 @@ class Subscriber < ApplicationRecord
     update!(address: nil)
   end
 
+  def as_json(options = {})
+    options[:except] ||= %i(signon_user_uid)
+    super(options)
+  end
+
 private
 
   def not_nullified_and_activated
