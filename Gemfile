@@ -11,6 +11,8 @@ gem 'foreman', '~> 0.84'
 gem 'gds-api-adapters', '~> 52.4'
 gem 'gds-sso', '~> 13.6'
 gem 'govuk_app_config', '~> 1.4'
+# This is pinned < 2 until gds-sso supports JWT > 2
+gem 'jwt', '~> 1.5'
 gem 'nokogiri', '~> 1.8'
 gem 'notifications-ruby-client', '~> 2.6'
 gem 'plek', '~> 2.1'
