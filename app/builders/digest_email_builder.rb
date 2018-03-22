@@ -46,8 +46,9 @@ private
   def spam_prevention_survey_links
     <<~BODY
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
-
-      &nbsp;
+      [View and manage your subscriptions](/magic-manage-link)
+      
+      \u00A0
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY

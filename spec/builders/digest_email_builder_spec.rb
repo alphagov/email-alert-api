@@ -104,8 +104,9 @@ RSpec.describe DigestEmailBuilder do
         unsubscribe_link_2
 
         You’re getting this email because you subscribed to these topic updates on GOV.UK.
+        [View and manage your subscriptions](/magic-manage-link)
 
-        &nbsp;
+        \u00A0
 
         ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
       BODY

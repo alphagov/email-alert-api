@@ -9,7 +9,7 @@ class UnsubscribeLinkPresenter
   end
 
   def call
-    "Unsubscribe from [#{title}](#{url})"
+    "[Unsubscribe from ‛#{title}’](#{url})"
   end
 
   private_class_method :new
