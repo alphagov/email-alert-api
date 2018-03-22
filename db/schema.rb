@@ -93,7 +93,7 @@ ActiveRecord::Schema.define(version: 20180321125113) do
     t.datetime "finished_sending_at"
     t.datetime "archived_at"
     t.bigint "subscriber_id"
-    t.integer "status"
+    t.integer "status", default: 0, null: false
     t.integer "failure_reason"
     t.index ["address"], name: "index_emails_on_address"
     t.index ["archived_at"], name: "index_emails_on_archived_at"
