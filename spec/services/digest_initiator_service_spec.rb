@@ -2,6 +2,10 @@ require "rails_helper"
 
 RSpec.describe DigestInitiatorService do
   describe ".call" do
+    around do |example|
+      Timecop.freeze(Time.parse("08:30")) { example.run }
+    end
+
     context "daily" do
       let(:range) { Frequency::DAILY }
 
@@ -11,35 +15,29 @@ RSpec.describe DigestInitiatorService do
 
       context "when there is no daily DigestRun for the date" do
         it "creates one" do
-          Timecop.freeze(Time.parse("08:30")) do
-            expect { described_class.call(range: range) }
-              .to change { DigestRun.daily.count }.from(0).to(1)
-          end
+          expect { described_class.call(range: range) }
+            .to change { DigestRun.daily.count }.from(0).to(1)
         end
       end
 
       context "when a DigestRun already exists" do
         it "doesn't create another one" do
-          Timecop.freeze(Time.parse("08:30")) do
-            create(:digest_run, :daily, date: Date.current)
+          create(:digest_run, :daily, date: Date.current)
 
-            described_class.call(range: range)
+          described_class.call(range: range)
 
-            expect(DigestRun.count).to eq(1)
-          end
+          expect(DigestRun.count).to eq(1)
         end
       end
 
       context "when the service is called multiple times" do
         it "only creates one DigestRun" do
-          Timecop.freeze(Time.parse("08:30")) do
-            described_class.call(range: range)
-            described_class.call(range: range)
-            described_class.call(range: range)
-            described_class.call(range: range)
+          described_class.call(range: range)
+          described_class.call(range: range)
+          described_class.call(range: range)
+          described_class.call(range: range)
 
-            expect(DigestRun.count).to eq(1)
-          end
+          expect(DigestRun.count).to eq(1)
         end
       end
 
@@ -52,20 +50,16 @@ RSpec.describe DigestInitiatorService do
         end
 
         it "creates a DigestRunSubscriber for each subscriber" do
-          Timecop.freeze(Time.parse("08:30")) do
-            described_class.call(range: range)
-            expect(DigestRunSubscriber.all.map(&:subscriber_id)).to match([1, 2])
-          end
+          described_class.call(range: range)
+          expect(DigestRunSubscriber.all.map(&:subscriber_id)).to match([1, 2])
         end
 
         it "enqueues a DigestEmailGenerationWorker job" do
-          Timecop.freeze(Time.parse("08:30")) do
-            expect(DigestEmailGenerationWorker)
-              .to receive(:perform_async)
-              .exactly(2).times
+          expect(DigestEmailGenerationWorker)
+            .to receive(:perform_async)
+            .exactly(2).times
 
-            described_class.call(range: range)
-          end
+          described_class.call(range: range)
         end
 
         it "sets the digest_run_subscriber_count" do
@@ -87,35 +81,29 @@ RSpec.describe DigestInitiatorService do
 
       context "when there is no daily DigestRun for the date" do
         it "creates one" do
-          Timecop.freeze(Time.parse("08:30")) do
-            expect { described_class.call(range: range) }
-              .to change { DigestRun.weekly.count }.from(0).to(1)
-          end
+          expect { described_class.call(range: range) }
+            .to change { DigestRun.weekly.count }.from(0).to(1)
         end
       end
 
       context "when a DigestRun already exists" do
         it "doesn't create another one" do
-          Timecop.freeze(Time.parse("08:30")) do
-            create(:digest_run, :weekly, date: Date.current)
+          create(:digest_run, :weekly, date: Date.current)
 
-            described_class.call(range: range)
+          described_class.call(range: range)
 
-            expect(DigestRun.count).to eq(1)
-          end
+          expect(DigestRun.count).to eq(1)
         end
       end
 
       context "when the service is called multiple times" do
         it "only creates one DigestRun" do
-          Timecop.freeze(Time.parse("08:30")) do
-            described_class.call(range: range)
-            described_class.call(range: range)
-            described_class.call(range: range)
-            described_class.call(range: range)
+          described_class.call(range: range)
+          described_class.call(range: range)
+          described_class.call(range: range)
+          described_class.call(range: range)
 
-            expect(DigestRun.count).to eq(1)
-          end
+          expect(DigestRun.count).to eq(1)
         end
       end
     end
