@@ -128,6 +128,64 @@ RSpec.describe Subscriber, type: :model do
     end
   end
 
+  describe ".find_by_address" do
+    let!(:subscriber) { create(:subscriber, address: "Test@example.com") }
+    subject { described_class.find_by_address(address) }
+
+    context "when address is a different case" do
+      let(:address) { "TEST@EXAMPLE.COM" }
+      it { is_expected.to eq subscriber }
+    end
+
+    context "when the address doesn't match" do
+      let(:address) { "different@example.com" }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  describe ".find_by_address!" do
+    let!(:subscriber) { create(:subscriber, address: "Test@example.com") }
+    subject(:find_address) { described_class.find_by_address!(address) }
+
+    context "when address is a different case" do
+      let(:address) { "TEST@EXAMPLE.COM" }
+      it { is_expected.to eq subscriber }
+    end
+
+    context "when the address doesn't match" do
+      let(:address) { "different@example.com" }
+
+      it "raises an error" do
+        expect { find_address }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
+  describe "#active_subscriptions" do
+    let(:subscriber) { create(:subscriber) }
+    before do
+      create(:subscription, subscriber: subscriber)
+      create(:subscription, subscriber: subscriber)
+      create(:subscription, :ended, subscriber: subscriber)
+    end
+
+    it "returns active subscriptions" do
+      expect(subscriber.active_subscriptions.count).to eq 2
+    end
+  end
+
+  describe "#ended_subscriptions" do
+    let(:subscriber) { create(:subscriber) }
+    before do
+      create(:subscription, subscriber: subscriber)
+      create(:subscription, subscriber: subscriber)
+      create(:subscription, :ended, subscriber: subscriber)
+    end
+
+    it "returns ended subscriptions" do
+      expect(subscriber.ended_subscriptions.count).to eq 1
+    end
+  end
   describe "#activate!" do
     context "when activated" do
       subject(:subscriber) { create(:subscriber, :activated) }

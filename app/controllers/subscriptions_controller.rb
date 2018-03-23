@@ -70,7 +70,7 @@ private
 
   def subscriber
     @subscriber ||= begin
-                      found = Subscriber.where("LOWER(address) = ?", address.downcase).first
+                      found = Subscriber.find_by_address(address)
                       found || Subscriber.create!(
                         address: address,
                         signon_user_uid: current_user.uid,

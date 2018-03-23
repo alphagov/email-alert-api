@@ -2,7 +2,7 @@ require 'csv'
 
 namespace :manage do
   def change_email_address(old_email_address:, new_email_address:)
-    subscriber = Subscriber.find_by("LOWER(address) = ?", old_email_address.downcase)
+    subscriber = Subscriber.find_by_address(old_email_address)
     raise "Cannot find subscriber with email address #{old_email_address}" if subscriber.nil?
     subscriber.address = new_email_address
     if subscriber.save!

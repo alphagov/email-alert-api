@@ -6,7 +6,9 @@ class Subscriber < ApplicationRecord
 
   validate :not_nullified_and_activated
 
-  has_many :subscriptions, -> { active }
+  has_many :subscriptions
+  has_many :active_subscriptions, -> { active }, class_name: "Subscription"
+  has_many :ended_subscriptions, -> { ended }, class_name: "Subscription"
   has_many :subscriber_lists, through: :subscriptions
   has_many :digest_run_subscribers, dependent: :destroy
   has_many :digest_runs, through: :digest_run_subscribers
@@ -15,6 +17,14 @@ class Subscriber < ApplicationRecord
   scope :deactivated, -> { where.not(deactivated_at: nil) }
   scope :nullified, -> { where(address: nil) }
   scope :not_nullified, -> { where.not(address: nil) }
+
+  def self.find_by_address(address)
+    find_by("lower(address) = ?", address.downcase)
+  end
+
+  def self.find_by_address!(address)
+    find_by!("lower(address) = ?", address.downcase)
+  end
 
   def activated?
     deactivated_at.nil?

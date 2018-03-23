@@ -52,4 +52,16 @@ RSpec.describe Subscription, type: :model do
       expect(Subscription.active.count).to eq(0)
     end
   end
+
+  describe ".ended" do
+    it "returns subscriptions with ended_at nil" do
+      create(:subscription, :ended)
+      expect(Subscription.ended.count).to eq(1)
+    end
+
+    it "doesn't return subscriptions with ended_at" do
+      create(:subscription)
+      expect(Subscription.ended.count).to eq(0)
+    end
+  end
 end
