@@ -9,12 +9,10 @@ Rails.application.routes.draw do
     resources :status_updates, path: "status-updates", only: %i[create]
     resources :subscriptions, only: %i[create show update]
 
-    get "/healthcheck", to: "healthcheck#check"
+    patch "/subscribers/:id", to: "subscribers#change_address"
+    get "/subscribers/:id/subscriptions", to: "subscribers#subscriptions"
 
-    constraints address: /.+@.+\..+/ do
-      patch "/subscribers/:address", to: "subscribers#change_address"
-      get "/subscribers/:address/subscriptions", to: "subscribers#subscriptions"
-    end
+    get "/healthcheck", to: "healthcheck#check"
 
     post "/unsubscribe/:id", to: "unsubscribe#unsubscribe"
   end

@@ -17,18 +17,18 @@ class SubscribersController < ApplicationController
 private
 
   def subscriber
-    @subscriber ||= Subscriber.find_by!("LOWER(address) = ?", address.downcase)
+    @subscriber ||= Subscriber.find(id)
   end
 
   def new_address
     subscriber_params.require(:new_address)
   end
 
-  def address
-    subscriber_params.require(:address)
+  def id
+    subscriber_params.require(:id)
   end
 
   def subscriber_params
-    params.permit(:address, :new_address)
+    params.permit(:id, :new_address)
   end
 end
