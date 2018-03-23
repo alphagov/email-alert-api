@@ -199,7 +199,7 @@ The following fields are accepted on this endpoint: `subject`, `from_address_id`
 `document_type`, `content_id`, `public_updated_at`, `publishing_app`, `email_document_supertype`,
 `government_document_supertype`, `title`, `description`, `change_note`, `base_path`, `priority` and `footnote`.
 
-* `GET /subscribers/test@example.com/subscriptions` - gets a subscriber's subscriptions, in the form:
+* `GET /subscribers/xxx/subscriptions` - gets a subscriber's subscriptions, in the form:
 
 ```json
 {
@@ -243,7 +243,7 @@ The following fields are accepted on this endpoint: `subject`, `from_address_id`
 }
 ```
 
-* `PATCH /subscribers/test@example.com` with data:
+* `PATCH /subscribers/xxx` with data:
 
 ```json
 {
@@ -253,6 +253,8 @@ The following fields are accepted on this endpoint: `subject`, `from_address_id`
 
 and it will respond with the details of the subscriber including the
 new email address.
+
+* `DELETE /subscribers/xxx` - unsubscribes a provided subscriber and returns `204 No Content`.
 
 * `POST /subscriptions` with data:
 
@@ -277,6 +279,8 @@ subscription or a `200 OK` if the subscription already exists.
 
 and it will respond with the details of the subscription including the
 new frequency.
+
+* `POST /unsubscribe/xxx` - unsubscribes a subscriber from the provided subscription and returns `204 No Content`.
 
 #### healthcheck API
 
