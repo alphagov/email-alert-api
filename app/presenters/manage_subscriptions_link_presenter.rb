@@ -1,6 +1,6 @@
 class ManageSubscriptionsLinkPresenter
-  def initialize(subscriber_id:)
-    @subscriber_id = subscriber_id
+  def initialize(address:)
+    @address = address
   end
 
   def self.call(*args)
@@ -15,10 +15,10 @@ class ManageSubscriptionsLinkPresenter
 
 private
 
-  attr_reader :subscriber_id
+  attr_reader :address
 
   def url
-    base_path = "/email/authentication?id=#{subscriber_id}"
+    base_path = "/email/authenticate?address=#{address}"
     PublicUrlService.url_for(base_path: base_path)
   end
 end

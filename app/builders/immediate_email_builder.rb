@@ -20,9 +20,9 @@ private
   def records
     recipients_and_content.map do |recipient_and_content|
       [
-        recipient_and_content.fetch(:address),
+        address = recipient_and_content.fetch(:address),
         subject(recipient_and_content.fetch(:content_change)),
-        body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions)),
+        body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions), address),
         recipient_and_content.fetch(:subscriber_id),
       ]
     end
@@ -36,19 +36,19 @@ private
     "GOV.UK update – #{content_change.title}"
   end
 
-  def body(content_change, subscriptions)
+  def body(content_change, subscriptions, address)
     if Array(subscriptions).empty?
       presented_content_change(content_change)
     else
       <<~BODY
         #{presented_content_change(content_change)}
         ---
-        You’re getting this email because you subscribed to ‛#{subscriptions.first.subscriber_list.title}’ updates on GOV.UK.
+        You’re getting this email because you subscribed to ‘#{subscriptions.first.subscriber_list.title}’ updates on GOV.UK.
 
         #{presented_unsubscribe_links(subscriptions)}
-        #{presented_manage_subscriptions_links}
+        #{presented_manage_subscriptions_links(address)}
 
-        \u00A0
+        &nbsp;
 
         ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
       BODY
@@ -59,11 +59,8 @@ private
     ContentChangePresenter.call(content_change, frequency: "immediate")
   end
 
-  def presented_manage_subscriptions_links
-    address = recipients_and_content.map do |recipient_and_content|
-      recipient_and_content.fetch(:subscriber_id)
-    end.join
-    ManageSubscriptionsLinkPresenter.call(subscriber_id: subscriber_id)
+  def presented_manage_subscriptions_links(address)
+    ManageSubscriptionsLinkPresenter.call(address: address)
   end
 
   def presented_unsubscribe_links(subscriptions)
