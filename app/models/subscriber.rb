@@ -16,6 +16,14 @@ class Subscriber < ApplicationRecord
   scope :nullified, -> { where(address: nil) }
   scope :not_nullified, -> { where.not(address: nil) }
 
+  def self.find_by_address(address)
+    find_by("lower(address) = ?", address.downcase)
+  end
+
+  def self.find_by_address!(address)
+    find_by!("lower(address) = ?", address.downcase)
+  end
+
   def activated?
     deactivated_at.nil?
   end

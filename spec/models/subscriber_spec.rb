@@ -128,6 +128,39 @@ RSpec.describe Subscriber, type: :model do
     end
   end
 
+  describe ".find_by_address" do
+    let!(:subscriber) { create(:subscriber, address: "Test@example.com") }
+    subject { described_class.find_by_address(address) }
+
+    context "when address is a different case" do
+      let(:address) { "TEST@EXAMPLE.COM" }
+      it { is_expected.to eq subscriber }
+    end
+
+    context "when the address doesn't match" do
+      let(:address) { "different@example.com" }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  describe ".find_by_address!" do
+    let!(:subscriber) { create(:subscriber, address: "Test@example.com") }
+    subject(:find_address) { described_class.find_by_address!(address) }
+
+    context "when address is a different case" do
+      let(:address) { "TEST@EXAMPLE.COM" }
+      it { is_expected.to eq subscriber }
+    end
+
+    context "when the address doesn't match" do
+      let(:address) { "different@example.com" }
+
+      it "raises an error" do
+        expect { find_address }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
   describe "#activate!" do
     context "when activated" do
       subject(:subscriber) { create(:subscriber, :activated) }
