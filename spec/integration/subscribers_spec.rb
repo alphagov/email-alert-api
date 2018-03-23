@@ -15,12 +15,12 @@ RSpec.describe "Subscriptions", type: :request do
         let!(:subscription_3) { create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list_3, frequency: :daily) }
 
         it "lists all active subscriptions" do
-          get "/subscribers/#{subscriber.address}/subscriptions"
+          get "/subscribers/#{subscriber.id}/subscriptions"
           expect(data[:subscriptions].length).to eq(2)
         end
 
         it "does not list any ended subscriptions" do
-          get "/subscribers/#{subscriber.address}/subscriptions"
+          get "/subscribers/#{subscriber.id}/subscriptions"
           ended_subscription = data[:subscriptions].detect { |s| s[:id] == subscription_2.id }
           expect(ended_subscription).to be_nil
         end
@@ -28,7 +28,7 @@ RSpec.describe "Subscriptions", type: :request do
 
       context "without an existing subscriber" do
         it "returns status code 404" do
-          get "/subscribers/doesnotexist@example.com/subscriptions"
+          get "/subscribers/x12345/subscriptions"
           expect(response.status).to eq(404)
         end
       end
@@ -39,20 +39,20 @@ RSpec.describe "Subscriptions", type: :request do
         let!(:subscriber) { create(:subscriber) }
 
         it "changes the email address if the new email address is valid" do
-          patch "/subscribers/#{subscriber.address}", params: { new_address: "new-test@example.com" }
+          patch "/subscribers/#{subscriber.id}", params: { new_address: "new-test@example.com" }
           expect(response.status).to eq(200)
           expect(data[:subscriber][:address]).to eq("new-test@example.com")
         end
 
         it "returns an error message if the new email address is invalid" do
-          patch "/subscribers/#{subscriber.address}", params: { new_address: "invalid" }
+          patch "/subscribers/#{subscriber.id}", params: { new_address: "invalid" }
           expect(response.status).to eq(422)
         end
       end
 
       context "without an existing subscriber" do
         it "returns a 404" do
-          patch "/subscribers/doesnotexist@example.com", params: { new_address: "new-doesnotexist@example.com" }
+          patch "/subscribers/x12345", params: { new_address: "new-doesnotexist@example.com" }
           expect(response.status).to eq(404)
         end
       end
@@ -61,7 +61,7 @@ RSpec.describe "Subscriptions", type: :request do
 
   context "without authentication" do
     it "returns a 403" do
-      get "/subscribers/test@example.com/subscriptions"
+      get "/subscribers/1/subscriptions"
       expect(response.status).to eq(403)
     end
   end
@@ -69,7 +69,7 @@ RSpec.describe "Subscriptions", type: :request do
   context "without authorisation" do
     it "returns a 403" do
       login_with_signin
-      get "/subscribers/test@example.com/subscriptions"
+      get "/subscribers/1/subscriptions"
       expect(response.status).to eq(403)
     end
   end
