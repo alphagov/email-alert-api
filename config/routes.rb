@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     resources :subscriptions, only: %i[create show update]
 
     patch "/subscribers/:id", to: "subscribers#change_address"
+    delete "/subscribers/:id", to: "unsubscribe#unsubscribe_all"
     get "/subscribers/:id/subscriptions", to: "subscribers#subscriptions"
 
     get "/healthcheck", to: "healthcheck#check"

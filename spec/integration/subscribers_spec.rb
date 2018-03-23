@@ -57,6 +57,39 @@ RSpec.describe "Subscriptions", type: :request do
         end
       end
     end
+
+    context "when unsubscribing a subscriber from everything" do
+      context "when the subscriber exists" do
+        let!(:subscriber) { create(:subscriber) }
+        let(:subscription) { create(:subscription, subscriber: subscriber) }
+
+        before do
+          delete "/subscribers/#{subscriber.id}"
+        end
+
+        it "deletes the subscription" do
+          expect(Subscription.active.count).to eq(0)
+        end
+
+        it "deactivates the subscriber" do
+          expect(Subscriber.activated.count).to eq(0)
+        end
+
+        it "responds with a 204 status" do
+          expect(response.status).to eq(204)
+        end
+      end
+
+      context "when the subscriber doesn't exist" do
+        before do
+          delete "/subscribers/123"
+        end
+
+        it "responds with a 404 status" do
+          expect(response.status).to eq(404)
+        end
+      end
+    end
   end
 
   context "without authentication" do

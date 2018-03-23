@@ -16,7 +16,7 @@ RSpec.describe "Unsubscribing", type: :request do
           expect(Subscription.active.count).to eq(0)
         end
 
-        it "responds with a 200 status" do
+        it "responds with a 204 status" do
           expect(response.status).to eq(204)
         end
       end
