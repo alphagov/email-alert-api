@@ -161,6 +161,31 @@ RSpec.describe Subscriber, type: :model do
     end
   end
 
+  describe "#active_subscriptions" do
+    let(:subscriber) { create(:subscriber) }
+    before do
+      create(:subscription, subscriber: subscriber)
+      create(:subscription, subscriber: subscriber)
+      create(:subscription, :ended, subscriber: subscriber)
+    end
+
+    it "returns active subscriptions" do
+      expect(subscriber.active_subscriptions.count).to eq 2
+    end
+  end
+
+  describe "#ended_subscriptions" do
+    let(:subscriber) { create(:subscriber) }
+    before do
+      create(:subscription, subscriber: subscriber)
+      create(:subscription, subscriber: subscriber)
+      create(:subscription, :ended, subscriber: subscriber)
+    end
+
+    it "returns ended subscriptions" do
+      expect(subscriber.ended_subscriptions.count).to eq 1
+    end
+  end
   describe "#activate!" do
     context "when activated" do
       subject(:subscriber) { create(:subscriber, :activated) }

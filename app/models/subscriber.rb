@@ -6,7 +6,9 @@ class Subscriber < ApplicationRecord
 
   validate :not_nullified_and_activated
 
-  has_many :subscriptions, -> { active }
+  has_many :subscriptions
+  has_many :active_subscriptions, -> { active }, class_name: "Subscription"
+  has_many :ended_subscriptions, -> { ended }, class_name: "Subscription"
   has_many :subscriber_lists, through: :subscriptions
   has_many :digest_run_subscribers, dependent: :destroy
   has_many :digest_runs, through: :digest_run_subscribers

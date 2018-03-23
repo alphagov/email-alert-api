@@ -1,7 +1,7 @@
 module UnsubscribeService
   class << self
     def subscriber!(subscriber, reason)
-      unsubscribe!(subscriber, subscriber.subscriptions, reason)
+      unsubscribe!(subscriber, subscriber.active_subscriptions, reason)
     end
 
     def subscription!(subscription, reason)
