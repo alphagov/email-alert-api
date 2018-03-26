@@ -1,5 +1,9 @@
 class SubscribersForImmediateEmailQuery
   def self.call
+    new.call
+  end
+
+  def call
     Subscriber
       .activated
       .where(
@@ -7,7 +11,9 @@ class SubscribersForImmediateEmailQuery
        )
   end
 
-  def self.unprocessed_subscription_contents_exist_for_subscribers
+private
+
+  def unprocessed_subscription_contents_exist_for_subscribers
     SubscriptionContent
       .joins(:subscription)
       .where(email_id: nil)
