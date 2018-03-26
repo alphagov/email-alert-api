@@ -8,4 +8,8 @@ class DigestRunSubscriber < ApplicationRecord
   def mark_complete!
     update_attributes!(completed_at: Time.now)
   end
+
+  def completed?
+    completed_at.present?
+  end
 end
