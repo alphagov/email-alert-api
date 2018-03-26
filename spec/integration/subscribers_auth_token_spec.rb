@@ -4,10 +4,13 @@ RSpec.describe "Subscribers auth token", type: :request do
   describe "creating an auth token" do
     let(:path) { "/subscribers/auth-token" }
     let(:address) { "test@example.com" }
+    let(:destination) { "/test" }
+    let(:redirect) { nil }
     let(:params) do
       {
         address: address,
-        destination: "/test",
+        destination: destination,
+        redirect: redirect,
       }
     end
 
@@ -50,8 +53,54 @@ RSpec.describe "Subscribers auth token", type: :request do
     end
 
     context "when we're provided with a bad email address" do
+      let(:address) { "bad-address" }
+
       it "returns a 422" do
-        pending("validation")
+        post path, params: params
+        expect(response.status).to eq(422)
+      end
+    end
+
+    context "when we're provided with no email address" do
+      let(:address) { nil }
+
+      it "returns a 422" do
+        post path, params: params
+        expect(response.status).to eq(422)
+      end
+    end
+
+    context "when we're not given a destination" do
+      let(:destination) { nil }
+
+      it "returns a 422" do
+        post path, params: params
+        expect(response.status).to eq(422)
+      end
+    end
+
+    context "when we're given a bad destination" do
+      let(:destination) { "http://example.com/test" }
+
+      it "returns a 422" do
+        post path, params: params
+        expect(response.status).to eq(422)
+      end
+    end
+
+    context "when we're given a path redirect" do
+      let(:redirect) { "/test" }
+
+      it "returns a 201" do
+        post path, params: params
+        expect(response.status).to eq(201)
+      end
+    end
+
+    context "when we're given a bad redirect" do
+      let(:redirect) { "http://example.com/test" }
+
+      it "returns a 422" do
         post path, params: params
         expect(response.status).to eq(422)
       end

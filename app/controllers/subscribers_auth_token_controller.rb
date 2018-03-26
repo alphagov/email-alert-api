@@ -1,5 +1,5 @@
 class SubscribersAuthTokenController < ApplicationController
-  # @TODO - there is no validation here
+  before_action :validate_params
 
   def auth_token
     subscriber = find_or_create_subscriber(expected_params.require(:address))
@@ -41,5 +41,20 @@ private
 
   def expected_params
     params.permit(:address, :destination, :redirect)
+  end
+
+  def validate_params
+    ParamsValidator.new(expected_params).validate!
+  end
+
+  class ParamsValidator < OpenStruct
+    include ActiveModel::Validations
+
+    validates :address, presence: true
+    validates :address, email_address: true, allow_blank: true
+
+    validates :destination, presence: true
+    validates :destination, absolute_path: true, allow_blank: true
+    validates :redirect, absolute_path: true, allow_blank: true
   end
 end

@@ -21,7 +21,9 @@ module EmailAlertAPI
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
-    config.eager_load_paths << Rails.root.join('lib')
+    config.eager_load_paths << Rails.root.join("lib")
+
+    config.action_dispatch.rescue_responses["ActiveModel::ValidationError"] = :unprocessable_entity
 
     unless Rails.application.secrets.email_alert_auth_token
       raise "Email Alert Auth Token is not configured. See config/secrets.yml"
@@ -31,5 +33,5 @@ module EmailAlertAPI
   cattr_accessor :config
 end
 
-require_relative '../lib/email_alert_api/config'
+require_relative "../lib/email_alert_api/config"
 EmailAlertAPI.config = EmailAlertAPI::Config.new(Rails.env)
