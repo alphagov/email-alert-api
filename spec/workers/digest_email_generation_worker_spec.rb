@@ -14,33 +14,36 @@ RSpec.describe DigestEmailGenerationWorker do
   end
 
   describe ".perform" do
-    let(:subscriber) { create(:subscriber, id: 1) }
-    let!(:subscription_one) {
-      create(:subscription, id: "7879434f-d83c-47d2-b04b-b3dd69c1931e", subscriber_id: subscriber.id)
-    }
-    let!(:subscription_two) {
-      create(:subscription, id: "e4704303-a1b1-4a26-a231-4efecd9d21be", subscriber_id: subscriber.id)
-    }
-    let!(:digest_run) { create(:digest_run, id: 10) }
+    let(:subscriber) { create(:subscriber) }
 
-    let(:subscription_content_change_query_results) {
+    let(:subscription_one) do
+      create(:subscription, subscriber: subscriber)
+    end
+
+    let(:subscription_two) do
+      create(:subscription, subscriber: subscriber)
+    end
+
+    let(:digest_run) { create(:digest_run) }
+
+    let(:digest_run_subscriber) do
+      create(:digest_run_subscriber, digest_run: digest_run, subscriber: subscriber)
+    end
+
+    let(:subscription_content_change_query_results) do
       [
         double(
           subscription_id: subscription_one.id,
           subscriber_list_title: "Test title 1",
-          content_changes: [
-            create(:content_change, public_updated_at: "1/1/2016 10:00"),
-          ],
+          content_changes: [create(:content_change)],
         ),
         double(
           subscription_id: subscription_two.id,
           subscriber_list_title: "Test title 2",
-          content_changes: [
-            create(:content_change, public_updated_at: "4/1/2016 10:00"),
-          ],
+          content_changes: [create(:content_change)],
         ),
       ]
-    }
+    end
 
     before do
       allow(SubscriptionContentChangeQuery).to receive(:call).and_return(
@@ -49,17 +52,13 @@ RSpec.describe DigestEmailGenerationWorker do
     end
 
     it "accepts digest_run_subscriber_id" do
-      create(:digest_run_subscriber, id: 1)
-
       expect {
-        subject.perform(1)
+        subject.perform(digest_run_subscriber.id)
       }.not_to raise_error
     end
 
     it "creates an email" do
-      create(:digest_run_subscriber, id: 1)
-
-      expect { subject.perform(1) }
+      expect { subject.perform(digest_run_subscriber.id) }
         .to change { Email.count }.by(1)
     end
 
@@ -67,63 +66,68 @@ RSpec.describe DigestEmailGenerationWorker do
       expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
         .with(instance_of(String), queue: :delivery_digest)
 
-      create(:digest_run_subscriber, id: 1)
-
-      subject.perform(1)
+      subject.perform(digest_run_subscriber.id)
     end
 
     it "records a metric for the delivery attempt" do
       expect(MetricsService).to receive(:digest_email_generation)
         .with("daily")
 
-      create(:digest_run_subscriber, id: 1)
-
-      subject.perform(1)
+      subject.perform(digest_run_subscriber.id)
     end
 
     it "marks the DigestRunSubscriber completed" do
-      digest_run_subscriber = create(
-        :digest_run_subscriber,
-        id: 1,
-        subscriber_id: subscriber.id
-      )
-
-      allow(DigestRunSubscriber).to receive(:includes).and_return(DigestRunSubscriber)
-
-      allow(DigestRunSubscriber).to receive(:find)
-        .with(1)
-        .and_return(digest_run_subscriber)
-
-      expect(digest_run_subscriber).to receive(:mark_complete!)
-
-      subject.perform(1)
+      expect { subject.perform(digest_run_subscriber.id) }
+        .to change { digest_run_subscriber.reload.completed? }
+        .from(false)
+        .to(true)
     end
 
-    it "creates a SubscriptionContent" do
-      create(
-        :digest_run_subscriber,
-        id: 1,
-        subscriber_id: subscriber.id
-      )
-
-      subject.perform(1)
-
-      subscription_content = SubscriptionContent.last
-      expect(subscription_content.digest_run_subscriber_id).to eq(1)
+    it "creates SubscriptionContents" do
+      expect { subject.perform(digest_run_subscriber.id) }
+        .to change(SubscriptionContent, :count)
+        .by(subscription_content_change_query_results.count)
     end
 
     it "marks the digest run complete" do
-      create(:digest_run_subscriber, id: 1)
-      expect_any_instance_of(DigestRun).to receive(:mark_complete!)
-      subject.perform(1)
+      expect { subject.perform(digest_run_subscriber.id) }
+        .to change { digest_run.reload.completed? }
+        .from(false)
+        .to(true)
     end
 
     context "when there are incomplete DigestRunSubscribers left" do
+      before do
+        # Create an extra instance of digest run subscriber so more are left
+        create(:digest_run_subscriber, digest_run: digest_run)
+      end
+
       it "doesn't mark the digest run complete" do
-        create(:digest_run_subscriber, id: 1, digest_run_id: digest_run.id)
-        create(:digest_run_subscriber, digest_run_id: digest_run.id)
-        expect_any_instance_of(DigestRun).not_to receive(:mark_complete!)
-        subject.perform(1)
+        expect { subject.perform(digest_run_subscriber.id) }
+          .not_to(change { digest_run.reload.completed? })
+      end
+    end
+
+    context "when there are no content changes to send" do
+      let(:subscription_content_change_query_results) { [] }
+
+      it "doesn't create an email" do
+        expect { subject.perform(digest_run_subscriber.id) }
+          .to_not change(Email, :count)
+      end
+
+      it "marks the digest run subscriber completed" do
+        expect { subject.perform(digest_run_subscriber.id) }
+          .to change { digest_run_subscriber.reload.completed? }
+          .from(false)
+          .to(true)
+      end
+
+      it "can mark the digest run complete" do
+        expect { subject.perform(digest_run_subscriber.id) }
+          .to change { digest_run.reload.completed? }
+          .from(false)
+          .to(true)
       end
     end
   end

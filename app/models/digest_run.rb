@@ -16,6 +16,10 @@ class DigestRun < ApplicationRecord
     mark_complete! unless has_incomplete_subscribers?
   end
 
+  def completed?
+    completed_at.present?
+  end
+
 private
 
   def starts_at=(value)

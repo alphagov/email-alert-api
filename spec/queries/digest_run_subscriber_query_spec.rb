@@ -57,6 +57,22 @@ RSpec.describe DigestRunSubscriberQuery do
       end
     end
 
+    context "with an ended subscription" do
+      let!(:subscription) do
+        create(:subscription, :ended, subscriber_list: subscriber_list_one, frequency: :daily)
+      end
+
+      context "with a matched content change" do
+        before do
+          create_and_match_content_change
+        end
+
+        it "returns no subscribers" do
+          expect(subscribers.count).to eq(0)
+        end
+      end
+    end
+
     context "with a weekly subscription" do
       let!(:subscription) do
         create(:subscription, :weekly, subscriber_list: subscriber_list_one)
