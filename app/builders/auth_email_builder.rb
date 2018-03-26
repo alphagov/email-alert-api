@@ -38,8 +38,14 @@ private
 
   def link
     Plek.new.website_uri.tap do |uri|
-      uri.path = destination
-      uri.query = "token=#{token}"
+      destination_uri = URI.parse(destination)
+      uri.path = destination_uri.path
+      uri.query = if destination_uri.query.present?
+                    "#{destination_uri.query}&token=#{token}"
+                  else
+                    "token=#{token}"
+                  end
+      uri.fragment = destination_uri.fragment
     end
   end
 end

@@ -23,5 +23,15 @@ RSpec.describe AuthEmailBuilder do
       email = call
       expect(email.body).to include(link)
     end
+
+    context "when destination has a query string and fragment" do
+      let(:destination) { "/destination?query#fragment" }
+
+      it "merges the token" do
+        link = "http://www.dev.gov.uk/destination?query&token=secret#fragment"
+        email = call
+        expect(email.body).to include(link)
+      end
+    end
   end
 end
