@@ -107,5 +107,28 @@ RSpec.describe DigestEmailGenerationWorker do
           .not_to(change { digest_run.reload.completed? })
       end
     end
+
+    context "when there are no content changes to send" do
+      let(:subscription_content_change_query_results) { [] }
+
+      it "doesn't create an email" do
+        expect { subject.perform(digest_run_subscriber.id) }
+          .to_not change(Email, :count)
+      end
+
+      it "marks the digest run subscriber completed" do
+        expect { subject.perform(digest_run_subscriber.id) }
+          .to change { digest_run_subscriber.reload.completed? }
+          .from(false)
+          .to(true)
+      end
+
+      it "can mark the digest run complete" do
+        expect { subject.perform(digest_run_subscriber.id) }
+          .to change { digest_run.reload.completed? }
+          .from(false)
+          .to(true)
+      end
+    end
   end
 end
