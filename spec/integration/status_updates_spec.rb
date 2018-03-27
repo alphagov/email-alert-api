@@ -70,5 +70,34 @@ RSpec.describe "Receiving a status update", type: :request do
         expect(response.status).to eq(422)
       end
     end
+
+    context "without sent_at" do
+      let(:params_without_sent_at) { params.reject { |k, _v| k == :sent_at } }
+
+      it "updates the delivery attempt" do
+        expect(StatusUpdateService).to receive(:call).with(
+          sent_at: nil,
+          completed_at: Time.parse("2017-05-14T12:15:30.000000Z"),
+          reference: reference,
+          status: "delivered",
+          user: user,
+        )
+
+        post "/status-updates", params: params_without_sent_at
+      end
+
+      it "renders 204 no content" do
+        post "/status-updates", params: params_without_sent_at
+
+        expect(response.status).to eq(204)
+        expect(response.body).to eq("")
+      end
+
+      it "updates the delivery attempt" do
+        expect { post "/status-updates", params: params_without_sent_at }
+          .to change { delivery_attempt.reload.status }
+          .to eq("delivered")
+      end
+    end
   end
 end
