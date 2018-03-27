@@ -39,7 +39,7 @@ RSpec.describe "Create an auth token", type: :request do
         "body" => hash_including(
           "email_address" => subscriber.address,
           "personalisation" => hash_including(
-            "subject" => "Log into your Subsciption Management",
+            "subject" => "Confirm your email address",
             "body" => include(sign_in_link),
           )
         )
