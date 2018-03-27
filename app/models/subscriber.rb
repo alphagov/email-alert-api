@@ -1,6 +1,6 @@
 class Subscriber < ApplicationRecord
   with_options allow_nil: true do
-    validates_with EmailAddressValidator, fields: [:address]
+    validates :address, email_address: true
     validates_uniqueness_of :address, case_sensitive: false
   end
 
