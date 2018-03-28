@@ -2,7 +2,7 @@ class SubscribersAuthTokenController < ApplicationController
   before_action :validate_params
 
   def auth_token
-    subscriber = find_or_create_subscriber(expected_params.require(:address))
+    subscriber = find_subscriber(expected_params.require(:address))
     token = generate_token(subscriber)
     email = build_email(subscriber, token)
 
@@ -14,13 +14,10 @@ class SubscribersAuthTokenController < ApplicationController
 
 private
 
-  def find_or_create_subscriber(address)
-    found = Subscriber.find_by_address(address)
-    found.activate! if found&.deactivated?
-    found || Subscriber.create!(
-      address: address,
-      signon_user_uid: current_user.uid,
-    )
+  def find_subscriber(address)
+    Subscriber.find_by_address!(address).tap do |subscriber|
+      subscriber.activate! if subscriber.deactivated?
+    end
   end
 
   def generate_token(subscriber)
