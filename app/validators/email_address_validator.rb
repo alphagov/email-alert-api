@@ -1,8 +1,7 @@
-class EmailAddressValidator < ActiveModel::Validator
-  def validate(record)
-    email_address = record.address
-    unless email_address.nil? || valid_email_address?(email_address)
-      record.errors.add(:address, 'is not an email address')
+class EmailAddressValidator < ActiveModel::EachValidator
+  def validate_each(record, attribute, value)
+    if !value.nil? && !valid_email_address?(value)
+      record.errors.add(attribute, 'is not an email address')
     end
   end
 

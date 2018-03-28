@@ -282,6 +282,20 @@ new frequency.
 
 * `POST /unsubscribe/xxx` - unsubscribes a subscriber from the provided subscription and returns `204 No Content`.
 
+* `POST /subscribers/auth-token` with data:
+
+```json
+{
+  "address": "test@example.com",
+  "destination": "/authentication-page-on-govuk",
+  "redirect": "/page-user-wanted-on-govuk",
+}
+```
+
+This will trigger an email to the address specified with a link to the
+destination with a query string of token and a [JWT](https://jwt.io/) token.
+Returns a 201 status code on success.
+
 #### healthcheck API
 
 A queue health check endpoint is available at `/healthcheck`.

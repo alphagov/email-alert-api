@@ -1,6 +1,6 @@
 class Subscriber < ApplicationRecord
   with_options allow_nil: true do
-    validates_with EmailAddressValidator, fields: [:address]
+    validates :address, email_address: true
     validates_uniqueness_of :address, case_sensitive: false
   end
 
@@ -56,6 +56,11 @@ class Subscriber < ApplicationRecord
     raise "Must be deactivated first." unless deactivated?
 
     update!(address: nil)
+  end
+
+  def as_json(options = {})
+    options[:except] ||= %i(signon_user_uid)
+    super(options)
   end
 
 private
