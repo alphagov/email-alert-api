@@ -13,10 +13,16 @@ RSpec.describe "Subscribers auth token", type: :request do
         redirect: redirect,
       }
     end
+    let!(:subscriber) { create(:subscriber, address: "test@example.com") }
 
     it "returns 201" do
       post path, params: params
       expect(response.status).to eq(201)
+    end
+
+    it "returns subscriber details" do
+      post path, params: params
+      expect(data[:subscriber][:id]).to eq(subscriber.id)
     end
 
     it "sends an email" do
@@ -24,25 +30,17 @@ RSpec.describe "Subscribers auth token", type: :request do
       post path, params: params
     end
 
-    context "when we have an existing user" do
-      let!(:subscriber) { create(:subscriber, address: address) }
+    context "when it's a user we didn't previously know" do
+      before { subscriber.delete }
 
-      it "returns subscriber details" do
+      it "returns a 404" do
         post path, params: params
-        expect(data[:subscriber][:id]).to eq(subscriber.id)
-      end
-    end
-
-    context "when we user we didn't previously know" do
-      it "creates the new user" do
-        expect { post path, params: params }
-          .to change { Subscriber.count }
-          .by(1)
+        expect(response.status).to eq(404)
       end
     end
 
     context "when we have a deactivated user" do
-      let!(:subscriber) { create(:subscriber, :deactivated, address: address) }
+      before { subscriber.deactivate! }
 
       it "re-activates the subscriber" do
         expect { post path, params: params }

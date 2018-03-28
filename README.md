@@ -294,7 +294,8 @@ new frequency.
 
 This will trigger an email to the address specified with a link to the
 destination with a query string of token and a [JWT](https://jwt.io/) token.
-Returns a 201 status code on success.
+Returns a 201 status code on success or 404 if the subscriber is not known
+to Email Alert API.
 
 #### healthcheck API
 
