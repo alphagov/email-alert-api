@@ -15,10 +15,10 @@
     every: '5s'
     class: ImmediateEmailGenerationWorker
   daily_digest_initiator:
-    cron: '30 8 * * *' # every day at 8:30am
+    cron: '30 8 * * * Europe/London' # every day at 8:30am
     class: DailyDigestInitiatorWorker
   weekly_digest_initiator:
-    cron: '30 8 * * 6' # every Saturday at 8:30am
+    cron: '30 8 * * 6 Europe/London' # every Saturday at 8:30am
     class: WeeklyDigestInitiatorWorker
   nullify_deactivated_subscribers:
     every: '1h'
