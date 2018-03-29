@@ -8,7 +8,7 @@ gem 'with_advisory_lock', '~> 3.2'
 
 gem 'faraday', '0.12.2'
 gem 'foreman', '~> 0.84'
-gem 'gds-api-adapters', '~> 52.4'
+gem 'gds-api-adapters', '~> 52.5'
 gem 'gds-sso', '~> 13.6'
 gem 'govuk_app_config', '~> 1.4'
 # This is pinned < 2 until gds-sso supports JWT > 2
