@@ -111,9 +111,10 @@ RSpec.describe ImmediateEmailBuilder do
             presented_content_change
 
             ---
-            You’re getting this email because you subscribed to #{subscriptions.first.subscriber_list.title} updates on GOV.UK.
+            You’re getting this email because you subscribed to ‘#{subscriptions.first.subscriber_list.title}’ updates on GOV.UK.
 
             unsubscribe_link
+            [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test@example.com)
 
             &nbsp;
 

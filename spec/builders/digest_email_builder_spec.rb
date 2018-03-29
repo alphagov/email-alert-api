@@ -104,6 +104,7 @@ RSpec.describe DigestEmailBuilder do
         unsubscribe_link_2
 
         You’re getting this email because you subscribed to these topic updates on GOV.UK.
+        [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test-3@example.com)
 
         &nbsp;
 

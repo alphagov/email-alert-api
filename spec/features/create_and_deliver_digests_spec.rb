@@ -14,7 +14,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     Timecop.return
   end
 
-  def first_expected_daily_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four)
+  def first_expected_daily_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four, subscriber)
     <<~BODY
       #Subscriber list one&nbsp;
 
@@ -34,7 +34,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription_one.id}?title=Subscriber%20list%20one)
+      [Unsubscribe from ‘Subscriber list one’](http://www.dev.gov.uk/email/unsubscribe/#{subscription_one.id}?title=Subscriber%20list%20one)
 
       &nbsp;
 
@@ -56,9 +56,10 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list two](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id}?title=Subscriber%20list%20two)
+      [Unsubscribe from ‘Subscriber list two’](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id}?title=Subscriber%20list%20two)
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
+      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{subscriber.address})
 
       &nbsp;
 
@@ -66,7 +67,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     BODY
   end
 
-  def second_expected_daily_email_body(subscription, content_change_one, content_change_two)
+  def second_expected_daily_email_body(subscription, content_change_one, content_change_two, subscriber)
     <<~BODY
       #Subscriber list one&nbsp;
 
@@ -86,9 +87,10 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?title=Subscriber%20list%20one)
+      [Unsubscribe from ‘Subscriber list one’](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?title=Subscriber%20list%20one)
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
+      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{subscriber.address})
 
       &nbsp;
 
@@ -200,6 +202,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     #TODO retrieve this via the API when we have an endpoint
     subscriptions = Subscription.all
     content_changes = ContentChange.all
+    subscribers = Subscriber.all
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
@@ -207,7 +210,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => first_expected_daily_email_body(subscriptions[0], subscriptions[1], content_changes[0], content_changes[1], content_changes[2], content_changes[3])
+            "body" => first_expected_daily_email_body(subscriptions[0], subscriptions[1], content_changes[0], content_changes[1], content_changes[2], content_changes[3], subscribers[0])
           )
         )
       )
@@ -219,7 +222,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => second_expected_daily_email_body(subscriptions[2], content_changes[0], content_changes[1])
+            "body" => second_expected_daily_email_body(subscriptions[2], content_changes[0], content_changes[1], subscribers[1])
           )
         )
       )
@@ -232,7 +235,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     expect(second_digest_stub).to have_been_requested
   end
 
-  def first_expected_weekly_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four)
+  def first_expected_weekly_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four, subscriber)
     <<~BODY
       #Subscriber list one&nbsp;
 
@@ -252,7 +255,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription_one.id}?title=Subscriber%20list%20one)
+      [Unsubscribe from ‘Subscriber list one’](http://www.dev.gov.uk/email/unsubscribe/#{subscription_one.id}?title=Subscriber%20list%20one)
 
       &nbsp;
 
@@ -274,9 +277,10 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list two](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id}?title=Subscriber%20list%20two)
+      [Unsubscribe from ‘Subscriber list two’](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id}?title=Subscriber%20list%20two)
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
+      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{subscriber.address})
 
       &nbsp;
 
@@ -284,7 +288,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     BODY
   end
 
-  def second_expected_weekly_email_body(subscription, content_change_one, content_change_two)
+  def second_expected_weekly_email_body(subscription, content_change_one, content_change_two, subscriber)
     <<~BODY
       #Subscriber list one&nbsp;
 
@@ -304,9 +308,10 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      Unsubscribe from [Subscriber list one](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?title=Subscriber%20list%20one)
+      [Unsubscribe from ‘Subscriber list one’](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?title=Subscriber%20list%20one)
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
+      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{subscriber.address})
 
       &nbsp;
 
@@ -415,6 +420,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     #TODO retrieve this via the API when we have an endpoint
     subscriptions = Subscription.all
     content_changes = ContentChange.all
+    subscribers = Subscriber.all
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
@@ -422,7 +428,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => first_expected_weekly_email_body(subscriptions[0], subscriptions[1], content_changes[0], content_changes[1], content_changes[2], content_changes[3])
+            "body" => first_expected_weekly_email_body(subscriptions[0], subscriptions[1], content_changes[0], content_changes[1], content_changes[2], content_changes[3], subscribers[0])
           )
         )
       )
@@ -434,7 +440,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => second_expected_weekly_email_body(subscriptions[2], content_changes[0], content_changes[1])
+            "body" => second_expected_weekly_email_body(subscriptions[2], content_changes[0], content_changes[1], subscribers[1])
           )
         )
       )

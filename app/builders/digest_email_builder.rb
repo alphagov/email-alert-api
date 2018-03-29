@@ -46,6 +46,7 @@ private
   def spam_prevention_survey_links
     <<~BODY
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
+      #{presented_manage_subscriptions_links}
 
       &nbsp;
 
@@ -85,5 +86,9 @@ private
       id: result.subscription_id,
       title: result.subscriber_list_title
     )
+  end
+
+  def presented_manage_subscriptions_links
+    ManageSubscriptionsLinkPresenter.call(address: subscriber.address)
   end
 end
