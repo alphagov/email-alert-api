@@ -13,12 +13,6 @@ class Subscription < ApplicationRecord
   scope :active, -> { where(ended_at: nil) }
   scope :ended, -> { where.not(ended_at: nil) }
 
-  def as_json(options = {})
-    options[:except] ||= %i(signon_user_uid subscriber_list_id subscriber_id)
-    options[:include] ||= %i(subscriber_list subscriber)
-    super(options)
-  end
-
   def active?
     ended_at.nil?
   end

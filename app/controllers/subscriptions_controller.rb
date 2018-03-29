@@ -30,7 +30,7 @@ class SubscriptionsController < ApplicationController
 
   def show
     subscription = Subscription.find(subscription_params.require(:id))
-    render json: { subscription: subscription }
+    render json: { subscription: SubscriptionShowPresenter.call(subscription) }
   end
 
   def update
@@ -59,7 +59,7 @@ class SubscriptionsController < ApplicationController
       end
     end
 
-    render json: { subscription: subscription }, status: :ok
+    render json: { subscription: SubscriptionShowPresenter.call(subscription) }, status: :ok
   end
 
 private
