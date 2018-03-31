@@ -114,6 +114,17 @@ RSpec.describe DigestRun do
     end
   end
 
+  context "when we are in British Summer Time" do
+    around do |example|
+      # A UTC value of a typical time to start the digest
+      Timecop.freeze("2018-03-31T07:30:00+00:00") { example.run }
+    end
+
+    it "creates a digest run without errors" do
+      described_class.create!(date: Date.current, range: :daily)
+    end
+  end
+
   describe "#mark_complete!" do
     it "sets completed_at to Time.now" do
       Timecop.freeze do
