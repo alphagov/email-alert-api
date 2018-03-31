@@ -9,7 +9,7 @@ class DigestRun < ApplicationRecord
   enum range: { daily: 0, weekly: 1 }
 
   def mark_complete!
-    update_attributes!(completed_at: Time.now)
+    update_attributes!(completed_at: Time.zone.now)
   end
 
   def check_and_mark_complete!
@@ -36,15 +36,15 @@ private
   end
 
   def ends_at_is_in_the_past
-    errors.add(:ends_at, "must be in the past") if ends_at >= Time.now
+    errors.add(:ends_at, "must be in the past") if ends_at >= Time.zone.now
   end
 
   def configured_starts_at
-    Time.parse("#{digest_range_hour}:00", starts_at_time)
+    Time.zone.parse("#{digest_range_hour}:00", starts_at_time)
   end
 
   def configured_ends_at
-    Time.parse("#{digest_range_hour}:00", date.to_time)
+    Time.zone.parse("#{digest_range_hour}:00", date.to_time)
   end
 
   def starts_at_time
