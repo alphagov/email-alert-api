@@ -17,7 +17,7 @@ RSpec.describe DigestRun do
           instance = described_class.create(date: date, range: "daily")
 
           expect(instance.starts_at).to eq(
-            Time.parse("08:00", (date - 1.day).to_time)
+            Time.zone.parse("08:00", (date - 1.day).to_time)
           )
         end
 
@@ -26,7 +26,7 @@ RSpec.describe DigestRun do
           instance = described_class.create(date: date, range: "daily")
 
           expect(instance.ends_at).to eq(
-            Time.parse("08:00", date.to_time)
+            Time.zone.parse("08:00", date.to_time)
           )
         end
       end
@@ -37,7 +37,7 @@ RSpec.describe DigestRun do
           instance = described_class.create(date: date, range: "weekly")
 
           expect(instance.starts_at).to eq(
-            Time.parse("08:00", (date - 1.week).to_time)
+            Time.zone.parse("08:00", (date - 1.week).to_time)
           )
         end
 
@@ -46,7 +46,7 @@ RSpec.describe DigestRun do
           instance = described_class.create(date: date, range: "weekly")
 
           expect(instance.ends_at).to eq(
-            Time.parse("08:00", date.to_time)
+            Time.zone.parse("08:00", date.to_time)
           )
         end
       end
@@ -55,7 +55,7 @@ RSpec.describe DigestRun do
     context "configured with an env var" do
       before do
         ENV["DIGEST_RANGE_HOUR"] = "10"
-        Timecop.freeze("10:30", Time.now)
+        Timecop.freeze("10:30", Time.zone.now)
       end
 
       after do
@@ -69,7 +69,7 @@ RSpec.describe DigestRun do
           instance = described_class.create(date: date, range: "daily")
 
           expect(instance.starts_at).to eq(
-            Time.parse("10:00", (date - 1.day).to_time)
+            Time.zone.parse("10:00", (date - 1.day).to_time)
           )
         end
 
@@ -78,7 +78,7 @@ RSpec.describe DigestRun do
           instance = described_class.create(date: date, range: "daily")
 
           expect(instance.ends_at).to eq(
-            Time.parse("10:00", date.to_time)
+            Time.zone.parse("10:00", date.to_time)
           )
         end
       end
@@ -89,7 +89,7 @@ RSpec.describe DigestRun do
           instance = described_class.create(date: date, range: "weekly")
 
           expect(instance.starts_at).to eq(
-            Time.parse("10:00", (date - 1.week).to_time)
+            Time.zone.parse("10:00", (date - 1.week).to_time)
           )
         end
 
@@ -98,7 +98,7 @@ RSpec.describe DigestRun do
           instance = described_class.create(date: date, range: "weekly")
 
           expect(instance.ends_at).to eq(
-            Time.parse("10:00", date.to_time)
+            Time.zone.parse("10:00", date.to_time)
           )
         end
       end
@@ -106,7 +106,7 @@ RSpec.describe DigestRun do
 
     describe "validations" do
       it "fails if the calculated ends_at is in the future" do
-        Timecop.freeze(Time.parse("07:00", Time.now)) do
+        Timecop.freeze(Time.zone.parse("07:00", Time.now)) do
           instance = described_class.create(date: Date.current, range: "daily")
           expect(instance.errors[:ends_at]).to eq(["must be in the past"])
         end
@@ -114,13 +114,24 @@ RSpec.describe DigestRun do
     end
   end
 
+  context "when we are in British Summer Time" do
+    around do |example|
+      # A UTC value of a typical time to start the digest
+      Timecop.freeze("2018-03-31T07:30:00+00:00") { example.run }
+    end
+
+    it "creates a digest run without errors" do
+      described_class.create!(date: Date.current, range: :daily)
+    end
+  end
+
   describe "#mark_complete!" do
-    it "sets completed_at to Time.now" do
+    it "sets completed_at to Time.zone.now" do
       Timecop.freeze do
         digest_run = create(:digest_run)
         digest_run.mark_complete!
         digest_run.reload
-        expect(digest_run.completed_at.change(nsec: 0)).to eq(Time.now.change(nsec: 0))
+        expect(digest_run.completed_at).to be_within(1.second).of(Time.zone.now)
       end
     end
   end
@@ -141,7 +152,7 @@ RSpec.describe DigestRun do
 
     context "no incomplete digest_run_subscribers" do
       before do
-        create(:digest_run_subscriber, digest_run_id: subject.id, completed_at: Time.now)
+        create(:digest_run_subscriber, digest_run_id: subject.id, completed_at: Time.zone.now)
       end
     end
 
