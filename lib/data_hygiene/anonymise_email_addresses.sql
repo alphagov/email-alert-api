@@ -38,7 +38,9 @@ WHERE a.address = s.address;
 
 # Set emails.address from the auto-incremented id in addresses table.
 UPDATE emails e
-SET address = CONCAT('anonymous-', a.id, '@example.com')
+SET address = CONCAT('anonymous-', a.id, '@example.com'),
+subject = REPLACE(e.subject, e.address, CONCAT('anonymous-', a.id, '@example.com')),
+body = REPLACE(e.body, e.address, CONCAT('anonymous-', a.id, '@example.com'))
 FROM addresses a
 WHERE a.address = e.address;
 
