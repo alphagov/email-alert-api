@@ -21,8 +21,9 @@ WHERE created_at < current_timestamp - interval '1 day';
 CREATE TABLE addresses (id SERIAL, address VARCHAR NOT NULL);
 
 # Copy all email addresses into the table.
+# Ignore nulled out subscriber addresses.
 INSERT INTO addresses (address)
-  SELECT address FROM subscribers
+  SELECT address FROM subscribers WHERE address IS NOT NULL
   UNION DISTINCT
   SELECT address FROM emails;
 

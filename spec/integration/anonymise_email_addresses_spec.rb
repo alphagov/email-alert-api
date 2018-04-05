@@ -32,6 +32,16 @@ RSpec.describe "Anonymising email addresses" do
       .to("anonymous-1@example.com")
   end
 
+  it "keeps the pre-existing null addresses in the subscribers table" do
+    create(:subscriber, address: "foo@example.com")
+    create(:subscriber, :nullified)
+
+    execute_sql
+
+    expect(Subscriber.count).to eq(2)
+    expect(Subscriber.all.map(&:address)).to include(nil)
+  end
+
   it "anonymises addresses in the emails table" do
     email = create(:email, address: "foo@example.com")
 
