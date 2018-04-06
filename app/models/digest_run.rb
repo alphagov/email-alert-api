@@ -6,10 +6,13 @@ class DigestRun < ApplicationRecord
   has_many :digest_run_subscribers, dependent: :destroy
   has_many :subscribers, through: :digest_run_subscribers
 
+  scope :incomplete, -> { where(completed_at: nil) }
+
   enum range: { daily: 0, weekly: 1 }
 
   def mark_complete!
-    update_attributes!(completed_at: Time.zone.now)
+    completed_at = digest_run_subscribers.maximum(:completed_at) || Time.zone.now
+    update_attributes!(completed_at: completed_at)
   end
 
   def check_and_mark_complete!
