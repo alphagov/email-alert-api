@@ -89,23 +89,9 @@ RSpec.describe DigestEmailGenerationWorker do
         .by(subscription_content_change_query_results.count)
     end
 
-    it "marks the digest run complete" do
+    it "doesn't mark the digest run complete" do
       expect { subject.perform(digest_run_subscriber.id) }
-        .to change { digest_run.reload.completed? }
-        .from(false)
-        .to(true)
-    end
-
-    context "when there are incomplete DigestRunSubscribers left" do
-      before do
-        # Create an extra instance of digest run subscriber so more are left
-        create(:digest_run_subscriber, digest_run: digest_run)
-      end
-
-      it "doesn't mark the digest run complete" do
-        expect { subject.perform(digest_run_subscriber.id) }
-          .not_to(change { digest_run.reload.completed? })
-      end
+        .not_to(change { digest_run.reload.completed? })
     end
 
     context "when there are no content changes to send" do
@@ -119,13 +105,6 @@ RSpec.describe DigestEmailGenerationWorker do
       it "marks the digest run subscriber completed" do
         expect { subject.perform(digest_run_subscriber.id) }
           .to change { digest_run_subscriber.reload.completed? }
-          .from(false)
-          .to(true)
-      end
-
-      it "can mark the digest run complete" do
-        expect { subject.perform(digest_run_subscriber.id) }
-          .to change { digest_run.reload.completed? }
           .from(false)
           .to(true)
       end

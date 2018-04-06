@@ -126,17 +126,32 @@ RSpec.describe DigestRun do
   end
 
   describe "#mark_complete!" do
-    it "sets completed_at to Time.zone.now" do
-      Timecop.freeze do
-        digest_run = create(:digest_run)
-        digest_run.mark_complete!
-        digest_run.reload
-        expect(digest_run.completed_at).to be_within(1.second).of(Time.zone.now)
+    context "with complete subscribers" do
+      it "sets completed_at to the most recent subscriber completed_at" do
+        Timecop.freeze do
+          digest_run = create(:digest_run)
+          create(:digest_run_subscriber, digest_run: digest_run, completed_at: Time.mktime(2018, 1, 1, 10))
+          create(:digest_run_subscriber, digest_run: digest_run, completed_at: Time.mktime(2018, 1, 1, 9))
+          digest_run.mark_complete!
+          digest_run.reload
+          expect(digest_run.completed_at).to eq Time.mktime(2018, 1, 1, 10)
+        end
+      end
+    end
+
+    context "with no subscribers" do
+      it "sets completed_at to the current time" do
+        Timecop.freeze do
+          digest_run = create(:digest_run)
+          digest_run.mark_complete!
+          digest_run.reload
+          expect(digest_run.completed_at).to be_within(1.second).of(Time.zone.now)
+        end
       end
     end
   end
 
-  describe ".check_and_mark_complete?" do
+  describe ".check_and_mark_complete!" do
     let(:subject) { create(:digest_run) }
 
     context "incomplete digest_run_subscribers" do

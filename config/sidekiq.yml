@@ -29,3 +29,6 @@
   email_deleter:
     every: '1h'
     class: EmailDeletionWorker
+  digest_run_completion_marker:
+    every: '1m'
+    class: DigestRunCompletionMarkerWorker
