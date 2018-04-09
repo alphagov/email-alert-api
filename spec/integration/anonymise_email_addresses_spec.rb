@@ -55,6 +55,33 @@ RSpec.describe "Anonymising email addresses" do
     expect { execute_sql }.not_to(change { user.reload.email })
   end
 
+  it "anonymises uses of addresses within the email" do
+    email = create(
+      :email,
+      address: "foo@example.com",
+      subject: "Email for foo@example.com",
+      body: <<~HDOC
+        [Thailand travel advice](https://www.gov.uk/foreign-travel-advice/thailand)
+
+        10:51am, 4 April 2018: Another test that email sent ok
+
+        ---
+        You’re getting this email because you subscribed to ‘Thailand  - travel advice’ updates on GOV.UK.
+
+        [Unsubscribe from ‘Thailand  - travel advice’](https://www.gov.uk/email/unsubscribe/8697f282-21f5-474f-a69f-abc3f70b18a8)
+        [View and manage your subscriptions](https://www.gov.uk/email/authenticate?address=foo@example.com)
+      HDOC
+    )
+
+    execute_sql
+    email.reload
+    expect(email.body).not_to match(/foo@example.com/)
+    expect(email.subject).to eq("Email for anonymous-1@example.com")
+    expect(email.body).to match(
+      /#{Regexp.escape("[View and manage your subscriptions](https://www.gov.uk/email/authenticate?address=anonymous-1@example.com)")}/
+    )
+  end
+
   it "covers all cases where email/address appears in the database" do
     cases_covered = %w(subscribers.address emails.address users.email)
     other_columns = column_names - cases_covered
