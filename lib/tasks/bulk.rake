@@ -1,13 +1,10 @@
 namespace :bulk do
   desc "Send a bulk email to many subscriber lists"
-  task :email, %i(subject body) => :environment do |_t, args|
-    subscriber_list_ids = args.extras
-    subscriber_lists = SubscriberList.where(id: subscriber_list_ids)
-
+  task :email, [] => :environment do |_t, args|
     BulkEmailSenderService.call(
-      subject: args.subject,
-      body: args.body,
-      subscriber_lists: subscriber_lists,
+      subject: ENV.fetch("SUBJECT"),
+      body: ENV.fetch("BODY"),
+      subscriber_lists: SubscriberList.where(id: args.extras),
     )
   end
 end
