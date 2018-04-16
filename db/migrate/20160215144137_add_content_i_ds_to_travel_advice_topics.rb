@@ -23,3 +23,5 @@ class AddContentIDsToTravelAdviceTopics < ActiveRecord::Migration[4.2]
     end
   end
 end
+
+# rubocop:enable Lint/UnreachableCode

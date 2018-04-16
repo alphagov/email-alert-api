@@ -69,4 +69,5 @@ private
   end
 end
 
-class RatelimitExceededError < StandardError; end
+class RatelimitExceededError < StandardError
+end

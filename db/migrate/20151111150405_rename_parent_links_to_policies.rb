@@ -21,3 +21,5 @@ class RenameParentLinksToPolicies < ActiveRecord::Migration[4.2]
     SubscriberList.where("(links -> :key) IS NOT NULL", key: key)
   end
 end
+
+# rubocop:enable Lint/UnreachableCode

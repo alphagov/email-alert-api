@@ -10,3 +10,5 @@ class AddAllCountriesSubscriberList < ActiveRecord::Migration[4.2]
     )
   end
 end
+
+# rubocop:enable Lint/UnreachableCode
