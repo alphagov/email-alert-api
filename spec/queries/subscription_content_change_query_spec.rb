@@ -150,6 +150,12 @@ RSpec.describe SubscriptionContentChangeQuery do
         content_change: content_change_2,
         subscriber_list: subscriber_list_2,
       )
+
+      create(
+        :matched_content_change,
+        content_change: content_change_1,
+        subscriber_list: subscriber_list_2,
+      )
     end
 
     it "returns correctly ordered" do
@@ -160,6 +166,10 @@ RSpec.describe SubscriptionContentChangeQuery do
       expect(subject.second.subscription_id).to eq("b8c3fd84-5f00-460d-a812-edb628f28c8f")
       expect(subject.second.subscriber_list_title).to eq("list-2")
       expect(subject.second.content_changes.first.id).to eq("70ac31fa-505e-4060-b7bb-bfa15028cc99")
+    end
+
+    it "returns only two changes" do
+      expect(subject.length).to eq(2)
     end
   end
 end

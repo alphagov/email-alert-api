@@ -167,7 +167,7 @@ RSpec.describe "creating and delivering digests", type: :request do
         change_note: "Change note two",
         public_updated_at: "2017-01-01 09:00:00",
         links: {
-          topics: [list_one_topic_id]
+          topics: [list_one_topic_id, list_two_topic_id]
         }
       )
     end
