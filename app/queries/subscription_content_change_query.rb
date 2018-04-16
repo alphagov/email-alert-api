@@ -46,5 +46,6 @@ private
       .where("content_changes.created_at < ?", digest_run.ends_at)
       .merge(Subscription.active)
       .order("subscriber_list_title ASC", "content_changes.title ASC")
+      .uniq(&:content_id)
   end
 end

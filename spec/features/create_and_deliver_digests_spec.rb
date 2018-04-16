@@ -146,7 +146,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     )
 
     #publish two items to each list
-    Timecop.freeze "2017-01-01 10:00" do
+    Timecop.freeze "2017-01-01 09:30:00" do
       create_content_change(
         title: "Title one",
         content_id: SecureRandom.uuid,
@@ -159,7 +159,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       )
     end
 
-    Timecop.freeze "2017-01-01 09:00" do
+    Timecop.freeze "2017-01-01 09:30:01" do
       create_content_change(
         title: "Title two",
         content_id: SecureRandom.uuid,
@@ -167,12 +167,12 @@ RSpec.describe "creating and delivering digests", type: :request do
         change_note: "Change note two",
         public_updated_at: "2017-01-01 09:00:00",
         links: {
-          topics: [list_one_topic_id]
+          topics: [list_one_topic_id, list_two_topic_id]
         }
       )
     end
 
-    Timecop.freeze "2017-01-01 09:00:00" do
+    Timecop.freeze "2017-01-01 09:30:02" do
       create_content_change(
         title: "Title three",
         content_id: SecureRandom.uuid,
@@ -186,7 +186,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       )
     end
 
-    Timecop.freeze "2017-01-01 09:30:00" do
+    Timecop.freeze "2017-01-01 09:30:03" do
       create_content_change(
         title: "Title four",
         content_id: SecureRandom.uuid,
@@ -201,7 +201,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     #TODO retrieve this via the API when we have an endpoint
     subscriptions = Subscription.all
-    content_changes = ContentChange.all
+    content_changes = ContentChange.order(:created_at)
     subscribers = Subscriber.all
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
