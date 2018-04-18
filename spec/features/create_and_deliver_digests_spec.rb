@@ -1,3 +1,5 @@
+# rubocop:disable Layout/EmptyLinesAroundArguments
+
 require "rails_helper"
 
 RSpec.describe "creating and delivering digests", type: :request do
@@ -453,3 +455,5 @@ RSpec.describe "creating and delivering digests", type: :request do
     expect(second_digest_stub).to have_been_requested
   end
 end
+
+# rubocop:enable Layout/EmptyLinesAroundArguments

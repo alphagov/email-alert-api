@@ -15,3 +15,5 @@ class RemovePolicySubscriberListsWithErroneousLinks < ActiveRecord::Migration[4.
     SubscriberList.where("(tags -> :key) IS NOT NULL", key: key)
   end
 end
+
+# rubocop:enable Lint/UnreachableCode

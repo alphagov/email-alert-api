@@ -25,3 +25,5 @@ class RemoveDeadSubscriberLists < ActiveRecord::Migration[4.2]
     #noop
   end
 end
+
+# rubocop:enable Lint/UnreachableCode
