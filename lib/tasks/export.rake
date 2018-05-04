@@ -1,24 +1,11 @@
-require 'csv'
-
 namespace :export do
-  def present_subscriber_list(list_id)
-    list = SubscriberList.find(list_id)
-    { subscriber_list_id: list_id, title: list.title, count: list.subscribers.count }
-  rescue ActiveRecord::RecordNotFound
-    warn "could not fetch record for #{list_id}"
+  desc "Export the number of subscriptions for a collection of lists given as arguments of list IDs"
+  task csv_from_ids: :environment do |_, args|
+    DataExporter.new.export_csv_from_ids(args.to_a)
   end
 
-  desc "Export the number of subscribers for a collection of lists as a csv, accepts multiple arguments"
-  task :csv, [:subscriber_list_id] => :environment do |_, args|
-    CSV($stdout, headers: %i[subscriber_list_id title count], write_headers: true) do |csv|
-      rows = args.to_a.map { |list_id| present_subscriber_list(list_id) }
-      rows.compact.each { |row| csv << row }
-    end
-  end
-
-  desc "Export the number of subscribers for a list"
-  task :count, [:subscriber_list_id] => :environment do |_, args|
-    list = present_subscriber_list(args[:subscriber_list_id])
-    puts list[:count] unless list.nil?
+  desc "Export the number of subscriptions for the 'Living in' taxons for EU countries"
+  task csv_from_living_in_eu: :environment do
+    DataExporter.new.export_csv_from_living_in_eu
   end
 end
