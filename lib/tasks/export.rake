@@ -6,7 +6,6 @@ namespace :export do
 
   desc "Export the number of subscribers for a list"
   task :count, [:subscriber_list_id] => :environment do |_, args|
-    list = DataExporter.new.present_subscriber_list(args[:subscriber_list_id])
-    puts list[:count] unless list.nil?
+    puts SubscriberList.find(args[:subscriber_list_id]).active_subscriptions_count
   end
 end

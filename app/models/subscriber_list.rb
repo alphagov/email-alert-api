@@ -22,6 +22,10 @@ class SubscriberList < ApplicationRecord
     slug
   end
 
+  def active_subscriptions_count
+    subscriptions.active.count
+  end
+
   def to_json(options = {})
     options[:except] ||= %i{signon_user_uid}
     options[:methods] ||= %i{subscription_url gov_delivery_id}
