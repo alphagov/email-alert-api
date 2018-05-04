@@ -1,10 +1,10 @@
 class DataExporter
-  CSV_HEADERS = %i(id title count)
+  CSV_HEADERS = %i(id title count).freeze
 
   EU_COUNTRIES = %w(
     austria belgium bulgaria croatia cyprus czech-republic denmark estonia finland france germany greece hungary
     ireland italy latvia lithuania luxembourg malta netherlands poland portugal slovakia slovenia spain sweeden
-  )
+  ).freeze
 
   def living_in_eu_subscriber_lists
     slugs = EU_COUNTRIES.map { |country| "living-in-#{country}" }
