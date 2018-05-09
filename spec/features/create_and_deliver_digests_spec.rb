@@ -61,7 +61,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       [Unsubscribe from ‘Subscriber list two’](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id}?title=Subscriber%20list%20two)
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
-      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{subscriber.address})
+      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
 
       &nbsp;
 
@@ -92,7 +92,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       [Unsubscribe from ‘Subscriber list one’](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?title=Subscriber%20list%20one)
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
-      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{subscriber.address})
+      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
 
       &nbsp;
 
@@ -282,7 +282,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       [Unsubscribe from ‘Subscriber list two’](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id}?title=Subscriber%20list%20two)
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
-      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{subscriber.address})
+      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
 
       &nbsp;
 
@@ -313,7 +313,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       [Unsubscribe from ‘Subscriber list one’](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?title=Subscriber%20list%20one)
 
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
-      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{subscriber.address})
+      [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
 
       &nbsp;
 

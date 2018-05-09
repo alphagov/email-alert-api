@@ -13,6 +13,10 @@ module PublicUrlService
       "#{website_root}/email/subscriptions/new?#{params}"
     end
 
+    def authenticate_url(address:)
+      "#{website_root}/email/authenticate?#{param('address', address)}"
+    end
+
   private
 
     def website_root
