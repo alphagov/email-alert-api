@@ -18,7 +18,6 @@ private
   attr_reader :address
 
   def url
-    base_path = "/email/authenticate?address=#{address}"
-    PublicUrlService.url_for(base_path: base_path)
+    PublicUrlService.authenticate_url(address: address)
   end
 end
