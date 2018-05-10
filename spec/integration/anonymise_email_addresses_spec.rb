@@ -112,6 +112,13 @@ RSpec.describe "Anonymising email addresses" do
     expect(bar_subscriber.reload.address).to_not eq(foo_subscriber.reload.address)
   end
 
+  it "handles addresses only differing in capitalisation" do
+    create(:email, address: "foo@example.com")
+    create(:email, address: "Foo@example.com")
+
+    execute_sql
+  end
+
   it "cleans up after itself" do
     expect { execute_sql }.not_to(change { connection.tables.count })
   end

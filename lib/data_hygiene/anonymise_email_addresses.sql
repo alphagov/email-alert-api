@@ -28,7 +28,7 @@ INSERT INTO addresses (address)
   SELECT address FROM emails;
 
 # Index the table so we can efficiently lookup addresses.
-CREATE UNIQUE INDEX addresses_index ON addresses (lower(address));
+CREATE UNIQUE INDEX addresses_index ON addresses (address);
 
 # Set subscribers.address from the auto-incremented id in addresses table.
 UPDATE subscribers s
