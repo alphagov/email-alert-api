@@ -4,8 +4,8 @@ namespace :export do
     DataExporter.new.export_csv_from_ids(args.to_a)
   end
 
-  desc "Export the number of subscriptions for the 'Living in' taxons for EU countries"
-  task csv_from_living_in_eu: :environment do
-    DataExporter.new.export_csv_from_living_in_eu
+  desc "Export the number of subscriptions for the 'Living in' taxons for European countries"
+  task csv_from_living_in_europe: :environment do
+    DataExporter.new.export_csv_from_living_in_europe
   end
 end

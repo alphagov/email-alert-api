@@ -1,13 +1,14 @@
 class DataExporter
   CSV_HEADERS = %i(id title count).freeze
 
-  EU_COUNTRIES = %w(
+  EUROPEAN_COUNTRIES = %w(
     austria belgium bulgaria croatia cyprus czech-republic denmark estonia finland france germany greece hungary
     ireland italy latvia lithuania luxembourg malta netherlands poland portugal slovakia slovenia spain sweeden
+    switzerland iceland norway liechtenstein
   ).freeze
 
-  def living_in_eu_subscriber_lists
-    slugs = EU_COUNTRIES.map { |country| "living-in-#{country}" }
+  def living_in_europe_subscriber_lists
+    slugs = EUROPEAN_COUNTRIES.map { |country| "living-in-#{country}" }
     SubscriberList.where(slug: slugs)
   end
 
@@ -31,7 +32,7 @@ class DataExporter
     export_csv(SubscriberList.where(id: ids))
   end
 
-  def export_csv_from_living_in_eu
-    export_csv(living_in_eu_subscriber_lists)
+  def export_csv_from_living_in_europe
+    export_csv(living_in_europe_subscriber_lists)
   end
 end
