@@ -54,7 +54,7 @@ GEM
     climate_control (0.2.0)
     coderay (1.1.2)
     concurrent-ruby (1.0.5)
-    connection_pool (2.2.1)
+    connection_pool (2.2.2)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.4)
@@ -64,7 +64,7 @@ GEM
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
     erubi (1.7.1)
-    et-orbi (1.1.1)
+    et-orbi (1.1.2)
       tzinfo
     factory_bot (4.10.0)
       activesupport (>= 3.0.0)
@@ -286,7 +286,7 @@ GEM
       redis (>= 3.3.5, < 5)
     sidekiq-logging-json (0.0.18)
       sidekiq (>= 3)
-    sidekiq-scheduler (2.2.2)
+    sidekiq-scheduler (3.0.0)
       redis (>= 3, < 5)
       rufus-scheduler (~> 3.2)
       sidekiq (>= 3)
@@ -357,7 +357,7 @@ DEPENDENCIES
   redcarpet (~> 3.4)
   rspec-rails (= 3.7.2)
   ruby-prof (~> 0.17)
-  sidekiq-scheduler (~> 2.2)
+  sidekiq-scheduler (~> 3.0)
   timecop
   webmock
   with_advisory_lock (~> 3.2)
