@@ -10,17 +10,19 @@ class UnprocessedSubscriptionContentsBySubscriberQuery
   end
 
   def call
-    subscription_contents = SubscriptionContent
-      .joins(:subscription)
-      .includes(:subscription)
-      .where(email_id: nil, "subscriptions.subscriber_id": subscriber_ids)
-
     transform_results(subscription_contents)
   end
 
   private_class_method :new
 
 private
+
+  def subscription_contents
+    SubscriptionContent
+      .joins(:subscription)
+      .includes(:subscription)
+      .where(email_id: nil, subscriptions: { subscriber_id: subscriber_ids })
+  end
 
   def transform_results(subscription_contents)
     subscription_contents.each_with_object({}) do |subscription_content, results|
