@@ -28,7 +28,7 @@ class SubscriberList < ApplicationRecord
 
   def to_json(options = {})
     options[:except] ||= %i{signon_user_uid}
-    options[:methods] ||= %i{subscription_url gov_delivery_id}
+    options[:methods] ||= %i{subscription_url gov_delivery_id active_subscriptions_count}
     super(options)
   end
 

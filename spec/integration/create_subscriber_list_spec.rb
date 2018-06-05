@@ -55,6 +55,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
           links
           email_document_supertype
           government_document_supertype
+          active_subscriptions_count
         }.to_set
       )
 
