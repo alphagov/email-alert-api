@@ -144,6 +144,29 @@ $ bundle exec rake manage:move_all_subscribers[<from_slug>, <to_slug>]
 You need to supply the `slug` for the source and destination
 subscriber lists.
 
+#### Export data
+
+There are a number of tasks available which export subscriber list data into CSV files on standard output. In
+particular this includes the active subscription count.
+
+```bash
+$ bundle exec rake export:csv_from_ids[<subscriber_list_id>, ...]
+```
+
+```bash
+$ bundle exec rake export:csv_from_ids_at[<date>, <subscriber_list_id>, ...]
+```
+
+This is the same as above, but exports the active subscription count of the subscriber list as it was on a particular
+date.
+
+```bash
+$ bundle exec rake export:csv_from_living_in_europe
+```
+
+This is a convenience export which does the same as above but with all the "Living in Europe" taxon subscriber lists
+without needing to know their IDs.
+
 ### Available endpoints
 
 #### application API
