@@ -3,7 +3,7 @@ class DataExporter
 
   EUROPEAN_COUNTRIES = %w(
     austria belgium bulgaria croatia cyprus czech-republic denmark estonia finland france germany greece hungary
-    ireland italy latvia lithuania luxembourg malta netherlands poland portugal slovakia slovenia spain sweeden
+    ireland italy latvia lithuania luxembourg malta netherlands poland portugal slovakia slovenia spain sweden
     switzerland iceland norway liechtenstein
   ).freeze
 
