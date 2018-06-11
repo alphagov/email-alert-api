@@ -20,7 +20,7 @@ gem 'redcarpet', '~> 3.4'
 
 gem 'govuk_sidekiq', '~> 3.0'
 gem 'ratelimit', '~> 1.0'
-gem 'sidekiq-scheduler', '~> 2.2'
+gem 'sidekiq-scheduler', '~> 3.0'
 
 group :test do
   gem 'climate_control'
