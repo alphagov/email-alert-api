@@ -189,9 +189,11 @@ RSpec.describe "Getting a subscriber list", type: :request do
   end
 
   context "without authentication" do
-    it "returns a 403" do
-      get_subscriber_list({})
-      expect(response.status).to eq(403)
+    it "returns a 401" do
+      without_login do
+        get_subscriber_list({})
+        expect(response.status).to eq(401)
+      end
     end
   end
 

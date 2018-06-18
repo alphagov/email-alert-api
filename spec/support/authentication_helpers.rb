@@ -15,6 +15,10 @@ module AuthenticationHelpers
     login_as(create(:user, permissions: Array(permissions)))
   end
 
+  def without_login
+    ClimateControl.modify(GDS_SSO_MOCK_INVALID: "1") { yield }
+  end
+
   def login_as(user)
     GDS::SSO.test_user = user
   end

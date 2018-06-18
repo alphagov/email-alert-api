@@ -36,10 +36,11 @@ RSpec.describe "Sending a notification", type: :request do
   end
 
   context "without authentication" do
-    it "returns 403" do
-      post "/notifications", params: {}, headers: {}
-
-      expect(response.status).to eq(403)
+    it "returns 401" do
+      without_login do
+        post "/notifications", params: {}, headers: {}
+        expect(response.status).to eq(401)
+      end
     end
   end
 

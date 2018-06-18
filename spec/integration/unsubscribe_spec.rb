@@ -34,9 +34,11 @@ RSpec.describe "Unsubscribing", type: :request do
   end
 
   context "without authentication" do
-    it "returns a 403" do
-      post "/unsubscribe/123"
-      expect(response.status).to eq(403)
+    it "returns a 401" do
+      without_login do
+        post "/unsubscribe/123"
+        expect(response.status).to eq(401)
+      end
     end
   end
 
