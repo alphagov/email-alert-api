@@ -1,4 +1,4 @@
-class Healthcheck
+module Healthcheck
   class QueueSizeHealthcheck
     def name
       :queue_size

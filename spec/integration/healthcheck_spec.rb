@@ -42,12 +42,12 @@ RSpec.describe "Healthcheck", type: :request do
     get "/healthcheck"
 
     expect(data.fetch(:checks)).to include(
-      database:          { status: "ok" },
-      queue_latency:     { status: "ok", queues: a_kind_of(Hash) },
-      queue_size:        { status: "ok", queues: a_kind_of(Hash) },
-      redis:             { status: "ok" },
-      retry_size:        { status: "ok", retry_size: 0 },
-      technical_failure: hash_including(status: "ok", failing: 0),
+      database_connectivity: { status: "ok" },
+      queue_latency:         { status: "ok", queues: a_kind_of(Hash) },
+      queue_size:            { status: "ok", queues: a_kind_of(Hash) },
+      redis_connectivity:    { status: "ok" },
+      retry_size:            { status: "ok", retry_size: 0 },
+      technical_failure:     hash_including(status: "ok", failing: 0),
     )
   end
 end

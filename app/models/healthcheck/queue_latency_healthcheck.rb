@@ -1,4 +1,4 @@
-class Healthcheck
+module Healthcheck
   class QueueLatencyHealthcheck
     def name
       :queue_latency

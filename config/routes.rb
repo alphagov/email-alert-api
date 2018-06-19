@@ -14,8 +14,15 @@ Rails.application.routes.draw do
     get "/subscribers/:id/subscriptions", to: "subscribers#subscriptions"
     post "/subscribers/auth-token", to: "subscribers_auth_token#auth_token"
 
-    get "/healthcheck", to: "healthcheck#check"
-
     post "/unsubscribe/:id", to: "unsubscribe#unsubscribe"
+
+    get "/healthcheck", to: GovukHealthcheck.rack_response(
+      GovukHealthcheck::SidekiqRedis,
+      GovukHealthcheck::ActiveRecord,
+      Healthcheck::QueueLatencyHealthcheck.new,
+      Healthcheck::QueueSizeHealthcheck.new,
+      Healthcheck::RetrySizeHealthcheck.new,
+      Healthcheck::TechnicalFailureHealthcheck.new,
+    )
   end
 end

@@ -1,4 +1,4 @@
-class Healthcheck
+module Healthcheck
   class TechnicalFailureHealthcheck
     def name
       :technical_failure

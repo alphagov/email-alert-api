@@ -1,4 +1,4 @@
-class Healthcheck
+module Healthcheck
   class StatusUpdateHealthcheck
     def name
       :status_update
