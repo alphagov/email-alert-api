@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_01_155601) do
+ActiveRecord::Schema.define(version: 2018_06_18_132321) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -130,7 +130,6 @@ ActiveRecord::Schema.define(version: 2018_05_01_155601) do
     t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
     t.index ["government_document_supertype"], name: "index_subscriber_lists_on_government_document_supertype"
     t.index ["slug"], name: "index_subscriber_lists_on_slug", unique: true
-    t.index ["title"], name: "index_subscriber_lists_on_title", unique: true
   end
 
   create_table "subscribers", force: :cascade do |t|

@@ -7,7 +7,6 @@ class SubscriberList < ApplicationRecord
   validate :link_values_are_valid
 
   validates :title, presence: true
-  validates_uniqueness_of :title
   validates_uniqueness_of :slug
 
   has_many :subscriptions

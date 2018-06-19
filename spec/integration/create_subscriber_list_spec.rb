@@ -80,11 +80,11 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(response.status).to eq(422)
     end
 
-    it "returns an error if creating the same topic" do
-      create_subscriber_list(title: "oil and gas", tags: { topics: ["oil-and-gas/licensing"] })
-      create_subscriber_list(title: "oil and gas", tags: { topics: ["oil-and-gas/licensing"] })
+    it "successfully creates two SubscriberList objects with the same title" do
+      create_subscriber_list(title: "oil and gas", links: { taxons: ["oil-and-gas"] })
+      create_subscriber_list(title: "oil and gas", links: { policies: ["oil-and-gas/licensing"] })
 
-      expect(response.status).to eq(422)
+      expect(response.status).to eq(201)
     end
 
     it "returns an error if link isn't an array" do
