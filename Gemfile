@@ -7,7 +7,7 @@ gem 'activerecord-import', '~> 0.24'
 gem 'with_advisory_lock', '~> 3.2'
 
 gem 'faraday', '0.12.2'
-gem 'foreman', '~> 0.84'
+gem 'foreman', '~> 0.85'
 gem 'gds-api-adapters', '~> 52.6'
 gem 'gds-sso', '~> 13.6'
 gem 'govuk_app_config', '~> 1.5'
