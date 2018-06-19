@@ -27,10 +27,10 @@ private
 
   def all
     @all ||= [
-      DatabaseHealthcheck.new,
+      GovukHealthcheck::ActiveRecord,
+      GovukHealthcheck::SidekiqRedis,
       QueueLatencyHealthcheck.new,
       QueueSizeHealthcheck.new,
-      RedisHealthcheck.new,
       RetrySizeHealthcheck.new,
       TechnicalFailureHealthcheck.new,
     ]
