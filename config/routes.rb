@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       Healthcheck::QueueLatencyHealthcheck.new,
       Healthcheck::QueueSizeHealthcheck.new,
       Healthcheck::RetrySizeHealthcheck.new,
+      Healthcheck::StatusUpdateHealthcheck.new,
       Healthcheck::TechnicalFailureHealthcheck.new,
     )
   end
