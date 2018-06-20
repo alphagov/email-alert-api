@@ -1,12 +1,4 @@
 RSpec.describe "Healthcheck", type: :request do
-  it "responds with json" do
-    get "/healthcheck"
-
-    expect(response.status).to eq(200)
-    expect(response.content_type).to eq("application/json")
-    expect { data }.not_to raise_error
-  end
-
   context "when the healthchecks pass" do
     it "returns a status of 'ok'" do
       get "/healthcheck"
