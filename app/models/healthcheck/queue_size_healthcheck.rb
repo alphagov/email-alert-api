@@ -25,7 +25,7 @@ module Healthcheck
     end
 
     def queues
-      @queues ||= Sidekiq::Stats.new.queues
+      Sidekiq::Stats.new.queues
     end
 
     def critical_size

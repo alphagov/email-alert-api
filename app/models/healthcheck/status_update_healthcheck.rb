@@ -27,12 +27,10 @@ module Healthcheck
   private
 
     def totals
-      @totals ||= begin
-        DeliveryAttempt
-          .where("created_at > ? AND created_at <= ?", (1.hour + 10.minutes).ago, 10.minutes.ago)
-          .group("CASE WHEN status = 0 THEN 'pending' ELSE 'done' END")
-          .count
-      end
+      DeliveryAttempt
+        .where("created_at > ? AND created_at <= ?", (1.hour + 10.minutes).ago, 10.minutes.ago)
+        .group("CASE WHEN status = 0 THEN 'pending' ELSE 'done' END")
+        .count
     end
 
     def total_pending
