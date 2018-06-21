@@ -1,4 +1,4 @@
-class Healthcheck
+module Healthcheck
   class QueueLatencyHealthcheck
     def name
       :queue_latency
@@ -21,7 +21,7 @@ class Healthcheck
   private
 
     def queues
-      @queues ||= thresholds_for_queues.each_with_object({}) do |(name, threshold), hash|
+      thresholds_for_queues.each_with_object({}) do |(name, threshold), hash|
         latency = latency_for(name)
         critical = latency > threshold.fetch(:critical)
         warning = latency > threshold.fetch(:warning)

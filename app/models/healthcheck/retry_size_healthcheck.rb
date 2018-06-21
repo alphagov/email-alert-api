@@ -1,4 +1,4 @@
-class Healthcheck
+module Healthcheck
   class RetrySizeHealthcheck
     def name
       :retry_size
@@ -21,7 +21,7 @@ class Healthcheck
   private
 
     def retry_size
-      @retry_size ||= Sidekiq::Stats.new.retry_size
+      Sidekiq::Stats.new.retry_size
     end
 
     def critical_size

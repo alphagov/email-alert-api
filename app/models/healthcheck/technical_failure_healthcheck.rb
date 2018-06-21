@@ -1,4 +1,4 @@
-class Healthcheck
+module Healthcheck
   class TechnicalFailureHealthcheck
     def name
       :technical_failure
@@ -27,12 +27,10 @@ class Healthcheck
   private
 
     def totals
-      @totals ||= begin
-        DeliveryAttempt
-          .where("created_at > ?", 1.hour.ago)
-          .group("CASE WHEN status = 4 THEN 'failing' ELSE 'other' END")
-          .count
-      end
+      DeliveryAttempt
+        .where("created_at > ?", 1.hour.ago)
+        .group("CASE WHEN status = 4 THEN 'failing' ELSE 'other' END")
+        .count
     end
 
     def total_failing

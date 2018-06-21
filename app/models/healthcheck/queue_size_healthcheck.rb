@@ -1,4 +1,4 @@
-class Healthcheck
+module Healthcheck
   class QueueSizeHealthcheck
     def name
       :queue_size
@@ -25,7 +25,7 @@ class Healthcheck
     end
 
     def queues
-      @queues ||= Sidekiq::Stats.new.queues
+      Sidekiq::Stats.new.queues
     end
 
     def critical_size
