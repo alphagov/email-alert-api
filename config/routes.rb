@@ -1,4 +1,4 @@
-Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
+Rails.application.routes.draw do
   scope format: false, defaults: { format: :json } do
     root "welcome#index"
     resources :subscriber_lists, path: "subscriber-lists", only: %i[create]
@@ -25,7 +25,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       Healthcheck::QueueSizeHealthcheck.new,
       Healthcheck::RetrySizeHealthcheck.new,
       Healthcheck::StatusUpdateHealthcheck.new,
-      Healthcheck::SubscriptionContentHealthcheck.new,
       Healthcheck::TechnicalFailureHealthcheck.new,
     )
   end
