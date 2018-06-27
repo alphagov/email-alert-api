@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       Healthcheck::QueueSizeHealthcheck.new,
       Healthcheck::RetrySizeHealthcheck.new,
       Healthcheck::StatusUpdateHealthcheck.new,
+      Healthcheck::SubscriptionContentHealthcheck.new,
       Healthcheck::TechnicalFailureHealthcheck.new,
     )
   end
