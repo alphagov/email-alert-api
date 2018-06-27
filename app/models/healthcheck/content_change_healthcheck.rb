@@ -1,7 +1,7 @@
 module Healthcheck
   class ContentChangeHealthcheck
     def name
-      :content_change
+      :content_changes
     end
 
     def status
