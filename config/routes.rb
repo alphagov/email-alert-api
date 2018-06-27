@@ -19,7 +19,7 @@ Rails.application.routes.draw do
     get "/healthcheck", to: GovukHealthcheck.rack_response(
       GovukHealthcheck::SidekiqRedis,
       GovukHealthcheck::ActiveRecord,
-
+      Healthcheck::ContentChangeHealthcheck.new,
       Healthcheck::DigestRunHealthcheck.new,
       Healthcheck::QueueLatencyHealthcheck.new,
       Healthcheck::QueueSizeHealthcheck.new,
