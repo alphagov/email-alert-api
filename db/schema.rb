@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_28_134912) do
+ActiveRecord::Schema.define(version: 2018_06_28_135936) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,8 @@ ActiveRecord::Schema.define(version: 2018_06_28_134912) do
     t.datetime "archived_at", null: false
     t.datetime "finished_sending_at", null: false
     t.datetime "exported_at"
+    t.index ["exported_at"], name: "index_email_archives_on_exported_at"
+    t.index ["finished_sending_at"], name: "index_email_archives_on_finished_sending_at"
   end
 
   create_table "emails", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
