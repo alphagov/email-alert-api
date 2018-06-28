@@ -40,11 +40,11 @@ module Healthcheck
     end
 
     def critical_latency
-      1.minute
+      3.minutes
     end
 
     def warning_latency
-      30.seconds
+      90.seconds
     end
   end
 end

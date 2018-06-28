@@ -19,17 +19,17 @@ RSpec.describe Healthcheck::SubscriptionContentHealthcheck do
     it_behaves_like "an ok healthcheck"
   end
 
-  context "when a subscription content was created 30 seconds ago" do
+  context "when a subscription content was created 90 seconds ago" do
     before do
-      create(:subscription_content, created_at: 30.seconds.ago)
+      create(:subscription_content, created_at: 90.seconds.ago)
     end
 
     it_behaves_like "a warning healthcheck"
   end
 
-  context "when a subscription content was created 1 minute ago" do
+  context "when a subscription content was created 3 minutes ago" do
     before do
-      create(:subscription_content, created_at: 1.minute.ago)
+      create(:subscription_content, created_at: 3.minutes.ago)
     end
 
     it_behaves_like "a critical healthcheck"
