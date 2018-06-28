@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_28_072318) do
+ActiveRecord::Schema.define(version: 2018_06_28_134912) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,6 +85,7 @@ ActiveRecord::Schema.define(version: 2018_06_28_072318) do
     t.datetime "created_at", null: false
     t.datetime "archived_at", null: false
     t.datetime "finished_sending_at", null: false
+    t.datetime "exported_at"
   end
 
   create_table "emails", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -164,8 +165,8 @@ ActiveRecord::Schema.define(version: 2018_06_28_072318) do
     t.bigint "subscriber_list_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "signon_user_uid"
     t.integer "frequency", default: 0, null: false
+    t.string "signon_user_uid"
     t.integer "source", default: 0, null: false
     t.datetime "ended_at"
     t.integer "ended_reason"
