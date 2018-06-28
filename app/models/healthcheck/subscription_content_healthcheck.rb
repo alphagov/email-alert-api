@@ -5,9 +5,9 @@ module Healthcheck
     end
 
     def status
-      if count_subscription_contents(critical_latency).positive?
+      if critical_subscription_contents.positive?
         :critical
-      elsif count_subscription_contents(warning_latency).positive?
+      elsif warning_subscription_contents.positive?
         :warning
       else
         :ok
@@ -16,12 +16,20 @@ module Healthcheck
 
     def details
       {
-        critical: count_subscription_contents(critical_latency),
-        warning: count_subscription_contents(warning_latency),
+        critical: critical_subscription_contents,
+        warning: warning_subscription_contents,
       }
     end
 
   private
+
+    def critical_subscription_contents
+      @critical_subscription_contents ||= count_subscription_contents(critical_latency)
+    end
+
+    def warning_subscription_contents
+      @warning_subscription_contents ||= count_subscription_contents(warning_latency)
+    end
 
     def count_subscription_contents(age)
       # The `merge(Subscription.active)` check is because there is a

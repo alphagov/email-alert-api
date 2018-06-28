@@ -5,9 +5,9 @@ module Healthcheck
     end
 
     def status
-      if count_digest_runs(critical_latency).positive?
+      if critical_digest_runs.positive?
         :critical
-      elsif count_digest_runs(warning_latency).positive?
+      elsif warning_digest_runs.positive?
         :warning
       else
         :ok
@@ -16,12 +16,20 @@ module Healthcheck
 
     def details
       {
-        critical: count_digest_runs(critical_latency),
-        warning: count_digest_runs(warning_latency),
+        critical: critical_digest_runs,
+        warning: warning_digest_runs,
       }
     end
 
   private
+
+    def critical_digest_runs
+      @critical_digest_runs ||= count_digest_runs(critical_latency)
+    end
+
+    def warning_digest_runs
+      @warning_digest_runs ||= count_digest_runs(warning_latency)
+    end
 
     def count_digest_runs(age)
       DigestRun

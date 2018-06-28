@@ -5,9 +5,9 @@ module Healthcheck
     end
 
     def status
-      if count_content_changes(critical_latency).positive?
+      if critical_content_changes.positive?
         :critical
-      elsif count_content_changes(warning_latency).positive?
+      elsif warning_content_changes.positive?
         :warning
       else
         :ok
@@ -16,12 +16,20 @@ module Healthcheck
 
     def details
       {
-        critical: count_content_changes(critical_latency),
-        warning: count_content_changes(warning_latency),
+        critical: critical_content_changes,
+        warning: warning_content_changes,
       }
     end
 
   private
+
+    def critical_content_changes
+      @critical_content_changes ||= count_content_changes(critical_latency)
+    end
+
+    def warning_content_changes
+      @warning_content_changes ||= count_content_changes(warning_latency)
+    end
 
     def count_content_changes(age)
       ContentChange
