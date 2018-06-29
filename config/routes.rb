@@ -19,14 +19,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     get "/healthcheck", to: GovukHealthcheck.rack_response(
       GovukHealthcheck::SidekiqRedis,
       GovukHealthcheck::ActiveRecord,
-      Healthcheck::ContentChangeHealthcheck.new,
-      Healthcheck::DigestRunHealthcheck.new,
-      Healthcheck::QueueLatencyHealthcheck.new,
-      Healthcheck::QueueSizeHealthcheck.new,
-      Healthcheck::RetrySizeHealthcheck.new,
-      Healthcheck::StatusUpdateHealthcheck.new,
-      Healthcheck::SubscriptionContentHealthcheck.new,
-      Healthcheck::TechnicalFailureHealthcheck.new,
+      Healthcheck::ContentChangeHealthcheck,
+      Healthcheck::DigestRunHealthcheck,
+      Healthcheck::QueueLatencyHealthcheck,
+      Healthcheck::QueueSizeHealthcheck,
+      Healthcheck::RetrySizeHealthcheck,
+      Healthcheck::StatusUpdateHealthcheck,
+      Healthcheck::SubscriptionContentHealthcheck,
+      Healthcheck::TechnicalFailureHealthcheck,
     )
   end
 end
