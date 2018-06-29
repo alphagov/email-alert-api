@@ -9,10 +9,10 @@ RSpec.describe S3EmailArchiveService do
 
   def create_record(time: Time.now)
     {
-      archived_at: time,
+      archived_at: time.utc.to_s(:db),
       content_change: nil,
-      created_at: time,
-      finished_sending_at: time,
+      created_at: time.utc.to_s(:db),
+      finished_sending_at: time.utc.to_s(:db),
       id: SecureRandom.uuid,
       sent: true,
       subject: "Test email",
@@ -42,7 +42,7 @@ RSpec.describe S3EmailArchiveService do
 
     expect_any_instance_of(Aws::S3::Object).to receive(:put)
       .with(
-        body: gzipped_match(%r/^{"archived_at":"2018-06-28/),
+        body: gzipped_match(%r/^{"archived_at":"2018-06-27/),
         content_encoding: "gzip"
       ) do |args|
       end

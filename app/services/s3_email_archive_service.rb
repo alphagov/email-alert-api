@@ -17,7 +17,9 @@ private
     batch.group_by do |item|
       # we group by date in this way to create partitions for s3/athena
       # these are grouped in case dates span more than one day
-      item.fetch(:finished_sending_at).utc.strftime("year=%Y/month=%m/date=%d")
+      Date.parse(
+        item.fetch(:finished_sending_at)
+      ).strftime("year=%Y/month=%m/date=%d")
     end
   end
 
@@ -40,7 +42,8 @@ private
 
   def object_name(prefix, last_time)
     uuid = SecureRandom.uuid
-    "email-archive/#{prefix}/#{last_time.utc.to_s(:iso8601)}-#{uuid}.json.gz"
+    time = ActiveSupport::TimeZone["UTC"].parse(last_time)
+    "email-archive/#{prefix}/#{time.to_s(:iso8601)}-#{uuid}.json.gz"
   end
 
   def object_body(records)
