@@ -68,16 +68,16 @@ private
 
     def send_to_s3(records)
       batch = records.map do |r|
-        r.symbolize_keys.slice(
-          :archived_at,
-          :content_change,
-          :created_at,
-          :finished_sending_at,
-          :id,
-          :sent,
-          :subject,
-          :subscriber_id
-        )
+        {
+          archived_at: r["archived_at"].utc.to_s(:db),
+          content_change: r["content_change"],
+          created_at: r["created_at"].utc.to_s(:db),
+          finished_sending_at: r["finished_sending_at"].utc.to_s(:db),
+          id: r["id"],
+          sent: r["sent"],
+          subject: r["subject"],
+          subscriber_id: r["subscriber_id"]
+        }
       end
 
       S3EmailArchiveService.call(batch)
