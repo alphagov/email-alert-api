@@ -1,33 +1,36 @@
 require "rails_helper"
 
 RSpec.describe EmailArchivePresenter do
-  describe ".call" do
-    let(:record) do
-      {
-        "content_change_ids" => [SecureRandom.uuid],
-        "digest_run_ids" => [1],
-        "created_at" => Time.now,
-        "finished_sending_at" => Time.now,
-        "id" => SecureRandom.uuid,
-        "sent" => true,
-        "subject" => "Test email",
-        "subscriber_id" => 1,
-        "subscription_ids" => [SecureRandom.uuid]
-      }
-    end
+  let(:time_bst) { Time.parse("2018-07-01 10:00 +0100") }
+  let(:time_for_s3) { "2018-07-01 09:00:00" }
 
-    let(:archived_at) { Time.now }
+  let(:record) do
+    {
+      "content_change_ids" => [SecureRandom.uuid],
+      "digest_run_ids" => [1],
+      "created_at" => time_bst,
+      "finished_sending_at" => time_bst,
+      "id" => SecureRandom.uuid,
+      "sent" => true,
+      "subject" => "Test email",
+      "subscriber_id" => 1,
+      "subscription_ids" => [SecureRandom.uuid]
+    }
+  end
 
+  let(:archived_at) { time_bst }
+
+  describe ".for_s3" do
     it "presents the data" do
-      expect(described_class.call(record, archived_at)).to eq(
-        archived_at: archived_at,
+      expect(described_class.for_s3(record, archived_at)).to eq(
+        archived_at: time_for_s3,
         content_change: {
           content_change_ids: record["content_change_ids"],
           digest_run_id: record["digest_run_ids"].first,
           subscription_ids: record["subscription_ids"]
         },
-        created_at: record["created_at"],
-        finished_sending_at: record["finished_sending_at"],
+        created_at: time_for_s3,
+        finished_sending_at: time_for_s3,
         id: record["id"],
         sent: record["sent"],
         subject: record["subject"],
@@ -38,7 +41,7 @@ RSpec.describe EmailArchivePresenter do
 
     context "when there are required keys missing" do
       it "raises a KeyError" do
-        expect { described_class.call(record.except("id"), archived_at) }
+        expect { described_class.for_s3(record.except("id"), archived_at) }
           .to raise_error(KeyError)
       end
     end
@@ -50,15 +53,35 @@ RSpec.describe EmailArchivePresenter do
       end
 
       it "only returns one of them" do
-        expect(described_class.call(record, archived_at)).to match(
+        expect(described_class.for_s3(record, archived_at)).to match(
           hash_including(content_change: hash_including(digest_run_id: 1))
         )
       end
 
       it "notifies the error service" do
         expect(GovukError).to receive(:notify)
-        described_class.call(record, archived_at)
+        described_class.for_s3(record, archived_at)
       end
+    end
+  end
+
+  describe ".for_db" do
+    it "presents the data" do
+      expect(described_class.for_db(record, archived_at, nil)).to eq(
+        archived_at: time_bst,
+        content_change: {
+          content_change_ids: record["content_change_ids"],
+          digest_run_id: record["digest_run_ids"].first,
+          subscription_ids: record["subscription_ids"]
+        },
+        created_at: time_bst,
+        exported_at: nil,
+        finished_sending_at: time_bst,
+        id: record["id"],
+        sent: record["sent"],
+        subject: record["subject"],
+        subscriber_id: record["subscriber_id"],
+      )
     end
   end
 end
