@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe EmailArchivePresenter do
   let(:time_bst) { Time.parse("2018-07-01 10:00 +0100") }
-  let(:time_for_s3) { "2018-07-01 09:00:00" }
+  let(:time_for_s3) { "2018-07-01 09:00:00.000" }
 
   let(:record) do
     {
@@ -23,14 +23,14 @@ RSpec.describe EmailArchivePresenter do
   describe ".for_s3" do
     it "presents the data" do
       expect(described_class.for_s3(record, archived_at)).to eq(
-        archived_at: time_for_s3,
+        archived_at_utc: time_for_s3,
         content_change: {
           content_change_ids: record["content_change_ids"],
           digest_run_id: record["digest_run_ids"].first,
           subscription_ids: record["subscription_ids"]
         },
-        created_at: time_for_s3,
-        finished_sending_at: time_for_s3,
+        created_at_utc: time_for_s3,
+        finished_sending_at_utc: time_for_s3,
         id: record["id"],
         sent: record["sent"],
         subject: record["subject"],

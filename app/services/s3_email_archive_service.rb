@@ -18,14 +18,14 @@ private
       # we group by date in this way to create partitions for s3/athena
       # these are grouped in case dates span more than one day
       Date.parse(
-        item.fetch(:finished_sending_at)
+        item.fetch(:finished_sending_at_utc)
       ).strftime("year=%Y/month=%m/date=%d")
     end
   end
 
   def send_to_s3(prefix, records)
-    records = records.sort_by { |r| r.fetch(:finished_sending_at) }
-    last_time = records.last[:finished_sending_at]
+    records = records.sort_by { |r| r.fetch(:finished_sending_at_utc) }
+    last_time = records.last[:finished_sending_at_utc]
     obj = bucket.object(object_name(prefix, last_time))
     obj.put(
       body: object_body(records),

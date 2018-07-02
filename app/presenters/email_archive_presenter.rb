@@ -1,4 +1,6 @@
 class EmailArchivePresenter
+  S3_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S.%L".freeze
+
   # This is expected to be called with a JSON representation of a record
   # returned from EmailArchiveQuery
   def self.for_s3(*args)
@@ -7,10 +9,10 @@ class EmailArchivePresenter
 
   def for_s3(record, archived_at)
     {
-      archived_at: archived_at.utc.to_s(:db),
+      archived_at_utc: archived_at.utc.strftime(S3_DATETIME_FORMAT),
       content_change: build_content_change(record),
-      created_at: record.fetch("created_at").utc.to_s(:db),
-      finished_sending_at: record.fetch("finished_sending_at").utc.to_s(:db),
+      created_at_utc: record.fetch("created_at").utc.strftime(S3_DATETIME_FORMAT),
+      finished_sending_at_utc: record.fetch("finished_sending_at").utc.strftime(S3_DATETIME_FORMAT),
       id: record.fetch("id"),
       sent: record.fetch("sent"),
       subject: record.fetch("subject"),

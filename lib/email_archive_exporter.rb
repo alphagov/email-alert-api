@@ -69,10 +69,10 @@ private
     def send_to_s3(records)
       batch = records.map do |r|
         {
-          archived_at: r["archived_at"].utc.to_s(:db),
+          archived_at_utc: r["archived_at"].utc.strftime(EmailArchivePresenter::S3_DATETIME_FORMAT),
           content_change: r["content_change"],
-          created_at: r["created_at"].utc.to_s(:db),
-          finished_sending_at: r["finished_sending_at"].utc.to_s(:db),
+          created_at_utc: r["created_at"].utc.strftime(EmailArchivePresenter::S3_DATETIME_FORMAT),
+          finished_sending_at_utc: r["finished_sending_at"].utc.strftime(EmailArchivePresenter::S3_DATETIME_FORMAT),
           id: r["id"],
           sent: r["sent"],
           subject: r["subject"],
