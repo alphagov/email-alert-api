@@ -40,6 +40,48 @@ RSpec.describe EmailArchiveWorker do
       end
     end
 
+    describe "archiving to S3" do
+      let!(:email) { create(:archivable_email) }
+
+      context "when archiving is disabled" do
+        around do |example|
+          ClimateControl.modify(EMAIL_ARCHIVE_S3_ENABLED: nil) { example.run }
+        end
+
+        it "does not use the S3EmailArchiveService" do
+          expect(S3EmailArchiveService).not_to receive(:call)
+          perform
+        end
+
+        it "does not set the EmailArchive entry as exported" do
+          perform
+          expect(EmailArchive.find(email.id).exported_at).to be_nil
+        end
+      end
+
+      context "when archiving is enabled" do
+        before { Aws.config[:s3] = { stub_responses: true } }
+
+        around do |example|
+          env_vars = {
+            EMAIL_ARCHIVE_S3_BUCKET: "my-bucket",
+            EMAIL_ARCHIVE_S3_ENABLED: "yes",
+          }
+          ClimateControl.modify(env_vars) { example.run }
+        end
+
+        it "Uses the S3EmailArchiveService" do
+          expect(S3EmailArchiveService).to receive(:call)
+          perform
+        end
+
+        it "sets the EmailArchive entry as exported" do
+          perform
+          expect(EmailArchive.find(email.id).exported_at).not_to be nil
+        end
+      end
+    end
+
     context "when an email is not associated with content changes" do
       let!(:email) { create(:archivable_email) }
 

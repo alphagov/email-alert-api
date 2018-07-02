@@ -6,6 +6,7 @@ gem 'rails', '~> 5.2'
 gem 'activerecord-import', '~> 0.24'
 gem 'with_advisory_lock', '~> 3.2'
 
+gem 'aws-sdk-s3', '~> 1'
 gem 'faraday', '0.12.2'
 gem 'foreman', '~> 0.85'
 gem 'gds-api-adapters', '~> 52.6'
