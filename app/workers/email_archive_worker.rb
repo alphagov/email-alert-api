@@ -6,6 +6,7 @@ class EmailArchiveWorker
   LOCK_NAME = "email_archive_worker".freeze
 
   def perform
+    return unless ENV.include?("EMAIL_ARCHIVE_S3_ENABLED")
     Email.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
       start_time = Time.zone.now
       archived_count = 0
@@ -24,25 +25,8 @@ private
 
   def archive_batch(batch)
     archived_at = Time.zone.now
-    exported_at = nil
-
-    if ENV.include?("EMAIL_ARCHIVE_S3_ENABLED")
-      send_to_s3(batch, archived_at)
-      exported_at = archived_at
-    end
-
-    import_batch(batch, archived_at, exported_at)
+    send_to_s3(batch, archived_at)
     mark_emails_as_archived(batch.pluck("id"), archived_at)
-  end
-
-  def import_batch(batch, archived_at, exported_at)
-    archive = batch.map do |b|
-      EmailArchivePresenter.for_db(b, archived_at, exported_at)
-    end
-
-    columns = archive.first.keys.map(&:to_s)
-    values = archive.map(&:values)
-    EmailArchive.import(columns, values, validate: false)
   end
 
   def send_to_s3(batch, archived_at)

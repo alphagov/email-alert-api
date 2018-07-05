@@ -64,24 +64,4 @@ RSpec.describe EmailArchivePresenter do
       end
     end
   end
-
-  describe ".for_db" do
-    it "presents the data" do
-      expect(described_class.for_db(record, archived_at, nil)).to eq(
-        archived_at: time_bst,
-        content_change: {
-          content_change_ids: record["content_change_ids"],
-          digest_run_id: record["digest_run_ids"].first,
-          subscription_ids: record["subscription_ids"]
-        },
-        created_at: time_bst,
-        exported_at: nil,
-        finished_sending_at: time_bst,
-        id: record["id"],
-        sent: record["sent"],
-        subject: record["subject"],
-        subscriber_id: record["subscriber_id"],
-      )
-    end
-  end
 end

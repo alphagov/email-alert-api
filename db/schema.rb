@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_28_135936) do
+ActiveRecord::Schema.define(version: 2018_07_05_095148) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,19 +75,6 @@ ActiveRecord::Schema.define(version: 2018_06_28_135936) do
     t.integer "subscriber_count"
     t.index ["completed_at"], name: "index_digest_runs_on_completed_at"
     t.index ["created_at"], name: "index_digest_runs_on_created_at"
-  end
-
-  create_table "email_archives", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.string "subject", null: false
-    t.bigint "subscriber_id"
-    t.json "content_change"
-    t.boolean "sent", null: false
-    t.datetime "created_at", null: false
-    t.datetime "archived_at", null: false
-    t.datetime "finished_sending_at", null: false
-    t.datetime "exported_at"
-    t.index ["exported_at"], name: "index_email_archives_on_exported_at"
-    t.index ["finished_sending_at"], name: "index_email_archives_on_finished_sending_at"
   end
 
   create_table "emails", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
