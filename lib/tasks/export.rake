@@ -13,9 +13,4 @@ namespace :export do
   task csv_from_living_in_europe: :environment do
     DataExporter.new.export_csv_from_living_in_europe
   end
-
-  desc "Export data from Email Archives to S3 - accepts arguments for the date range of emails to export"
-  task :email_archives_to_s3, %i[from_date until_date] => :environment do |_, args|
-    EmailArchiveExporter.call(args.from_date, args.until_date)
-  end
 end
