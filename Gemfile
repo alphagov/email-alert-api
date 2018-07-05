@@ -4,7 +4,7 @@ gem 'pg', '~> 0.21'
 gem 'rails', '~> 5.2'
 
 gem 'activerecord-import', '~> 0.24'
-gem 'with_advisory_lock', '~> 3.2'
+gem 'with_advisory_lock', '~> 4.0'
 
 gem 'aws-sdk-s3', '~> 1'
 gem 'faraday', '0.12.2'
