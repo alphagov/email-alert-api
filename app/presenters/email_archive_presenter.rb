@@ -20,24 +20,6 @@ class EmailArchivePresenter
     }
   end
 
-  def self.for_db(*args)
-    new.for_db(*args)
-  end
-
-  def for_db(record, archived_at, exported_at = nil)
-    {
-      archived_at: archived_at,
-      content_change: build_content_change(record),
-      created_at: record.fetch("created_at"),
-      exported_at: exported_at,
-      finished_sending_at: record.fetch("finished_sending_at"),
-      id: record.fetch("id"),
-      sent: record.fetch("sent"),
-      subject: record.fetch("subject"),
-      subscriber_id: record.fetch("subscriber_id"),
-    }
-  end
-
   private_class_method :new
 
 private
