@@ -1,5 +1,5 @@
 module Healthcheck
-  class RetrySizeHealthcheck
+  class RetrySize
     def name
       :retry_size
     end

@@ -1,7 +1,7 @@
 module Healthcheck
-  class StatusUpdateHealthcheck
+  class StatusUpdates
     def name
-      :status_update
+      :status_updates
     end
 
     def status

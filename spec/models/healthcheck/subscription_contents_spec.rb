@@ -1,4 +1,4 @@
-RSpec.describe Healthcheck::ContentChangeHealthcheck do
+RSpec.describe Healthcheck::SubscriptionContents do
   shared_examples "an ok healthcheck" do
     specify { expect(subject.status).to eq(:ok) }
   end
@@ -11,25 +11,25 @@ RSpec.describe Healthcheck::ContentChangeHealthcheck do
     specify { expect(subject.status).to eq(:critical) }
   end
 
-  context "when a content change was created 1 minute ago" do
+  context "when a subscription content was created 1 second ago" do
     before do
-      create(:content_change, created_at: 1.minute.ago)
+      create(:subscription_content, created_at: 1.second.ago)
     end
 
     it_behaves_like "an ok healthcheck"
   end
 
-  context "when a content change was created 5 minutes ago" do
+  context "when a subscription content was created 90 seconds ago" do
     before do
-      create(:content_change, created_at: 5.minutes.ago)
+      create(:subscription_content, created_at: 90.seconds.ago)
     end
 
     it_behaves_like "a warning healthcheck"
   end
 
-  context "when a content change was created 10 minutes ago" do
+  context "when a subscription content was created 3 minutes ago" do
     before do
-      create(:content_change, created_at: 10.minutes.ago)
+      create(:subscription_content, created_at: 3.minutes.ago)
     end
 
     it_behaves_like "a critical healthcheck"

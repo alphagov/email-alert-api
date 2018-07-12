@@ -1,4 +1,4 @@
-RSpec.describe Healthcheck::TechnicalFailureHealthcheck do
+RSpec.describe Healthcheck::TechnicalFailures do
   def create_delivery_attempt(status, created, email = create(:email))
     create(:delivery_attempt, status: status, created_at: created, email: email)
   end

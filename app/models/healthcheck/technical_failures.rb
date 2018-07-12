@@ -1,7 +1,7 @@
 module Healthcheck
-  class TechnicalFailureHealthcheck
+  class TechnicalFailures
     def name
-      :technical_failure
+      :technical_failures
     end
 
     def status

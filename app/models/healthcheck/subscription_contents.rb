@@ -1,7 +1,7 @@
 module Healthcheck
-  class SubscriptionContentHealthcheck
+  class SubscriptionContents
     def name
-      :subscription_content
+      :subscription_contents
     end
 
     def status

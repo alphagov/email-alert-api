@@ -1,4 +1,4 @@
-RSpec.describe Healthcheck::QueueSizeHealthcheck do
+RSpec.describe Healthcheck::QueueSize do
   before { allow(subject).to receive(:queue_sizes).and_return [size] }
 
   context "when there aren't many jobs" do

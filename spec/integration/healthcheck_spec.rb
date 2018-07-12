@@ -8,7 +8,7 @@ RSpec.describe "Healthcheck", type: :request do
 
   context "when one of the healthchecks is warning" do
     before do
-      allow_any_instance_of(Healthcheck::QueueSizeHealthcheck)
+      allow_any_instance_of(Healthcheck::QueueSize)
         .to receive(:queues)
         .and_return(default: 80000)
     end
@@ -41,8 +41,8 @@ RSpec.describe "Healthcheck", type: :request do
       queue_size:            { status: "ok", queues: a_kind_of(Hash) },
       redis_connectivity:    { status: "ok" },
       retry_size:            { status: "ok", retry_size: 0 },
-      subscription_content:  { status: "ok", critical: 0, warning: 0 },
-      technical_failure:     hash_including(status: "ok", failing: 0),
+      subscription_contents: { status: "ok", critical: 0, warning: 0 },
+      technical_failures:    hash_including(status: "ok", failing: 0),
     )
   end
 end

@@ -1,5 +1,5 @@
 module Healthcheck
-  class QueueLatencyHealthcheck
+  class QueueLatency
     def name
       :queue_latency
     end

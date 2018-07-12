@@ -1,4 +1,4 @@
-RSpec.describe Healthcheck::QueueLatencyHealthcheck do
+RSpec.describe Healthcheck::QueueLatency do
   let(:delivery_immediate_high_latency) { 0 }
   let(:delivery_immediate_latency) { 0 }
   let(:delivery_digest_latency) { 0 }

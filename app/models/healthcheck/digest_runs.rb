@@ -1,5 +1,5 @@
 module Healthcheck
-  class DigestRunHealthcheck
+  class DigestRuns
     def name
       :digest_runs
     end

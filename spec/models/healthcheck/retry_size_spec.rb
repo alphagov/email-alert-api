@@ -1,4 +1,4 @@
-RSpec.describe Healthcheck::RetrySizeHealthcheck do
+RSpec.describe Healthcheck::RetrySize do
   before { allow(subject).to receive(:retry_size).and_return(size) }
 
   context "when there aren't many retries" do
