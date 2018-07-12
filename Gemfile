@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'pg', '~> 0.21'
 gem 'rails', '~> 5.2'
 
-gem 'activerecord-import', '~> 0.24'
+gem 'activerecord-import', '~> 0.25'
 gem 'with_advisory_lock', '~> 4.0'
 
 gem 'aws-sdk-s3', '~> 1'
