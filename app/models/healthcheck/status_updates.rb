@@ -1,27 +1,24 @@
 module Healthcheck
-  class StatusUpdates
+  class StatusUpdates < GovukHealthcheck::ThresholdCheck
     def name
       :status_updates
     end
 
-    def status
-      return :ok unless expect_status_update_callbacks?
-
-      if proportion_pending >= 0.2
-        :critical
-      elsif proportion_pending >= 0.1
-        :warning
-      else
-        :ok
-      end
+    def value
+      return 0 if total.zero?
+      total_pending.to_f / total.to_f
     end
 
-    def details
-      {
-        totals: totals,
-        pending: proportion_pending,
-        done: proportion_done,
-      }
+    def critical_threshold
+      0.2
+    end
+
+    def warning_threshold
+      0.1
+    end
+
+    def enabled?
+      EmailAlertAPI.config.email_service.fetch(:expect_status_update_callbacks)
     end
 
   private
@@ -43,20 +40,6 @@ module Healthcheck
 
     def total
       total_pending + total_done
-    end
-
-    def proportion_pending
-      return 0 if total.zero?
-      total_pending.to_f / total.to_f
-    end
-
-    def proportion_done
-      return 1 if total.zero?
-      total_done.to_f / total.to_f
-    end
-
-    def expect_status_update_callbacks?
-      EmailAlertAPI.config.email_service.fetch(:expect_status_update_callbacks)
     end
   end
 end

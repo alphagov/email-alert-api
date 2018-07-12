@@ -1,27 +1,24 @@
 module Healthcheck
-  class TechnicalFailures
+  class TechnicalFailures < GovukHealthcheck::ThresholdCheck
     def name
       :technical_failures
     end
 
-    def status
-      return :ok unless expect_status_update_callbacks?
-
-      if proportion_failing >= 0.1
-        :critical
-      elsif proportion_failing >= 0.05
-        :warning
-      else
-        :ok
-      end
+    def value
+      return 0 if total.zero?
+      total_failing.to_f / total.to_f
     end
 
-    def details
-      {
-        totals: totals,
-        failing: proportion_failing,
-        other: proportion_other,
-      }
+    def critical_threshold
+      0.1
+    end
+
+    def warning_threshold
+      0.05
+    end
+
+    def enabled?
+      EmailAlertAPI.config.email_service.fetch(:expect_status_update_callbacks)
     end
 
   private
@@ -43,20 +40,6 @@ module Healthcheck
 
     def total
       total_failing + total_other
-    end
-
-    def proportion_failing
-      return 0 if total.zero?
-      total_failing.to_f / total.to_f
-    end
-
-    def proportion_other
-      return 1 if total.zero?
-      total_other.to_f / total.to_f
-    end
-
-    def expect_status_update_callbacks?
-      EmailAlertAPI.config.email_service.fetch(:expect_status_update_callbacks)
     end
   end
 end

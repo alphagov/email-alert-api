@@ -4,9 +4,11 @@ RSpec.describe Healthcheck::QueueLatency do
   let(:delivery_digest_latency) { 0 }
 
   before do
-    allow(subject).to receive(:latency_for).with(:delivery_immediate_high).and_return(delivery_immediate_high_latency)
-    allow(subject).to receive(:latency_for).with(:delivery_immediate).and_return(delivery_immediate_latency)
-    allow(subject).to receive(:latency_for).with(:delivery_digest).and_return(delivery_digest_latency)
+    allow(subject).to receive(:queues).and_return(
+      delivery_immediate_high: delivery_immediate_high_latency,
+      delivery_immediate: delivery_immediate_latency,
+      delivery_digest: delivery_digest_latency,
+    )
   end
 
   shared_examples "an ok healthcheck" do
