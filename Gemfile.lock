@@ -34,7 +34,7 @@ GEM
       activemodel (= 5.2.0)
       activesupport (= 5.2.0)
       arel (>= 9.0)
-    activerecord-import (0.24.0)
+    activerecord-import (0.25.0)
       activerecord (>= 3.2)
     activestorage (5.2.0)
       actionpack (= 5.2.0)
@@ -350,7 +350,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord-import (~> 0.24)
+  activerecord-import (~> 0.25)
   aws-sdk-s3 (~> 1)
   climate_control
   equivalent-xml
