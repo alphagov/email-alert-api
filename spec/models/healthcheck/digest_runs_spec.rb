@@ -1,4 +1,4 @@
-RSpec.describe Healthcheck::DigestRunHealthcheck do
+RSpec.describe Healthcheck::DigestRuns do
   shared_examples "an ok healthcheck" do
     specify { expect(subject.status).to eq(:ok) }
   end

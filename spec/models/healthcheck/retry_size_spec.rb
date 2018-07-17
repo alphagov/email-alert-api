@@ -1,5 +1,6 @@
-RSpec.describe Healthcheck::RetrySizeHealthcheck do
-  before { allow(subject).to receive(:retry_size).and_return(size) }
+RSpec.describe Healthcheck::RetrySize do
+  let(:sidekiq_stats) { double(retry_size: size) }
+  before { allow(Sidekiq::Stats).to receive(:new).and_return(sidekiq_stats) }
 
   context "when there aren't many retries" do
     let(:size) { 2 }
@@ -20,7 +21,7 @@ RSpec.describe Healthcheck::RetrySizeHealthcheck do
     let(:size) { 3 }
 
     it "returns the number of retries" do
-      expect(subject.details).to eq(retry_size: 3)
+      expect(subject.details.fetch(:value)).to eq(3)
     end
   end
 end

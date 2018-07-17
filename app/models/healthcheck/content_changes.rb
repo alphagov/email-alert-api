@@ -1,5 +1,5 @@
 module Healthcheck
-  class ContentChangeHealthcheck
+  class ContentChanges
     def name
       :content_changes
     end

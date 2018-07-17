@@ -1,5 +1,6 @@
-RSpec.describe Healthcheck::QueueSizeHealthcheck do
-  before { allow(subject).to receive(:queue_sizes).and_return [size] }
+RSpec.describe Healthcheck::QueueSize do
+  let(:sidekiq_stats) { double(queues: { default: size }) }
+  before { allow(Sidekiq::Stats).to receive(:new).and_return(sidekiq_stats) }
 
   context "when there aren't many jobs" do
     let(:size) { 1 }
@@ -18,11 +19,9 @@ RSpec.describe Healthcheck::QueueSizeHealthcheck do
 
   describe "#details" do
     let(:size) { 3 }
-    let(:queues) { { default: size } }
 
     it "returns a hash of the queues and their sizes" do
-      allow(subject).to receive(:queues).and_return(queues)
-      expect(subject.details).to eq(queues: queues)
+      expect(subject.details.fetch(:queues)).to match(default: hash_including(value: 3))
     end
   end
 end
