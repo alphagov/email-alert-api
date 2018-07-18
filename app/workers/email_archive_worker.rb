@@ -4,6 +4,7 @@ class EmailArchiveWorker
   sidekiq_options queue: :cleanup
 
   LOCK_NAME = "email_archive_worker".freeze
+  BATCH_SIZE = 1000
 
   def perform
     return unless ENV.include?("EMAIL_ARCHIVE_S3_ENABLED")
@@ -11,10 +12,13 @@ class EmailArchiveWorker
       start_time = Time.zone.now
       archived_count = 0
 
-      EmailArchiveQuery.call.in_batches do |batch|
-        Email.transaction do
-          archived_count += archive_batch(batch.as_json)
-        end
+      loop do
+        batch = EmailArchiveQuery.call.limit(BATCH_SIZE).as_json
+        break if batch.empty?
+
+        archived_count += archive_batch(batch)
+
+        break if batch.length < BATCH_SIZE
       end
 
       log_complete(archived_count, start_time, Time.zone.now)
