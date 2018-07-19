@@ -8,9 +8,7 @@ class EmailDeletionWorker
   def perform
     Email.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
       start_time = Time.zone.now
-      deleted_count = Email.deleteable.in_batches.inject(0) do |memo, batch|
-        memo + batch.delete_all
-      end
+      deleted_count = Email.deleteable.delete_all
       log_complete(deleted_count, start_time, Time.zone.now)
     end
   end
