@@ -74,4 +74,25 @@ RSpec.describe UnsubscribeService do
       end
     end
   end
+
+  describe "spam_report" do
+    let!(:subscription) { create(:subscription) }
+    let(:subscriber) { subscription.subscriber }
+    let(:email) { create(:email, subscriber_id: subscriber.id) }
+    let(:delivery_attempt) { create(:delivery_attempt, email: email) }
+
+    it "unsubscribes the subscriber" do
+      expect { subject.spam_report!(delivery_attempt) }
+        .to change { email.reload.marked_as_spam }
+        .from(nil)
+        .to(true)
+    end
+
+    it "marks the subscription as ended" do
+      expect { subject.spam_report!(delivery_attempt) }
+        .to change { subscription.reload.ended_reason }
+        .from(nil)
+        .to("marked_as_spam")
+    end
+  end
 end
