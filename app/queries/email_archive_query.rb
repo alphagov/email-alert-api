@@ -18,6 +18,7 @@ private
       digest_run_ids,
       :finished_sending_at,
       :id,
+      :marked_as_spam,
       sent,
       :subject,
       :subscriber_id,
