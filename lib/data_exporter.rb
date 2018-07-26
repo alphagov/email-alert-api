@@ -13,6 +13,10 @@ class DataExporter
     export_csv(living_in_europe_subscriber_lists)
   end
 
+  def export_csv_from_slugs(slugs)
+    export_csv(SubscriberList.where(slug: slugs))
+  end
+
 private
 
   CSV_HEADERS = %i(id title count).freeze

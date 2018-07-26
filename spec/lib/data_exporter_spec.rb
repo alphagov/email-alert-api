@@ -34,4 +34,22 @@ RSpec.describe DataExporter do
       expect { subject }.to output("id,title,count\n1,title,2\n").to_stdout
     end
   end
+
+  describe "#export_csv_from_slugs" do
+    let(:subscriber_list_foo) { create(:subscriber_list, id: 1, title: "Foo", slug: "foo") }
+    let(:subscriber_list_bar) { create(:subscriber_list, id: 2, title: "Bar", slug: "bar") }
+    let(:subscriber_list_baz) { create(:subscriber_list, id: 3, title: "Baz", slug: "baz") }
+
+    before do
+      create(:subscription, subscriber_list: subscriber_list_foo)
+      create(:subscription, subscriber_list: subscriber_list_bar)
+      create(:subscription, subscriber_list: subscriber_list_baz)
+    end
+
+    subject { DataExporter.new.export_csv_from_slugs(%w(foo bar)) }
+
+    it "exports subscriber lists by slug" do
+      expect { subject }.to output("id,title,count\n1,Foo,1\n2,Bar,1\n").to_stdout
+    end
+  end
 end
