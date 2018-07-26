@@ -9,6 +9,14 @@ class DataExporter
     export_csv(SubscriberList.where(id: ids), at: date)
   end
 
+  def export_csv_from_slugs(slugs)
+    export_csv(SubscriberList.where(slug: slugs))
+  end
+
+  def export_csv_from_slugs_at(date, slugs)
+    export_csv(SubscriberList.where(slug: slugs), at: date)
+  end
+
   def export_csv_from_living_in_europe
     export_csv(living_in_europe_subscriber_lists)
   end
