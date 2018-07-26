@@ -13,4 +13,9 @@ namespace :export do
   task csv_from_living_in_europe: :environment do
     DataExporter.new.export_csv_from_living_in_europe
   end
+
+  desc "Export the number of subscriptions for the given subscription list slug(s). eg. rake csv_from_slugs['foo bar baz']"
+  task :csv_from_slugs, [:slugs] => :environment do |_, args|
+    DataExporter.new.export_csv_from_slugs(args.slugs.split)
+  end
 end
