@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_23_091112) do
+ActiveRecord::Schema.define(version: 2018_07_27_115914) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,7 +38,6 @@ ActiveRecord::Schema.define(version: 2018_07_23_091112) do
     t.text "footnote", default: "", null: false
     t.index ["created_at"], name: "index_content_changes_on_created_at"
     t.index ["processed_at"], name: "index_content_changes_on_processed_at"
-    t.index ["updated_at"], name: "index_content_changes_on_updated_at"
   end
 
   create_table "delivery_attempts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -53,7 +52,6 @@ ActiveRecord::Schema.define(version: 2018_07_23_091112) do
     t.index ["created_at"], name: "index_delivery_attempts_on_created_at"
     t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
     t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
-    t.index ["updated_at"], name: "index_delivery_attempts_on_updated_at"
   end
 
   create_table "digest_run_subscribers", force: :cascade do |t|
@@ -94,9 +92,6 @@ ActiveRecord::Schema.define(version: 2018_07_23_091112) do
     t.index ["created_at"], name: "index_emails_on_created_at"
     t.index ["failure_reason"], name: "index_emails_on_failure_reason"
     t.index ["finished_sending_at"], name: "index_emails_on_finished_sending_at"
-    t.index ["status", "archived_at"], name: "index_emails_on_status_and_archived_at"
-    t.index ["status"], name: "index_emails_on_status"
-    t.index ["updated_at"], name: "index_emails_on_updated_at"
   end
 
   create_table "matched_content_changes", force: :cascade do |t|
@@ -143,7 +138,6 @@ ActiveRecord::Schema.define(version: 2018_07_23_091112) do
     t.uuid "subscription_id", null: false
     t.uuid "content_change_id", null: false
     t.index ["content_change_id"], name: "index_subscription_contents_on_content_change_id"
-    t.index ["created_at"], name: "index_subscription_contents_on_created_at"
     t.index ["digest_run_subscriber_id"], name: "index_subscription_contents_on_digest_run_subscriber_id"
     t.index ["email_id"], name: "index_subscription_contents_on_email_id"
     t.index ["subscription_id", "content_change_id"], name: "index_subscription_contents_on_subscription_and_content_change", unique: true
@@ -164,7 +158,6 @@ ActiveRecord::Schema.define(version: 2018_07_23_091112) do
     t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true, where: "(ended_at IS NULL)"
     t.index ["subscriber_id"], name: "index_subscriptions_on_subscriber_id"
     t.index ["subscriber_list_id"], name: "index_subscriptions_on_subscriber_list_id"
-    t.index ["updated_at"], name: "index_subscriptions_on_updated_at"
   end
 
   create_table "users", force: :cascade do |t|
