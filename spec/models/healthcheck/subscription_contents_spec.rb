@@ -1,14 +1,17 @@
 RSpec.describe Healthcheck::SubscriptionContents do
   shared_examples "an ok healthcheck" do
     specify { expect(subject.status).to eq(:ok) }
+    specify { expect(subject.message).to match(/0 created over 600 seconds ago/) }
   end
 
   shared_examples "a warning healthcheck" do
     specify { expect(subject.status).to eq(:warning) }
+    specify { expect(subject.message).to match(/1 created over 300 seconds ago/) }
   end
 
   shared_examples "a critical healthcheck" do
     specify { expect(subject.status).to eq(:critical) }
+    specify { expect(subject.message).to match(/1 created over 600 seconds ago/) }
   end
 
   context "when a subscription content was created 10 second ago" do
