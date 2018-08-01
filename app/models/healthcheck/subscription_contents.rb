@@ -21,6 +21,13 @@ module Healthcheck
       }
     end
 
+    def message
+      <<~MESSAGE
+        #{critical_subscription_contents} created over #{critical_latency} seconds ago.
+        #{warning_subscription_contents} created over #{warning_latency} seconds ago.
+      MESSAGE
+    end
+
   private
 
     def critical_subscription_contents
@@ -48,11 +55,11 @@ module Healthcheck
     end
 
     def critical_latency
-      5.minutes
+      10.minutes
     end
 
     def warning_latency
-      2.minutes
+      5.minutes
     end
   end
 end
