@@ -35,6 +35,6 @@ group :development, :test do
   gem 'govuk-lint', '~> 3.8'
   gem 'listen', '3.1.5'
   gem 'pry-byebug'
-  gem 'rspec-rails', '3.7.2'
+  gem 'rspec-rails', '3.8.0'
   gem 'ruby-prof', '~> 0.17'
 end
