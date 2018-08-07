@@ -116,7 +116,7 @@ GEM
       rubocop (~> 0.52.0)
       rubocop-rspec (~> 1.19.0)
       scss_lint
-    govuk_app_config (1.7.0)
+    govuk_app_config (1.8.0)
       logstasher (~> 1.2.2)
       sentry-raven (~> 2.7.1)
       statsd-ruby (~> 1.4.0)
@@ -329,7 +329,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.5)
     unicode-display_width (1.4.0)
-    unicorn (5.4.0)
+    unicorn (5.4.1)
       kgio (~> 2.6)
       raindrops (~> 0.7)
     warden (1.2.7)
@@ -360,7 +360,7 @@ DEPENDENCIES
   gds-api-adapters (~> 52.7)
   gds-sso (~> 13.6)
   govuk-lint (~> 3.8)
-  govuk_app_config (~> 1.7)
+  govuk_app_config (~> 1.8)
   govuk_sidekiq (~> 3.0)
   jwt (~> 1.5)
   listen (= 3.1.5)
