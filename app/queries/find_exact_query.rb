@@ -21,10 +21,10 @@ private
   def base_scope
     @base_scope ||= begin
       scope = SubscriberList
-        .where(document_type: @document_type)
+        .where("document_type = '#{@document_type}'")
         .where(email_document_supertype: @email_document_supertype)
         .where(government_document_supertype: @government_document_supertype)
-      scope = scope.where(slug: @slug) if @slug.present?
+      scope = scope.where("slug = '#{@slug}'") if @slug.present?
       scope
     end
   end
