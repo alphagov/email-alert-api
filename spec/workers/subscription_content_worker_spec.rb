@@ -78,7 +78,7 @@ RSpec.describe SubscriptionContentWorker do
 
   context "with a courtesy subscription" do
     let!(:subscriber) do
-      create(:subscriber, address: "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk")
+      create(:subscriber, address: Email::COURTESY_EMAIL)
     end
 
     it "creates an email for the courtesy email group" do

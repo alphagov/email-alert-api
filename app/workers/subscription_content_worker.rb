@@ -64,7 +64,7 @@ private
 
   def queue_delivery_to_courtesy_subscribers(content_change)
     addresses = [
-      "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk",
+      Email::COURTESY_EMAIL,
     ]
 
     Subscriber.where(address: addresses).find_each do |subscriber|
