@@ -95,4 +95,15 @@ RSpec.describe UnsubscribeService do
         .to("marked_as_spam")
     end
   end
+
+  describe "subscriber_list!" do
+    let!(:subscriber_list) { create(:subscriber_list_with_subscribers, subscriber_count: 5) }
+
+
+    it 'unsubscribes all subscribers to the list' do
+      expect { subject.subscriber_list!(subscriber_list, :unsubscribed) }
+        .to change { subscriber_list.active_subscriptions_count }
+        .by(-5)
+    end
+  end
 end
