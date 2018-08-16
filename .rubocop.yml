@@ -2,3 +2,8 @@ AllCops:
   Exclude:
     - tmp/**/**
     - db/schema.rb
+
+Metrics/BlockLength:
+  Exclude:
+    - config/routes.rb
+    - spec/**/**
