@@ -55,11 +55,22 @@ module Healthcheck
     end
 
     def critical_latency
-      10.minutes
+      is_scheduled_publishing_time? ? 20.minutes : 10.minutes
     end
 
     def warning_latency
-      5.minutes
+      is_scheduled_publishing_time? ? 15.minutes : 5.minutes
+    end
+
+    # There's a lot of scheduled publishing at 09:30 UK time, so we
+    # want larger thresholds around then.
+    def is_scheduled_publishing_time?
+      @is_scheduled_publishing_time ||= begin
+        now = Time.zone.now
+        begun = Time.zone.parse("09:30") <= now
+        ended = Time.zone.parse("10:30") <= now
+        begun && !ended
+      end
     end
   end
 end
