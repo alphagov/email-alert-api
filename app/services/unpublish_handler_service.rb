@@ -30,7 +30,7 @@ private
 
   def unsubscribe(subscriber_lists)
     subscriber_lists.each do |subscriber_list|
-      UnsubscribeService.subscriber_list!(subscriber_list, :unpublished)
+      UnsubscribeSubscriberListWorker.perform_async(subscriber_list.id, :unpublished)
     end
   end
 

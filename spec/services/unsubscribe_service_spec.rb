@@ -101,7 +101,7 @@ RSpec.describe UnsubscribeService do
 
 
     it 'unsubscribes all subscribers to the list' do
-      expect { subject.subscriber_list!(subscriber_list, :unsubscribed) }
+      expect { subject.subscriber_list!(subscriber_list, 'unsubscribed') }
         .to change { subscriber_list.active_subscriptions_count }
         .by(-5)
     end
