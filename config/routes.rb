@@ -5,6 +5,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     get "/subscriber-lists", to: "subscriber_lists#show"
     get "/subscribables/:slug", to: "subscribables#show"
 
+    post "/unpublish-messages", to: "unpublish_messages#create"
+
     resources :notifications, only: %i[create index show]
     resources :spam_reports, path: "spam-reports", only: %i[create]
     resources :status_updates, path: "status-updates", only: %i[create]
