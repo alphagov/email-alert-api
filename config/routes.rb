@@ -1,9 +1,11 @@
-Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
+Rails.application.routes.draw do
   scope format: false, defaults: { format: :json } do
     root "welcome#index"
     resources :subscriber_lists, path: "subscriber-lists", only: %i[create]
     get "/subscriber-lists", to: "subscriber_lists#show"
     get "/subscribables/:slug", to: "subscribables#show"
+
+    post "/unpublish-messages", to: "unpublish_messages#create"
 
     resources :notifications, only: %i[create index show]
     resources :spam_reports, path: "spam-reports", only: %i[create]

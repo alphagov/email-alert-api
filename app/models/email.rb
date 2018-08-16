@@ -1,4 +1,5 @@
 class Email < ApplicationRecord
+  COURTESY_EMAIL = "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk".freeze
   has_many :delivery_attempts
 
   scope :archivable, lambda {
