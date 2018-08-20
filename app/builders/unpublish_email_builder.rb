@@ -22,12 +22,13 @@ private
   end
 
   def body(title, address, redirect)
+    redirect_url = PublicUrlService.redirect_url(path: redirect)
     <<~BODY
       Your subscription to ‘#{title}’ no longer exists, as a result you will no longer receive emails
       about this subject.
 
       #{presented_manage_subscriptions_links(address)}
-      [Redirect to this taxon](#{redirect})
+      [Redirect to this taxon](#{redirect_url})
       &nbsp;
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
