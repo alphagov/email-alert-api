@@ -25,7 +25,7 @@ module UnsubscribeService
 
     def subscriber_list!(list, reason)
       ActiveRecord::Base.transaction do
-        subscriptions = list.subscriptions
+        subscriptions = list.subscriptions.active
         unsubscribe_subscriptions!(subscriptions, reason)
         Subscriber.where(subscriptions: subscriptions).each do |subscriber|
           unsubscribe_subscriber!(subscriber)

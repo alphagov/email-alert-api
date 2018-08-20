@@ -105,5 +105,20 @@ RSpec.describe UnsubscribeService do
         .to change { subscriber_list.active_subscriptions_count }
         .by(-5)
     end
+
+    it 'does not throw an error if there are already unsubscribed subscriptions' do
+      subscriber = create(
+        :subscriber,
+        address: 'unsubscribed@example.com',
+        id: 222
+      )
+      create(
+        :subscription,
+        :ended,
+        subscriber: subscriber,
+        subscriber_list: subscriber_list,
+        )
+      expect { subject.subscriber_list!(subscriber_list, 'unsubscribed') }.to_not raise_error
+    end
   end
 end
