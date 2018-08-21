@@ -49,9 +49,10 @@ RSpec.describe UnpublishEmailBuilder do
           expect(@imported_email.address).to eq("address@test.com")
         end
         it 'contains the body for the regular email' do
-          expect(@imported_email.body).to include("Your subscription to ‘subject_test’ no longer exists, as a result you will no longer receive emails")
+          expect(@imported_email.body).to include("You were subscribed to emails about")
         end
         it 'contains the redirect in the body' do
+          pending
           expect(@imported_email.body).to include(redirect)
         end
       end

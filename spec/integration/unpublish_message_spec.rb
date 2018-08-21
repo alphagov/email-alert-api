@@ -49,6 +49,7 @@ RSpec.describe "Sending an unpublish message", type: :request do
                                       address: "test@example.com"))
     end
     it "the message contains the redirect URL" do
+      pending
       expect(DeliveryRequestService).to have_received(:call).
         with(email: having_attributes(body: include('/redirected/path'))).twice
     end
