@@ -1,6 +1,8 @@
 RSpec.describe "Sending an unpublish message", type: :request do
   context "with authentication and authorisation" do
     before :each do
+      content_id = SecureRandom.uuid
+
       subscriber = create(
         :subscriber,
         address: "test@example.com",
@@ -13,7 +15,7 @@ RSpec.describe "Sending an unpublish message", type: :request do
 
       subscriber_list = create(
         :subscriber_list,
-        links: { taxon_tree: [SecureRandom.uuid] },
+        links: { taxon_tree: [content_id] },
         title: "First Subscription",
       )
 
@@ -23,7 +25,8 @@ RSpec.describe "Sending an unpublish message", type: :request do
         subscriber_list: subscriber_list
       )
 
-      @request_params = { content_id: subscriber_list.links.values.flatten.join }.to_json
+      @request_params = { content_id: content_id,
+                          redirects: [{ path: '/source/path', destination: '/redirected/path' }] }.to_json
     end
 
     before do
@@ -31,7 +34,9 @@ RSpec.describe "Sending an unpublish message", type: :request do
       login_with_internal_app
       post "/unpublish-messages", params: @request_params, headers: JSON_HEADERS
     end
-
+    it 'returns status 202' do
+      expect(response.status).to eq(202)
+    end
     it "creates an Email and a courtesy email" do
       expect(Email.count).to eq(2)
     end
@@ -42,6 +47,10 @@ RSpec.describe "Sending an unpublish message", type: :request do
       expect(DeliveryRequestService).to have_received(:call).
         with(email: having_attributes(subject: 'First Subscription',
                                       address: "test@example.com"))
+    end
+    it "the message contains the redirect URL" do
+      expect(DeliveryRequestService).to have_received(:call).
+        with(email: having_attributes(body: include('/redirected/path'))).twice
     end
     it 'unsubscribes all affected subscriptions' do
       expect(@subscription.reload.ended_at).to_not be_nil
