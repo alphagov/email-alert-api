@@ -12,4 +12,10 @@ RSpec.describe PublicUrlService do
       expect(result).to eq("http://www.dev.gov.uk/email/subscriptions/new?topic_id=foo_bar")
     end
   end
+
+  describe ".redirect_url" do
+    it "returns the GOV.UK Url for a redirected page" do
+      expect(subject.redirect_url(path: 'redirect/to/path')).to eq("http://www.dev.gov.uk/redirect/to/path")
+    end
+  end
 end
