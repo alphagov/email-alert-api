@@ -17,6 +17,10 @@ module PublicUrlService
       "#{website_root}/email/authenticate?#{param('address', address)}"
     end
 
+    def redirect_url(path:)
+      "#{website_root}/#{path}"
+    end
+
   private
 
     def website_root
