@@ -2,10 +2,10 @@ RSpec.describe UnpublishEmailBuilder do
   describe ".call" do
     describe 'No emails sent' do
       it 'does not return any emails' do
-        expect(described_class.call([])).to be_empty
+        expect(described_class.call([], nil)).to be_empty
       end
       it 'does not save and email objects' do
-        expect { described_class.call([]) }.to_not(change { Email.count })
+        expect { described_class.call([], nil) }.to_not(change { Email.count })
       end
     end
 
@@ -26,12 +26,15 @@ RSpec.describe UnpublishEmailBuilder do
           }
         ]
       }
+      let(:redirect) {
+        'https://redirect.to/somewhere'
+      }
       it 'Saves an email object' do
-        expect { described_class.call(emails) }.to change { Email.count }.by(1)
+        expect { described_class.call(emails, redirect) }.to change { Email.count }.by(1)
       end
       describe 'return one email' do
         before :each do
-          @imported_email = described_class.call(emails).first
+          @imported_email = described_class.call(emails, redirect).first
         end
         it 'sets the subject' do
           expect(@imported_email.subject).to eq("subject_test")
@@ -45,9 +48,11 @@ RSpec.describe UnpublishEmailBuilder do
         it 'sets the addess' do
           expect(@imported_email.address).to eq("address@test.com")
         end
-
         it 'contains the body for the regular email' do
           expect(@imported_email.body).to include("Your subscription to ‘subject_test’ no longer exists, as a result you will no longer receive emails")
+        end
+        it 'contains the redirect in the body' do
+          expect(@imported_email.body).to include(redirect)
         end
       end
     end
