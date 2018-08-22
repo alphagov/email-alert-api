@@ -1,4 +1,8 @@
+require 'gds_api/test_helpers/content_store'
+
 RSpec.describe "Sending an unpublish message", type: :request do
+  include ::GdsApi::TestHelpers::ContentStore
+
   context "with authentication and authorisation" do
     before :each do
       content_id = SecureRandom.uuid
@@ -27,6 +31,13 @@ RSpec.describe "Sending an unpublish message", type: :request do
 
       @request_params = { content_id: content_id,
                           redirects: [{ path: '/source/path', destination: '/redirected/path' }] }.to_json
+
+      content_store_has_item(
+        '/redirected/path',
+        {
+          'title' => 'redirected title'
+        }.to_json
+      )
     end
 
     before do
@@ -49,9 +60,8 @@ RSpec.describe "Sending an unpublish message", type: :request do
                                       address: "test@example.com"))
     end
     it "the message contains the redirect URL" do
-      pending
       expect(DeliveryRequestService).to have_received(:call).
-        with(email: having_attributes(body: include('/redirected/path'))).twice
+        with(email: having_attributes(body: include('/redirected/path', 'redirected title'))).twice
     end
     it 'unsubscribes all affected subscriptions' do
       expect(@subscription.reload.ended_at).to_not be_nil
