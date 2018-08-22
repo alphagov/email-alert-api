@@ -27,7 +27,7 @@ RSpec.describe UnpublishEmailBuilder do
         ]
       }
       let(:redirect) {
-        'https://redirect.to/somewhere'
+        double(:redirect, path: '/somewhere', title: 'redirect_title', url: 'https://redirect.to/somewhere')
       }
       it 'Saves an email object' do
         expect { described_class.call(emails, redirect) }.to change { Email.count }.by(1)
@@ -51,9 +51,9 @@ RSpec.describe UnpublishEmailBuilder do
         it 'contains the body for the regular email' do
           expect(@imported_email.body).to include("You were subscribed to emails about")
         end
-        it 'contains the redirect in the body' do
-          pending
-          expect(@imported_email.body).to include(redirect)
+        it 'contains the redirect and title in the body' do
+          expect(@imported_email.body).to include(redirect.url)
+          expect(@imported_email.body).to include(redirect.title)
         end
       end
     end
