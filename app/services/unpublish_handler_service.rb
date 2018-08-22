@@ -3,13 +3,13 @@ class UnpublishHandlerService
     new.call(*args)
   end
 
-  def call(content_id, redirects)
+  def call(content_id, redirect)
     lists = subscriber_list(content_id)
     taxon_subscriber_lists, other_subscriber_lists = split_subscriber_lists(lists)
 
     taxon_email_parameters = build_emails(taxon_subscriber_lists)
     all_email_parameters = taxon_email_parameters + courtesy_emails(taxon_email_parameters)
-    emails = UnpublishEmailBuilder.call(all_email_parameters, redirects)
+    emails = UnpublishEmailBuilder.call(all_email_parameters, redirect)
 
     queue_delivery_request_workers(emails)
 
