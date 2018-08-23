@@ -21,9 +21,11 @@ private
     end
   end
 
-  def body(title, address, _)
+  def body(title, address, redirect)
     <<~BODY
       You were subscribed to emails about '#{title}'. This topic no longer exists so you won't get any more emails about it.
+
+      You can subscribe to '#{redirect.title}' instead: (#{redirect.url})
 
       #{presented_manage_subscriptions_links(address)}
     BODY

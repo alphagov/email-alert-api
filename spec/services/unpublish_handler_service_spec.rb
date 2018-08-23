@@ -5,13 +5,13 @@ RSpec.describe UnpublishHandlerService do
       address: Email::COURTESY_EMAIL,
     )
     @content_id = SecureRandom.uuid
-    @redirect_url = 'http://redirect_to_somewhere'
+    @redirect = double(ContentItem, path: 'to/somewhere', title: 'redirect_title', url: 'http://host/to/somewhere')
   end
 
   describe '.call' do
     context 'No subscriber lists are found' do
       it 'it does not create an email' do
-        expect { described_class.call(@content_id, @redirect_url) }.to_not(change { Email.count })
+        expect { described_class.call(@content_id, @redirect) }.to_not(change { Email.count })
       end
       it 'does not send emails' do
         expect(DeliveryRequestService).to receive(:call).never
@@ -37,13 +37,12 @@ RSpec.describe UnpublishHandlerService do
         )
       end
       it 'creates an email and a courtesy email' do
-        expect { described_class.call(@content_id, @redirect_url) }.to change { Email.count }.by(2)
+        expect { described_class.call(@content_id, @redirect) }.to change { Email.count }.by(2)
       end
-      it 'uses the redirection url in the body of the email' do
-        pending
+      it 'uses the redirection in the body of the email' do
         expect(DeliveryRequestService).to receive(:call).
-          with(email: having_attributes(body: include(@redirect_url))).twice
-        described_class.call(@content_id, @redirect_url)
+          with(email: having_attributes(body: include(@redirect.url, @redirect.title))).twice
+        described_class.call(@content_id, @redirect)
       end
       it 'sends the email and a courtesy email to the DeliverRequestWorker' do
         expect(DeliveryRequestService).to receive(:call).
@@ -52,15 +51,15 @@ RSpec.describe UnpublishHandlerService do
         expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(subject: 'First Subscription',
                                        address: Email::COURTESY_EMAIL))
-        described_class.call(@content_id, @redirect_url)
+        described_class.call(@content_id, @redirect)
       end
       it 'unsubscribes all subscribers' do
-        described_class.call(@content_id, @redirect_url)
+        described_class.call(@content_id, @redirect)
         expect(@subscriber_list.subscriptions.map(&:ended_at)).to all(be_truthy)
       end
       it 'Logs the taxon unpublishing email and the courtesy email' do
         expect(Rails.logger).to receive(:info).with(include('Created Email', 'First Subscription')).twice
-        described_class.call(@content_id, @redirect_url)
+        described_class.call(@content_id, @redirect)
       end
 
       context 'The subscriber is deactivated' do
@@ -68,7 +67,7 @@ RSpec.describe UnpublishHandlerService do
           @subscriber_list.subscribers.each(&:deactivate!)
         end
         it 'it does not create an email' do
-          expect { described_class.call(@content_id, @redirect_url) }.to_not(change { Email.count })
+          expect { described_class.call(@content_id, @redirect) }.to_not(change { Email.count })
         end
         it 'does not send emails' do
           expect(DeliveryRequestService).to receive(:call).never
@@ -97,7 +96,7 @@ RSpec.describe UnpublishHandlerService do
       end
 
       it 'Does not create an email' do
-        expect { described_class.call(@content_id, @redirect_url) }.to_not(change { Email.count })
+        expect { described_class.call(@content_id, @redirect) }.to_not(change { Email.count })
       end
       it 'does not send emails' do
         expect(DeliveryRequestService).to receive(:call).never
@@ -105,7 +104,7 @@ RSpec.describe UnpublishHandlerService do
       it 'Logs the non taxon unpublishing event' do
         expect(Rails.logger).to receive(:info).
           with(include('Not sending notification', 'First Subscription'))
-        described_class.call(@content_id, @redirect_url)
+        described_class.call(@content_id, @redirect)
       end
     end
   end

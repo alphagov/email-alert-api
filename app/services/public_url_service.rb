@@ -18,7 +18,7 @@ module PublicUrlService
     end
 
     def redirect_url(path:)
-      "#{website_root}/#{path}"
+      File.join(website_root, path)
     end
 
   private

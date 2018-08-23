@@ -1,8 +1,9 @@
 class UnpublishMessagesController < ApplicationController
   def create
+    redirect_path = unpublishing_params.dig(:redirects, 0, :destination)
     UnpublishHandlerService.call(
-      unpublishing_params[:content_id], unpublishing_params.dig(:redirects, 0, :destination)
-      )
+      unpublishing_params[:content_id], ContentItem.new(redirect_path)
+    )
 
     render json: { message: "Unpublish message queued for sending" }, status: 202
   end
