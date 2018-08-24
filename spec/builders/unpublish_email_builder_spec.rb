@@ -49,7 +49,7 @@ RSpec.describe UnpublishEmailBuilder do
           expect(@imported_email.address).to eq("address@test.com")
         end
         it 'contains the body for the regular email' do
-          expect(@imported_email.body).to include("You were subscribed to emails about")
+          expect(@imported_email.body).to include("Your subscription to email")
         end
         it 'contains the redirect and title in the body' do
           expect(@imported_email.body).to include(redirect.url)
