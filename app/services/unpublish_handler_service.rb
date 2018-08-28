@@ -57,7 +57,12 @@ private
           subject: subscriber_list.title,
           address: subscriber.address,
           subscriber_id: subscriber.id,
-          redirect: redirect
+          redirect: redirect,
+          utm_parameters: {
+              'utm_source' => subscriber_list.title,
+              'utm_medium' => 'email',
+              'utm_campaign' => 'govuk-notification'
+          }
         }
       end
     end
@@ -71,6 +76,7 @@ private
         address: subscriber.address,
         subscriber_id: subscriber.id,
         redirect: taxon_emails.first.fetch(:redirect),
+        utm_parameters: {}
       }
     end
   end
