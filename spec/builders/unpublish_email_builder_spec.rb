@@ -2,10 +2,10 @@ RSpec.describe UnpublishEmailBuilder do
   describe ".call" do
     describe 'No emails sent' do
       it 'does not return any emails' do
-        expect(described_class.call([], nil)).to be_empty
+        expect(described_class.call([])).to be_empty
       end
       it 'does not save and email objects' do
-        expect { described_class.call([], nil) }.to_not(change { Email.count })
+        expect { described_class.call([]) }.to_not(change { Email.count })
       end
     end
 
@@ -23,6 +23,11 @@ RSpec.describe UnpublishEmailBuilder do
             address: "address@test.com",
             subject: "subject_test",
             subscriber_id: 123,
+            redirect: redirect,
+            utm_parameters: {
+                "utm_source" => "mysource",
+                "utm_content" => "mycontent"
+            }
           }
         ]
       }
@@ -30,11 +35,11 @@ RSpec.describe UnpublishEmailBuilder do
         double(:redirect, path: '/somewhere', title: 'redirect_title', url: 'https://redirect.to/somewhere')
       }
       it 'Saves an email object' do
-        expect { described_class.call(emails, redirect) }.to change { Email.count }.by(1)
+        expect { described_class.call(emails) }.to change { Email.count }.by(1)
       end
       describe 'return one email' do
         before :each do
-          @imported_email = described_class.call(emails, redirect).first
+          @imported_email = described_class.call(emails).first
         end
         it 'sets the subject' do
           expect(@imported_email.subject).to eq("subject_test")
@@ -54,6 +59,9 @@ RSpec.describe UnpublishEmailBuilder do
         it 'contains the redirect and title in the body' do
           expect(@imported_email.body).to include(redirect.url)
           expect(@imported_email.body).to include(redirect.title)
+        end
+        it 'contains the UTM parameters in the body' do
+          expect(@imported_email.body).to include("utm_source=mysource", "utm_content=mycontent")
         end
       end
     end
