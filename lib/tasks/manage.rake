@@ -39,7 +39,9 @@ namespace :manage do
           subscriber_list: source_subscriber_list
         )
 
-        existing_subscription.end(reason: :subscriber_list_changed) if existing_subscription
+        next unless existing_subscription
+
+        existing_subscription.end(reason: :subscriber_list_changed)
 
         subscribed_to_destination_subscriber_list = Subscription.find_by(
           subscriber: subscriber,
