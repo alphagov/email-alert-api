@@ -25,7 +25,7 @@ private
     <<~BODY
       Your subscription to email updates about '#{title}' has ended because this topic no longer exists on GOV.UK.
 
-      You might want to subscribe to updates about '#{redirect.title}' instead: #{add_query_params(redirect.url, utm_parameters)}
+      You might want to subscribe to updates about '#{redirect.title}' instead: [#{redirect.url}](#{add_query_params(redirect.url, utm_parameters)})
 
       #{presented_manage_subscriptions_links(address)}
     BODY
