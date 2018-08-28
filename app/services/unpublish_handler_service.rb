@@ -7,9 +7,9 @@ class UnpublishHandlerService
     lists = subscriber_list(content_id)
     taxon_subscriber_lists, other_subscriber_lists = split_subscriber_lists(lists)
 
-    taxon_email_parameters = build_emails(taxon_subscriber_lists)
+    taxon_email_parameters = build_emails(taxon_subscriber_lists, redirect)
     all_email_parameters = taxon_email_parameters + courtesy_emails(taxon_email_parameters)
-    emails = UnpublishEmailBuilder.call(all_email_parameters, redirect)
+    emails = UnpublishEmailBuilder.call(all_email_parameters)
 
     queue_delivery_request_workers(emails)
 
@@ -50,13 +50,14 @@ private
       .includes(:subscribers)
   end
 
-  def build_emails(subscriber_lists)
+  def build_emails(subscriber_lists, redirect)
     subscriber_lists.flat_map do |subscriber_list|
       subscriber_list.subscribers.activated.map do |subscriber|
         {
           subject: subscriber_list.title,
           address: subscriber.address,
-          subscriber_id: subscriber.id
+          subscriber_id: subscriber.id,
+          redirect: redirect
         }
       end
     end
@@ -68,7 +69,8 @@ private
       {
         subject: taxon_emails.first.fetch(:subject),
         address: subscriber.address,
-        subscriber_id: subscriber.id
+        subscriber_id: subscriber.id,
+        redirect: taxon_emails.first.fetch(:redirect),
       }
     end
   end

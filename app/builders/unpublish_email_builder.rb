@@ -3,19 +3,19 @@ class UnpublishEmailBuilder
     new.call(*args)
   end
 
-  def call(emails, redirect)
-    ids = Email.import!(email_records(emails, redirect)).ids
+  def call(emails)
+    ids = Email.import!(email_records(emails)).ids
     Email.where(id: ids)
   end
 
 private
 
-  def email_records(emails, redirect)
+  def email_records(emails)
     emails.map do |email|
       {
         address: email.fetch(:address),
         subject: email.fetch(:subject),
-        body: body(email.fetch(:subject), email.fetch(:address), redirect),
+        body: body(email.fetch(:subject), email.fetch(:address), email.fetch(:redirect)),
         subscriber_id: email.fetch(:subscriber_id)
       }
     end
