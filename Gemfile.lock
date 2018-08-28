@@ -192,7 +192,7 @@ GEM
     parallel (1.12.1)
     parser (2.5.1.2)
       ast (~> 2.4.0)
-    pg (0.21.0)
+    pg (1.1.1)
     plek (2.1.1)
     powerpack (0.1.2)
     pry (0.11.3)
@@ -366,7 +366,7 @@ DEPENDENCIES
   listen (= 3.1.5)
   nokogiri (~> 1.8)
   notifications-ruby-client (~> 2.7)
-  pg (~> 0.21)
+  pg (~> 1.1)
   plek (~> 2.1)
   pry-byebug
   rails (~> 5.2)
