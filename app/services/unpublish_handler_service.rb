@@ -4,29 +4,31 @@ class UnpublishHandlerService
   end
 
   def call(content_id, redirect)
-    lists = subscriber_list(content_id)
-    taxon_subscriber_lists, other_subscriber_lists = split_subscriber_lists(lists)
-
-    taxon_email_parameters = build_emails(taxon_subscriber_lists, redirect)
-    all_email_parameters = taxon_email_parameters + courtesy_emails(taxon_email_parameters)
-    emails = UnpublishEmailBuilder.call(all_email_parameters)
-
-    queue_delivery_request_workers(emails)
-
-    log_taxon_emails(emails)
-    log_non_taxon_lists(other_subscriber_lists)
-
-    unsubscribe(taxon_subscriber_lists)
+    subscriber_lists = fetch_subscriber_lists(content_id)
+    type = find_type(subscriber_lists, content_id)
+    case type
+    when :taxon_tree
+      unsubscribe_taxon(subscriber_lists, redirect)
+    else
+      unsubscribe_other(subscriber_lists)
+    end
   end
 
 private
 
-  def split_subscriber_lists(lists)
-    list_groupings = lists.group_by do |list|
-      list.links.has_key?(:taxon_tree) ? :taxon : :other
-    end
 
-    [list_groupings.fetch(:taxon, []), list_groupings.fetch(:other, [])]
+  def unsubscribe_other(subscriber_lists)
+    log_non_taxon_lists(subscriber_lists)
+  end
+
+  def unsubscribe_taxon(subscriber_lists, redirect)
+    email_parameters = build_emails(subscriber_lists, redirect)
+    all_email_parameters = email_parameters + courtesy_emails(email_parameters)
+
+    emails = UnpublishEmailBuilder.call(all_email_parameters)
+    queue_delivery_request_workers(emails)
+    log_taxon_emails(emails)
+    unsubscribe(subscriber_lists)
   end
 
   def unsubscribe(subscriber_lists)
@@ -43,8 +45,14 @@ private
     end
   end
 
+  def find_type(subscriber_lists, content_id)
+    first_list = subscriber_lists.first
+    return :none if first_list.nil?
+    first_list.links.find { |_, values| values.include?(content_id) }.first
+  end
+
   # For this query to return the content id has to be wrapped in a double quote blame psql 9.3
-  def subscriber_list(content_id)
+  def fetch_subscriber_lists(content_id)
     SubscriberList
       .where(":id IN (SELECT json_array_elements((json_each(links)).value)::text)", id: "\"#{content_id}\"")
       .includes(:subscribers)
