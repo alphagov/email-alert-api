@@ -40,7 +40,7 @@ RSpec.describe UnpublishEmailBuilder do
       describe 'return one email' do
         it 'sets the subject' do
           imported_email = described_class.call(emails, 'body').first
-          expect(imported_email.subject).to eq('subject_test')
+          expect(imported_email.subject).to eq('GOV.UK update – subject_test')
         end
         it 'contains the subscriber id' do
           imported_email = described_class.call(emails, 'body').first
@@ -48,11 +48,11 @@ RSpec.describe UnpublishEmailBuilder do
         end
         it 'sets the status' do
           imported_email = described_class.call(emails, 'body').first
-          expect(imported_email.status).to eq("pending")
+          expect(imported_email.status).to eq('pending')
         end
         it 'sets the addess' do
           imported_email = described_class.call(emails, 'body').first
-          expect(imported_email.address).to eq("address@test.com")
+          expect(imported_email.address).to eq('address@test.com')
         end
         it 'contains the body for the regular email' do
           imported_email = described_class.call(emails, 'body').first

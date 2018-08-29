@@ -39,10 +39,10 @@ RSpec.describe UnpublishHandlerService do
     end
     it 'sends the email and a courtesy email to the DeliverRequestWorker' do
       expect(DeliveryRequestService).to receive(:call).
-          with(email: having_attributes(subject: 'First Subscription',
+          with(email: having_attributes(subject: 'GOV.UK update – First Subscription',
                                         address: 'test@example.com'))
       expect(DeliveryRequestService).to receive(:call).
-          with(email: having_attributes(subject: 'First Subscription',
+          with(email: having_attributes(subject: 'GOV.UK update – First Subscription',
                                         address: Email::COURTESY_EMAIL))
       described_class.call(@content_id, @redirect)
     end

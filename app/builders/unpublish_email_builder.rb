@@ -14,7 +14,7 @@ private
     email_parameters.map do |email|
       {
         address: email.address,
-        subject: email.subject,
+        subject: "GOV.UK update – #{email.subject}",
         body: ERB.new(template).result(email.fetch_binding),
         subscriber_id: email.subscriber_id
       }
