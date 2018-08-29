@@ -8,7 +8,7 @@ class UnpublishHandlerService
     type = find_type(subscriber_lists, content_id)
     case type
     when :taxon_tree
-      unsubscribe_taxon(subscriber_lists, redirect)
+      unsubscribe(subscriber_lists, redirect, taxon_template)
     else
       unsubscribe_other(subscriber_lists)
     end
@@ -21,17 +21,17 @@ private
     log_non_taxon_lists(subscriber_lists)
   end
 
-  def unsubscribe_taxon(subscriber_lists, redirect)
+  def unsubscribe(subscriber_lists, redirect, template)
     email_parameters = build_emails(subscriber_lists, redirect)
     all_email_parameters = email_parameters + courtesy_emails(email_parameters)
 
-    emails = UnpublishEmailBuilder.call(all_email_parameters)
+    emails = UnpublishEmailBuilder.call(all_email_parameters, template)
     queue_delivery_request_workers(emails)
-    log_taxon_emails(emails)
-    unsubscribe(subscriber_lists)
+    log_emails(emails)
+    unsubscribe_list(subscriber_lists)
   end
 
-  def unsubscribe(subscriber_lists)
+  def unsubscribe_list(subscriber_lists)
     subscriber_lists.each do |subscriber_list|
       UnsubscribeSubscriberListWorker.perform_async(subscriber_list.id, :unpublished)
     end
@@ -61,7 +61,7 @@ private
   def build_emails(subscriber_lists, redirect)
     subscriber_lists.flat_map do |subscriber_list|
       subscriber_list.subscribers.activated.map do |subscriber|
-        {
+        EmailParameters.new(
           subject: subscriber_list.title,
           address: subscriber.address,
           subscriber_id: subscriber.id,
@@ -71,7 +71,7 @@ private
               'utm_medium' => 'email',
               'utm_campaign' => 'govuk-notification'
           }
-        }
+        )
       end
     end
   end
@@ -79,17 +79,17 @@ private
   def courtesy_emails(taxon_emails)
     return [] if taxon_emails.empty?
     Subscriber.where(address: Email::COURTESY_EMAIL).map do |subscriber|
-      {
-        subject: taxon_emails.first.fetch(:subject),
+      EmailParameters.new(
+        subject: taxon_emails.first.subject,
         address: subscriber.address,
         subscriber_id: subscriber.id,
-        redirect: taxon_emails.first.fetch(:redirect),
+        redirect: taxon_emails.first.redirect,
         utm_parameters: {}
-      }
+      )
     end
   end
 
-  def log_taxon_emails(emails)
+  def log_emails(emails)
     emails.each do |email|
       Rails.logger.info(<<-INFO.strip_heredoc)
         ----
@@ -115,5 +115,15 @@ private
         ++++
       INFO
     end
+  end
+
+  def taxon_template
+    <<~BODY
+      Your subscription to email updates about '<%=subject%>' has ended because this topic no longer exists on GOV.UK.
+
+      You might want to subscribe to updates about '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
+
+      <%=presented_manage_subscriptions_links(address)%>
+    BODY
   end
 end
