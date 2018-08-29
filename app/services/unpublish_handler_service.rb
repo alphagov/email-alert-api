@@ -9,17 +9,16 @@ class UnpublishHandlerService
     case type
     when :taxon_tree
       unsubscribe(subscriber_lists, redirect, taxon_template)
+    when :policy_areas
+      unsubscribe(subscriber_lists, redirect, policy_area_template)
+    when :policies
+      unsubscribe(subscriber_lists, redirect, policy_template)
     else
-      unsubscribe_other(subscriber_lists)
+      log_non_taxon_lists(subscriber_lists)
     end
   end
 
 private
-
-
-  def unsubscribe_other(subscriber_lists)
-    log_non_taxon_lists(subscriber_lists)
-  end
 
   def unsubscribe(subscriber_lists, redirect, template)
     email_parameters = build_emails(subscriber_lists, redirect)
@@ -53,8 +52,13 @@ private
 
   # For this query to return the content id has to be wrapped in a double quote blame psql 9.3
   def fetch_subscriber_lists(content_id)
+    sql = <<~SQLSTRING
+      :id IN (
+        SELECT json_array_elements((json_each(links)).value)::text
+       )
+    SQLSTRING
     SubscriberList
-      .where(":id IN (SELECT json_array_elements((json_each(links)).value)::text)", id: "\"#{content_id}\"")
+      .where(sql, id: "\"#{content_id}\"")
       .includes(:subscribers)
   end
 
@@ -118,6 +122,26 @@ private
   end
 
   def taxon_template
+    <<~BODY
+      Your subscription to email updates about '<%=subject%>' has ended because this topic no longer exists on GOV.UK.
+
+      You might want to subscribe to updates about '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
+
+      <%=presented_manage_subscriptions_links(address)%>
+    BODY
+  end
+
+  def policy_area_template
+    <<~BODY
+      Your subscription to email updates about '<%=subject%>' has ended because this topic no longer exists on GOV.UK.
+
+      You might want to subscribe to updates about '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
+
+      <%=presented_manage_subscriptions_links(address)%>
+    BODY
+  end
+
+  def policy_template
     <<~BODY
       Your subscription to email updates about '<%=subject%>' has ended because this topic no longer exists on GOV.UK.
 
