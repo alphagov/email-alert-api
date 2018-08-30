@@ -1,5 +1,3 @@
-# rubocop:disable Layout/EmptyLinesAroundArguments
-
 RSpec.describe "Anonymising email addresses" do
   let(:sql) { File.read("lib/data_hygiene/anonymise_email_addresses.sql") }
 
@@ -123,5 +121,3 @@ RSpec.describe "Anonymising email addresses" do
     expect { execute_sql }.not_to(change { connection.tables.count })
   end
 end
-
-# rubocop:enable Layout/EmptyLinesAroundArguments

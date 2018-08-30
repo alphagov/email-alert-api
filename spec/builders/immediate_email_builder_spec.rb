@@ -1,5 +1,3 @@
-# rubocop:disable Layout/EmptyLinesAroundArguments
-
 RSpec.describe ImmediateEmailBuilder do
   let(:subscriber) { build(:subscriber, address: "test@example.com") }
 
@@ -127,5 +125,3 @@ RSpec.describe ImmediateEmailBuilder do
     end
   end
 end
-
-# rubocop:enable Layout/EmptyLinesAroundArguments

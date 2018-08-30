@@ -25,7 +25,7 @@ RSpec.describe FindExactMatch do
       found_lists = described_class.new(query_field: :tags)
         .call(topics: ["oil-and-gas/licensing"],
           organisations: ["environment-agency", "hm-revenue-customs"],
-          foo: ["bar"])
+          foo: %w[bar])
       expect(found_lists).to eq([])
     end
 
@@ -62,7 +62,7 @@ RSpec.describe FindExactMatch do
       found_lists = described_class.new(query_field: :links)
         .call(topics: ["uuid-888"],
           organisations: ["org-123", "org-555"],
-          foo: ["bar"])
+          foo: %w[bar])
       expect(found_lists).to eq([])
     end
 

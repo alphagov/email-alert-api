@@ -1,6 +1,6 @@
 RSpec.describe FindByTopic do
   before do
-    @list1 = create(:subscriber_list, tags: { format: ["raib_report"], })
+    @list1 = create(:subscriber_list, tags: { format: %w[raib_report], })
     @list2 = create(:subscriber_list, tags: { topics: ["environmental-management/boating"], })
     @list3 = create(:subscriber_list, tags: {
       topics: [
