@@ -6,6 +6,7 @@ class ContentChange < ApplicationRecord
     :govuk_request_id, :document_type, :publishing_app
 
   has_many :matched_content_changes
+  has_many :subscription_contents
 
   enum priority: { normal: 0, high: 1 }
 
