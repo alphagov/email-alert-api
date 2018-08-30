@@ -133,9 +133,11 @@ private
 
   def policy_area_template
     <<~BODY
-      Your subscription to email updates about '<%=subject%>' has ended because this topic no longer exists on GOV.UK.
+      We're changing the way content is organised on GOV.UK.
 
-      You might want to subscribe to updates about '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
+      Your subscription to email updates about the policy area '<%=subject%>' has ended.
+
+      You can subscribe to the topic '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
 
       <%=presented_manage_subscriptions_links(address)%>
     BODY
@@ -143,9 +145,11 @@ private
 
   def policy_template
     <<~BODY
-      Your subscription to email updates about '<%=subject%>' has ended because this topic no longer exists on GOV.UK.
+      We're changing the way content is organised on GOV.UK.
 
-      You might want to subscribe to updates about '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
+      Your subscription to email updates about the policy '<%=subject%>' has ended.
+
+      You can subscribe to the topic '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
 
       <%=presented_manage_subscriptions_links(address)%>
     BODY

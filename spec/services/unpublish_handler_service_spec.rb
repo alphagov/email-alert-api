@@ -93,7 +93,7 @@ RSpec.describe UnpublishHandlerService do
       before :each do
         @subscriber_list = create_subscriber_list(links: { taxon_tree: [@content_id] })
       end
-      it_behaves_like 'it_sends_an_email_with_body_including', 'Your subscription to email'
+      it_behaves_like 'it_sends_an_email_with_body_including', 'has ended because this topic no longer exists on GOV.UK'
       it_behaves_like 'it_unsubscribes_all_subscribers'
       it_behaves_like 'it_logs_emails'
     end
@@ -102,7 +102,8 @@ RSpec.describe UnpublishHandlerService do
       before :each do
         @subscriber_list = create_subscriber_list(links: { policy_areas: [@content_id] })
       end
-      it_behaves_like 'it_sends_an_email_with_body_including', 'Your subscription to email'
+      it_behaves_like 'it_sends_an_email_with_body_including',
+                      "Your subscription to email updates about the policy area 'First Subscription"
       it_behaves_like 'it_unsubscribes_all_subscribers'
       it_behaves_like 'it_logs_emails'
     end
@@ -111,7 +112,8 @@ RSpec.describe UnpublishHandlerService do
       before :each do
         @subscriber_list = create_subscriber_list(links: { policies: [@content_id] })
       end
-      it_behaves_like 'it_sends_an_email_with_body_including', 'Your subscription to email'
+      it_behaves_like 'it_sends_an_email_with_body_including',
+                      "Your subscription to email updates about the policy 'First Subscription"
       it_behaves_like 'it_unsubscribes_all_subscribers'
       it_behaves_like 'it_logs_emails'
     end
