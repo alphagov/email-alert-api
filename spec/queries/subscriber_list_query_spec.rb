@@ -1,8 +1,8 @@
 RSpec.describe SubscriberListQuery do
   subject do
     described_class.new(
-      tags: { policies: ['eggs'] },
-      links: { policies: ['11aa'] },
+      tags: { policies: %w[eggs] },
+      links: { policies: %w[11aa] },
       document_type: 'travel_advice',
       email_document_supertype: 'publications',
       government_document_supertype: 'news_stories'
@@ -55,19 +55,19 @@ RSpec.describe SubscriberListQuery do
   end
 
   context 'when matching has tags fields' do
-    it_behaves_like "#links matching", tags: { policies: ['eggs'] }, links: {}
+    it_behaves_like "#links matching", tags: { policies: %w[eggs] }, links: {}
 
     it "excluded when non-matching tags" do
-      subscriber_list = create_subscriber_list(tags: { policies: ['apples'] })
+      subscriber_list = create_subscriber_list(tags: { policies: %w[apples] })
       expect(subject.lists).not_to include(subscriber_list)
     end
   end
 
   context 'when matching has links fields' do
-    it_behaves_like "#links matching", links: { policies: ['11aa'] }, tags: {}
+    it_behaves_like "#links matching", links: { policies: %w[11aa] }, tags: {}
 
     it "excluded when non-matching links" do
-      subscriber_list = create_subscriber_list(links: { policies: ['aa11'] })
+      subscriber_list = create_subscriber_list(links: { policies: %w[aa11] })
       expect(subject.lists).not_to include(subscriber_list)
     end
   end

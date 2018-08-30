@@ -104,7 +104,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
       it "sets the document_type on the subscriber list" do
         create_subscriber_list(
-          tags: { countries: ["andorra"] },
+          tags: { countries: %w[andorra] },
           document_type: "travel_advice"
         )
 

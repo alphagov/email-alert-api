@@ -11,6 +11,6 @@ class UnpublishMessagesController < ApplicationController
 private
 
   def unpublishing_params
-    @_params ||= params.permit(:content_id, redirects: :destination)
+    @unpublishing_params ||= params.permit(:content_id, redirects: :destination)
   end
 end

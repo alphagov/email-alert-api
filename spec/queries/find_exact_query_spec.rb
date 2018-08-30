@@ -31,8 +31,8 @@ RSpec.describe FindExactQuery do
     end
 
     it "not matched on tags if unable to match links - even if it would match" do
-      query = build_query(links: { policies: ['aa-11'] }, tags: { policies: ['apples'] })
-      _subscriber_list = create_subscriber_list(tags: { policies: ['apples'] })
+      query = build_query(links: { policies: ['aa-11'] }, tags: { policies: %w[apples] })
+      _subscriber_list = create_subscriber_list(tags: { policies: %w[apples] })
       expect(query.exact_match).to be_nil
     end
 
@@ -45,37 +45,37 @@ RSpec.describe FindExactQuery do
 
   context "when tags are in the query" do
     it "matched when subscriber tags has the same tags" do
-      query = build_query(tags: { policies: ['beer'] })
-      subscriber_list = create_subscriber_list(tags: { policies: ['beer'] })
+      query = build_query(tags: { policies: %w[beer] })
+      subscriber_list = create_subscriber_list(tags: { policies: %w[beer] })
       expect(query.exact_match).to eq(subscriber_list)
     end
 
     it "matched when subscriber list has the same tags and matching document_type" do
-      query = build_query(tags: { policies: ['beer'] }, document_type: 'document_type')
-      subscriber_list = create_subscriber_list(tags: { policies: ['beer'] }, document_type: 'document_type')
+      query = build_query(tags: { policies: %w[beer] }, document_type: 'document_type')
+      subscriber_list = create_subscriber_list(tags: { policies: %w[beer] }, document_type: 'document_type')
       expect(query.exact_match).to eq(subscriber_list)
     end
 
     it "matched when subscriber list has the same tags and matching email_document_supertype" do
-      query = build_query(tags: { policies: ['beer'] }, email_document_supertype: 'publications')
-      subscriber_list = create_subscriber_list(tags: { policies: ['beer'] }, email_document_supertype: 'publications')
+      query = build_query(tags: { policies: %w[beer] }, email_document_supertype: 'publications')
+      subscriber_list = create_subscriber_list(tags: { policies: %w[beer] }, email_document_supertype: 'publications')
       expect(query.exact_match).to eq(subscriber_list)
     end
 
     it "not matched when subscriber list has different tags" do
-      query = build_query(tags: { policies: ['beer'] })
-      _subscriber_list = create_subscriber_list(tags: { policies: ['cider'] })
+      query = build_query(tags: { policies: %w[beer] })
+      _subscriber_list = create_subscriber_list(tags: { policies: %w[cider] })
       expect(query.exact_match).to be_nil
     end
 
     it "not matched when subscriber list has no tags" do
-      query = build_query(tags: { policies: ['beer'] })
+      query = build_query(tags: { policies: %w[beer] })
       _subscriber_list = create_subscriber_list
       expect(query.exact_match).to be_nil
     end
 
     it "not matched on document type - even if they match" do
-      query = build_query(tags: { policies: ['beer'] }, document_type: 'travel_advice')
+      query = build_query(tags: { policies: %w[beer] }, document_type: 'travel_advice')
       _subscriber_list = create_subscriber_list(document_type: 'travel_advice')
       expect(query.exact_match).to be_nil
     end
@@ -88,7 +88,7 @@ RSpec.describe FindExactQuery do
   end
 
   it "not matched on different document type" do
-    query = build_query(tags: { policies: ['beer'] }, document_type: 'travel_advice')
+    query = build_query(tags: { policies: %w[beer] }, document_type: 'travel_advice')
     _subscriber_list = create_subscriber_list(document_type: 'other')
     expect(query.exact_match).to be_nil
   end

@@ -1,5 +1,3 @@
-# rubocop:disable Layout/EmptyLinesAroundArguments
-
 RSpec.describe DigestEmailBuilder do
   let(:digest_run) { double(daily?: true) }
   let(:subscriber) { build(:subscriber) }
@@ -132,5 +130,3 @@ RSpec.describe DigestEmailBuilder do
     end
   end
 end
-
-# rubocop:enable Layout/EmptyLinesAroundArguments

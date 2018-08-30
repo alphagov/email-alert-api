@@ -17,7 +17,7 @@ RSpec.describe SubscriberList, type: :model do
     end
 
     it "is valid when tags 'hash' has values that are arrays" do
-      subject.tags = { foo: ["bar"] }
+      subject.tags = { foo: %w[bar] }
 
       expect(subject).to be_valid
     end
@@ -30,7 +30,7 @@ RSpec.describe SubscriberList, type: :model do
     end
 
     it "is valid when links 'hash' has values that are arrays" do
-      subject.links = { foo: ["bar"] }
+      subject.links = { foo: %w[bar] }
 
       expect(subject).to be_valid
     end
