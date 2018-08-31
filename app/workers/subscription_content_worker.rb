@@ -59,7 +59,7 @@ private
   def grouped_subscription_ids_by_subscriber(content_change)
     ContentChangeImmediateSubscriptionQuery.call(content_change: content_change)
       .group(:subscriber_id)
-      .pluck("ARRAY_AGG(subscriptions.id)")
+      .pluck(Arel.sql("ARRAY_AGG(subscriptions.id)"))
   end
 
   def queue_delivery_to_courtesy_subscribers(content_change)
