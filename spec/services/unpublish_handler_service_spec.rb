@@ -103,7 +103,7 @@ RSpec.describe UnpublishHandlerService do
         @subscriber_list = create_subscriber_list(links: { policy_areas: [@content_id] })
       end
       it_behaves_like 'it_sends_an_email_with_body_including',
-                      "Your subscription to email updates about the policy area 'First Subscription"
+                      "email updates on 'First Subscription"
       it_behaves_like 'it_unsubscribes_all_subscribers'
       it_behaves_like 'it_logs_emails'
     end
@@ -113,7 +113,7 @@ RSpec.describe UnpublishHandlerService do
         @subscriber_list = create_subscriber_list(links: { policies: [@content_id] })
       end
       it_behaves_like 'it_sends_an_email_with_body_including',
-                      "Your subscription to email updates about the policy 'First Subscription"
+                      "email updates on 'First Subscription"
       it_behaves_like 'it_unsubscribes_all_subscribers'
       it_behaves_like 'it_logs_emails'
     end
