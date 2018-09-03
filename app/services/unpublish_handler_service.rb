@@ -10,9 +10,9 @@ class UnpublishHandlerService
     when :taxon_tree
       unsubscribe(subscriber_lists, redirect, taxon_template)
     when :policy_areas
-      unsubscribe(subscriber_lists, redirect, policy_area_template)
+      unsubscribe(subscriber_lists, redirect, policy_and_policy_area_template)
     when :policies
-      unsubscribe(subscriber_lists, redirect, policy_template)
+      unsubscribe(subscriber_lists, redirect, policy_and_policy_area_template)
     else
       log_non_taxon_lists(subscriber_lists)
     end
@@ -131,25 +131,15 @@ private
     BODY
   end
 
-  def policy_area_template
+  def policy_and_policy_area_template
     <<~BODY
       We're changing the way content is organised on GOV.UK.
 
-      Your subscription to email updates about the policy area '<%=subject%>' has ended.
+      Because of this, you'll no longer receive email updates on '<%=subject%>'.
 
-      You can subscribe to the topic '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
+      If you want to continue receiving updates relating to this topic, you may wish to subscribe to the new '<%=redirect.title%>' page:
 
-      <%=presented_manage_subscriptions_links(address)%>
-    BODY
-  end
-
-  def policy_template
-    <<~BODY
-      We're changing the way content is organised on GOV.UK.
-
-      Your subscription to email updates about the policy '<%=subject%>' has ended.
-
-      You can subscribe to the topic '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
+        [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
 
       <%=presented_manage_subscriptions_links(address)%>
     BODY
