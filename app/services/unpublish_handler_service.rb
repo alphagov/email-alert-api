@@ -135,11 +135,10 @@ private
     <<~BODY
       We're changing the way content is organised on GOV.UK.
 
-      Because of this, you'll no longer receive email updates on '<%=subject%>'.
+      Because of this, you will not get email updates about '<%= subject %>' anymore.
 
-      If you want to continue receiving updates relating to this topic, you may wish to subscribe to the new '<%=redirect.title%>' page:
-
-        [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
+      If you want to continue receiving updates relating to this topic, you can
+      [subscribe to the new '<%= redirect.title %>' page](<%= add_utm(redirect.url) %>).
 
       <%=presented_manage_subscriptions_links(address)%>
     BODY
