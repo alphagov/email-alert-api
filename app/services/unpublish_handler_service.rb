@@ -73,7 +73,7 @@ private
           utm_parameters: {
               'utm_source' => subscriber_list.title,
               'utm_medium' => 'email',
-              'utm_campaign' => 'govuk-notification'
+              'utm_campaign' => 'govuk-subscription-ended'
           }
         )
       end
