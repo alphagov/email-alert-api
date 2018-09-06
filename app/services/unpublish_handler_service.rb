@@ -137,8 +137,7 @@ private
 
       Because of this, you will not get email updates about '<%= subject %>' anymore.
 
-      If you want to continue receiving updates relating to this topic, you can
-      [subscribe to the new '<%= redirect.title %>' page](<%= add_utm(redirect.url) %>).
+      If you want to continue receiving updates relating to this topic, you can [subscribe to the new '<%= redirect.title %>' page](<%= add_utm(redirect.url) %>).
 
       <%=presented_manage_subscriptions_links(address)%>
     BODY
