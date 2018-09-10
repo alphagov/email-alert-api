@@ -13,8 +13,6 @@ class UnpublishHandlerService
       unsubscribe(subscriber_lists, redirect, policy_and_policy_area_template)
     when :policies
       unsubscribe(subscriber_lists, redirect, policy_and_policy_area_template)
-    else
-      log_non_taxon_lists(subscriber_lists)
     end
   end
 
@@ -26,7 +24,6 @@ private
 
     emails = UnpublishEmailBuilder.call(all_email_parameters, template)
     queue_delivery_request_workers(emails)
-    log_emails(emails)
     unsubscribe_list(subscriber_lists)
   end
 
@@ -90,34 +87,6 @@ private
         redirect: taxon_emails.first.redirect,
         utm_parameters: {}
       )
-    end
-  end
-
-  def log_emails(emails)
-    emails.each do |email|
-      Rails.logger.info(<<-INFO.strip_heredoc)
-        ----
-        Created Email:
-        id: #{email.id}
-        subject: #{email.subject}
-        body: #{email.body}
-        subscriber_id: #{email.subscriber_id}
-        ----
-      INFO
-    end
-  end
-
-  def log_non_taxon_lists(subscriber_lists)
-    subscriber_lists.each do |list|
-      Rails.logger.info(<<-INFO.strip_heredoc)
-        ++++
-        Not sending notification about non-Topic SubscriberList.
-        id: #{list.id}
-        title: #{list.title}
-        links: #{list.links}
-        tags: #{list.tags}
-        ++++
-      INFO
     end
   end
 

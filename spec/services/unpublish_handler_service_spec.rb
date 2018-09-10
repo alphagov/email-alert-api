@@ -69,13 +69,6 @@ RSpec.describe UnpublishHandlerService do
     end
   end
 
-  shared_examples_for 'it_logs_emails' do
-    it 'logs an unpublishing email and a courtesy email' do
-      expect(Rails.logger).to receive(:info).with(include('Created Email', 'First Subscription')).twice
-      described_class.call(@content_id, @redirect)
-    end
-  end
-
   describe '.call' do
     context 'No subscriber lists are found' do
       it_behaves_like 'it_does_not_send_an_email'
@@ -95,7 +88,6 @@ RSpec.describe UnpublishHandlerService do
       end
       it_behaves_like 'it_sends_an_email_with_body_including', 'has ended because this topic no longer exists on GOV.UK'
       it_behaves_like 'it_unsubscribes_all_subscribers'
-      it_behaves_like 'it_logs_emails'
     end
 
     context 'there is a policy area subscriber list' do
@@ -105,7 +97,6 @@ RSpec.describe UnpublishHandlerService do
       it_behaves_like 'it_sends_an_email_with_body_including',
                       "email updates about 'First Subscription"
       it_behaves_like 'it_unsubscribes_all_subscribers'
-      it_behaves_like 'it_logs_emails'
     end
 
     context 'there is a policy subscriber list' do
@@ -115,7 +106,6 @@ RSpec.describe UnpublishHandlerService do
       it_behaves_like 'it_sends_an_email_with_body_including',
                       "email updates about 'First Subscription"
       it_behaves_like 'it_unsubscribes_all_subscribers'
-      it_behaves_like 'it_logs_emails'
     end
 
     context 'there is a non-taxon subscriber list' do
@@ -126,11 +116,6 @@ RSpec.describe UnpublishHandlerService do
         })
       end
       it_behaves_like 'it_does_not_send_an_email'
-      it 'Logs the non taxon unpublishing event' do
-        expect(Rails.logger).to receive(:info).
-          with(include('Not sending notification', 'First Subscription'))
-        described_class.call(@content_id, @redirect)
-      end
     end
   end
 end
