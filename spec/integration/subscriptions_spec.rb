@@ -69,6 +69,7 @@ RSpec.describe "Subscriptions", type: :request do
           updated_at
           ended_at
           ended_reason
+          ended_email_id
           frequency
           source
         ))

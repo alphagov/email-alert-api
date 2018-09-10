@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_28_153412) do
+ActiveRecord::Schema.define(version: 2018_09_10_095917) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -154,6 +154,7 @@ ActiveRecord::Schema.define(version: 2018_08_28_153412) do
     t.integer "source", default: 0, null: false
     t.datetime "ended_at"
     t.integer "ended_reason"
+    t.uuid "ended_email_id"
     t.index ["created_at"], name: "index_subscriptions_on_created_at"
     t.index ["subscriber_id", "subscriber_list_id"], name: "index_subscriptions_on_subscriber_id_and_subscriber_list_id", unique: true, where: "(ended_at IS NULL)"
     t.index ["subscriber_id"], name: "index_subscriptions_on_subscriber_id"
@@ -181,6 +182,7 @@ ActiveRecord::Schema.define(version: 2018_08_28_153412) do
   add_foreign_key "subscription_contents", "digest_run_subscribers", on_delete: :cascade
   add_foreign_key "subscription_contents", "emails", on_delete: :cascade
   add_foreign_key "subscription_contents", "subscriptions", on_delete: :restrict
+  add_foreign_key "subscriptions", "emails", column: "ended_email_id"
   add_foreign_key "subscriptions", "subscriber_lists", on_delete: :restrict
   add_foreign_key "subscriptions", "subscribers", on_delete: :restrict
 end
