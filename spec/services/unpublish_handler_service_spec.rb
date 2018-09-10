@@ -8,22 +8,26 @@ RSpec.describe UnpublishHandlerService do
     @redirect = double(ContentItem, path: 'to/somewhere', title: 'redirect_title', url: 'http://host/to/somewhere')
   end
 
-  def create_subscriber_list(links: {}, tags: {})
+  def create_subscriber_list(
+        links: {},
+        tags: {},
+        title: 'First Subscription',
+        address: 'test@example.com'
+      )
     subscriber = create(
       :subscriber,
-        address: 'test@example.com',
-        id: 111
+      address: address,
     )
     subscriber_list = create(
       :subscriber_list,
-        links: links,
-        tags: tags,
-        title: 'First Subscription',
-        )
+      links: links,
+      tags: tags,
+      title: title,
+    )
     create(
       :subscription,
-        subscriber: subscriber,
-        subscriber_list: subscriber_list
+      subscriber: subscriber,
+      subscriber_list: subscriber_list
     )
     subscriber_list
   end
@@ -74,10 +78,12 @@ RSpec.describe UnpublishHandlerService do
       it_behaves_like 'it_does_not_send_an_email'
     end
 
-    context 'The subscriber is deactivated' do
+    context 'All subscriptions are ended' do
       before :each do
         @subscriber_list = create_subscriber_list(links: { taxon_tree: [@content_id] })
-        @subscriber_list.subscribers.each(&:deactivate!)
+        @subscriber_list.subscriptions.each do |subscription|
+          subscription.end(reason: :unpublished)
+        end
       end
       it_behaves_like 'it_does_not_send_an_email'
     end
@@ -116,6 +122,37 @@ RSpec.describe UnpublishHandlerService do
         })
       end
       it_behaves_like 'it_does_not_send_an_email'
+    end
+
+    context 'with multiple subscriber lists' do
+      before :each do
+        @first_subscriber_list = create_subscriber_list(
+          links: {
+            taxon_tree: [@content_id],
+            world_locations: [SecureRandom.uuid]
+          },
+          title: 'First Subscriber List',
+          address: 'test1@example.com'
+        )
+        @second_subscriber_list = create_subscriber_list(
+          links: {
+            taxon_tree: [@content_id],
+            world_locations: [SecureRandom.uuid]
+          },
+          title: 'Second Subscriber List',
+          address: 'test2@example.com'
+        )
+      end
+
+      it 'correctly associates emails to subscriptions' do
+        described_class.call(@content_id, @redirect)
+
+        Subscription.all.each do |subscription|
+          email = Email.find(subscription.ended_email_id)
+
+          expect(email.address).to eq(subscription.subscriber.address)
+        end
+      end
     end
   end
 end

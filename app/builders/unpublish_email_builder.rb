@@ -4,8 +4,7 @@ class UnpublishEmailBuilder
   end
 
   def call(emails, template)
-    ids = Email.import!(email_records(emails, template)).ids
-    Email.where(id: ids)
+    Email.import!(email_records(emails, template)).ids
   end
 
 private
