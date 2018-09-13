@@ -171,7 +171,7 @@ GEM
     nio4r (2.3.1)
     nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
-    notifications-ruby-client (2.8.0)
+    notifications-ruby-client (2.9.0)
       jwt (>= 1.5, < 3)
     null_logger (0.0.1)
     oauth2 (1.4.0)
@@ -367,7 +367,7 @@ DEPENDENCIES
   jwt (~> 1.5)
   listen (= 3.1.5)
   nokogiri (~> 1.8)
-  notifications-ruby-client (~> 2.8)
+  notifications-ruby-client (~> 2.9)
   pg (~> 1.1)
   plek (~> 2.1)
   pry-byebug
