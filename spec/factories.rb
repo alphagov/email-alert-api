@@ -164,4 +164,11 @@ FactoryBot.define do
   end
 
   factory :user
+
+  factory :content_item do
+    sequence(:path) { |n| "/content-item-#{n}" }
+
+    initialize_with { new(path) }
+    skip_create
+  end
 end
