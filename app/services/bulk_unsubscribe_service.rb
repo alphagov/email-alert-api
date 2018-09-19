@@ -1,3 +1,5 @@
+# rubocop:disable Metrics/BlockLength
+
 module BulkUnsubscribeService
   def self.call(content_ids_and_replacements)
     affected_subscriber_list_ids = content_ids_and_replacements
@@ -14,7 +16,7 @@ module BulkUnsubscribeService
     subscriptions_to_end
       .group_by(&:subscriber)
       .sort_by { |_subscriber, subscriptions| subscriptions.length }
-      .each do |(subscriber, subscriptions)|
+      .each_with_index do |(subscriber, subscriptions), index|
 
       subscription_details = subscriptions.map do |subscription|
         relevant_content_id = subscription
@@ -32,7 +34,11 @@ module BulkUnsubscribeService
         ]
       end
 
-      email = send_email_to_subscriber(subscriber, subscription_details)
+      email = send_email_to_subscriber(
+        subscriber,
+        subscription_details,
+        send_courtesy_copy: (index % 500).zero?
+      )
 
       subscriptions.each do |subscription|
         subscription.update!(
@@ -48,7 +54,7 @@ module BulkUnsubscribeService
     )
   end
 
-  def self.send_email_to_subscriber(subscriber, subscription_details)
+  def self.send_email_to_subscriber(subscriber, subscription_details, send_courtesy_copy:)
     template_data = {
       subscription_details: subscription_details,
       utm_parameters: {
@@ -72,6 +78,29 @@ module BulkUnsubscribeService
       queue: :delivery_immediate
     )
 
+    # Send a sample of the emails to the courtesy copy group. As
+    # we're iterating over subscribers here, sending each email
+    # would be excessive.
+    if send_courtesy_copy
+      Subscriber.where(
+        address: Email::COURTESY_EMAIL
+      ).each do |courtesy_subscriber|
+        courtesy_email = BulkUnsubscribeEmailBuilder.call(
+          EmailParameters.new(
+            subject: 'Ending Policy Page Subscriptions',
+            subscriber: courtesy_subscriber,
+            template_data: template_data
+          ),
+          BULK_POLICY_TEMPLATE
+        )
+
+        DeliveryRequestWorker.perform_async_in_queue(
+          courtesy_email.id,
+          queue: :delivery_immediate
+        )
+      end
+    end
+
     email
   end
 
@@ -87,3 +116,5 @@ module BulkUnsubscribeService
     <%= presented_manage_subscriptions_links(address) %>
   BODY
 end
+
+# rubocop:enable Metrics/BlockLength

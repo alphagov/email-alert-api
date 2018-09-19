@@ -6,10 +6,10 @@ RSpec.describe BulkUnsubscribeService do
   let(:policy1_content_id) { SecureRandom.uuid }
   let(:policy2_content_id) { SecureRandom.uuid }
 
-  let(:subscriber_list_with_single_subscriber) do
+  let(:policy1_subscriber_list) do
     create(:subscriber_list, links: { policies: [policy1_content_id] })
   end
-  let(:subscriber_list_with_multiple_subscribers) do
+  let(:policy2_subscriber_list) do
     create(:subscriber_list, links: { policies: [policy2_content_id] })
   end
 
@@ -23,17 +23,17 @@ RSpec.describe BulkUnsubscribeService do
   before :each do
     double_subscriber = create(
       :subscription,
-      subscriber_list: subscriber_list_with_single_subscriber
+      subscriber_list: policy1_subscriber_list
     ).subscriber
 
     create(
       :subscription,
       subscriber: double_subscriber,
-      subscriber_list: subscriber_list_with_multiple_subscribers
+      subscriber_list: policy2_subscriber_list
     )
     create(
       :subscription,
-      subscriber_list: subscriber_list_with_multiple_subscribers
+      subscriber_list: policy1_subscriber_list
     )
 
     create(:subscriber, address: Email::COURTESY_EMAIL)
@@ -47,13 +47,13 @@ RSpec.describe BulkUnsubscribeService do
   end
 
   describe ".call" do
-    it "sends two emails" do
+    it "sends three emails" do
       Sidekiq::Testing.fake! do
         DeliveryRequestWorker.jobs.clear
         described_class.call(content_ids_and_replacements)
       end
 
-      expect(DeliveryRequestWorker.jobs.size).to eq(2)
+      expect(DeliveryRequestWorker.jobs.size).to eq(3)
     end
   end
 end
