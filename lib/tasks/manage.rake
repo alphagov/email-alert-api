@@ -84,4 +84,22 @@ namespace :manage do
   task :move_all_subscribers, %i[from_slug to_slug] => :environment do |_t, args|
     move_all_subscribers(from_slug: args[:from_slug], to_slug: args[:to_slug])
   end
+
+  desc "Unsubscribe subscribers using a list of base paths"
+  task :unsubscribe_bulk_from_base_paths_csv, [:csv_file_path] => :environment do |_t, args|
+    content_ids_and_replacements = {}
+
+    CSV.foreach(args[:csv_file_path], headers: true) do |row|
+      content_id = ContentItem.new(row['base_path']).content_id
+
+      content_ids_and_replacements[content_id] = ContentItem
+                                                   .new(row['alternative_path'])
+    end
+
+    if content_ids_and_replacements.keys.uniq.length != content_ids_and_replacements.size
+      raise "Non-unique content id's detected"
+    end
+
+    BulkUnsubscribeService.call(content_ids_and_replacements)
+  end
 end
