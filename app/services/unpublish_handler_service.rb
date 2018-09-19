@@ -2,7 +2,7 @@ class UnpublishHandlerService
   TAXON_TEMPLATE = <<~BODY.freeze
     Your subscription to email updates about '<%=subject%>' has ended because this topic no longer exists on GOV.UK.
 
-    You might want to subscribe to updates about '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
+    You might want to subscribe to updates about '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url, utm_parameters)%>)
 
     <%=presented_manage_subscriptions_links(address)%>
   BODY
@@ -12,7 +12,7 @@ class UnpublishHandlerService
 
     Because of this, you will not get email updates about '<%= subject %>' anymore.
 
-    If you want to continue receiving updates relating to this topic, you can [subscribe to the new '<%= redirect.title %>' page](<%= add_utm(redirect.url) %>).
+    If you want to continue receiving updates relating to this topic, you can [subscribe to the new '<%= redirect.title %>' page](<%= add_utm(redirect.url, utm_parameters) %>).
 
     <%=presented_manage_subscriptions_links(address)%>
   BODY
@@ -54,13 +54,14 @@ private
 
       EmailParameters.new(
         subject: subscriber_list.title,
-        address: subscriber.address,
-        subscriber_id: subscriber.id,
-        redirect: redirect,
-        utm_parameters: {
-          'utm_source' => subscriber_list.title,
-          'utm_medium' => 'email',
-          'utm_campaign' => 'govuk-subscription-ended'
+        subscriber: subscriber,
+        template_data: {
+          redirect: redirect,
+          utm_parameters: {
+            'utm_source' => subscriber_list.title,
+            'utm_medium' => 'email',
+            'utm_campaign' => 'govuk-subscription-ended'
+          }
         }
       )
     end
@@ -95,10 +96,11 @@ private
     ).map do |subscriber|
       EmailParameters.new(
         subject: subscriber_list.title,
-        address: subscriber.address,
-        subscriber_id: subscriber.id,
-        redirect: redirect,
-        utm_parameters: {}
+        subscriber: subscriber,
+        template_data: {
+          redirect: redirect,
+          utm_parameters: {}
+        }
       )
     end
 

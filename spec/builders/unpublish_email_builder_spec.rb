@@ -20,13 +20,14 @@ RSpec.describe UnpublishEmailBuilder do
       let(:emails) {
         [
           EmailParameters.new(
-            address: 'address@test.com',
+            subscriber: subscriber,
             subject: 'subject_test',
-            subscriber_id: 123,
-            redirect: redirect,
-            utm_parameters: {
+            template_data: {
+              redirect: redirect,
+              utm_parameters: {
                 'utm_source' => 'mysource',
                 'utm_content' => 'mycontent'
+              }
             }
           )
         ]
@@ -67,7 +68,7 @@ RSpec.describe UnpublishEmailBuilder do
           expect(imported_email.body).to eq('redirect_title')
         end
         it 'contains the UTM parameters in the body' do
-          imported_email = Email.find(described_class.call(emails, '<%=add_utm(redirect.url)%>').first)
+          imported_email = Email.find(described_class.call(emails, '<%=add_utm(redirect.url, utm_parameters)%>').first)
           expect(imported_email.body).to include('utm_source=mysource', 'utm_content=mycontent')
         end
       end
