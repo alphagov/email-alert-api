@@ -15,6 +15,6 @@ class ContentItem
   end
 
   def url
-    @url ||= PublicUrlService.redirect_url(path: @path)
+    @url ||= PublicUrlService.absolute_url(path: @path)
   end
 end

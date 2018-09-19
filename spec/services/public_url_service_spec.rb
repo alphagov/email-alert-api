@@ -13,10 +13,10 @@ RSpec.describe PublicUrlService do
     end
   end
 
-  describe ".redirect_url" do
-    it "returns the GOV.UK Url for a redirected page" do
-      expect(subject.redirect_url(path: 'redirect/to/path')).to eq("http://www.dev.gov.uk/redirect/to/path")
-      expect(subject.redirect_url(path: '/redirect/to/path')).to eq("http://www.dev.gov.uk/redirect/to/path")
+  describe ".absolute_url" do
+    it "returns the absolute url given a base_path" do
+      expect(subject.absolute_url(path: 'redirect/to/path')).to eq("http://www.dev.gov.uk/redirect/to/path")
+      expect(subject.absolute_url(path: '/redirect/to/path')).to eq("http://www.dev.gov.uk/redirect/to/path")
     end
   end
 end

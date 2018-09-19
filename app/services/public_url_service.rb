@@ -17,7 +17,7 @@ module PublicUrlService
       "#{website_root}/email/authenticate?#{param('address', address)}"
     end
 
-    def redirect_url(path:)
+    def absolute_url(path:)
       File.join(website_root, path)
     end
 
