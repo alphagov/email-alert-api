@@ -28,7 +28,9 @@ class UnpublishHandlerService
   end
 
   def call(content_id, redirect)
-    subscriber_lists = fetch_subscriber_lists(content_id)
+    subscriber_lists = SubscriberList
+                         .find_by_links_value(content_id)
+                         .includes(:subscribers)
     type = find_type(subscriber_lists, content_id)
     template = TEMPLATES[type]
 
@@ -118,17 +120,5 @@ private
     first_list = subscriber_lists.first
     return :none if first_list.nil?
     first_list.links.find { |_, values| values.include?(content_id) }.first
-  end
-
-  # For this query to return the content id has to be wrapped in a double quote blame psql 9.3
-  def fetch_subscriber_lists(content_id)
-    sql = <<~SQLSTRING
-      :id IN (
-        SELECT json_array_elements((json_each(links)).value)::text
-       )
-    SQLSTRING
-    SubscriberList
-      .where(sql, id: "\"#{content_id}\"")
-      .includes(:subscribers)
   end
 end
