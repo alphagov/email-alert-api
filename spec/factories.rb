@@ -143,6 +143,10 @@ FactoryBot.define do
       ended_at { Time.now }
       ended_reason { :unsubscribed }
     end
+
+    trait :unpublished do
+      ended_reason { 'unpublished' }
+    end
   end
 
   factory :subscription_content do
