@@ -41,7 +41,10 @@ RSpec.describe BulkUnsubscribeService do
     content_ids_and_replacements.each do |(_content_id, content_item)|
       content_store_has_item(
         content_item.path,
-        { 'title' => content_item.path.titleize }.to_json
+        {
+          'base_path' => content_item.path,
+          'title' => content_item.path.titleize
+        }.to_json
       )
     end
   end

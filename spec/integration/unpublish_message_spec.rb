@@ -35,6 +35,7 @@ RSpec.describe "Sending an unpublish message", type: :request do
       content_store_has_item(
         '/redirected/path',
         {
+          'base_path' => '/redirected/path',
           'title' => 'redirected title'
         }.to_json
       )
