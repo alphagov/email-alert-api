@@ -1,7 +1,11 @@
 # rubocop:disable Metrics/BlockLength
 
 module BulkUnsubscribeService
-  def self.call(content_ids_and_replacements)
+  def self.call(
+        content_ids_and_replacements,
+        subscriber_limit: 1_000_000,
+        courtesy_emails_every_nth_email: 500
+      )
     affected_subscriber_list_ids = content_ids_and_replacements
                                      .keys
                                      .flat_map do |content_id|
@@ -15,7 +19,8 @@ module BulkUnsubscribeService
 
     subscriptions_to_end
       .group_by(&:subscriber)
-      .sort_by { |_subscriber, subscriptions| subscriptions.length }
+      .sort_by { |_subscriber, subscriptions| subscriptions.length * -1 } # start with most subscriptions
+      .take(subscriber_limit)
       .each_with_index do |(subscriber, subscriptions), index|
 
       subscription_details = subscriptions.map do |subscription|
@@ -34,19 +39,27 @@ module BulkUnsubscribeService
         ]
       end
 
-      email = send_email_to_subscriber(
-        subscriber,
-        subscription_details,
-        send_courtesy_copy: (index % 500).zero?
-      )
-
-      subscriptions.each do |subscription|
-        subscription.update!(
-          ended_reason: :unpublished,
-          ended_at: Time.now,
-          ended_email_id: email.id
+      email = nil
+      ActiveRecord::Base.transaction do
+        email = send_email_to_subscriber(
+          subscriber,
+          subscription_details,
+          send_courtesy_copy: (index % courtesy_emails_every_nth_email).zero?
         )
+
+        subscriptions.each do |subscription|
+          subscription.update!(
+            ended_reason: :unpublished,
+            ended_at: Time.now,
+            ended_email_id: email.id
+          )
+        end
       end
+
+      DeliveryRequestWorker.perform_async_in_queue(
+        email.id,
+        queue: :delivery_immediate
+      )
     end
 
     SubscriberDeactivationWorker.perform_async(
@@ -54,7 +67,11 @@ module BulkUnsubscribeService
     )
   end
 
-  def self.send_email_to_subscriber(subscriber, subscription_details, send_courtesy_copy:)
+  def self.send_email_to_subscriber(
+        subscriber,
+        subscription_details,
+        send_courtesy_copy:
+      )
     template_data = {
       subscription_details: subscription_details,
       utm_parameters: {
@@ -73,14 +90,6 @@ module BulkUnsubscribeService
       BULK_POLICY_TEMPLATE
     )
 
-    DeliveryRequestWorker.perform_async_in_queue(
-      email.id,
-      queue: :delivery_immediate
-    )
-
-    # Send a sample of the emails to the courtesy copy group. As
-    # we're iterating over subscribers here, sending each email
-    # would be excessive.
     if send_courtesy_copy
       Subscriber.where(
         address: Email::COURTESY_EMAIL

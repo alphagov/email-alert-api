@@ -86,20 +86,35 @@ namespace :manage do
   end
 
   desc "Unsubscribe subscribers using a list of base paths"
-  task :unsubscribe_bulk_from_base_paths_csv, [:csv_file_path] => :environment do |_t, args|
+  task :unsubscribe_bulk_from_base_paths_csv, %i[csv_file_path subscriber_limit courtesy_emails_every_nth_email] => :environment do |_t, args|
+    args.with_defaults(
+      subscriber_limit: 1_000_000,
+      courtesy_emails_every_nth_email: 500
+    )
+
     content_ids_and_replacements = {}
 
     CSV.foreach(args[:csv_file_path], headers: true) do |row|
       content_id = ContentItem.new(row['base_path']).content_id
+      alternative_content_item = ContentItem.new(row['alternative_path'])
 
-      content_ids_and_replacements[content_id] = ContentItem
-                                                   .new(row['alternative_path'])
+      raise "Missing title for #{row['alternative_path']}" \
+        unless alternative_content_item.title.present?
+
+      content_ids_and_replacements[content_id] = alternative_content_item
     end
 
     if content_ids_and_replacements.keys.uniq.length != content_ids_and_replacements.size
       raise "Non-unique content id's detected"
     end
 
-    BulkUnsubscribeService.call(content_ids_and_replacements)
+    puts "Processing #{args[:subscriber_limit].to_i} subscribers"
+    puts "Sending a courtesy copy every #{args[:courtesy_emails_every_nth_email].to_i} emails"
+
+    BulkUnsubscribeService.call(
+      content_ids_and_replacements,
+      subscriber_limit: args[:subscriber_limit].to_i,
+      courtesy_emails_every_nth_email: args[:courtesy_emails_every_nth_email].to_i
+    )
   end
 end
