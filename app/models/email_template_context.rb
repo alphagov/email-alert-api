@@ -1,4 +1,6 @@
 class EmailTemplateContext
+  include ActionView::Helpers::TextHelper
+
   def initialize(data = {})
     data.each do |key, value|
       instance_variable_set("@#{key}", value)

@@ -72,10 +72,11 @@ module BulkUnsubscribeService
         subscription_details,
         send_courtesy_copy:
       )
+    subject = 'Changes to your email subscriptions'
     template_data = {
       subscription_details: subscription_details,
       utm_parameters: {
-        'utm_source' => 'Ending Policy Page Subscriptions',
+        'utm_source' => subject,
         'utm_medium' => 'email',
         'utm_campaign' => 'govuk-subscription-ended'
       }
@@ -83,7 +84,7 @@ module BulkUnsubscribeService
 
     email = BulkUnsubscribeEmailBuilder.call(
       EmailParameters.new(
-        subject: 'Ending Policy Page Subscriptions',
+        subject: subject,
         subscriber: subscriber,
         template_data: template_data
       ),
@@ -96,7 +97,7 @@ module BulkUnsubscribeService
       ).each do |courtesy_subscriber|
         courtesy_email = BulkUnsubscribeEmailBuilder.call(
           EmailParameters.new(
-            subject: 'Ending Policy Page Subscriptions',
+            subject: subject,
             subscriber: courtesy_subscriber,
             template_data: template_data
           ),
@@ -114,15 +115,14 @@ module BulkUnsubscribeService
   end
 
   BULK_POLICY_TEMPLATE = <<~BODY.freeze
-    We're changing the way content is organised on GOV.UK.
+    We're changing the way content is organised on GOV.​UK. This affects your email subscriptions.
 
-    Because of this, you will not get email updates about the following policy pages anymore. If you want to continue receiving updates relating to these topics, you can subscribe to the new pages shown below.
+    You are subscribed to email updates about <%= pluralize(subscription_details.length, 'policy page') %>. You will not receive these updates any more.
 
+    You can sign up to <%= subscription_details.length == 1 ? 'this topic' : 'these topics' %> to get similar updates:
     <% subscription_details.each do |(subscription_title, replacement)| %>
-      - <%= subscription_title %>: [<%= replacement.title %>](<%= add_utm(replacement.url, utm_parameters) %>)
+      - [<%= replacement.title %>](<%= add_utm(replacement.url, utm_parameters) %>)
     <% end %>
-
-    <%= presented_manage_subscriptions_links(address) %>
   BODY
 end
 
