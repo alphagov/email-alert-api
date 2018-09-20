@@ -39,6 +39,10 @@ module BulkUnsubscribeService
         ]
       end
 
+      subscription_details = subscription_details.sort_by do |(title, _replacement)|
+        title
+      end
+
       email = nil
       ActiveRecord::Base.transaction do
         email = send_email_to_subscriber(
