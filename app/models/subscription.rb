@@ -27,12 +27,13 @@ class Subscription < ApplicationRecord
     ended_at.present?
   end
 
-  def end(reason:, datetime: nil)
+  def end(reason:, datetime: nil, ended_email_id: nil)
     raise "Already ended." if ended?
 
     update!(
       ended_reason: reason,
       ended_at: datetime || Time.now,
+      ended_email_id: ended_email_id
     )
   end
 end
