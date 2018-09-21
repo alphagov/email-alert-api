@@ -52,9 +52,8 @@ module BulkUnsubscribeService
         )
 
         subscriptions.each do |subscription|
-          subscription.update!(
-            ended_reason: :unpublished,
-            ended_at: Time.now,
+          subscription.end(
+            reason: :unpublished,
             ended_email_id: email.id
           )
         end
