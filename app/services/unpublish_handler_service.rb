@@ -2,7 +2,7 @@ class UnpublishHandlerService
   TAXON_TEMPLATE = <<~BODY.freeze
     Your subscription to email updates about '<%=subject%>' has ended because this topic no longer exists on GOV.UK.
 
-    You might want to subscribe to updates about '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url)%>)
+    You might want to subscribe to updates about '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url, utm_parameters)%>)
 
     <%=presented_manage_subscriptions_links(address)%>
   BODY
@@ -12,7 +12,7 @@ class UnpublishHandlerService
 
     Because of this, you will not get email updates about '<%= subject %>' anymore.
 
-    If you want to continue receiving updates relating to this topic, you can [subscribe to the new '<%= redirect.title %>' page](<%= add_utm(redirect.url) %>).
+    If you want to continue receiving updates relating to this topic, you can [subscribe to the new '<%= redirect.title %>' page](<%= add_utm(redirect.url, utm_parameters) %>).
 
     <%=presented_manage_subscriptions_links(address)%>
   BODY
@@ -28,7 +28,9 @@ class UnpublishHandlerService
   end
 
   def call(content_id, redirect)
-    subscriber_lists = fetch_subscriber_lists(content_id)
+    subscriber_lists = SubscriberList
+                         .find_by_links_value(content_id)
+                         .includes(:subscribers)
     type = find_type(subscriber_lists, content_id)
     template = TEMPLATES[type]
 
@@ -54,13 +56,14 @@ private
 
       EmailParameters.new(
         subject: subscriber_list.title,
-        address: subscriber.address,
-        subscriber_id: subscriber.id,
-        redirect: redirect,
-        utm_parameters: {
-          'utm_source' => subscriber_list.title,
-          'utm_medium' => 'email',
-          'utm_campaign' => 'govuk-subscription-ended'
+        subscriber: subscriber,
+        template_data: {
+          redirect: redirect,
+          utm_parameters: {
+            'utm_source' => subscriber_list.title,
+            'utm_medium' => 'email',
+            'utm_campaign' => 'govuk-subscription-ended'
+          }
         }
       )
     end
@@ -95,10 +98,11 @@ private
     ).map do |subscriber|
       EmailParameters.new(
         subject: subscriber_list.title,
-        address: subscriber.address,
-        subscriber_id: subscriber.id,
-        redirect: redirect,
-        utm_parameters: {}
+        subscriber: subscriber,
+        template_data: {
+          redirect: redirect,
+          utm_parameters: {}
+        }
       )
     end
 
@@ -116,17 +120,5 @@ private
     first_list = subscriber_lists.first
     return :none if first_list.nil?
     first_list.links.find { |_, values| values.include?(content_id) }.first
-  end
-
-  # For this query to return the content id has to be wrapped in a double quote blame psql 9.3
-  def fetch_subscriber_lists(content_id)
-    sql = <<~SQLSTRING
-      :id IN (
-        SELECT json_array_elements((json_each(links)).value)::text
-       )
-    SQLSTRING
-    SubscriberList
-      .where(sql, id: "\"#{content_id}\"")
-      .includes(:subscribers)
   end
 end

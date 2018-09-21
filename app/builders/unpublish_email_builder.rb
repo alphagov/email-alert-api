@@ -12,10 +12,14 @@ private
   def email_records(email_parameters, template)
     email_parameters.map do |email|
       {
-        address: email.address,
+        address: email.subscriber.address,
         subject: "GOV.UK update – #{email.subject}",
-        body: ERB.new(template).result(email.fetch_binding),
-        subscriber_id: email.subscriber_id
+        body: ERB.new(template).result(
+          EmailTemplateContext.new(
+            email.template_data
+          ).fetch_binding
+        ),
+        subscriber_id: email.subscriber.id
       }
     end
   end
