@@ -45,7 +45,7 @@ module BulkUnsubscribeService
 
       email = nil
       ActiveRecord::Base.transaction do
-        email = send_email_to_subscriber(
+        email = process_subscriber(
           subscriber,
           subscription_details,
           send_courtesy_copy: (index % courtesy_emails_every_nth_email).zero?
@@ -70,7 +70,7 @@ module BulkUnsubscribeService
     )
   end
 
-  def self.send_email_to_subscriber(
+  def self.process_subscriber(
         subscriber,
         subscription_details,
         send_courtesy_copy:
