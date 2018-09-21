@@ -35,4 +35,19 @@ RSpec.describe ContentItem do
       expect(ContentItem.new('/redirected/path').url).to eq("http://www.dev.gov.uk/redirected/path")
     end
   end
+
+  describe 'content_store_data' do
+    it 'raises and exception if the response base_path differs from the requested item' do
+      content_store_has_item(
+        '/requested/path',
+        {
+          'base_path' => '/different/path',
+        }.to_json
+      )
+
+      expect {
+        ContentItem.new('/requested/path').content_store_data
+      }.to raise_error(ContentItem::RedirectDetected)
+    end
+  end
 end
