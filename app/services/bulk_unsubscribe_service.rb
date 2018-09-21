@@ -51,12 +51,12 @@ module BulkUnsubscribeService
           send_courtesy_copy: (index % courtesy_emails_every_nth_email).zero?
         )
 
-        subscriptions.each do |subscription|
-          subscription.end(
-            reason: :unpublished,
-            ended_email_id: email.id
-          )
-        end
+        UnsubscribeService.subscriptions!(
+          subscriber,
+          subscriptions,
+          :unpublished,
+          ended_email_id: email.id
+        )
       end
 
       DeliveryRequestWorker.perform_async_in_queue(
@@ -64,10 +64,6 @@ module BulkUnsubscribeService
         queue: :delivery_immediate
       )
     end
-
-    SubscriberDeactivationWorker.perform_async(
-      subscriptions_to_end.map(&:subscriber_id).uniq
-    )
   end
 
   def self.process_subscriber(
