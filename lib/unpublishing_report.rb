@@ -9,10 +9,8 @@ class UnpublishingReport
   end
 
   def call
-    puts "Unpublishing activity between #{start_date} and #{end_date}"
-
     subscriptions_info = subscriber_lists_with_subscribers(unpublished_subscriptions)
-    subscription_count_per_subscriber_list(subscriptions_info)
+    generate_report(subscriptions_info)
   end
 
 private
@@ -20,26 +18,52 @@ private
   attr_reader :start_date, :end_date
 
   def unpublished_subscriptions
-    Subscription.where(ended_reason: "unpublished")
-                .where(ended_at: start_date..end_date)
+    Subscription.where(ended_reason: "unpublished", ended_at: start_date..end_date)
   end
 
   def subscriber_lists_with_subscribers(unpublished_subscriptions)
-    hash_array = Hash.new do |hash, key|
-      hash[key] = []
-    end
+    hash_array = Hash.new { |hash, key| hash[key] = [] }
 
     unpublished_subscriptions
       .pluck(:subscriber_list_id, :subscriber_id)
       .each_with_object(hash_array) { |(key, value), result| result[key] << value }
   end
 
-  def subscription_count_per_subscriber_list(subscriptions_info)
-    subscriptions_info.each do |subscriber_list_id, subscription_ids|
-      title = SubscriberList.find(subscriber_list_id).title
-      subscriptions_count = subscription_ids.count
+  def generate_report(subscriptions_info)
+    puts "Unpublishing activity between #{start_date} and #{end_date}"
+    puts ""
 
-      puts "'#{title}' has been unpublished ending #{subscriptions_count} subscriptions"
+    subscriptions_info.each do |subscriber_list_id, subscriber_ids|
+      title = SubscriberList.find(subscriber_list_id).title
+
+      puts "'#{title}' has been unpublished ending #{subscriber_ids.count} subscriptions"
+      puts ""
+
+      new_subscriptions(subscriber_ids)
+
+      puts "-------------------------------------------"
+    end
+  end
+
+  def new_subscriptions(subscriber_ids)
+    subscriber_list_ids = []
+    Subscriber.where(id: subscriber_ids).each do |subscriber|
+      subscriber_list_ids.concat(
+        subscriber.subscriptions
+          .where(ended_at: nil)
+          .where('created_at > ?', start_date)
+          .pluck(:subscriber_list_id)
+      )
+    end
+
+    new_subscriptions_with_count(subscriber_list_ids)
+  end
+
+  def new_subscriptions_with_count(subscriber_list_ids)
+    grouped_ids = subscriber_list_ids.group_by { |subscriber_list| subscriber_list }
+
+    grouped_ids.each do |id, values|
+      puts "- #{values.count} subscribers have now subscribed to '#{SubscriberList.find(id).title}'"
     end
   end
 end
