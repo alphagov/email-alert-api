@@ -13,7 +13,7 @@ class SubscriberList < ApplicationRecord
   has_many :subscribers, through: :subscriptions
   has_many :matched_content_changes
 
-  def self.find_by_links_value(content_id)
+  scope :find_by_links_value, ->(content_id) do
     # For this query to return the content id has to be wrapped in a
     # double quote blame psql 9.
     sql = <<~SQLSTRING
@@ -21,7 +21,7 @@ class SubscriberList < ApplicationRecord
         SELECT json_array_elements((json_each(links)).value)::text
        )
     SQLSTRING
-    SubscriberList.where(sql, id: "\"#{content_id}\"")
+    where(sql, id: "\"#{content_id}\"")
   end
 
   def subscription_url

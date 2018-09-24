@@ -32,16 +32,10 @@ module BulkUnsubscribeService
                                 .find do |links_content_id|
           content_ids_and_replacements.key? links_content_id
         end
-
-        [
-          subscription.subscriber_list.title,
-          content_ids_and_replacements.fetch(relevant_content_id)
-        ]
+        SubscriptionDetails.new(subscription, content_ids_and_replacements.fetch(relevant_content_id))
       end
 
-      subscription_details = subscription_details.sort_by do |(title, _replacement)|
-        title
-      end
+      subscription_details.sort_by!(&:title)
 
       email = nil
       ActiveRecord::Base.transaction do
@@ -119,10 +113,39 @@ module BulkUnsubscribeService
     You are subscribed to email updates about <%= pluralize(subscription_details.length, 'policy page') %>. You will not receive these updates any more.
 
     You can sign up to <%= subscription_details.length == 1 ? 'this topic' : 'these topics' %> to get similar updates:
-    <% subscription_details.each do |(subscription_title, replacement)| %>
-      - [<%= replacement.title %>](<%= add_utm(replacement.url, utm_parameters) %>)
+    <% subscription_details.each do |details| %>
+      - [<%= details.replacement_title %>](<%= add_utm(details.replacement_url, utm_parameters) %>)
     <% end %>
   BODY
+
+  class SubscriptionDetails
+
+    def initialize(subscription, replacement)
+      @subscription = subscription
+      @replacement = replacement
+    end
+
+    def subscriber_list
+      @_subscriber_list = @subscription.subscriber_list
+    end
+
+    def title
+      subscriber_list.title
+    end
+
+    def links
+      subscriber_list.links
+    end
+
+    def replacement_title
+      @replacement.title
+    end
+
+    def replacement_url
+      @replacement.url
+    end
+
+  end
 end
 
 # rubocop:enable Metrics/BlockLength
