@@ -2,6 +2,7 @@
 :verbose: true
 :concurrency: 30
 :logfile: ./log/sidekiq.json.log
+:timeout: 4
 :queues:
   - [delivery_immediate_high, 6]
   - [delivery_immediate, 5]
