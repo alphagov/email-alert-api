@@ -1,3 +1,5 @@
+# rubocop:disable Metrics/BlockLength
+
 require 'csv'
 
 namespace :manage do
@@ -89,8 +91,17 @@ namespace :manage do
   task :unsubscribe_bulk_from_base_paths_csv, %i[csv_file_path subscriber_limit courtesy_emails_every_nth_email] => :environment do |_t, args|
     args.with_defaults(
       subscriber_limit: 1_000_000,
-      courtesy_emails_every_nth_email: 500
+      courtesy_emails_every_nth_email: 500,
+      people_path: 'tmp/people.json', #[{content_id: ..., slug: ....}]
+      world_location_path: 'tmp/world_location.json', #[{content_id: ..., slug: ....}]
+      organisations_path: 'tmp/organisations.json', #[{content_id: ..., slug: ....}]
+      policy_area_mappings_path: 'tmp/policy_area_mappings.json' #[{content_id: ..., taxon_path: ....}]
     )
+
+    people = JSON.parse(File.read(args[:people_path]), symbolize_names: true)
+    world_locations = JSON.parse(File.read(args[:world_location_path]), symbolize_names: true)
+    organisations = JSON.parse(File.read(args[:organisations_path]), symbolize_names: true)
+    policy_area_mappings = JSON.parse(File.read(args[:policy_area_mappings_path]), symbolize_names: true)
 
     content_ids_and_replacements = {}
 
@@ -114,7 +125,12 @@ namespace :manage do
     BulkUnsubscribeService.call(
       content_ids_and_replacements,
       subscriber_limit: args[:subscriber_limit].to_i,
-      courtesy_emails_every_nth_email: args[:courtesy_emails_every_nth_email].to_i
+      courtesy_emails_every_nth_email: args[:courtesy_emails_every_nth_email].to_i,
+      people: people,
+      world_locations: world_locations,
+      organisations: organisations,
+      policy_area_mappings: policy_area_mappings
     )
   end
 end
+# rubocop:enable Metrics/BlockLength

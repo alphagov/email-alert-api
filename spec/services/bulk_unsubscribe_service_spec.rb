@@ -5,13 +5,14 @@ RSpec.describe BulkUnsubscribeService do
 
   describe 'send bulk emails' do
     before :each do
+      Redis.current = double
+      allow(Redis.current).to receive(:get).with('topic_taxonomy_taxons').and_return(JSON.dump([]))
 
       policy_area1_content_id = SecureRandom.uuid
       policy_area2_content_id = SecureRandom.uuid
 
       policy_area1_subscriber_list = create(:subscriber_list, links: { policy_areas: [policy_area1_content_id] })
       policy_area2_subscriber_list = create(:subscriber_list, links: { policy_areas: [policy_area2_content_id] })
-
 
       @content_ids_and_replacements = {
             policy_area1_content_id => create(:content_item, path: '/topic1'),
@@ -60,6 +61,9 @@ RSpec.describe BulkUnsubscribeService do
 
   describe 'redirect to announcements finder' do
     before :each do
+      Redis.current = double
+      allow(Redis.current).to receive(:get).with('topic_taxonomy_taxons').and_return(JSON.dump([]))
+
       @policy_area1_content_id = SecureRandom.uuid
 
       @content_ids_and_replacements = {
@@ -148,7 +152,6 @@ RSpec.describe BulkUnsubscribeService do
                email_document_supertype: 'publications',
                links: { policy_areas: [@policy_area1_content_id] })
 
-        Redis.current = double
         taxonomy = [{
                       content_id: 'level_one_content_id',
                       base_path: '/level_one',
@@ -161,6 +164,7 @@ RSpec.describe BulkUnsubscribeService do
                         ]
                       }
                     }]
+        Redis.current = double
         allow(Redis.current).to receive(:get).with('topic_taxonomy_taxons').and_return(JSON.dump(taxonomy))
       end
       it 'sends the user to a url filtered on taxon and subtaxon' do
