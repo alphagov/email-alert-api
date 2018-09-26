@@ -1,11 +1,44 @@
 # rubocop:disable Metrics/BlockLength
 
 module BulkUnsubscribeService
+  mattr_accessor :people, :world_locations, :organisations, :policy_area_mappings, :taxonomy
+
+  def self.person_slug(content_id)
+    result = people.find(-> { {} }) { |person| person[:content_id] == content_id }
+    result[:slug]
+  end
+
+  def self.world_location_slug(content_id)
+    result = world_locations.find(-> { {} }) { |world_location| world_location[:content_id] == content_id }
+    result[:slug]
+  end
+
+  def self.organisation_slug(content_id)
+    result = organisations.find(-> { {} }) { |org| org[:content_id] == content_id }
+    result[:slug]
+  end
+
+  def self.taxon_path(policy_area_content_id)
+    result = policy_area_mappings.find(-> { {} }) { |mapping| mapping[:content_id] == policy_area_content_id }
+    result[:taxon_path]
+  end
+
   def self.call(
         content_ids_and_replacements,
         subscriber_limit: 1_000_000,
-        courtesy_emails_every_nth_email: 500
-      )
+        courtesy_emails_every_nth_email: 500,
+        people: [], #[{content_id: ..., slug: ....}]
+        world_locations: [], #[{content_id: ..., slug: ....}]
+        organisations: [], #[{content_id: ..., slug: ....}]
+        policy_area_mappings: [] #[{content_id: ...., taxon_path: ....}]
+    )
+
+    BulkUnsubscribeService.people = people
+    BulkUnsubscribeService.world_locations = world_locations
+    BulkUnsubscribeService.organisations = organisations
+    BulkUnsubscribeService.policy_area_mappings = policy_area_mappings
+    BulkUnsubscribeService.taxonomy = Taxonomy.new
+
     affected_subscriber_list_ids = content_ids_and_replacements
                                      .keys
                                      .flat_map do |content_id|
@@ -117,7 +150,6 @@ module BulkUnsubscribeService
       - [<%= details.replacement_title %>](<%= add_utm(details.replacement_url, utm_parameters) %>)
     <% end %>
   BODY
-  
 end
 
 # rubocop:enable Metrics/BlockLength
