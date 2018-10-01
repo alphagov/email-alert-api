@@ -1,8 +1,8 @@
 module BulkUnsubscribeService
   class SubscriptionDetails
-    def initialize(subscription, replacement)
+    def initialize(subscription, taxon_path)
       @subscription = subscription
-      @replacement = replacement
+      @replacement = ContentItem.new(taxon_path)
     end
 
     def subscriber_list

@@ -24,7 +24,6 @@ module BulkUnsubscribeService
   end
 
   def self.call(
-        content_ids_and_replacements,
         subscriber_limit: 1_000_000,
         courtesy_emails_every_nth_email: 500,
         people: [], #[{content_id: ..., slug: ....}]
@@ -39,10 +38,8 @@ module BulkUnsubscribeService
     BulkUnsubscribeService.policy_area_mappings = policy_area_mappings
     BulkUnsubscribeService.taxonomy = Taxonomy.new
 
-    affected_subscriber_list_ids = content_ids_and_replacements
-                                     .keys
-                                     .flat_map do |content_id|
-      SubscriberList.find_by_links_value(content_id).pluck(:id)
+    affected_subscriber_list_ids = policy_area_mappings.flat_map do |mapping|
+      SubscriberList.find_by_links_value(mapping[:content_id]).pluck(:id)
     end
 
     subscriptions_to_end = Subscription
@@ -57,15 +54,13 @@ module BulkUnsubscribeService
       .each_with_index do |(subscriber, subscriptions), index|
 
       subscription_details = subscriptions.map do |subscription|
-        relevant_content_id = subscription
+        subscription_content_ids = subscription
                                 .subscriber_list
                                 .links
                                 .values
                                 .flatten
-                                .find do |links_content_id|
-          content_ids_and_replacements.key? links_content_id
-        end
-        SubscriptionDetails.new(subscription, content_ids_and_replacements.fetch(relevant_content_id))
+        mapping = policy_area_mappings.find { |m| subscription_content_ids.include?(m[:content_id]) }
+        SubscriptionDetails.new(subscription, mapping[:taxon_path])
       end
 
       subscription_details.sort_by!(&:title)

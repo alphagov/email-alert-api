@@ -14,10 +14,10 @@ RSpec.describe BulkUnsubscribeService do
       policy_area1_subscriber_list = create(:subscriber_list, links: { policy_areas: [policy_area1_content_id] })
       policy_area2_subscriber_list = create(:subscriber_list, links: { policy_areas: [policy_area2_content_id] })
 
-      @content_ids_and_replacements = {
-            policy_area1_content_id => create(:content_item, path: '/topic1'),
-            policy_area2_content_id => create(:content_item, path: '/topic2')
-      }
+      @policy_area_mappings = [
+        { content_id: policy_area1_content_id, taxon_path: '/topic1' },
+        { content_id: policy_area2_content_id, taxon_path: '/topic2' }
+      ]
 
       double_subscriber = create(
         :subscription,
@@ -36,12 +36,12 @@ RSpec.describe BulkUnsubscribeService do
 
       create(:subscriber, address: Email::COURTESY_EMAIL)
 
-      @content_ids_and_replacements.each do |(_content_id, content_item)|
+      @policy_area_mappings.each do |hash|
         content_store_has_item(
-          content_item.path,
+          hash[:taxon_path],
           {
-            'base_path' => content_item.path,
-            'title' => content_item.path.titleize
+            'base_path' => hash[:taxon_path],
+            'title' => hash[:taxon_path].titleize
           }.to_json
         )
       end
@@ -51,7 +51,7 @@ RSpec.describe BulkUnsubscribeService do
       it "sends three emails" do
         Sidekiq::Testing.fake! do
           DeliveryRequestWorker.jobs.clear
-          described_class.call(@content_ids_and_replacements)
+          BulkUnsubscribeService.call(policy_area_mappings: @policy_area_mappings)
         end
 
         expect(DeliveryRequestWorker.jobs.size).to eq(3)
@@ -66,9 +66,9 @@ RSpec.describe BulkUnsubscribeService do
 
       @policy_area1_content_id = SecureRandom.uuid
 
-      @content_ids_and_replacements = {
-          @policy_area1_content_id => build(:content_item, path: '/topic1'),
-      }
+      @policy_area_mappings = [
+          content_id: @policy_area1_content_id, taxon_path: '/topic1'
+      ]
       content_store_has_item(
         '/topic1',
           {
@@ -86,7 +86,7 @@ RSpec.describe BulkUnsubscribeService do
 
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('/government/announcements')))
-      BulkUnsubscribeService.call(@content_ids_and_replacements)
+      BulkUnsubscribeService.call(policy_area_mappings: @policy_area_mappings)
     end
 
     it 'sends the user to the publications' do
@@ -97,7 +97,7 @@ RSpec.describe BulkUnsubscribeService do
 
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('/government/publications')))
-      BulkUnsubscribeService.call(@content_ids_and_replacements)
+      BulkUnsubscribeService.call(policy_area_mappings: @policy_area_mappings)
     end
 
     it 'sends the user to a url filtered on people' do
@@ -111,7 +111,7 @@ RSpec.describe BulkUnsubscribeService do
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('people%5B%5D=person-slug')))
 
-      BulkUnsubscribeService.call(@content_ids_and_replacements,
+      BulkUnsubscribeService.call(policy_area_mappings: @policy_area_mappings,
                                   people: [{ content_id: person_content_id, slug: 'person-slug' }])
     end
 
@@ -126,7 +126,7 @@ RSpec.describe BulkUnsubscribeService do
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('world_locations%5B%5D=world_location_slug')))
 
-      BulkUnsubscribeService.call(@content_ids_and_replacements,
+      BulkUnsubscribeService.call(policy_area_mappings: @policy_area_mappings,
                                   world_locations: [{ content_id: world_location_id, slug: 'world_location_slug' }])
     end
 
@@ -141,7 +141,7 @@ RSpec.describe BulkUnsubscribeService do
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('departments%5B%5D=organisation_slug')))
 
-      BulkUnsubscribeService.call(@content_ids_and_replacements,
+      BulkUnsubscribeService.call(policy_area_mappings: @policy_area_mappings,
                                   organisations: [{ content_id: organisations_id, slug: 'organisation_slug' }])
     end
 
@@ -164,6 +164,20 @@ RSpec.describe BulkUnsubscribeService do
                         ]
                       }
                     }]
+        content_store_has_item(
+          '/level_one',
+          {
+            'base_path' => '/level_one',
+            'title' => 'level_one'
+          }.to_json
+        )
+        content_store_has_item(
+          '/level_one/level_two',
+          {
+            'base_path' => '/level_one/level_two',
+            'title' => 'level_one_level_two'
+          }.to_json
+        )
         Redis.current = double
         allow(Redis.current).to receive(:get).with('topic_taxonomy_taxons').and_return(JSON.dump(taxonomy))
       end
@@ -171,15 +185,13 @@ RSpec.describe BulkUnsubscribeService do
         expect(DeliveryRequestService).to receive(:call).
             with(email: having_attributes(body: include('taxons%5B%5D=level_one_content_id', 'subtaxons%5B%5D=level_two_content_id')))
 
-        BulkUnsubscribeService.call(@content_ids_and_replacements,
-                                    policy_area_mappings: [{ content_id: @policy_area1_content_id, taxon_path: '/level_one/level_two' }])
+        BulkUnsubscribeService.call(policy_area_mappings: [{ content_id: @policy_area1_content_id, taxon_path: '/level_one/level_two' }])
       end
       it 'sends the user to a url filtered on taxon; the subtaxon is set to "all"' do
         expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('taxons%5B%5D=level_one_content_id', 'subtaxons%5B%5D=all')))
 
-        BulkUnsubscribeService.call(@content_ids_and_replacements,
-                                    policy_area_mappings: [{ content_id: @policy_area1_content_id, taxon_path: '/level_one' }])
+        BulkUnsubscribeService.call(policy_area_mappings: [{ content_id: @policy_area1_content_id, taxon_path: '/level_one' }])
       end
     end
   end
