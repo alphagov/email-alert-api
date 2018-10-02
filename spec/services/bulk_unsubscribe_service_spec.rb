@@ -151,6 +151,45 @@ RSpec.describe BulkUnsubscribeService do
     end
   end
 
+  describe 'Title swap' do
+    it 'swaps the policy area title with the taxon title' do
+      @policy_area_content_id = SecureRandom.uuid
+
+      Redis.current = double
+      allow(Redis.current).to receive(:get).with('topic_taxonomy_taxons').and_return(JSON.dump([]))
+
+      content_store_has_item(
+        '/taxon',
+        {
+          'base_path' => '/taxon',
+          'title' => 'taxon_title'
+        }.to_json
+      )
+      content_store_has_item(
+        '/policy_area',
+        {
+          'base_path' => '/policy_area',
+          'title' => 'policy_title'
+        }.to_json
+      )
+
+      create(:subscriber_list_with_subscribers,
+             subscriber_count: 1,
+             email_document_supertype: 'publications',
+             title: 'this is about a policy_title amongst other things',
+             links: { policy_areas: [@policy_area_content_id] })
+
+      policy_area_mappings = [{ content_id: @policy_area_content_id,
+                                taxon_path: '/taxon',
+                                policy_area_path: '/policy_area' }]
+
+      expect(DeliveryRequestService).to receive(:call).
+        with(email: having_attributes(body: include('this is about a taxon_title amongst other things')))
+
+      BulkUnsubscribeService.call(policy_area_mappings: policy_area_mappings)
+    end
+  end
+
   describe 'taxon and subtaxon' do
     before :each do
       @policy_area_content_id = SecureRandom.uuid

@@ -1,7 +1,8 @@
 module BulkUnsubscribeService
   class SubscriptionDetails
-    def initialize(subscription, taxon_path)
+    def initialize(subscription, policy_area_path, taxon_path)
       @subscription = subscription
+      @policy_area = ContentItem.new(policy_area_path)
       @replacement = ContentItem.new(taxon_path)
     end
 
@@ -18,7 +19,12 @@ module BulkUnsubscribeService
     end
 
     def replacement_title
-      @replacement.title
+      if subscriber_list[:email_document_supertype] == 'announcements' ||
+          subscriber_list[:email_document_supertype] == 'publications'
+        @subscription.subscriber_list.title.gsub(@policy_area.title, @replacement.title)
+      else
+        @replacement.title
+      end
     end
 
     def replacement_url

@@ -29,21 +29,13 @@ module BulkUnsubscribeService
         people: [], #[{content_id: ..., slug: ....}]
         world_locations: [], #[{content_id: ..., slug: ....}]
         organisations: [], #[{content_id: ..., slug: ....}]
-        policy_area_mappings: [] #[{content_id: ...., policy_area_path:, taxon_path: ....}]
+        policy_area_mappings: [] #[{content_id: ...., policy_area_path: ... taxon_path: ....}]
     )
 
     BulkUnsubscribeService.people = people
     BulkUnsubscribeService.world_locations = world_locations
     BulkUnsubscribeService.organisations = organisations
-    BulkUnsubscribeService.policy_area_mappings = policy_area_mappings.map do |mapping|
-      taxon_title = Services.content_store.content_item(mapping[:taxon_path])['title']
-      policy_area_title = Services.content_store.content_item(mapping[:policy_area_path])['title']
-      { content_id: mapping[:content_id],
-        taxon_path: mapping[:taxon_path],
-        taxon_title: taxon_title,
-        policy_area_title: policy_area_title
-      }
-    end
+    BulkUnsubscribeService.policy_area_mappings = policy_area_mappings
     BulkUnsubscribeService.taxonomy = Taxonomy.new
 
     affected_subscriber_list_ids = policy_area_mappings.flat_map do |mapping|
@@ -68,7 +60,7 @@ module BulkUnsubscribeService
                                 .values
                                 .flatten
         mapping = policy_area_mappings.find { |m| subscription_content_ids.include?(m[:content_id]) }
-        SubscriptionDetails.new(subscription, mapping[:taxon_path])
+        SubscriptionDetails.new(subscription, mapping[:policy_area_path], mapping[:taxon_path])
       end
 
       subscription_details.sort_by!(&:title)
