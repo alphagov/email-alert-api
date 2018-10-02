@@ -138,7 +138,7 @@ module BulkUnsubscribeService
   BULK_POLICY_TEMPLATE = <<~BODY.freeze
     We're changing the way content is organised on GOV.​UK. This affects your email subscriptions.
 
-    You are subscribed to email updates about <%= pluralize(subscription_details.length, 'policy page') %>. You will not receive these updates any more.
+    You are subscribed to email updates about <%= pluralize(subscription_details.length, 'policy area') %>. You will not receive these updates any more.
 
     You can sign up to <%= subscription_details.length == 1 ? 'this topic' : 'these topics' %> to get similar updates:
     <% subscription_details.each do |details| %>
