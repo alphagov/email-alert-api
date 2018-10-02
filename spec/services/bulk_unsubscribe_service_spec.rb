@@ -3,6 +3,25 @@ require 'gds_api/test_helpers/content_store'
 RSpec.describe BulkUnsubscribeService do
   include ::GdsApi::TestHelpers::ContentStore
 
+  def content_store_has_data(policy_area_mappings)
+    policy_area_mappings.each do |hash|
+      content_store_has_item(
+        hash[:taxon_path],
+        {
+          'base_path' => hash[:taxon_path],
+          'title' => hash[:taxon_path].titleize
+        }.to_json
+      )
+      content_store_has_item(
+        hash[:policy_area_path],
+        {
+          'base_path' => hash[:policy_area_path],
+          'title' => hash[:policy_area_path].titleize
+        }.to_json
+      )
+    end
+  end
+
   describe 'send bulk emails' do
     before :each do
       Redis.current = double
@@ -15,8 +34,8 @@ RSpec.describe BulkUnsubscribeService do
       policy_area2_subscriber_list = create(:subscriber_list, links: { policy_areas: [policy_area2_content_id] })
 
       @policy_area_mappings = [
-        { content_id: policy_area1_content_id, taxon_path: '/topic1' },
-        { content_id: policy_area2_content_id, taxon_path: '/topic2' }
+        { content_id: policy_area1_content_id, taxon_path: '/topic1', policy_area_path: '/policy1' },
+        { content_id: policy_area2_content_id, taxon_path: '/topic2', policy_area_path: '/policy2' }
       ]
 
       double_subscriber = create(
@@ -36,15 +55,7 @@ RSpec.describe BulkUnsubscribeService do
 
       create(:subscriber, address: Email::COURTESY_EMAIL)
 
-      @policy_area_mappings.each do |hash|
-        content_store_has_item(
-          hash[:taxon_path],
-          {
-            'base_path' => hash[:taxon_path],
-            'title' => hash[:taxon_path].titleize
-          }.to_json
-        )
-      end
+      content_store_has_data(@policy_area_mappings)
     end
 
     describe ".call" do
@@ -67,15 +78,9 @@ RSpec.describe BulkUnsubscribeService do
       @policy_area1_content_id = SecureRandom.uuid
 
       @policy_area_mappings = [
-          content_id: @policy_area1_content_id, taxon_path: '/topic1'
+          content_id: @policy_area1_content_id, taxon_path: '/level_one', policy_area_path: '/policy1'
       ]
-      content_store_has_item(
-        '/topic1',
-          {
-              'base_path' => '/topic1',
-              'title' => 'topic1'
-          }.to_json
-      )
+      content_store_has_data(@policy_area_mappings)
     end
 
     it 'sends the user to the announcements' do
@@ -144,55 +149,53 @@ RSpec.describe BulkUnsubscribeService do
       BulkUnsubscribeService.call(policy_area_mappings: @policy_area_mappings,
                                   organisations: [{ content_id: organisations_id, slug: 'organisation_slug' }])
     end
+  end
 
-    describe 'taxon and subtaxon' do
-      before :each do
-        create(:subscriber_list_with_subscribers,
-               subscriber_count: 1,
-               email_document_supertype: 'publications',
-               links: { policy_areas: [@policy_area1_content_id] })
+  describe 'taxon and subtaxon' do
+    before :each do
+      @policy_area_content_id = SecureRandom.uuid
 
-        taxonomy = [{
-                      content_id: 'level_one_content_id',
-                      base_path: '/level_one',
-                      links: {
-                        child_taxons: [
-                          {
-                            content_id: 'level_two_content_id',
-                            base_path: '/level_one/level_two'
-                          }
-                        ]
-                      }
-                    }]
-        content_store_has_item(
-          '/level_one',
-          {
-            'base_path' => '/level_one',
-            'title' => 'level_one'
-          }.to_json
-        )
-        content_store_has_item(
-          '/level_one/level_two',
-          {
-            'base_path' => '/level_one/level_two',
-            'title' => 'level_one_level_two'
-          }.to_json
-        )
-        Redis.current = double
-        allow(Redis.current).to receive(:get).with('topic_taxonomy_taxons').and_return(JSON.dump(taxonomy))
-      end
-      it 'sends the user to a url filtered on taxon and subtaxon' do
-        expect(DeliveryRequestService).to receive(:call).
-            with(email: having_attributes(body: include('taxons%5B%5D=level_one_content_id', 'subtaxons%5B%5D=level_two_content_id')))
+      create(:subscriber_list_with_subscribers,
+             subscriber_count: 1,
+             email_document_supertype: 'publications',
+             links: { policy_areas: [@policy_area_content_id] })
 
-        BulkUnsubscribeService.call(policy_area_mappings: [{ content_id: @policy_area1_content_id, taxon_path: '/level_one/level_two' }])
-      end
-      it 'sends the user to a url filtered on taxon; the subtaxon is set to "all"' do
-        expect(DeliveryRequestService).to receive(:call).
-          with(email: having_attributes(body: include('taxons%5B%5D=level_one_content_id', 'subtaxons%5B%5D=all')))
+      taxonomy = [{
+                    content_id: 'level_one_content_id',
+                    base_path: '/level_one',
+                    links: {
+                      child_taxons: [
+                        {
+                          content_id: 'level_two_content_id',
+                          base_path: '/level_one/level_two'
+                        }
+                      ]
+                    }
+                  }]
+      Redis.current = double
+      allow(Redis.current).to receive(:get).with('topic_taxonomy_taxons').and_return(JSON.dump(taxonomy))
+    end
+    it 'sends the user to a url filtered on taxon and subtaxon' do
+      policy_area_mappings = [{ content_id: @policy_area_content_id,
+                                taxon_path: '/level_one/level_two',
+                                policy_area_path: '/policy1' }]
+      content_store_has_data(policy_area_mappings)
 
-        BulkUnsubscribeService.call(policy_area_mappings: [{ content_id: @policy_area1_content_id, taxon_path: '/level_one' }])
-      end
+      expect(DeliveryRequestService).to receive(:call).
+          with(email: having_attributes(body: include('taxons%5B%5D=level_one_content_id', 'subtaxons%5B%5D=level_two_content_id')))
+
+      BulkUnsubscribeService.call(policy_area_mappings: policy_area_mappings)
+    end
+    it 'sends the user to a url filtered on taxon; the subtaxon is set to "all"' do
+      policy_area_mappings = [{ content_id: @policy_area_content_id,
+                                taxon_path: '/level_one',
+                                policy_area_path: '/policy1' }]
+      content_store_has_data(policy_area_mappings)
+
+      expect(DeliveryRequestService).to receive(:call).
+        with(email: having_attributes(body: include('taxons%5B%5D=level_one_content_id', 'subtaxons%5B%5D=all')))
+
+      BulkUnsubscribeService.call(policy_area_mappings: policy_area_mappings)
     end
   end
 end

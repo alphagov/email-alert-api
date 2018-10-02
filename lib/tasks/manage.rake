@@ -93,7 +93,7 @@ namespace :manage do
       people_path: 'tmp/people.json', #[{content_id: ..., slug: ....}]
       world_location_path: 'tmp/world_locations.json', #[{content_id: ..., slug: ....}]
       organisations_path: 'tmp/organisations.json', #[{content_id: ..., slug: ....}]
-      policy_area_mappings_path: 'tmp/policy_area_mappings.json' #[{content_id: ..., taxon_path: ....}]
+      policy_area_mappings_path: 'tmp/policy_area_mappings.json' #[{content_id: ..., taxon_path: ...., policy_area_path:}]
     )
 
     people = JSON.parse(File.read(args[:people_path]), symbolize_names: true)
