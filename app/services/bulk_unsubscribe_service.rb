@@ -140,7 +140,7 @@ module BulkUnsubscribeService
 
     You are subscribed to email updates about <%= pluralize(subscription_details.length, 'policy area') %>. You will not receive these updates any more.
 
-    You can sign up to <%= subscription_details.length == 1 ? 'this topic' : 'these topics' %> to get similar updates:
+    You can get similar updates by signing up to:
     <% subscription_details.each do |details| %>
       - [<%= details.replacement_title %>](<%= add_utm(details.replacement_url, utm_parameters) %>)
     <% end %>
