@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'pg', '~> 1.1'
 gem 'rails', '~> 5.2'
 
-gem 'activerecord-import', '~> 0.25'
+gem 'activerecord-import', '~> 0.26'
 gem 'bootsnap', require: false
 gem 'with_advisory_lock', '~> 4.0'
 
