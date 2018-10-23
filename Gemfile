@@ -14,7 +14,7 @@ gem 'gds-api-adapters', '~> 53.1'
 gem 'gds-sso', '~> 13.6'
 gem 'govuk_app_config', '~> 1.10'
 # This is pinned < 2 until gds-sso supports JWT > 2
-gem 'jwt', '~> 1.5'
+gem 'jwt', '~> 2.1'
 gem 'nokogiri', '~> 1.8'
 gem 'notifications-ruby-client', '~> 2.9'
 gem 'plek', '~> 2.1'
