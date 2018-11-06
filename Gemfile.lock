@@ -207,7 +207,7 @@ GEM
       pry (~> 0.10)
     public_suffix (3.0.3)
     raabro (1.1.6)
-    rack (2.0.5)
+    rack (2.0.6)
     rack-cache (1.8.0)
       rack (>= 0.4)
     rack-protection (2.0.3)
