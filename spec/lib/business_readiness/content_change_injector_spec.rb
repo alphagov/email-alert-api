@@ -4,14 +4,8 @@ RSpec.describe BusinessReadiness::ContentChangeInjector do
     {
       "/example" => {
         "appear_in_find_eu_exit_guidance_business_finder" => "yes",
-        "sector_business_area" => [
-          "aerospace",
-          "automotive",
-        ],
-        "intellectual_property" => [
-          "copyright",
-          "patents",
-        ]
+        "sector_business_area" => %w(aerospace automotive),
+        "intellectual_property" => %w(copyright patents)
       }
     }
   end
@@ -29,13 +23,13 @@ RSpec.describe BusinessReadiness::ContentChangeInjector do
   context "with some unrelated existing tags" do
     let(:existing_tags) do
       {
-        "unrelated_tag" => ["test"]
+        "unrelated_tag" => %w(test)
       }
     end
 
     it "should have all the new tags and the existing tags" do
       expect(subject).to eq(
-        base_paths_with_tags["/example"].merge("unrelated_tag" => ["test"])
+        base_paths_with_tags["/example"].merge("unrelated_tag" => %w(test))
       )
     end
   end
@@ -43,7 +37,7 @@ RSpec.describe BusinessReadiness::ContentChangeInjector do
   context "with some related existing tags" do
     let(:existing_tags) do
       {
-        "sector_business_area" => ["chemicals"]
+        "sector_business_area" => %w(chemicals)
       }
     end
 
