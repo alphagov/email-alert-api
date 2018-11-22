@@ -3,7 +3,7 @@ require "csv"
 module BusinessReadiness
   class Loader
     def initialize(filename, facets_filename)
-      @rows = CSV.read(filename)
+      @rows = CSV.read(filename, converters: lambda { |v| v || "" })
       @facets = {}
 
       if File.exist?(facets_filename)
