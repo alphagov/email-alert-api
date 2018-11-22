@@ -39,6 +39,10 @@ private
       priority: params.fetch(:priority, "normal").to_sym,
       signon_user_uid: user&.uid,
       footnote: params.fetch(:footnote, ""),
-    }
+    }.tap do |content_change|
+      content_change[:tags] = Services.business_readiness.inject(
+        content_change[:base_path], content_change[:tags]
+      )
+    end
   end
 end
