@@ -28,7 +28,7 @@ module BusinessReadiness
     attr_reader :facets, :rows
 
     def tags_for_row(row)
-      if row[1] == "yes"
+      if row[1].strip == "yes"
         create_all_tags
       else
         specific_tags(row)
@@ -45,7 +45,7 @@ module BusinessReadiness
       tags = {}
       facets.each_with_index do |facet, index|
         row_index = index + 2
-        tags[facet["key"]] = row.fetch(row_index, "").split(",")
+        tags[facet["key"]] = row.fetch(row_index, "").split(",").map(&:strip)
       end
 
       tags.reject do |_, value|
