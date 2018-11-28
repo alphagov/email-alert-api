@@ -8,7 +8,7 @@ gem 'bootsnap', require: false
 gem 'with_advisory_lock', '~> 4.0'
 
 gem 'aws-sdk-s3', '~> 1'
-gem 'faraday', '0.15.3'
+gem 'faraday', '0.15.4'
 gem 'foreman', '~> 0.85'
 gem 'gds-api-adapters', '~> 54.1'
 gem 'gds-sso', '~> 13.6'
