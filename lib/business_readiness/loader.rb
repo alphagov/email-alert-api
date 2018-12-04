@@ -28,10 +28,6 @@ module BusinessReadiness
     attr_reader :facets, :rows
 
     def tags_for_row(row)
-      specific_tags(row)
-    end
-
-    def specific_tags(row)
       tags = {}
       facets.each_with_index do |facet, index|
         row_index = index + 1
