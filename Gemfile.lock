@@ -89,7 +89,7 @@ GEM
     factory_bot_rails (4.11.1)
       factory_bot (~> 4.11.1)
       railties (>= 3.0.0)
-    faraday (0.15.3)
+    faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.25)
     foreman (0.85.0)
@@ -361,7 +361,7 @@ DEPENDENCIES
   climate_control
   equivalent-xml
   factory_bot_rails
-  faraday (= 0.15.3)
+  faraday (= 0.15.4)
   foreman (~> 0.85)
   gds-api-adapters (~> 54.1)
   gds-sso (~> 13.6)
