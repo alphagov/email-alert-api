@@ -5,18 +5,20 @@ RSpec.describe "Creating a subscriber list", type: :request do
     end
 
     it "creates a subscriber_list" do
-      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] } })
+      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
+                                     taxon_tree: { all: %w[taxon1 taxon2] } })
 
       expect(SubscriberList.count).to eq(1)
     end
 
     it "returns a 201" do
-      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] } })
+      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
+                                     taxon_tree: { all: %w[taxon1 taxon2] } })
 
       expect(response.status).to eq(201)
     end
 
-    context "with an existing subsciber list with the same slug" do
+    context "with an existing subscriber list with the same slug" do
       before do
         create(:subscriber_list, slug: "oil-and-gas")
       end
@@ -36,7 +38,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
       create_subscriber_list(
         title: "oil and gas licensing",
         tags: { topics: { any: ["oil-and-gas/licensing"] } },
-        links: { topics: { any: ["uuid-888"] } }
+        links: { topics: { any: ["uuid-888"] },
+                 taxon_tree: { all: %w[taxon1 taxon2] } }
       )
       response_hash = JSON.parse(response.body)
       subscriber_list = response_hash["subscriber_list"]
@@ -67,13 +70,34 @@ RSpec.describe "Creating a subscriber list", type: :request do
         },
         "links" => {
           "topics" => {
-            "any" => ["uuid-888"]
+            "any" => ["uuid-888"],
+          },
+          "taxon_tree" => {
+            "all" => %w[taxon1 taxon2]
           }
         }
       )
 
       expect(subscriber_list["gov_delivery_id"]).to eq("oil-and-gas-licensing")
       expect(subscriber_list["slug"]).to eq("oil-and-gas-licensing")
+    end
+
+    describe 'using legacy parameters' do
+      it 'creates a new subscriber list' do
+        expect {
+          create_subscriber_list(
+            title: "oil and gas licensing",
+            links: { topics: ["uuid-888"] }
+          )
+        }.to change { SubscriberList.count }.by(1)
+      end
+      it "returns an error if link isn't an array" do
+        create_subscriber_list(
+          links: { topics: "uuid-888" },
+          )
+
+        expect(response.status).to eq(422)
+      end
     end
 
     it "returns an error if tag isn't an array" do

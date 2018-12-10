@@ -8,7 +8,10 @@ class MatchedForNotification
 
   # Filter out subscriber lists:
   # - where the keys from the supplied hash are a superset of the keys in the specified query_field AND
-  # - the key values in the subscriber list have at least one corresponding match in the supplied hash.
+  # - If the operator is 'any':
+  #     the key values in the subscriber list have at least one corresponding match in the supplied hash.
+  # - If the operator is 'all'
+  #   all key values in the subscriber list have corresponding matches in the supplied hash.
   # Note that this means that not all keys from the the supplied hash are required to be matched.
   def call(content_item_tags_or_links)
     return [] unless content_item_tags_or_links.present?
@@ -19,9 +22,12 @@ class MatchedForNotification
       subscriber_list_tags_or_links = subscriber_list.send(@query_field) # send ensures the keys are symbols
 
       subscriber_list_tags_or_links.keys.all? do |key|
-        (
-          Array(content_item_tags_or_links[key]) & subscriber_list_tags_or_links[key][:any]
-        ).any?
+        content_item_values = Array(content_item_tags_or_links[key])
+        any_values = subscriber_list_tags_or_links[key].fetch(:any, [])
+        all_values = subscriber_list_tags_or_links[key].fetch(:all, [])
+
+        (all_values - content_item_values).empty? &&
+          (any_values.empty? || (any_values & content_item_values).any?)
       end
     end
   end

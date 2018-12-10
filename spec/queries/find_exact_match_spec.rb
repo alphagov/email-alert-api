@@ -13,6 +13,20 @@ RSpec.describe FindExactMatch do
       document_type: "policy",
     )
   end
+  let!(:list_with_all_and_any) do
+    create(
+      :subscriber_list,
+      tags: {
+        topics: { all: ["oil-and-gas/licensing", 'something/else'] },
+        taxon_tree: { all: ["ship-crew-health-and-safety", "mental-health-service-reform"], any: ["product-safety"] }
+      },
+      links: {
+        topics: { all: ["uuid-888", "uuid-999"], any: ["uuid-777"] },
+        taxon_tree: { all: ["taxon-123", "taxon-555"] }
+      },
+      document_type: "policy",
+      )
+  end
 
   context 'when matching on tags' do
     it "not matched when query contains fewer keys than the subscriber_list" do
@@ -48,6 +62,20 @@ RSpec.describe FindExactMatch do
         .call(topics:  { any: ["oil-and-gas/licensing"] },
           organisations:  { any: ["hm-revenue-customs", "environment-agency"] })
       expect(found_lists).to eq([list_with_tags])
+    end
+
+    it "requires and and any operators to be correctly set" do
+      found_lists = described_class.new(query_field: :tags)
+                      .call(topics: { all: ["oil-and-gas/licensing", 'something/else'] },
+                            taxon_tree: { all: ["ship-crew-health-and-safety", "mental-health-service-reform"], any: ["product-safety"] })
+      expect(found_lists).to eq([list_with_all_and_any])
+    end
+
+    it "requires both operators to be present" do
+      found_lists = described_class.new(query_field: :tags)
+                      .call(topics: { all: ["oil-and-gas/licensing", 'something/else'] },
+                            taxon_tree: { all: ["ship-crew-health-and-safety", "mental-health-service-reform"] })
+      expect(found_lists).to be_empty
     end
   end
 
@@ -86,6 +114,20 @@ RSpec.describe FindExactMatch do
         .call(topics:  { any: ["uuid-888"] },
           organisations:  { any: ["org-555", "org-123"] })
       expect(found_lists).to eq([list_with_tags])
+    end
+
+    it "requires and and any operators to be correctly set" do
+      found_lists = described_class.new(query_field: :links)
+                      .call(topics: { all: ["uuid-888", "uuid-999"], any: ["uuid-777"] },
+                            taxon_tree: { all: ["taxon-123", "taxon-555"] })
+      expect(found_lists).to eq([list_with_all_and_any])
+    end
+
+    it "requires both operators to be present" do
+      found_lists = described_class.new(query_field: :links)
+                      .call(topics: { all: ["uuid-888", "uuid-999"] },
+                            taxon_tree: { all: ["taxon-123", "taxon-555"] })
+      expect(found_lists).to be_empty
     end
   end
 end

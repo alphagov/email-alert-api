@@ -16,8 +16,14 @@ RSpec.describe SubscriberList, type: :model do
       expect(subject).to be_valid
     end
 
-    it "is valid when tags 'hash' has values that are arrays" do
+    it "is valid when tags 'hash' has 'any' values that are arrays" do
       subject.tags = { foo: { any: %w[bar] } }
+
+      expect(subject).to be_valid
+    end
+
+    it "is valid when tags 'hash' has 'all' values that are arrays" do
+      subject.tags = { foo: { all: %w[bar] } }
 
       expect(subject).to be_valid
     end
@@ -29,14 +35,27 @@ RSpec.describe SubscriberList, type: :model do
       expect(subject.errors[:tags]).to include("All tag values must be sent as Arrays")
     end
 
-    it "is valid when links 'hash' has values that are arrays" do
+    it "is valid when links 'hash' has 'any' values that are arrays" do
       subject.links = { foo: { any: %w[bar] } }
 
       expect(subject).to be_valid
     end
 
-    it "is invalid when links 'hash' has values that are not arrays" do
+    it "is valid when links 'hash' has 'all' values that are arrays" do
+      subject.links = { foo: { all: %w[bar] } }
+
+      expect(subject).to be_valid
+    end
+
+    it "is invalid when links 'hash' has 'any' values that are not arrays" do
       subject.links = { foo: { any: "bar" } }
+
+      expect(subject).to be_invalid
+      expect(subject.errors[:links]).to include("All link values must be sent as Arrays")
+    end
+
+    it "is invalid when links 'hash' has 'all' values that are not arrays" do
+      subject.links = { foo: { all: "bar" } }
 
       expect(subject).to be_invalid
       expect(subject.errors[:links]).to include("All link values must be sent as Arrays")
@@ -85,10 +104,10 @@ RSpec.describe SubscriberList, type: :model do
 
   describe "#tags" do
     it "deserializes the tag arrays" do
-      list = create(:subscriber_list, tags: { topics: { any: ["environmental-management/boating"] } })
+      list = create(:subscriber_list, tags: { topics: { any: ["environmental-management/boating"], all: ["oil-and-gas/licensing"] } })
       list.reload
 
-      expect(list.tags).to eq(topics: { any: ["environmental-management/boating"] })
+      expect(list.tags).to eq(topics: { any: ["environmental-management/boating"], all: ["oil-and-gas/licensing"] })
     end
   end
 
