@@ -13,14 +13,14 @@ class MatchedForNotification
   def call(content_item_tags_or_links)
     return [] unless content_item_tags_or_links.present?
 
-    content_item_tags_or_links = content_item_tags_or_links.stringify_keys
+    content_item_tags_or_links = content_item_tags_or_links.deep_symbolize_keys
 
     only_contains_keys(content_item_tags_or_links.keys).select do |subscriber_list|
-      subscriber_list_tags_or_links = subscriber_list[@query_field]
+      subscriber_list_tags_or_links = subscriber_list.send(@query_field) # send ensures the keys are symbols
 
       subscriber_list_tags_or_links.keys.all? do |key|
         (
-          Array(content_item_tags_or_links[key]) & subscriber_list_tags_or_links[key]
+          Array(content_item_tags_or_links[key]) & subscriber_list_tags_or_links[key][:any]
         ).any?
       end
     end

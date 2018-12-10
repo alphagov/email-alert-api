@@ -7,7 +7,7 @@ class FindByTopic
 
   def call(topic:)
     subscriber_lists_with_topics.select do |subscriber_list|
-      subscriber_list.send(@query_field)[:topics].include?(topic)
+      subscriber_list.send(@query_field)[:topics][:any].include?(topic)
     end
   end
 

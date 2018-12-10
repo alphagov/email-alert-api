@@ -30,8 +30,8 @@ RSpec.describe BulkUnsubscribeService do
       policy_area1_content_id = SecureRandom.uuid
       policy_area2_content_id = SecureRandom.uuid
 
-      policy_area1_subscriber_list = create(:subscriber_list, links: { policy_areas: [policy_area1_content_id] })
-      policy_area2_subscriber_list = create(:subscriber_list, links: { policy_areas: [policy_area2_content_id] })
+      policy_area1_subscriber_list = create(:subscriber_list, links: { policy_areas: { any: [policy_area1_content_id] } })
+      policy_area2_subscriber_list = create(:subscriber_list, links: { policy_areas: { any: [policy_area2_content_id] } })
 
       @policy_area_mappings = [
         { content_id: policy_area1_content_id, taxon_path: '/topic1', policy_area_path: '/policy1' },
@@ -87,7 +87,7 @@ RSpec.describe BulkUnsubscribeService do
       create(:subscriber_list_with_subscribers,
              subscriber_count: 1,
              email_document_supertype: 'announcements',
-             links: { policy_areas: [@policy_area1_content_id] })
+             links: { policy_areas: { any: [@policy_area1_content_id] } })
 
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('/government/announcements')))
@@ -98,7 +98,7 @@ RSpec.describe BulkUnsubscribeService do
       create(:subscriber_list_with_subscribers,
              subscriber_count: 1,
              email_document_supertype: 'publications',
-             links: { policy_areas: [@policy_area1_content_id] })
+             links: { policy_areas: { any: [@policy_area1_content_id] } })
 
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('/government/publications')))
@@ -111,7 +111,7 @@ RSpec.describe BulkUnsubscribeService do
       create(:subscriber_list_with_subscribers,
              subscriber_count: 1,
              email_document_supertype: 'announcements',
-             links: { policy_areas: [@policy_area1_content_id], people: [person_content_id] })
+             links: { policy_areas: { any: [@policy_area1_content_id] }, people: { any: [person_content_id] } })
 
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('people%5B%5D=person-slug')))
@@ -126,7 +126,7 @@ RSpec.describe BulkUnsubscribeService do
       create(:subscriber_list_with_subscribers,
              subscriber_count: 1,
              email_document_supertype: 'announcements',
-             links: { policy_areas: [@policy_area1_content_id], world_locations: [world_location_id] })
+             links: { policy_areas: { any: [@policy_area1_content_id] }, world_locations: { any: [world_location_id] } })
 
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('world_locations%5B%5D=world_location_slug')))
@@ -141,7 +141,7 @@ RSpec.describe BulkUnsubscribeService do
       create(:subscriber_list_with_subscribers,
              subscriber_count: 1,
              email_document_supertype: 'publications',
-             links: { policy_areas: [@policy_area1_content_id], organisations: [organisations_id] })
+             links: { policy_areas: { any: [@policy_area1_content_id] }, organisations: { any: [organisations_id] } })
 
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(body: include('departments%5B%5D=organisation_slug')))
@@ -177,7 +177,7 @@ RSpec.describe BulkUnsubscribeService do
              subscriber_count: 1,
              email_document_supertype: 'publications',
              title: 'this is about a policy_title amongst other things',
-             links: { policy_areas: [@policy_area_content_id] })
+             links: { policy_areas: { any: [@policy_area_content_id] } })
 
       policy_area_mappings = [{ content_id: @policy_area_content_id,
                                 taxon_path: '/taxon',
@@ -197,7 +197,7 @@ RSpec.describe BulkUnsubscribeService do
       create(:subscriber_list_with_subscribers,
              subscriber_count: 1,
              email_document_supertype: 'publications',
-             links: { policy_areas: [@policy_area_content_id] })
+             links: { policy_areas: { any: [@policy_area_content_id] } })
 
       taxonomy = [{
                     content_id: 'level_one_content_id',

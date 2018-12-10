@@ -5,13 +5,13 @@ RSpec.describe "Creating a subscriber list", type: :request do
     end
 
     it "creates a subscriber_list" do
-      create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
+      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] } })
 
       expect(SubscriberList.count).to eq(1)
     end
 
     it "returns a 201" do
-      create_subscriber_list(tags: { topics: ["oil-and-gas/licensing"] })
+      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] } })
 
       expect(response.status).to eq(201)
     end
@@ -22,7 +22,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
 
       it "creates another subscriber list with a different slug" do
-        create_subscriber_list(title: "oil and gas", tags: { topics: ["oil-and-gas/licensing"] })
+        create_subscriber_list(title: "oil and gas", tags: { topics: { any: ["oil-and-gas/licensing"] } })
 
         expect(response.status).to eq(201)
 
@@ -35,8 +35,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
     it "returns the created subscriber list" do
       create_subscriber_list(
         title: "oil and gas licensing",
-        tags: { topics: ["oil-and-gas/licensing"] },
-        links: { topics: ["uuid-888"] }
+        tags: { topics: { any: ["oil-and-gas/licensing"] } },
+        links: { topics: { any: ["uuid-888"] } }
       )
       response_hash = JSON.parse(response.body)
       subscriber_list = response_hash["subscriber_list"]
@@ -61,10 +61,14 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
       expect(subscriber_list).to include(
         "tags" => {
-          "topics" => ["oil-and-gas/licensing"]
+          "topics" => {
+            "any" => ["oil-and-gas/licensing"]
+          }
         },
         "links" => {
-          "topics" => ["uuid-888"]
+          "topics" => {
+            "any" => ["uuid-888"]
+          }
         }
       )
 
@@ -74,22 +78,22 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
     it "returns an error if tag isn't an array" do
       create_subscriber_list(
-        tags: { topics: "oil-and-gas/licensing" },
+        tags: { topics: { any: "oil-and-gas/licensing" } },
       )
 
       expect(response.status).to eq(422)
     end
 
     it "successfully creates two SubscriberList objects with the same title" do
-      create_subscriber_list(title: "oil and gas", links: { taxons: ["oil-and-gas"] })
-      create_subscriber_list(title: "oil and gas", links: { policies: ["oil-and-gas/licensing"] })
+      create_subscriber_list(title: "oil and gas", links: { taxons: { any: ["oil-and-gas"] } })
+      create_subscriber_list(title: "oil and gas", links: { policies: { any: ["oil-and-gas/licensing"] } })
 
       expect(response.status).to eq(201)
     end
 
     it "returns an error if link isn't an array" do
       create_subscriber_list(
-        links: { topics: "uuid-888" },
+        links: { topics: { any: "uuid-888" } },
       )
 
       expect(response.status).to eq(422)
@@ -104,7 +108,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
       it "sets the document_type on the subscriber list" do
         create_subscriber_list(
-          tags: { countries: %w[andorra] },
+          tags: { countries: { any: %w[andorra] } },
           document_type: "travel_advice"
         )
 

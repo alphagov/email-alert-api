@@ -2,12 +2,12 @@ RSpec.describe "Creating subscribables", type: :request do
   scenario "creating and looking up subscribables" do
     login_with(%w(internal_app status_updates))
 
-    params = { title: "Example", tags: {}, links: { person: ["test-123"] } }
+    params = { title: "Example", tags: {}, links: { person: { any: ["test-123"] } } }
 
     lookup_subscribable("example", expected_status: 404)
     lookup_subscriber_list(params, expected_status: 404)
 
-    create_subscribable(links: { person: ["test-123"] })
+    create_subscribable(links: { person: { any: ["test-123"] } })
 
     lookup_subscribable("example", expected_status: 200)
     expect(data.fetch(:subscribable)).to include(params)

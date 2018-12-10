@@ -80,7 +80,7 @@ RSpec.describe UnpublishHandlerService do
 
     context 'All subscriptions are ended' do
       before :each do
-        @subscriber_list = create_subscriber_list(links: { taxon_tree: [@content_id] })
+        @subscriber_list = create_subscriber_list(links: { taxon_tree: { any: [@content_id] } })
         @subscriber_list.subscriptions.each do |subscription|
           subscription.end(reason: :unpublished)
         end
@@ -90,7 +90,7 @@ RSpec.describe UnpublishHandlerService do
 
     context 'there is a taxon_tree subscriber list' do
       before :each do
-        @subscriber_list = create_subscriber_list(links: { taxon_tree: [@content_id] })
+        @subscriber_list = create_subscriber_list(links: { taxon_tree: { any: [@content_id] } })
       end
       it_behaves_like 'it_sends_an_email_with_body_including', 'has ended because this topic no longer exists on GOV.UK'
       it_behaves_like 'it_unsubscribes_all_subscribers'
@@ -98,7 +98,7 @@ RSpec.describe UnpublishHandlerService do
 
     context 'there is a policy area subscriber list' do
       before :each do
-        @subscriber_list = create_subscriber_list(links: { policy_areas: [@content_id] })
+        @subscriber_list = create_subscriber_list(links: { policy_areas: { any: [@content_id] } })
       end
       it_behaves_like 'it_sends_an_email_with_body_including',
                       "email updates about 'First Subscription"
@@ -107,7 +107,7 @@ RSpec.describe UnpublishHandlerService do
 
     context 'there is a policy subscriber list' do
       before :each do
-        @subscriber_list = create_subscriber_list(links: { policies: [@content_id] })
+        @subscriber_list = create_subscriber_list(links: { policies: { any: [@content_id] } })
       end
       it_behaves_like 'it_sends_an_email_with_body_including',
                       "email updates about 'First Subscription"
@@ -117,8 +117,8 @@ RSpec.describe UnpublishHandlerService do
     context 'there is a non-taxon subscriber list' do
       before :each do
         create_subscriber_list(links: {
-            'world_locations' => [SecureRandom.uuid, SecureRandom.uuid],
-            'another' => [@content_id]
+            'world_locations' => { any: [SecureRandom.uuid, SecureRandom.uuid] },
+            'another' => { any: [@content_id] }
         })
       end
       it_behaves_like 'it_does_not_send_an_email'
@@ -128,16 +128,16 @@ RSpec.describe UnpublishHandlerService do
       before :each do
         @first_subscriber_list = create_subscriber_list(
           links: {
-            taxon_tree: [@content_id],
-            world_locations: [SecureRandom.uuid]
+            taxon_tree: { any: [@content_id] },
+            world_locations: { any: [SecureRandom.uuid] }
           },
           title: 'First Subscriber List',
           address: 'test1@example.com'
         )
         @second_subscriber_list = create_subscriber_list(
           links: {
-            taxon_tree: [@content_id],
-            world_locations: [SecureRandom.uuid]
+            taxon_tree: { any: [@content_id] },
+            world_locations: { any: [SecureRandom.uuid] }
           },
           title: 'Second Subscriber List',
           address: 'test2@example.com'

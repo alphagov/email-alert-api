@@ -18,7 +18,7 @@ class SubscriberList < ApplicationRecord
     # double quote blame psql 9.
     sql = <<~SQLSTRING
       :id IN (
-        SELECT json_array_elements((json_each(links)).value)::text
+          SELECT json_array_elements((json_each((json_each(links)).value)).value)::text
        )
     SQLSTRING
     where(sql, id: "\"#{content_id}\"")
@@ -53,14 +53,22 @@ class SubscriberList < ApplicationRecord
 private
 
   def tag_values_are_valid
-    unless self[:tags].all? { |_, v| v.is_a?(Array) }
+    unless valid_subscriber_criteria(:tags)
       self.errors.add(:tags, "All tag values must be sent as Arrays")
     end
   end
 
   def link_values_are_valid
-    unless self[:links].all? { |_, v| v.is_a?(Array) }
+    unless valid_subscriber_criteria(:links)
       self.errors.add(:links, "All link values must be sent as Arrays")
+    end
+  end
+
+  def valid_subscriber_criteria(link_or_tags)
+    self.send(link_or_tags).values.all? do |hash|
+      hash.all? do |operator, values|
+        %i[all any].include?(operator) && values.is_a?(Array)
+      end
     end
   end
 end

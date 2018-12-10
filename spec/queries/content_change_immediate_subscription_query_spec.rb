@@ -1,10 +1,10 @@
 RSpec.describe ContentChangeImmediateSubscriptionQuery do
   let(:content_change) do
-    create(:content_change, tags: { topics: ["oil-and-gas/licensing"] })
+    create(:content_change, tags: { topics: { any: ["oil-and-gas/licensing"] } })
   end
 
   let(:subscriber_list) do
-    create(:subscriber_list, tags: { topics: ["oil-and-gas/licensing"] })
+    create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } })
   end
 
   before do

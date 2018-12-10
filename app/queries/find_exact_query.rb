@@ -2,8 +2,8 @@ class FindExactQuery
   class InvalidFindCriteria < StandardError; end
 
   def initialize(tags:, links:, document_type:, email_document_supertype:, government_document_supertype:, slug: nil)
-    @tags = tags.symbolize_keys
-    @links = links.symbolize_keys
+    @tags = tags.deep_symbolize_keys
+    @links = links.deep_symbolize_keys
     @document_type = document_type
     @email_document_supertype = email_document_supertype
     @government_document_supertype = government_document_supertype

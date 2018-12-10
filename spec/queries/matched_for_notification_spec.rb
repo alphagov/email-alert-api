@@ -2,19 +2,19 @@ RSpec.describe MatchedForNotification do
   describe "#call" do
     before do
       @list1 = create(:subscriber_list, tags: {
-        topics: ["oil-and-gas/licensing"], organisations: ["environment-agency", "hm-revenue-customs"]
+        topics: { any: ["oil-and-gas/licensing"] }, organisations: { any: ["environment-agency", "hm-revenue-customs"] }
       })
 
       @list2 = create(:subscriber_list, tags: {
-        topics: ["business-tax/vat", "oil-and-gas/licensing"]
+        topics: { any: ["business-tax/vat", "oil-and-gas/licensing"] }
       })
 
-      @list3 = create(:subscriber_list, links: { topics: ["uuid-123"], policies: ["uuid-888"] })
+      @list3 = create(:subscriber_list, links: { topics: { any: ["uuid-123"] }, policies: { any: ["uuid-888"] } })
 
       @list4 = create(:subscriber_list,
-        links: { topics: ["uuid-123"] },
+        links: { topics: { any: ["uuid-123"] } },
         tags: {
-          topics: ["environmental-management/boating"],
+          topics: { any: ["environmental-management/boating"] },
         })
     end
 
@@ -67,7 +67,7 @@ RSpec.describe MatchedForNotification do
     end
 
     context "Specialist publisher edge case" do
-      let!(:subscriber_list) { create(:subscriber_list, tags: { format: %w[employment_tribunal_decision] }) }
+      let!(:subscriber_list) { create(:subscriber_list, tags: { format: { any: %w[employment_tribunal_decision] } }) }
 
       it "finds the list when the criteria values is a string that is present in the subscriber list values for the field" do
         lists = execute_query(field: :tags, query_hash: {

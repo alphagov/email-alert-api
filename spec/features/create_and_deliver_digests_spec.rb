@@ -106,11 +106,11 @@ RSpec.describe "creating and delivering digests", type: :request do
     list_two_topic_id = "a915e039-070b-4633-813d-187af61cad7a"
 
     subscribable_one_id = create_subscribable(title: "Subscriber list one", links: {
-      topics: [list_one_topic_id]
+      topics: { any: [list_one_topic_id] }
     })
 
     subscribable_two_id = create_subscribable(title: "Subscriber list two", links: {
-      topics: [list_two_topic_id]
+      topics: { any: [list_two_topic_id] }
     })
 
     #create two daily subscribers, one subscribed to daily digests for both
@@ -180,7 +180,6 @@ RSpec.describe "creating and delivering digests", type: :request do
         change_note: "Change note three",
         public_updated_at: "2017-01-01 09:00:00",
         links: {
-
           topics: [list_two_topic_id]
         }
       )
@@ -326,11 +325,11 @@ RSpec.describe "creating and delivering digests", type: :request do
     list_two_topic_id = "a915e039-070b-4633-813d-187af61cad7a"
 
     subscribable_one_id = create_subscribable(title: "Subscriber list one", links: {
-      topics: [list_one_topic_id]
+      topics: { any: [list_one_topic_id] }
     })
 
     subscribable_two_id = create_subscribable(title: "Subscriber list two", links: {
-      topics: [list_two_topic_id]
+      topics: { any: [list_two_topic_id] }
     })
 
     #create two daily subscribers, one subscribed to daily digests for both

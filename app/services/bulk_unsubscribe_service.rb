@@ -58,6 +58,7 @@ module BulkUnsubscribeService
                                 .subscriber_list
                                 .links
                                 .values
+                                .flat_map(&:values)
                                 .flatten
         mapping = policy_area_mappings.find { |m| subscription_content_ids.include?(m[:content_id]) }
         SubscriptionDetails.new(subscription, mapping[:policy_area_path], mapping[:taxon_path])
