@@ -14,12 +14,17 @@ class SubscriberList < ApplicationRecord
   has_many :matched_content_changes
 
   scope :find_by_links_value, ->(content_id) do
-    # For this query to return the content id has to be wrapped in a
-    # double quote blame psql 9.
+      # For this query to return the content id has to be wrapped in a
+      # double quote blame psql 9.
     sql = <<~SQLSTRING
       :id IN (
-          SELECT json_array_elements((json_each((json_each(links)).value)).value)::text
-       )
+           SELECT json_array_elements(
+            CASE
+              WHEN ((link_table.link#>'{any}') IS NOT NULL) THEN link_table.link->'any'
+              WHEN ((link_table.link#>'{all}') IS NOT NULL) THEN link_table.link->'all'
+              ELSE link_table.link
+            END)::text AS content_id FROM (SELECT ((json_each(links)).value)::json AS link) AS link_table
+      )
     SQLSTRING
     where(sql, id: "\"#{content_id}\"")
   end

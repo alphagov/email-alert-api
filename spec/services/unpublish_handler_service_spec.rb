@@ -88,9 +88,36 @@ RSpec.describe UnpublishHandlerService do
       it_behaves_like 'it_does_not_send_an_email'
     end
 
-    context 'there is a taxon_tree subscriber list' do
+    context 'there are subscriber lists with different taxons' do
       before :each do
         @subscriber_list = create_subscriber_list(links: { taxon_tree: { any: [@content_id] } })
+        create_subscriber_list(links: { taxon_tree: { all: [SecureRandom.uuid] } },
+                                title: 'Second Subscriber List',
+                                address: 'test2@example.com')
+      end
+      it_behaves_like 'it_sends_an_email_with_body_including', 'has ended because this topic no longer exists on GOV.UK'
+      it_behaves_like 'it_unsubscribes_all_subscribers'
+    end
+
+    context 'there is a taxon_tree subscriber list with the any operator' do
+      before :each do
+        @subscriber_list = create_subscriber_list(links: { taxon_tree: { any: [@content_id] } })
+      end
+      it_behaves_like 'it_sends_an_email_with_body_including', 'has ended because this topic no longer exists on GOV.UK'
+      it_behaves_like 'it_unsubscribes_all_subscribers'
+    end
+
+    context 'there is a taxon_tree subscriber list with the all operator' do
+      before :each do
+        @subscriber_list = create_subscriber_list(links: { taxon_tree: { all: [@content_id] } })
+      end
+      it_behaves_like 'it_sends_an_email_with_body_including', 'has ended because this topic no longer exists on GOV.UK'
+      it_behaves_like 'it_unsubscribes_all_subscribers'
+    end
+
+    context 'there is a legacy taxon_tree subscriber list' do
+      before :each do
+        @subscriber_list = create_subscriber_list(links: { taxon_tree: [@content_id] })
       end
       it_behaves_like 'it_sends_an_email_with_body_including', 'has ended because this topic no longer exists on GOV.UK'
       it_behaves_like 'it_unsubscribes_all_subscribers'
@@ -136,7 +163,7 @@ RSpec.describe UnpublishHandlerService do
         )
         @second_subscriber_list = create_subscriber_list(
           links: {
-            taxon_tree: { any: [@content_id] },
+            taxon_tree: { all: [@content_id] },
             world_locations: { any: [SecureRandom.uuid] }
           },
           title: 'Second Subscriber List',

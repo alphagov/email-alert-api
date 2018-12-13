@@ -119,6 +119,6 @@ private
   def find_type(subscriber_lists, content_id)
     first_list = subscriber_lists.first
     return :none if first_list.nil?
-    first_list.links.find { |_, values| values[:any].include?(content_id) }.first
+    first_list.links.find { |_, values| (values.fetch(:any, []) + values.fetch(:all, [])).include?(content_id) }.first
   end
 end
