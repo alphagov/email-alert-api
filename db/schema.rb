@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_19_131532) do
+ActiveRecord::Schema.define(version: 2018_12_13_113655) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -92,6 +92,7 @@ ActiveRecord::Schema.define(version: 2018_11_19_131532) do
     t.index ["created_at"], name: "index_emails_on_created_at"
     t.index ["failure_reason"], name: "index_emails_on_failure_reason"
     t.index ["finished_sending_at"], name: "index_emails_on_finished_sending_at"
+    t.index ["status"], name: "index_emails_on_status"
   end
 
   create_table "matched_content_changes", force: :cascade do |t|
