@@ -11,7 +11,7 @@ gem 'aws-sdk-s3', '~> 1'
 gem 'faraday', '0.15.4'
 gem 'foreman', '~> 0.85'
 gem 'gds-api-adapters', '~> 55.0'
-gem 'gds-sso', '~> 13.6'
+gem 'gds-sso', '~> 14.0'
 gem 'govuk_app_config', '~> 1.10'
 # This is pinned < 2 until gds-sso supports JWT > 2
 gem 'jwt', '~> 2.1'
