@@ -18,14 +18,20 @@ similar to the links hash on a content item. For example:
 
 ```
 {
-    "key_1": ["value_a", "value_b", "value_c"],
-    "key_2": ["value_x", "value_y"]
+    "key_1": {
+        "any": ["value_a", "value_b", "value_c"],
+    }
+    "key_2": {
+        "all": ["value_x", "value_y"]
+    }
 }
 ```
 
 For a published content item to match the subscriber list on these
 fields, the links/tags in the request to email-alert-api must include
-all of the keys and at least one value for each key.
+all of the keys. If the value includes `any` then at least one of the
+values in the array needs to match for each key. If the value includes
+`all`, then each value in the array needs to match.
 
 `links` uses content ids and `tags` uses slugs - but the queries used
 on these fields don't care about that difference.
