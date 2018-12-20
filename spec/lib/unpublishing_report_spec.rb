@@ -41,7 +41,7 @@ RSpec.describe UnpublishingReport do
       described_class.call('2018/08/28', '2018/08/30')
       expect { described_class.call('2018/08/28', '2018/08/30') }.to output(
         <<~TEXT
-          Unpublishing activity between 2018-08-28 00:00:00 +0000 and 2018-08-30 00:00:00 +0000
+          Unpublishing activity between 2018-08-28 00:00:00 and 2018-08-30 00:00:00
 
           'Unpublished subscription' has been unpublished ending 2 subscriptions
 
@@ -55,7 +55,7 @@ RSpec.describe UnpublishingReport do
       described_class.call('2018/08/31', '2018/09/01')
       expect { described_class.call('2018/08/31', '2018/09/01') }.to output(
         <<~TEXT
-          Unpublishing activity between 2018-08-31 00:00:00 +0000 and 2018-09-01 00:00:00 +0000
+          Unpublishing activity between 2018-08-31 00:00:00 and 2018-09-01 00:00:00
 
           'Unpublished subscription two' has been unpublished ending 1 subscriptions
 
@@ -66,7 +66,7 @@ RSpec.describe UnpublishingReport do
 
     it "doesn't generate any results as nothing has been unpublished in the time frame" do
       expect { described_class.call('2018/08/10', '2018/08/11') }.to output(
-        "Unpublishing activity between 2018-08-10 00:00:00 +0000 and 2018-08-11 00:00:00 +0000\n\n"
+        "Unpublishing activity between 2018-08-10 00:00:00 and 2018-08-11 00:00:00\n\n"
       ).to_stdout
     end
   end

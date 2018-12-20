@@ -32,16 +32,16 @@ module BulkUnsubscribeService
           subscriber_list[:email_document_supertype] == 'publications'
 
         uri = URI.parse(PublicUrlService.absolute_url(path: "/government/#{subscriber_list[:email_document_supertype]}"))
-        policy_area_ids = links.fetch(:policy_areas, [])
+        policy_area_ids = links.dig(:policy_areas, :any) || []
 
         query_hash = {}
-        query_hash['people[]'] = links.fetch(:people, []).map do |id|
+        query_hash['people[]'] = (links.dig(:people, :any) || []).map do |id|
           BulkUnsubscribeService.person_slug(id)
         end
-        query_hash['world_locations[]'] = links.fetch(:world_locations, []).map do |id|
+        query_hash['world_locations[]'] = (links.dig(:world_locations, :any) || []).map do |id|
           BulkUnsubscribeService.world_location_slug(id)
         end
-        query_hash['departments[]'] = links.fetch(:organisations, []).map do |id|
+        query_hash['departments[]'] = (links.dig(:organisations, :any) || []).map do |id|
           BulkUnsubscribeService.organisation_slug(id)
         end
         taxon_paths = policy_area_ids.map do |policy_area_id|

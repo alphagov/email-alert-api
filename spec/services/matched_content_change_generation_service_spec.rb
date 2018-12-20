@@ -4,7 +4,7 @@ RSpec.describe MatchedContentChangeGenerationService do
   end
 
   before do
-    create(:subscriber_list, tags: { topics: ["oil-and-gas/licensing"] })
+    create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } })
   end
 
   describe ".call" do

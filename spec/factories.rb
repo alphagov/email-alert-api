@@ -102,11 +102,11 @@ FactoryBot.define do
   factory :subscriber_list do
     sequence(:title) { |n| "title #{n}" }
     sequence(:slug) { |n| "title-#{n}" }
-    tags { { topics: ["motoring/road_rage"] } }
+    tags { { topics: { any: ["motoring/road_rage"] } } }
     created_at { 1.year.ago }
 
     trait :travel_advice do
-      links { { countries: [SecureRandom.uuid] } }
+      links { { countries: { any: [SecureRandom.uuid] } } }
     end
 
     trait :medical_safety_alert do

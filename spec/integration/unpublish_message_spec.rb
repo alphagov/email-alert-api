@@ -19,7 +19,7 @@ RSpec.describe "Sending an unpublish message", type: :request do
 
       subscriber_list = create(
         :subscriber_list,
-        links: { taxon_tree: [content_id] },
+        links: { taxon_tree: { any: [content_id] } },
         title: "First Subscription",
       )
 

@@ -30,7 +30,7 @@ private
   end
 
   def generate_report(subscriptions_info)
-    puts "Unpublishing activity between #{start_date} and #{end_date}"
+    puts "Unpublishing activity between #{start_date.strftime('%Y-%m-%d %H:%M:%S')} and #{end_date.strftime('%Y-%m-%d %H:%M:%S')}"
     puts ""
 
     subscriptions_info.each do |subscriber_list_id, subscriber_ids|

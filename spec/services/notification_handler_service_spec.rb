@@ -15,9 +15,16 @@ RSpec.describe NotificationHandlerService do
         topics: ["oil-and-gas/licensing"]
       },
       links: {
-        organisations: [
-          "c380ea42-5d91-41cc-b3cd-0a4cfe439461"
-        ]
+        organisations: {
+          any: [
+            "c380ea42-5d91-41cc-b3cd-0a4cfe439461"
+          ]
+        },
+        taxon_tree: {
+          all: [
+            "6416e4e0-c0c1-457a-8337-4bf8ed9d5f80"
+          ]
+        }
       },
       content_id: "afe78383-6b27-45a4-92ae-a579e416373a",
       title: "Travel advice",
@@ -34,7 +41,7 @@ RSpec.describe NotificationHandlerService do
   }
 
   let!(:subscriber_list) do
-    create(:subscriber_list, tags: { topics: ["oil-and-gas/licensing"] })
+    create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } })
   end
 
   describe ".call" do

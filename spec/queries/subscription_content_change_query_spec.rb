@@ -15,7 +15,7 @@ RSpec.describe SubscriptionContentChangeQuery do
 
   context "with one subscription" do
     let(:subscriber_list) do
-      create(:subscriber_list, tags: { topics: ["oil-and-gas/licensing"] })
+      create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } })
     end
 
     let!(:subscription) do
@@ -25,7 +25,7 @@ RSpec.describe SubscriptionContentChangeQuery do
     def create_and_match_content_change(created_at: starts_at, title: nil)
       content_change = create(
         :content_change,
-        tags: { topics: ["oil-and-gas/licensing"] },
+        tags: { topics: { any: ["oil-and-gas/licensing"] } },
         created_at: created_at,
       )
       content_change.update!(title: title) if title
@@ -105,11 +105,11 @@ RSpec.describe SubscriptionContentChangeQuery do
 
   context "with two subscriptions" do
     let(:subscriber_list_1) do
-      create(:subscriber_list, title: "list-1", tags: { topics: ["oil-and-gas/licensing"] })
+      create(:subscriber_list, title: "list-1", tags: { topics: { any: ["oil-and-gas/licensing"] } })
     end
 
     let(:subscriber_list_2) do
-      create(:subscriber_list, title: "list-2", tags: { topics: ["oil-and-gas/drilling"] })
+      create(:subscriber_list, title: "list-2", tags: { topics: { any: ["oil-and-gas/drilling"] } })
     end
 
     let!(:subscription_2) do
@@ -124,7 +124,7 @@ RSpec.describe SubscriptionContentChangeQuery do
       create(
         :content_change,
         id: "d5ee8e1a-72c1-4525-94f0-23d58af8a6c5",
-        tags: { topics: ["oil-and-gas/licensing"] },
+        tags: { topics: { any: ["oil-and-gas/licensing"] } },
         created_at: starts_at,
       )
     end
@@ -133,7 +133,7 @@ RSpec.describe SubscriptionContentChangeQuery do
       create(
         :content_change,
         id: "70ac31fa-505e-4060-b7bb-bfa15028cc99",
-        tags: { topics: ["oil-and-gas/drilling"] },
+        tags: { topics: { any: ["oil-and-gas/drilling"] } },
         created_at: starts_at,
       )
     end

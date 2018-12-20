@@ -11,10 +11,15 @@ class FindExactMatch
 
     subscriber_lists = subscriber_lists_where_all_keys_present(query_hash)
 
-    subscriber_lists.select do |list|
-      list.send(@query_field).all? do |descriptor, array_of_values|
-        query_hash[descriptor].present? &&
-          query_hash[descriptor].sort == array_of_values.sort
+    subscriber_lists.select do |subscriber_list|
+      subscriber_list_tags_or_links = subscriber_list.send(@query_field) # send ensures the keys are symbols
+
+      subscriber_list_tags_or_links.all? do |key, subscriber_list_tag_or_link|
+        query_any = query_hash[key].fetch(:any, [])
+        query_all = query_hash[key].fetch(:all, [])
+        links_or_tags_any = subscriber_list_tag_or_link.fetch(:any, [])
+        links_or_tags_all = subscriber_list_tag_or_link.fetch(:all, [])
+        query_any.sort == links_or_tags_any.sort && query_all.sort == links_or_tags_all.sort
       end
     end
   end

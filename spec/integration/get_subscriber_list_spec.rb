@@ -8,7 +8,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
       create(
         :subscriber_list,
         links: {
-          topics: ["oil-and-gas/licensing", "drug-device-alert"]
+          topics: { any: ["oil-and-gas/licensing", "drug-device-alert"] }
         },
         tags: {},
         document_type: "",
@@ -20,7 +20,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
         :subscriber_list,
         links: {},
         tags: {
-          topics: ["oil-and-gas/licensing", "drug-device-alert"]
+          topics: { any: ["oil-and-gas/licensing", "drug-device-alert"] }
         },
         document_type: "",
       )
@@ -39,7 +39,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
       create(
         :subscriber_list,
         links: {
-          topics: ["vat-rates"],
+          topics: { any: ["vat-rates"] },
         },
         tags: {},
         document_type: "tax",
@@ -51,14 +51,14 @@ RSpec.describe "Getting a subscriber list", type: :request do
         :subscriber_list,
         links: {},
         tags: {
-          topics: ["vat-rates"],
+          topics: { any: ["vat-rates"] },
         },
         document_type: "tax",
       )
     end
 
     it "responds with the matching subscriber list" do
-      get_subscriber_list(links: { topics: ["drug-device-alert", "oil-and-gas/licensing"] })
+      get_subscriber_list(links: { topics: { any: ["drug-device-alert", "oil-and-gas/licensing"] } })
 
       database_subscriber_list = subscriber_list_links_only
       response_subscriber_list = JSON.parse(response.body).fetch("subscriber_list").deep_symbolize_keys
@@ -76,7 +76,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
     end
 
     it "finds subscriber lists that match all of the links" do
-      get_subscriber_list(links: { topics: ["drug-device-alert", "oil-and-gas/licensing"] })
+      get_subscriber_list(links: { topics: { any: ["drug-device-alert", "oil-and-gas/licensing"] } })
       expect(response.status).to eq(200)
 
       subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
@@ -84,7 +84,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
     end
 
     it "finds subscriber lists that match all of the tags" do
-      get_subscriber_list(tags: { topics: ["drug-device-alert", "oil-and-gas/licensing"] })
+      get_subscriber_list(tags: { topics: { any: ["drug-device-alert", "oil-and-gas/licensing"] } })
       expect(response.status).to eq(200)
 
       subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
@@ -101,7 +101,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
 
     it "finds subscriber lists that match links and document type" do
       get_subscriber_list(
-        links: { topics: ["vat-rates"] },
+        links: { topics: { any: ["vat-rates"] } },
         document_type: "tax",
       )
       expect(response.status).to eq(200)
@@ -112,7 +112,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
 
     it "finds subscriber lists that match tags and document type" do
       get_subscriber_list(
-        tags: { topics: ["vat-rates"] },
+        tags: { topics: { any: ["vat-rates"] } },
         document_type: "tax",
       )
       expect(response.status).to eq(200)
@@ -122,12 +122,12 @@ RSpec.describe "Getting a subscriber list", type: :request do
     end
 
     it "does not find subscriber lists that match some of the links" do
-      get_subscriber_list(links: { topics: ["drug-device-alert"] })
+      get_subscriber_list(links: { topics: { any: ["drug-device-alert"] } })
       expect(response.status).to eq(404)
     end
 
     it "does not find subscriber lists that match some of the tags" do
-      get_subscriber_list(tags: { topics: ["drug-device-alert"] })
+      get_subscriber_list(tags: { topics: { any: ["drug-device-alert"] } })
       expect(response.status).to eq(404)
     end
 
@@ -137,7 +137,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
     end
 
     it "does not find subscriber lists that match links but not document type" do
-      get_subscriber_list(links: { topics: ["vat-rates"] })
+      get_subscriber_list(links: { topics: { any: ["vat-rates"] } })
       expect(response.status).to eq(404)
     end
 
@@ -147,7 +147,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
     end
 
     it "does not find subscriber lists that match tags but not document type" do
-      get_subscriber_list(tags: { topics: ["vat-rates"] })
+      get_subscriber_list(tags: { topics: { any: ["vat-rates"] } })
       expect(response.status).to eq(404)
     end
 
@@ -164,7 +164,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
     context "when passing in gov_delivery_id" do
       it "does not find a subscriber list of the gov_delivery_id does not match" do
         get_subscriber_list(
-          tags: { topics: ["vat-rates"] },
+          tags: { topics: { any: ["vat-rates"] } },
           document_type: "tax",
           gov_delivery_id: "NEW-TOPIC"
         )
@@ -172,12 +172,12 @@ RSpec.describe "Getting a subscriber list", type: :request do
       end
 
       it "finds the subscriber list if the gov_delivery_id matches" do
-        _alpha = create(:subscriber_list, tags: { topics: ["vat-rates"] }, slug: "alpha")
-        beta = create(:subscriber_list, tags: { topics: ["vat-rates"] }, slug: "beta")
-        _gamma = create(:subscriber_list, tags: { topics: ["vat-rates"] }, slug: "gamma")
+        _alpha = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] } }, slug: "alpha")
+        beta = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] } }, slug: "beta")
+        _gamma = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] } }, slug: "gamma")
 
         get_subscriber_list(
-          tags: { topics: ["vat-rates"] },
+          tags: { topics: { any: ["vat-rates"] } },
           gov_delivery_id: "beta"
         )
         expect(response.status).to eq(200)
