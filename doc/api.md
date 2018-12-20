@@ -15,7 +15,9 @@
     "created_at": "20141010T12:00:00",
     "updated_at": "20141010T12:00:00",
     "tags": {
-      "topics": ["topic-slug"]
+      "any": {
+        "topics": ["topic-slug"],
+      }
     }
   }
 }
@@ -27,7 +29,9 @@
 {
   "title": "My title",
   "tags": {
-    "organisations": ["my-org"]
+    "any": {
+      "organisations": ["my-org"],
+    }
   }
 }
 ```
