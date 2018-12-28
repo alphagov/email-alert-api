@@ -76,3 +76,33 @@ $ bundle exec rake export:csv_from_living_in_europe
 
 This is a convenience export which does the same as above but with all the "Living in Europe" taxon subscriber lists
 without needing to know their IDs.
+
+## Reports
+
+There are a number of tasks to produce informational reports
+
+### Content Change
+
+```bash
+$ bundle exec rake report:content_change_email_status_count[<content_change_id>]
+```
+
+This will output to the terminal a count for the given content change's
+sent, pending and failed emails.
+
+```bash
+$ bundle exec rake report::content_change_failed_emails[<content_change_id>]
+```
+
+This will output to the terminal the ID and reason for failure for each of the content change's
+failed emails.
+
+### Unpublishing
+
+```bash
+$ bundle exec rake report::unpublishing[<start_date>, <end_date>]
+
+```
+
+This will output to the terminal a brief summary of unpublishing activity and related
+ending subscriptions between the two dates. It also reports new subscriptions.
