@@ -1,4 +1,4 @@
-RSpec.describe UnpublishingReport do
+RSpec.describe Reports::UnpublishingReport do
   before do
     subscriber_one = create(:subscriber)
     subscriber_two = create(:subscriber)
