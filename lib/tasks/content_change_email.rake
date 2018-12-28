@@ -1,7 +1,7 @@
-namespace :content_change_email do
+namespace :report do
   desc "Produce a report on sent and failed emails for a given content change"
-  task :status_count, [:id] => :environment do |_t, args|
+  task :content_change_email_status_count, [:id] => :environment do |_t, args|
     content_change = ContentChange.find(args[:id])
-    ContentChangeEmailStatusCount.call(content_change)
+    Reports::ContentChangeEmailStatusCount.call(content_change)
   end
 end

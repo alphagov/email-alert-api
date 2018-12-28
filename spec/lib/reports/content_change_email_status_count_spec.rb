@@ -1,4 +1,4 @@
-RSpec.describe ContentChangeEmailStatusCount do
+RSpec.describe Reports::ContentChangeEmailStatusCount do
   before do
     3.times { create(:email, status: 'sent') }
     2.times { create(:email, status: 'pending') }
