@@ -22,6 +22,14 @@ This task changes a subscriber's email address.
 $ bundle exec rake manage:change_email_address[<old_email_address>, <new_email_address>]
 ```
 
+## Resend emails
+
+This task takes an array of email ids and re-sends them.
+
+```bash
+bundle exec rake deliver:resend_failed_emails[<email_one_id>, <email_two_id>]
+```
+
 ## Manually unsubscribe subscribers
 
 This task unsubscribes one or more subscribers from everything they
