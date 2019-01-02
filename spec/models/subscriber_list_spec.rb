@@ -111,14 +111,6 @@ RSpec.describe SubscriberList, type: :model do
     end
   end
 
-  it 'returns "new" parameters when requested object contains legacy parameters' do
-    list = build(:subscriber_list, tags: { topics: ["environmental-management/boating"] })
-    list.save!(validate: false)
-    list.reload
-
-    expect(list.tags).to eq(topics: { any: ["environmental-management/boating"] })
-  end
-
   describe "#subscription_url" do
     subject { SubscriberList.new(slug: "UKGOVUK_4567") }
 
