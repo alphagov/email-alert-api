@@ -115,14 +115,6 @@ RSpec.describe UnpublishHandlerService do
       it_behaves_like 'it_unsubscribes_all_subscribers'
     end
 
-    context 'there is a legacy taxon_tree subscriber list' do
-      before :each do
-        @subscriber_list = create_subscriber_list(links: { taxon_tree: [@content_id] })
-      end
-      it_behaves_like 'it_sends_an_email_with_body_including', 'has ended because this topic no longer exists on GOV.UK'
-      it_behaves_like 'it_unsubscribes_all_subscribers'
-    end
-
     context 'there is a policy area subscriber list' do
       before :each do
         @subscriber_list = create_subscriber_list(links: { policy_areas: { any: [@content_id] } })

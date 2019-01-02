@@ -55,22 +55,7 @@ class SubscriberList < ApplicationRecord
     self[:tags].fetch("format", []).include?("medical_safety_alert")
   end
 
-  #TODO Remove tags, links and transform_legacy_values once subscriberlists have been updated
-  def tags
-    transform_legacy_values(super)
-  end
-
-  def links
-    transform_legacy_values(super)
-  end
-
 private
-
-  def transform_legacy_values(links_or_tags)
-    links_or_tags.transform_values do |link_or_tag|
-      link_or_tag.is_a?(Hash) ? link_or_tag : { any: link_or_tag }
-    end
-  end
 
   def tag_values_are_valid
     unless valid_subscriber_criteria(:tags)
