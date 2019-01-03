@@ -43,6 +43,7 @@ private
         date: Date.current, range: range
       )
       return if digest_run.persisted?
+
       digest_run.save!
       digest_run
     end

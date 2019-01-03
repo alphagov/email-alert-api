@@ -11,10 +11,10 @@ class ContentItem
 
   def title
     @title ||= begin
-      content_store_data['title'] || DEFAULT
-    rescue GdsApi::HTTPNotFound
-      DEFAULT
-    end
+                 content_store_data['title'] || DEFAULT
+               rescue GdsApi::HTTPNotFound
+                 DEFAULT
+               end
   end
 
   def content_id

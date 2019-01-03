@@ -8,7 +8,7 @@ class SubscriberDeactivationWorker
       subscriber = Subscriber.find(subscriber_id)
 
       next if subscriber.deactivated? ||
-          subscriber.active_subscriptions.exists?
+        subscriber.active_subscriptions.exists?
 
       deactivated_at = subscriber
                          .ended_subscriptions

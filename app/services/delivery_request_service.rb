@@ -47,6 +47,7 @@ private
   def determine_address(email, reference)
     overrider.destination_address(email.address).tap do |address|
       next if address == email.address
+
       Rails.logger.info(<<-INFO.strip_heredoc)
         Overriding email address #{email.address} to #{address}
         For email with reference: #{reference}
