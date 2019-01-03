@@ -20,4 +20,14 @@ namespace :deliver do
     email = test_email(args[:test_email_address])
     DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_immediate)
   end
+
+  desc "Re-send failed emails by email ids"
+  task resend_failed_emails: [:environment] do |_, args|
+    failed_email_ids = Email.where(id: args.to_a, status: 'failed').pluck(:id)
+
+    failed_email_ids.each do |email_id|
+      puts "Resending email: #{email_id}"
+      DeliveryRequestWorker.perform_async_in_queue(email_id, queue: :delivery_immediate)
+    end
+  end
 end
