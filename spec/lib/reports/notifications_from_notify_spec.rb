@@ -47,5 +47,37 @@ RSpec.describe Reports::NotificationsFromNotify do
         ).to_stdout
       end
     end
+
+    context "when passing an invalid reference" do
+      let!(:client_request_error) { build :client_request_error }
+      let(:error_response) {
+        attributes_for(:client_request_error)[:body]
+      }
+
+      before do
+        stub_request(
+          :get,
+          "http://fake-notify.com/v2/notifications?#{request_path}"
+        ).to_return(
+          status: 400,
+          body: error_response.to_json
+        )
+      end
+
+      it "returns a request error" do
+        client = instance_double("Notifications::Client")
+        error = client_request_error
+        allow(client).to receive(:get_notifications).and_raise(client_request_error)
+        described_class.call(reference)
+
+        expect { described_class.call(reference) }
+        .to output(
+          <<~TEXT
+            Query Notify for emails with the reference #{reference}
+            Returns request error #{error.code}, message: #{error.message}
+          TEXT
+        ).to_stdout
+      end
+    end
   end
 end

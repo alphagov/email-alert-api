@@ -33,6 +33,8 @@ module Reports
           TEXT
         end
       end
+    rescue Notifications::Client::RequestError => error
+      puts "Returns request error #{error.code}, message: #{error.message}"
     end
 
   private

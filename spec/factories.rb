@@ -223,4 +223,22 @@ FactoryBot.define do
       }
     end
   end
+
+  factory :client_request_error,
+    class: Notifications::Client::RequestError do
+    code '400'
+    body do
+      {
+        'status_code' => 400,
+        'errors' => ['error' => 'ValidationError',
+                      'message' => 'bad status is not one of [created, sending, sent, delivered, pending, failed, technical-failure, temporary-failure, permanent-failure, accepted, received]']
+      }
+    end
+
+    initialize_with do
+      new(
+        OpenStruct.new(code: code, body: body.to_json)
+      )
+    end
+  end
 end
