@@ -97,7 +97,7 @@ GEM
     fugit (1.1.3)
       et-orbi (~> 1.1, >= 1.1.1)
       raabro (~> 1.1)
-    gds-api-adapters (55.0.2)
+    gds-api-adapters (57.0.0)
       addressable
       link_header
       null_logger
@@ -363,7 +363,7 @@ DEPENDENCIES
   factory_bot_rails
   faraday (= 0.15.4)
   foreman (~> 0.85)
-  gds-api-adapters (~> 55.0)
+  gds-api-adapters (~> 57.0)
   gds-sso (~> 14.0)
   govuk-lint (~> 3.9)
   govuk_app_config (~> 1.11)
