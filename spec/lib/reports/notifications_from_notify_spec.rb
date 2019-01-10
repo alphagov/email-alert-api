@@ -1,28 +1,20 @@
 RSpec.describe Reports::NotificationsFromNotify do
   describe "notifications report" do
-    let(:options) {
-      {
-        "template_type" => "email",
-        "reference"     => reference
-      }
-    }
+    context "when passing a reference which is found" do
+      let!(:notifications_collection) { build :client_notifications_collection }
+      let(:reference) { "ref_123" }
 
-    let(:reference) { "ref_123" }
-    let(:request_path) { URI.encode_www_form(options) }
-    let!(:notifications_collection) { build :client_notifications_collection }
-
-    context "when passing a valid reference" do
       before do
         stub_request(
           :get,
-          "http://fake-notify.com/v2/notifications?#{request_path}"
+          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}"
         ).to_return(body: mocked_response.to_json)
       end
 
       let(:mocked_response) {
         attributes_for(
           :client_notifications_collection
-        )[:body].merge(options)
+        )[:body]
       }
 
       it "prints details about one notification" do
@@ -31,6 +23,7 @@ RSpec.describe Reports::NotificationsFromNotify do
         client = instance_double("Notifications::Client")
         notification = notifications_collection.collection.first
         allow(client).to receive(:get_notifications).and_return(notifications_collection)
+
         described_class.call(reference)
 
         expect { described_class.call(reference) }

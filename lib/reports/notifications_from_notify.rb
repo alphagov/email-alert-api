@@ -22,7 +22,7 @@ module Reports
       )
 
       if response.is_a?(Notifications::Client::NotificationsCollection)
-        if response.collection.count == 0
+        if response.collection.count.zero?
           puts "No results found, empty collection returned"
         else
           response.collection.each do |notification|
