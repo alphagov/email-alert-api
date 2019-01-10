@@ -22,16 +22,22 @@ module Reports
       )
 
       if response.is_a?(Notifications::Client::NotificationsCollection)
-        response.collection.each do |notification|
-          puts <<~TEXT
-            -------------------------------------------
-            Notification ID: #{notification.id}
-            Status: #{notification.status}
-            created_at: #{notification.created_at}
-            sent_at: #{notification.sent_at}
-            completed_at: #{notification.completed_at}
-          TEXT
+        if response.collection.count == 0
+          puts "No results found, empty collection returned"
+        else
+          response.collection.each do |notification|
+            puts <<~TEXT
+              -------------------------------------------
+              Notification ID: #{notification.id}
+              Status: #{notification.status}
+              created_at: #{notification.created_at}
+              sent_at: #{notification.sent_at}
+              completed_at: #{notification.completed_at}
+            TEXT
+          end
         end
+      else
+        puts "No results found"
       end
     rescue Notifications::Client::RequestError => error
       puts "Returns request error #{error.code}, message: #{error.message}"

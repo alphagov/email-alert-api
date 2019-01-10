@@ -224,6 +224,19 @@ FactoryBot.define do
     end
   end
 
+  factory :empty_client_notifications_collection,
+    class: Notifications::Client::NotificationsCollection do
+      initialize_with do
+        new(body)
+      end
+      body do
+        {
+          "links" => {},
+          "notifications" => {}
+        }
+      end
+  end
+
   factory :client_request_error,
     class: Notifications::Client::RequestError do
     code '400'

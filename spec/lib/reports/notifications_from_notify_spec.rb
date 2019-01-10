@@ -48,21 +48,54 @@ RSpec.describe Reports::NotificationsFromNotify do
       end
     end
 
-    context "when passing an invalid reference" do
-      let!(:client_request_error) { build :client_request_error }
-      let(:error_response) {
-        attributes_for(:client_request_error)[:body]
-      }
+    context "when passing a reference which is not found" do
+      let!(:empty_client_notifications_collection) { build :empty_client_notifications_collection }
+      let(:reference) { "PPP" }
 
       before do
         stub_request(
           :get,
-          "http://fake-notify.com/v2/notifications?#{request_path}"
+          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}"
+        ).to_return(body: empty_response.to_json)
+      end
+
+      let(:empty_response) {
+        attributes_for(:empty_client_notifications_collection)[:body]
+      }
+
+      it "does not return any notifications" do
+        client = instance_double("Notifications::Client")
+        allow(client).to receive(:get_notifications).and_return(empty_client_notifications_collection)
+
+        described_class.call(reference)
+
+        expect { described_class.call(reference) }
+        .to output(
+          <<~TEXT
+            Query Notify for emails with the reference #{reference}
+            No results found, empty collection returned
+          TEXT
+        ).to_stdout
+      end
+    end
+
+    context "when passing a reference is not successful" do
+      let!(:client_request_error) { build :client_request_error }
+      let(:reference) { "ref_123" }
+
+      before do
+        stub_request(
+          :get,
+          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}"
         ).to_return(
           status: 400,
           body: error_response.to_json
         )
       end
+
+      let(:error_response) {
+        attributes_for(:client_request_error)[:body]
+      }
 
       it "returns a request error" do
         client = instance_double("Notifications::Client")
