@@ -1,9 +1,6 @@
 class NotifyProvider
-  def initialize(config: EmailAlertAPI.config.notify)
-    api_key = config.fetch(:api_key)
-    base_url = config.fetch(:base_url)
-
-    @client = Notifications::Client.new(api_key, base_url)
+  def initialize(config: EmailAlertAPI.config.notify, notify_client: EmailAlertAPI.config.notify_client)
+    @client = notify_client
     @template_id = config.fetch(:template_id)
   end
 

@@ -15,6 +15,12 @@ module EmailAlertAPI
       @notify ||= notify_environment_config.symbolize_keys.freeze
     end
 
+    def notify_client
+      api_key = @notify[:api_key]
+      base_url = @notify[:base_url]
+      Notifications::Client.new(api_key, base_url)
+    end
+
     def email_service
       @email_service ||= email_service_config.symbolize_keys.freeze
     end
