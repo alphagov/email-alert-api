@@ -175,4 +175,83 @@ FactoryBot.define do
     initialize_with { new(path) }
     skip_create
   end
+
+  factory :client_notification,
+    class: Notifications::Client::Notification do
+    initialize_with do
+      new(body)
+    end
+
+    body do
+      {
+        "id" => "f163deaf-2d3f-4ec6-98fc-f23fa511518f",
+        "reference" => "ref_123",
+        "email_address" => "123@notify.com",
+        "type" => "email",
+        "status" => "delivered",
+        "template" =>
+          {
+            "id" => "cb633abc-6ae6-4843-ae6f-82ca500b6de2",
+            "uri" => "/v2/templates/5e427b42-4e98-46f3-a047-32c4a87d26bb",
+            "version" => 1
+          },
+        "body" => "Body of the message",
+        "subject" => "Changes to this document",
+        "created_at" => "2019-01-29T11:12:30.12354Z",
+        "sent_at" => "2019-01-29T11:12:40.12354Z",
+        "completed_at" => "2019-01-29T11:12:52.12354Z",
+        "created_by_name" => "A. Sender",
+      }
+    end
+  end
+
+  factory :client_notifications_collection,
+    class: Notifications::Client::NotificationsCollection do
+    initialize_with do
+      new(body)
+    end
+
+    body do
+      {
+        "links" => {
+          "current" => "/v2/notifications?page=3&template_type=email&status=delivered",
+          "next" => "/v2/notifications?page=3&template_type=email&status=delivered"
+        },
+        "notifications" => 1.times.map {
+          attributes_for(:client_notification)[:body]
+        }
+      }
+    end
+  end
+
+  factory :empty_client_notifications_collection,
+    class: Notifications::Client::NotificationsCollection do
+    initialize_with do
+      new(body)
+    end
+    body do
+      {
+        "links" => {},
+        "notifications" => {}
+      }
+    end
+  end
+
+  factory :client_request_error,
+    class: Notifications::Client::RequestError do
+    code '400'
+    body do
+      {
+        'status_code' => 400,
+        'errors' => ['error' => 'ValidationError',
+                      'message' => 'bad status is not one of [created, sending, sent, delivered, pending, failed, technical-failure, temporary-failure, permanent-failure, accepted, received]']
+      }
+    end
+
+    initialize_with do
+      new(
+        OpenStruct.new(code: code, body: body.to_json)
+      )
+    end
+  end
 end
