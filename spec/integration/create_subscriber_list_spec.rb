@@ -44,7 +44,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       response_hash = JSON.parse(response.body)
       subscriber_list = response_hash["subscriber_list"]
 
-      expect(subscriber_list.keys.to_set).to eq(
+      expect(subscriber_list.keys.to_set.sort).to eq(
         %w{
           id
           title
@@ -59,7 +59,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
           email_document_supertype
           government_document_supertype
           active_subscriptions_count
-        }.to_set
+          content_purpose_supergroup
+        }.to_set.sort
       )
 
       expect(subscriber_list).to include(
@@ -138,6 +139,30 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
         subscriber_list = SubscriberList.last
         expect(subscriber_list.document_type).to eq("travel_advice")
+      end
+    end
+
+    describe "creating a subscriber list with a content_purpose_supergroup" do
+      it "returns a 201" do
+        create_subscriber_list(content_purpose_supergroup: "news_and_communications")
+
+        expect(response.status).to eq(201)
+      end
+
+      it "enforces supergroup types contraint" do
+        create_subscriber_list(content_purpose_supergroup: "invalid_supergroup")
+
+        expect(response.status).to eq(422)
+      end
+
+      it "sets content_purpose_supergroup on the subscriber list" do
+        create_subscriber_list(
+          tags: { countries: { any: %w[andorra] } },
+          content_purpose_supergroup: "services"
+        )
+
+        subscriber_list = SubscriberList.last
+        expect(subscriber_list.content_purpose_supergroup).to eq("services")
       end
     end
 
