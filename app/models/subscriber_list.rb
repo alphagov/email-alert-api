@@ -5,6 +5,7 @@ class SubscriberList < ApplicationRecord
 
   validate :tag_values_are_valid
   validate :link_values_are_valid
+  validate :content_purpose_supergroup_is_valid
 
   validates :title, presence: true
   validates_uniqueness_of :slug
@@ -66,6 +67,18 @@ private
   def link_values_are_valid
     unless valid_subscriber_criteria(:links)
       self.errors.add(:links, "All link values must be sent as Arrays")
+    end
+  end
+
+  def supergroup_document_types
+    GovukDocumentTypes.supergroup_document_types content_purpose_supergroup
+  end
+
+  def content_purpose_supergroup_is_valid
+    valid = content_purpose_supergroup.nil? || supergroup_document_types.any?
+
+    unless valid
+      self.errors.add(:supergroup, "Invalid supergroup '#{content_purpose_supergroup}'")
     end
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_19_131532) do
+ActiveRecord::Schema.define(version: 2019_01_25_145045) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(version: 2018_11_19_131532) do
     t.string "government_document_supertype", default: "", null: false
     t.string "signon_user_uid"
     t.string "slug", limit: 10000, null: false
+    t.string "content_purpose_supergroup", limit: 100
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
     t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
     t.index ["government_document_supertype"], name: "index_subscriber_lists_on_government_document_supertype"
@@ -138,6 +139,7 @@ ActiveRecord::Schema.define(version: 2018_11_19_131532) do
     t.uuid "subscription_id", null: false
     t.uuid "content_change_id", null: false
     t.index ["content_change_id"], name: "index_subscription_contents_on_content_change_id"
+    t.index ["created_at"], name: "index_subscription_contents_on_created_at"
     t.index ["digest_run_subscriber_id"], name: "index_subscription_contents_on_digest_run_subscriber_id"
     t.index ["email_id"], name: "index_subscription_contents_on_email_id"
     t.index ["subscription_id", "content_change_id"], name: "index_subscription_contents_on_subscription_and_content_change", unique: true
