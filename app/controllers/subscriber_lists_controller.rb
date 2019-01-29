@@ -44,6 +44,7 @@ private
       document_type: permitted_params.fetch(:document_type, ""),
       email_document_supertype: permitted_params.fetch(:email_document_supertype, ""),
       government_document_supertype: permitted_params.fetch(:government_document_supertype, ""),
+      content_purpose_supergroup: permitted_params.fetch(:content_purpose_supergroup, nil),
       slug: params[:gov_delivery_id],
     }
   end

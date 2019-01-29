@@ -5,7 +5,8 @@ RSpec.describe SubscriberListQuery do
       links: { policies: %w[11aa], taxon_tree: %w[taxon1 taxon2] },
       document_type: 'travel_advice',
       email_document_supertype: 'publications',
-      government_document_supertype: 'news_stories'
+      government_document_supertype: 'news_stories',
+      content_purpose_supergroup: nil
     )
   end
 
@@ -16,6 +17,8 @@ RSpec.describe SubscriberListQuery do
     it { is_excluded_from_links tags_or_links, email_document_supertype: 'other' }
     it { is_included_in_links tags_or_links, government_document_supertype: 'news_stories' }
     it { is_excluded_from_links tags_or_links, government_document_supertype: 'other' }
+    it { is_included_in_links(tags_or_links, content_purpose_supergroup: nil) }
+    it { is_excluded_from_links(tags_or_links, content_purpose_supergroup: 'news_and_communications') }
 
     it do
       is_included_in_links(
@@ -90,6 +93,7 @@ RSpec.describe SubscriberListQuery do
       document_type: '',
       email_document_supertype: '',
       government_document_supertype: '',
+      content_purpose_supergroup: nil,
     }
   end
 
