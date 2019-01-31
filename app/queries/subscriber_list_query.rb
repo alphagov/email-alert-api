@@ -35,6 +35,6 @@ private
       .where(document_type: ['', @document_type])
       .where(email_document_supertype: ['', @email_document_supertype])
       .where(government_document_supertype: ['', @government_document_supertype])
-      .where(content_purpose_supergroup: @content_purpose_supergroup)
+      .where(content_purpose_supergroup: [nil, @content_purpose_supergroup])
   end
 end
