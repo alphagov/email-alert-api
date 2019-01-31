@@ -82,6 +82,54 @@ RSpec.describe SubscriberListQuery do
     it_behaves_like "#links matching", links: {}, tags: {}
   end
 
+  context 'when a content_purpose_supergroup is provided' do
+    query_params = {
+      document_type: 'travel_advice',
+      content_purpose_supergroup: 'guidance_and_regulation'
+    }
+
+    it "includes subscriber lists where the content_purpose_supergroup is set to the desired value" do
+      list_params = { document_type: 'travel_advice', content_purpose_supergroup: 'guidance_and_regulation' }
+      subscriber_list = create(:subscriber_list, defaults.merge(list_params))
+      query = described_class.new(defaults.merge(query_params))
+      expect(query.lists).to include(subscriber_list)
+    end
+
+    it "includes subscriber lists even if the content_purpose_supergroup is nil, if the document_type is the same value" do
+      list_params = { document_type: 'travel_advice' }
+      subscriber_list = create(:subscriber_list, defaults.merge(list_params))
+      query = described_class.new(defaults.merge(query_params))
+      expect(query.lists).to include(subscriber_list)
+    end
+
+    it "includes subscriber lists where the content_purpose_supergroup is set to the same value" do
+      list_params = { content_purpose_supergroup: 'guidance_and_regulation' }
+
+      query_params = defaults.merge(
+        document_type: 'travel_advice',
+        content_purpose_supergroup: 'guidance_and_regulation'
+      )
+
+      subscriber_list = create(:subscriber_list, defaults.merge(list_params))
+      query = described_class.new(query_params)
+      expect(query.lists).to include(subscriber_list)
+    end
+
+    it "excludes subscriber lists where the content_purpose_supergroup is set to a different value" do
+      list_params = { document_type: 'travel_advice', content_purpose_supergroup: 'news_and_communications' }
+      subscriber_list = create(:subscriber_list, defaults.merge(list_params))
+      query = described_class.new(defaults.merge(query_params))
+      expect(query.lists).not_to include(subscriber_list)
+    end
+
+    it "excludes subscriber lists where the content_purpose_supergroup is set to the same value but the document type is different" do
+      list_params = { content_purpose_supergroup: 'guidance_and_regulation', document_type: 'edition' }
+      subscriber_list = create(:subscriber_list, defaults.merge(list_params))
+      query = described_class.new(defaults.merge(query_params))
+      expect(query.lists).not_to include(subscriber_list)
+    end
+  end
+
   def create_subscriber_list(options)
     create(:subscriber_list, options)
   end
