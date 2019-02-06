@@ -122,6 +122,18 @@ RSpec.describe FindExactQuery do
     expect(query.exact_match).to be_nil
   end
 
+  it "matched on reject_content_purpose_supergroup" do
+    query = build_query(reject_content_purpose_supergroup: 'other')
+    subscriber_list = create_subscriber_list(reject_content_purpose_supergroup: 'other')
+    expect(query.exact_match).to eq(subscriber_list)
+  end
+
+  it "matched on reject_content_purpose_supergroup and content_purpose_supergroup" do
+    query = build_query(reject_content_purpose_supergroup: 'other', content_purpose_supergroup: 'news_and_communications')
+    subscriber_list = create_subscriber_list(reject_content_purpose_supergroup: 'other', content_purpose_supergroup: 'news_and_communications')
+    expect(query.exact_match).to eq(subscriber_list)
+  end
+
   def build_query(params = {})
     defaults = {
       tags: {},
@@ -130,6 +142,7 @@ RSpec.describe FindExactQuery do
       email_document_supertype: '',
       government_document_supertype: '',
       content_purpose_supergroup: nil,
+      reject_content_purpose_supergroup: nil,
     }
 
     described_class.new(defaults.merge(params))
