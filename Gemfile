@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+ruby File.read(".ruby-version").chomp
+
 gem 'pg', '~> 1.1'
 gem 'rails', '~> 5.2'
 
