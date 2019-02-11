@@ -1,13 +1,23 @@
 class FindExactQuery
   class InvalidFindCriteria < StandardError; end
 
-  def initialize(tags:, links:, document_type:, email_document_supertype:, government_document_supertype:, slug: nil, content_purpose_supergroup:)
+  def initialize(
+    tags:,
+    links:,
+    document_type:,
+    email_document_supertype:,
+    government_document_supertype:,
+    slug: nil,
+    content_purpose_supergroup:,
+    reject_content_purpose_supergroup:
+  )
     @tags = tags.deep_symbolize_keys
     @links = links.deep_symbolize_keys
     @document_type = document_type
     @email_document_supertype = email_document_supertype
     @government_document_supertype = government_document_supertype
     @content_purpose_supergroup = content_purpose_supergroup
+    @reject_content_purpose_supergroup = reject_content_purpose_supergroup
     @slug = slug
   end
 
@@ -26,6 +36,7 @@ private
         .where(email_document_supertype: @email_document_supertype)
         .where(government_document_supertype: @government_document_supertype)
         .where(content_purpose_supergroup: @content_purpose_supergroup)
+        .where(reject_content_purpose_supergroup: @reject_content_purpose_supergroup)
       scope = scope.where(slug: @slug) if @slug.present?
       scope
     end

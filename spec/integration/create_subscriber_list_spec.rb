@@ -60,6 +60,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
           government_document_supertype
           active_subscriptions_count
           content_purpose_supergroup
+          reject_content_purpose_supergroup
         }.to_set.sort
       )
 

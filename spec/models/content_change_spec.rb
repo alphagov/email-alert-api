@@ -21,8 +21,8 @@ RSpec.describe ContentChange do
       expect(content_item.content_purpose_supergroup).to be(supertypes.fetch('content_purpose_supergroup'))
     end
 
-    it "is nil when it is part of the 'other' supergroup" do
-      expect(content_item_with_other_supergroup.content_purpose_supergroup).to be(nil)
+    it "is other when it is part of the default supergroup" do
+      expect(content_item_with_other_supergroup.content_purpose_supergroup).to eq('other')
     end
   end
 end
