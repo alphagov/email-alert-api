@@ -8,6 +8,7 @@ class EmailArchiveWorker
 
   def perform
     return unless ENV.include?("EMAIL_ARCHIVE_S3_ENABLED")
+
     Email.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
       start_time = Time.zone.now
       archived_count = 0

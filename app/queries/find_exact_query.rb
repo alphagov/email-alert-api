@@ -24,6 +24,7 @@ class FindExactQuery
   def exact_match
     return find_exact(:links, @links) if @links.any?
     return find_exact(:tags, @tags) if @tags.any?
+
     FindWithoutLinksAndTags.new(scope: base_scope).call.first
   end
 

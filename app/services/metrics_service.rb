@@ -30,6 +30,7 @@ class MetricsService
 
     def first_delivery_attempt(email, time)
       return if DeliveryAttempt.exists?(email: email)
+
       store_time_to_send_email(email, time)
       store_time_to_send_content_change(email, time)
     end

@@ -239,7 +239,7 @@ FactoryBot.define do
 
   factory :client_request_error,
     class: Notifications::Client::RequestError do
-    code '400'
+    code { '400' }
     body do
       {
         'status_code' => 400,

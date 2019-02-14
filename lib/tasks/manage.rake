@@ -4,6 +4,7 @@ namespace :manage do
   def change_email_address(old_email_address:, new_email_address:)
     subscriber = Subscriber.find_by_address(old_email_address)
     raise "Cannot find subscriber with email address #{old_email_address}" if subscriber.nil?
+
     subscriber.address = new_email_address
     if subscriber.save!
       puts "Changed email address for #{old_email_address} to #{new_email_address}"
@@ -25,10 +26,13 @@ namespace :manage do
   def move_all_subscribers(from_slug:, to_slug:)
     source_subscriber_list = SubscriberList.find_by(slug: from_slug)
     raise "Source subscriber list #{from_slug} does not exist" if source_subscriber_list.nil?
+
     source_subscriptions = Subscription.active.find_by(subscriber_list_id: source_subscriber_list.id)
     raise "No active subscriptions to move from #{from_slug}" if source_subscriptions.nil?
+
     destination_subscriber_list = SubscriberList.find_by(slug: to_slug)
     raise "Destination subscriber list #{to_slug} does not exist" if destination_subscriber_list.nil?
+
     subscribers = source_subscriber_list.subscribers.activated
     puts "#{subscribers.count} active subscribers moving from #{from_slug} to #{to_slug}"
 

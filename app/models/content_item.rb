@@ -12,8 +12,8 @@ class ContentItem
   def title
     @title ||= begin
       content_store_data['title'] || DEFAULT
-    rescue GdsApi::HTTPNotFound
-      DEFAULT
+               rescue GdsApi::HTTPNotFound
+                 DEFAULT
     end
   end
 
