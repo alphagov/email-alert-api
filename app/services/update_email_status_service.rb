@@ -22,6 +22,7 @@ private
 
   def handle_temporary_failure
     return unless retries_exhausted?
+
     email.update!(
       status: :failed,
       failure_reason: :retries_exhausted_failure,
