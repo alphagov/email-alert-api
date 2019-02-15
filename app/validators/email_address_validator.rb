@@ -21,6 +21,7 @@ private
   def contains_a_valid_domain?(email_address)
     domain = email_address.split('@')[1]
     return false if domain.nil?
+
     domain_contains_at_least_one_dot?(domain) ||
       domain_is_an_ip_address?(domain)
   end
