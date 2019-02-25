@@ -23,4 +23,9 @@ namespace :export do
   task csv_from_living_in_europe: :environment do
     DataExporter.new.export_csv_from_living_in_europe
   end
+
+  desc "Export the number of subscriptions for each sector in the Business Readiness finder"
+  task csv_from_sectors_in_business_readiness: :environment do
+    DataExporter.new.export_csv_from_sectors_in_business_readiness
+  end
 end
