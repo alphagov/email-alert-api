@@ -66,6 +66,21 @@ namespace :manage do
     puts "#{subscribers.count} active subscribers moved from #{from_slug} to #{to_slug}"
   end
 
+  def update_subscriber_list(slug:, new_title:, new_slug:)
+    subscriber_list = SubscriberList.find_by(slug: slug)
+
+    raise "Cannot find subscriber list with #{slug}" if subscriber_list.nil?
+
+    subscriber_list.title = new_title
+    subscriber_list.slug = new_slug
+
+    if subscriber_list.save!
+      puts "Subscriber list updated with title:#{new_title} and slug: #{new_slug}"
+    else
+      puts "Error updating subscriber list with title:#{new_title} and slug: #{new_slug}"
+    end
+  end
+
   desc "Change the email address of a subscriber"
   task :change_email_address, %i[old_email_address new_email_address] => :environment do |_t, args|
     change_email_address(old_email_address: args[:old_email_address], new_email_address: args[:new_email_address])
@@ -116,5 +131,10 @@ namespace :manage do
       organisations: organisations,
       policy_area_mappings: policy_area_mappings
     )
+  end
+
+  desc "Update subscriber list title and slug"
+  task :update_subscriber_list, %i[slug new_title new_slug] => :environment do |_t, args|
+    update_subscriber_list(slug: args[:slug], new_title: args[:new_title], new_slug: args[:new_slug])
   end
 end
