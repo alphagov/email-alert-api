@@ -66,6 +66,20 @@ namespace :manage do
     puts "#{subscribers.count} active subscribers moved from #{from_slug} to #{to_slug}"
   end
 
+  def find_subscriber_list_by_title(title:)
+    subscriber_lists = SubscriberList.where("title ILIKE '%#{title}%'")
+
+    raise "Cannot find any subscriber lists with title containing `#{title}`" if subscriber_lists.nil?
+
+    puts "Found #{subscriber_lists.count} subscriber lists containing '#{title}'"
+
+    subscriber_lists.each do |subscriber_list|
+      puts "============================="
+      puts "title: #{subscriber_list.title}"
+      puts "slug: #{subscriber_list.slug}"
+    end
+  end
+
   def update_subscriber_list(slug:, new_title:, new_slug:)
     subscriber_list = SubscriberList.find_by(slug: slug)
 
@@ -131,6 +145,11 @@ namespace :manage do
       organisations: organisations,
       policy_area_mappings: policy_area_mappings
     )
+  end
+
+  desc "Find subscriber lists by title match"
+  task :find_subscriber_list_by_title, %i[title] => :environment do |_t, args|
+    find_subscriber_list_by_title(title: args[:title])
   end
 
   desc "Update subscriber list title and slug"
