@@ -2,7 +2,7 @@
 
 title We attempt to send emails to subscribers when\n\
 content changes if they have a subscription for a\n\
-subscribable that matches
+subscriber list that matches
 
 hide circle
 hide empty methods
@@ -25,7 +25,7 @@ package "Who" {
 }
 
 package "Why" {
-  class Subscribable {
+  class SubscriberList {
     [match criteria]
     title
   }
@@ -59,7 +59,7 @@ package "How" {
 }
 
 Subscriber o-down-> Subscription
-Subscription -down-> Subscribable
+Subscription -down-> SubscriberList
 
 SubscriptionContent -down-> Subscription
 SubscriptionContent -down-> ContentChange
