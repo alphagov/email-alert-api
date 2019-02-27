@@ -119,7 +119,7 @@ new email address.
 ```json
 {
   "address": "email@address.com",
-  "subscribable_id": "The id of a subscriber list"
+  "subscriber_list_id": "The id of a subscriber list"
 }
 ```
 
