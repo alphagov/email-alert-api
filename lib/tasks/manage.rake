@@ -67,7 +67,7 @@ namespace :manage do
   end
 
   def find_subscriber_list_by_title(title:)
-    subscriber_lists = SubscriberList.where("title ILIKE '%#{title}%'")
+    subscriber_lists = SubscriberList.where("title ILIKE ?", "%#{title}%")
 
     raise "Cannot find any subscriber lists with title containing `#{title}`" if subscriber_lists.nil?
 
