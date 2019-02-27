@@ -6,8 +6,8 @@ RSpec.describe "Failing to deliver an email via Notify (technical failure)", typ
   scenario "failing the healthcheck if delivery failed for a technical reason" do
     login_with(%w(internal_app status_updates))
 
-    subscribable_id = create_subscribable
-    subscribe_to_subscribable(subscribable_id)
+    subscriber_list_id = create_subscriber_list
+    subscribe_to_subscriber_list(subscriber_list_id)
     create_content_change
     email_data = expect_an_email_was_sent
 

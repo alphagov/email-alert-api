@@ -4,18 +4,18 @@ RSpec.describe "Creating a subscription", type: :request do
       login_with_internal_app
     end
 
-    context "with a subscribable" do
-      let(:subscribable) { create(:subscriber_list) }
+    context "with a subscriber_list" do
+      let(:subscriber_list) { create(:subscriber_list) }
 
       it "returns a 201" do
-        params = JSON.dump(address: "test@example.com", subscribable_id: subscribable.id)
+        params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id)
         post "/subscriptions", params: params, headers: JSON_HEADERS
 
         expect(response.status).to eq(201)
       end
 
       it "sets the source to a user signup" do
-        params = JSON.dump(address: "test@example.com", subscribable_id: subscribable.id)
+        params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id)
         post "/subscriptions", params: params, headers: JSON_HEADERS
 
         expect(Subscription.first.source_user_signed_up?).to be true
@@ -23,7 +23,7 @@ RSpec.describe "Creating a subscription", type: :request do
 
       context "with a frequency setting" do
         it "returns a 201 and sets the frequency" do
-          params = JSON.dump(address: "test@example.com", subscribable_id: subscribable.id, frequency: "daily")
+          params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "daily")
           post "/subscriptions", params: params, headers: JSON_HEADERS
 
           expect(response.status).to eq(201)
@@ -34,12 +34,12 @@ RSpec.describe "Creating a subscription", type: :request do
 
         context "with an existing subscription" do
           it "updates the frequency" do
-            params = JSON.dump(address: "test@example.com", subscribable_id: subscribable.id, frequency: "daily")
+            params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "daily")
             post "/subscriptions", params: params, headers: JSON_HEADERS
 
             expect(response.status).to eq(201)
 
-            params = JSON.dump(address: "test@example.com", subscribable_id: subscribable.id, frequency: "weekly")
+            params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "weekly")
             post "/subscriptions", params: params, headers: JSON_HEADERS
 
             expect(response.status).to eq(200)
@@ -59,12 +59,12 @@ RSpec.describe "Creating a subscription", type: :request do
 
         context "with an existing subscription but a different case" do
           it "returns a successful response" do
-            params = JSON.dump(address: "Test@example.com", subscribable_id: subscribable.id, frequency: "daily")
+            params = JSON.dump(address: "Test@example.com", subscriber_list_id: subscriber_list.id, frequency: "daily")
             post "/subscriptions", params: params, headers: JSON_HEADERS
 
             expect(response.status).to eq(201)
 
-            params = JSON.dump(address: "test@example.com", subscribable_id: subscribable.id, frequency: "weekly")
+            params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "weekly")
             post "/subscriptions", params: params, headers: JSON_HEADERS
 
             expect(response.status).to eq(200)
@@ -73,7 +73,7 @@ RSpec.describe "Creating a subscription", type: :request do
 
         context "with a notify email address" do
           it "returns a 201 but doesn't create a subscriber or subscription" do
-            params = JSON.dump(address: "simulate-delivered@notifications.service.gov.uk", subscribable_id: subscribable.id, frequency: "daily")
+            params = JSON.dump(address: "simulate-delivered@notifications.service.gov.uk", subscriber_list_id: subscriber_list.id, frequency: "daily")
             expect { post "/subscriptions", params: params, headers: JSON_HEADERS }.to_not change(Subscriber, :count)
 
             expect(response.status).to eq(201)
@@ -86,7 +86,7 @@ RSpec.describe "Creating a subscription", type: :request do
           end
 
           it "activates the subscriber" do
-            params = JSON.dump(address: "deactivated@example.com", subscribable_id: subscribable.id)
+            params = JSON.dump(address: "deactivated@example.com", subscriber_list_id: subscriber_list.id)
             post "/subscriptions", params: params, headers: JSON_HEADERS
 
             expect(Subscriber.first.deactivated?).to be false

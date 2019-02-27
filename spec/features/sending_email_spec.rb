@@ -3,11 +3,11 @@ RSpec.describe "Sending an email", type: :request do
     stub_notify
   end
 
-  scenario "sending an email for a subscription to a subscribable" do
+  scenario "sending an email for a subscription to a subscriber_list" do
     login_with_internal_app
 
-    subscribable_id = create_subscribable
-    subscribe_to_subscribable(subscribable_id)
+    subscriber_list_id = create_subscriber_list
+    subscribe_to_subscriber_list(subscriber_list_id)
     create_content_change
     email_data = expect_an_email_was_sent
 

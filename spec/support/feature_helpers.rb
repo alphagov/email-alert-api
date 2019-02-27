@@ -12,17 +12,17 @@ module FeatureHelpers
     expect(response.status).to eq(200)
   end
 
-  def create_subscribable(overrides = {})
+  def create_subscriber_list(overrides = {})
     params = { title: "Example", tags: {}, links: {} }.merge(overrides)
     post "/subscriber-lists", params: params.to_json, headers: JSON_HEADERS
     expect(response.status).to eq(201)
     data.dig(:subscriber_list, :id)
   end
 
-  def lookup_subscribable(gov_delivery_id, expected_status: 200)
-    get "/subscribables/#{gov_delivery_id}"
+  def lookup_subscriber_list_by_slug(slug, expected_status: 200)
+    get "/subscriber-lists/#{slug}"
     expect(response.status).to eq(expected_status)
-    data.dig(:subscribable, :id)
+    data.dig(:subscriber_list, :id)
   end
 
   def lookup_subscriber_list(params, expected_status: 200)
@@ -30,10 +30,10 @@ module FeatureHelpers
     expect(response.status).to eq(expected_status)
   end
 
-  def subscribe_to_subscribable(subscribable_id, expected_status: 201,
+  def subscribe_to_subscriber_list(subscriber_list_id, expected_status: 201,
     address: "test@test.com", frequency: "immediately")
     params = {
-      subscribable_id: subscribable_id,
+      subscriber_list_id: subscriber_list_id,
       address: address,
       frequency: frequency
     }
@@ -41,7 +41,7 @@ module FeatureHelpers
     expect(response.status).to eq(expected_status)
   end
 
-  def unsubscribe_from_subscribable(id, expected_status: 204)
+  def unsubscribe_from_subscriber_list(id, expected_status: 204)
     post "/unsubscribe/#{id}"
     expect(response.status).to eq(expected_status)
   end

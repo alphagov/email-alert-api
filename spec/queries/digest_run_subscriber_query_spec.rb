@@ -107,7 +107,7 @@ RSpec.describe DigestRunSubscriberQuery do
       end
     end
 
-    context "when the subscriber is subscribed to two matching subscribables" do
+    context "when the subscriber is subscribed to two matching subscriber_lists" do
       let(:subscriber_list_two) { create(:subscriber_list) }
       let(:subscriber) { create(:subscriber) }
       let!(:subscription_1) do
