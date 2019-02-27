@@ -1,6 +1,8 @@
 require "csv"
 
 class DataExporter
+  BUSINESS_READINESS_FINDER_SLUG_PREFIX = "find-eu-exit-guidance-for-your-business-with-sector".freeze
+
   def export_csv_from_ids(ids)
     export_csv(SubscriberList.where(id: ids))
   end
@@ -21,6 +23,23 @@ class DataExporter
     export_csv(living_in_europe_subscriber_lists)
   end
 
+  def export_csv_from_sectors_in_business_readiness
+    all_slugs = SubscriberList.pluck(:slug)
+
+    business_sectors.each do |sector|
+      slugs = all_slugs.select do |slug|
+        slug.starts_with?(BUSINESS_READINESS_FINDER_SLUG_PREFIX) && slug.include?(sector['value'])
+      end
+
+      CSV($stdout, headers: %i(title count), write_headers: true) do |csv|
+        csv << {
+          title: sector["label"],
+          count: SubscriberList.where(slug: slugs).count,
+        }
+      end
+    end
+  end
+
 private
 
   CSV_HEADERS = %i(id title count).freeze
@@ -34,6 +53,14 @@ private
   def living_in_europe_subscriber_lists
     slugs = EUROPEAN_COUNTRIES.map { |country| "living-in-#{country}" }
     SubscriberList.where(slug: slugs)
+  end
+
+  def business_sectors
+    facets_filename = File.join(Rails.root, "config", "find-eu-exit-guidance-business.yml")
+    if File.exist?(facets_filename)
+      @facet_config ||= YAML.load_file(facets_filename)
+      @facet_config["details"]["facets"].first["allowed_values"]
+    end
   end
 
   def subscriber_list_count(subscriber_list, date)
