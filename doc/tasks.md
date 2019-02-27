@@ -62,6 +62,31 @@ $ bundle exec rake manage:move_all_subscribers[<from_slug>, <to_slug>]
 You need to supply the `slug` for the source and destination
 subscriber lists.
 
+## Query for subscriptions by title
+
+This task will return subscriptions with titles containing the string provided
+(not case sensitive). It is to be used in conjunction with the next rake task as
+part of [renaming a country](https://docs.publishing.service.gov.uk/manual/rename-a-country.html).
+
+```bash
+$ bundle exec rake manage:find_subscriber_list_by_title[<title>]
+```
+
+It will output the number of subscriptions found and the `title` and `slug` for
+each one.
+
+## Update a subscription title
+
+This task updates a subscription's `title`. You need to provide the `slug`,
+`new_title`, and `new_slug`.
+
+```bash
+$ bundle exec rake manage:update_subscriber_list[<slug>,<new_title>,<new_slug>]
+```
+
+If successful it will confirm the change by returning the updated `title` and `slug`
+in the output.
+
 ## Export data
 
 There are a number of tasks available which export subscriber list data into CSV files on standard output. In
