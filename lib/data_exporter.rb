@@ -24,17 +24,14 @@ class DataExporter
   end
 
   def export_csv_from_sectors_in_business_readiness
-    all_slugs = SubscriberList.pluck(:slug)
-
     business_sectors.each do |sector|
-      slugs = all_slugs.select do |slug|
-        slug.starts_with?(BUSINESS_READINESS_FINDER_SLUG_PREFIX) && slug.include?(sector['value'])
-      end
-
       CSV($stdout, headers: %i(title count), write_headers: true) do |csv|
         csv << {
           title: sector["label"],
-          count: SubscriberList.where(slug: slugs).count,
+          count: SubscriberList
+                  .where("slug LIKE '#{BUSINESS_READINESS_FINDER_SLUG_PREFIX}%'")
+                  .where("tags->>'sector_business_area' LIKE ?", "%#{sector['value']}%")
+                  .map(&:subscribers).flatten.count,
         }
       end
     end

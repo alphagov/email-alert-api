@@ -54,8 +54,8 @@ RSpec.describe DataExporter do
   end
 
   describe "#export_csv_from_sectors_in_business_readiness" do
-    let(:subscriber_list_foo) { create(:subscriber_list, id: 1, title: "Foo", slug: DataExporter::BUSINESS_READINESS_FINDER_SLUG_PREFIX + "-foo") }
-    let(:subscriber_list_bar) { create(:subscriber_list, id: 2, title: "Foo and Bar", slug: DataExporter::BUSINESS_READINESS_FINDER_SLUG_PREFIX + "-foo-and-bar") }
+    let(:subscriber_list_foo) { create(:subscriber_list, :business_sectors, id: 1, title: "Item One", slug: DataExporter::BUSINESS_READINESS_FINDER_SLUG_PREFIX + "-one") }
+    let(:subscriber_list_bar) { create(:subscriber_list, :business_sectors, id: 2, title: "Item Two", slug: DataExporter::BUSINESS_READINESS_FINDER_SLUG_PREFIX + "-two") }
 
     before do
       create(:subscription, subscriber_list: subscriber_list_foo)
@@ -69,7 +69,7 @@ RSpec.describe DataExporter do
         { "label" => "Foo", "value" => "foo" },
         { "label" => "Bar", "value" => "bar" }
       ])
-      expect { subject.export_csv_from_sectors_in_business_readiness }.to output("title,count\nFoo,2\nBar,1\n").to_stdout
+      expect { subject.export_csv_from_sectors_in_business_readiness }.to output("title,count\nFoo,2\nBar,2\n").to_stdout
     end
   end
 end
