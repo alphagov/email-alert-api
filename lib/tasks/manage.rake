@@ -23,6 +23,48 @@ namespace :manage do
     end
   end
 
+  def move_to_new_generic_business_finder_emails
+    email_subject = "Changes to GOV.UK email alerts"
+    email_utm_parameters = {
+      'utm_source' => email_subject,
+      'utm_medium' => 'email',
+      'utm_campaign' => 'govuk-subscription-ended'
+      }
+    email_redirect = EmailTemplateContext.new.add_utm('https://gov.uk/email/manage', email_utm_parameters)
+
+    bulk_business_move_template = <<~BODY.freeze
+      Hello,
+
+      You've subscribed to get email alerts about EU Exit guidance for your business.
+
+      GOV.UK is changing the type of email alerts you get to make sure you find out when any EU Exit business guidance is added or updated.
+
+      You can [change how often you get updates or unsubscribe](#{email_redirect}) from GOV.UK email alerts.
+
+      Thanks,
+
+      GOV.UK
+    BODY
+
+    old_business_finder_slug_prefix = "find-eu-exit-guidance-for-your-business-with".freeze
+    to_slug = "find-eu-exit-guidance-for-your-business-appear-in-find-eu-exit-guidance-business-finder"
+
+    all_business_subscriber_lists = SubscriberList.where("slug LIKE '#{old_business_finder_slug_prefix}%'")
+    all_active_business_subscriber_lists = all_business_subscriber_lists.reject { |subscriber_list| subscriber_list.active_subscriptions_count.zero? }
+
+    puts "#{all_active_business_subscriber_lists.map(&:subscribers).flatten.count} subscribers found"
+
+    BulkEmailSenderService.call(
+      subject: email_subject,
+      body: bulk_business_move_template,
+      subscriber_lists: all_active_business_subscriber_lists,
+    )
+
+    all_active_business_subscriber_lists.each do |subscriber_list|
+      move_all_subscribers(from_slug: subscriber_list.slug, to_slug: to_slug)
+    end
+  end
+
   def move_all_subscribers(from_slug:, to_slug:)
     source_subscriber_list = SubscriberList.find_by(slug: from_slug)
     raise "Source subscriber list #{from_slug} does not exist" if source_subscriber_list.nil?
@@ -116,6 +158,11 @@ namespace :manage do
   desc "Move all subscribers from one subscriber list to another"
   task :move_all_subscribers, %i[from_slug to_slug] => :environment do |_t, args|
     move_all_subscribers(from_slug: args[:from_slug], to_slug: args[:to_slug])
+  end
+
+  desc "Move all business finder subscriptions to the new generic one"
+  task move_to_new_generic_business_finder_emails: :environment do |_t|
+    move_to_new_generic_business_finder_emails
   end
 
   desc "Unsubscribe subscribers using a list policy areas to taxons"
