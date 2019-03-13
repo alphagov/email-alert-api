@@ -36,6 +36,5 @@ private
       .where(email_document_supertype: ['', @email_document_supertype])
       .where(government_document_supertype: ['', @government_document_supertype])
       .where(content_purpose_supergroup: [nil, @content_purpose_supergroup])
-      .where("reject_content_purpose_supergroup <> '#{@content_purpose_supergroup}' OR reject_content_purpose_supergroup IS NULL")
   end
 end
