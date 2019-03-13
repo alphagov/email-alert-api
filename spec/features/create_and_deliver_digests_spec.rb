@@ -105,42 +105,42 @@ RSpec.describe "creating and delivering digests", type: :request do
     list_one_topic_id = "0eb5d0f0-d384-4f27-9da8-3f9e9b22a820"
     list_two_topic_id = "a915e039-070b-4633-813d-187af61cad7a"
 
-    subscribable_one_id = create_subscribable(title: "Subscriber list one", links: {
+    subscriber_list_one_id = create_subscriber_list(title: "Subscriber list one", links: {
       topics: { any: [list_one_topic_id] }
     })
 
-    subscribable_two_id = create_subscribable(title: "Subscriber list two", links: {
+    subscriber_list_two_id = create_subscriber_list(title: "Subscriber list two", links: {
       topics: { any: [list_two_topic_id] }
     })
 
     #create two daily subscribers, one subscribed to daily digests for both
-    #subscribables and the other for daily for subscribable_one only
+    #subscriber_lists and the other for daily for subscriber_list_one only
     subscriber_one_address = "test-one@example.com"
     subscriber_two_address = "test-two@example.com"
 
     #subscriber that shouldn't receive a digest
     non_digest_subscriber_address = "test-three@example.com"
 
-    subscribe_to_subscribable(
-      subscribable_one_id,
+    subscribe_to_subscriber_list(
+      subscriber_list_one_id,
       address: subscriber_one_address,
       frequency: Frequency::DAILY
     )
 
-    subscribe_to_subscribable(
-      subscribable_two_id,
+    subscribe_to_subscriber_list(
+      subscriber_list_two_id,
       address: subscriber_one_address,
       frequency: Frequency::DAILY
     )
 
-    subscribe_to_subscribable(
-      subscribable_one_id,
+    subscribe_to_subscriber_list(
+      subscriber_list_one_id,
       address: subscriber_two_address,
       frequency: Frequency::DAILY
     )
 
-    subscribe_to_subscribable(
-      subscribable_one_id,
+    subscribe_to_subscriber_list(
+      subscriber_list_one_id,
       address: non_digest_subscriber_address,
       frequency: Frequency::IMMEDIATELY
     )
@@ -325,41 +325,41 @@ RSpec.describe "creating and delivering digests", type: :request do
     list_one_taxon_id = "86db0cbd-a1f9-4218-b571-ca0550265e33"
     list_two_taxon_id = "6416e4e0-c0c1-457a-8337-4bf8ed9d5f80"
 
-    subscribable_one_id = create_subscribable(title: "Subscriber list one", links: {
+    subscriber_list_one_id = create_subscriber_list(title: "Subscriber list one", links: {
       topics: { any: [list_one_topic_id] }
     })
 
-    subscribable_two_id = create_subscribable(title: "Subscriber list two", links: {
+    subscriber_list_two_id = create_subscriber_list(title: "Subscriber list two", links: {
       taxon_tree: { all: [list_one_taxon_id, list_two_taxon_id] }
     })
 
     #create two daily subscribers, one subscribed to daily digests for both
-    #subscribables and the other for daily for subscribable_one only
+    #subscriber_lists and the other for daily for subscriber_list_one only
     subscriber_one_address = "test-one@example.com"
     subscriber_two_address = "test-two@example.com"
 
     non_weekly_digest_subscriber_address = "test-three@example.com"
 
-    subscribe_to_subscribable(
-      subscribable_one_id,
+    subscribe_to_subscriber_list(
+      subscriber_list_one_id,
       address: subscriber_one_address,
       frequency: Frequency::WEEKLY
     )
 
-    subscribe_to_subscribable(
-      subscribable_two_id,
+    subscribe_to_subscriber_list(
+      subscriber_list_two_id,
       address: subscriber_one_address,
       frequency: Frequency::WEEKLY
     )
 
-    subscribe_to_subscribable(
-      subscribable_one_id,
+    subscribe_to_subscriber_list(
+      subscriber_list_one_id,
       address: subscriber_two_address,
       frequency: Frequency::WEEKLY
     )
 
-    subscribe_to_subscribable(
-      subscribable_two_id,
+    subscribe_to_subscriber_list(
+      subscriber_list_two_id,
       address: non_weekly_digest_subscriber_address,
       frequency: Frequency::DAILY
     )

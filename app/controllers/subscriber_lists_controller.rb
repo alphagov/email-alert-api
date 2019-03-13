@@ -1,10 +1,22 @@
 class SubscriberListsController < ApplicationController
-  def show
+  def index
     subscriber_list = FindExactQuery.new(find_exact_query_params).exact_match
     if subscriber_list
       render json: subscriber_list.to_json
     else
       render json: { message: "Could not find the subscriber list" }, status: 404
+    end
+  end
+
+  def show
+    subscriber_list = SubscriberList.find_by(slug: params[:slug])
+    if subscriber_list
+      render json: {
+        subscribable: subscriber_list.attributes, # for backwards compatiblity
+        subscriber_list: subscriber_list.attributes,
+      }, status: status
+    else
+      render json: { message: "Could not find the subcsriber list" }, status: 404
     end
   end
 

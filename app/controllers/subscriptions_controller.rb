@@ -8,7 +8,7 @@ class SubscriptionsController < ApplicationController
     Subscription.transaction do
       existing_subscription = Subscription.active.lock.find_by(
         subscriber: subscriber,
-        subscriber_list: subscribable,
+        subscriber_list: subscriber_list,
       )
 
       existing_subscription.end(reason: :frequency_changed) if existing_subscription
@@ -17,7 +17,7 @@ class SubscriptionsController < ApplicationController
 
       subscription = Subscription.create!(
         subscriber: subscriber,
-        subscriber_list: subscribable,
+        subscriber_list: subscriber_list,
         frequency: frequency,
         signon_user_uid: current_user.uid,
         source: existing_subscription ? :frequency_changed : :user_signed_up
@@ -82,8 +82,12 @@ private
     subscription_params.require(:address)
   end
 
-  def subscribable
-    @subscribable ||= SubscriberList.find(subscription_params.require(:subscribable_id))
+  def subscriber_list
+    @subscriber_list ||= SubscriberList.find(subscriber_list_id)
+  end
+
+  def subscriber_list_id
+    subscription_params[:subscribable_id] || subscription_params.require(:subscriber_list_id)
   end
 
   def frequency
@@ -91,6 +95,6 @@ private
   end
 
   def subscription_params
-    params.permit(:id, :address, :subscribable_id, :frequency)
+    params.permit(:id, :address, :subscribable_id, :subscriber_list_id, :frequency)
   end
 end

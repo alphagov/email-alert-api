@@ -6,8 +6,8 @@ RSpec.describe "Failing to deliver an email via Notify (permanent failure)", typ
   scenario "automatically unsubscribing a user if delivery permanently failed" do
     login_with(%w(internal_app status_updates))
 
-    subscribable_id = create_subscribable
-    subscribe_to_subscribable(subscribable_id)
+    subscriber_list_id = create_subscriber_list
+    subscribe_to_subscriber_list(subscriber_list_id)
     create_content_change
     email_data = expect_an_email_was_sent
 
@@ -22,6 +22,6 @@ RSpec.describe "Failing to deliver an email via Notify (permanent failure)", typ
     expect_an_email_was_not_sent
 
     id = extract_unsubscribe_id(email_data)
-    unsubscribe_from_subscribable(id, expected_status: 404)
+    unsubscribe_from_subscriber_list(id, expected_status: 404)
   end
 end

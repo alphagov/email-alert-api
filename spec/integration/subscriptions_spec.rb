@@ -5,27 +5,27 @@ RSpec.describe "Subscriptions", type: :request do
     end
 
     it "requires an address parameter" do
-      post "/subscriptions", params: { subscribable_id: 10 }
+      post "/subscriptions", params: { subscriber_list_id: 10 }
       expect(response.status).to eq(400)
     end
 
-    it "requires a subscribable_id parameter" do
+    it "requires a subscriber_list_id parameter" do
       post "/subscriptions", params: { address: "test@example.com" }
       expect(response.status).to eq(400)
     end
 
-    it "fails with an invalid subscribable" do
-      post "/subscriptions", params: { subscribable_id: 10, address: "test@example.com" }
+    it "fails with an invalid subscriber_list" do
+      post "/subscriptions", params: { subscriber_list_id: 10, address: "test@example.com" }
       expect(response.status).to eq(404)
     end
 
     context "with an existing subscription" do
-      let(:subscribable) { create(:subscriber_list) }
+      let(:subscriber_list) { create(:subscriber_list) }
       let(:subscriber) { create(:subscriber, address: "test@example.com") }
-      let!(:subscription) { create(:subscription, subscriber_list: subscribable, subscriber: subscriber) }
+      let!(:subscription) { create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber) }
 
       def create_subscription
-        post "/subscriptions", params: { subscribable_id: subscribable.id, address: subscriber.address }
+        post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: subscriber.address }
       end
 
       it "creates a new subscription" do
@@ -48,7 +48,7 @@ RSpec.describe "Subscriptions", type: :request do
       end
 
       context "with an ended subscription" do
-        let!(:subscription) { create(:subscription, :ended, subscriber_list: subscribable, subscriber: subscriber) }
+        let!(:subscription) { create(:subscription, :ended, subscriber_list: subscriber_list, subscriber: subscriber) }
 
         it "leaves the subscription as ended" do
           create_subscription
@@ -77,11 +77,11 @@ RSpec.describe "Subscriptions", type: :request do
     end
 
     context "without an existing subscription" do
-      context "with a subscribable" do
-        let(:subscribable) { create(:subscriber_list) }
+      context "with a subscriber_list" do
+        let(:subscriber_list) { create(:subscriber_list) }
 
         def create_subscription
-          post "/subscriptions", params: { subscribable_id: subscribable.id, address: "test@example.com" }
+          post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: "test@example.com" }
         end
 
         context "with an existing subscriber" do
@@ -103,7 +103,7 @@ RSpec.describe "Subscriptions", type: :request do
 
         it "creates the subscription" do
           expect { create_subscription }.to change(Subscription, :count).by(1)
-          expect(Subscription.first.subscriber_list).to eq(subscribable)
+          expect(Subscription.first.subscriber_list).to eq(subscriber_list)
         end
 
         it "returns status code 201" do
@@ -153,10 +153,10 @@ RSpec.describe "Subscriptions", type: :request do
     end
 
     context "with an invalid email address" do
-      let(:subscribable) { create(:subscriber_list) }
+      let(:subscriber_list) { create(:subscriber_list) }
 
       it "cannot process the request" do
-        post "/subscriptions", params: { subscribable_id: subscribable.id, address: "invalid" }
+        post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: "invalid" }
         expect(response.status).to eq(422)
       end
     end
@@ -165,7 +165,7 @@ RSpec.describe "Subscriptions", type: :request do
   context "without authentication" do
     it "returns a 401" do
       without_login do
-        post "/subscriptions", params: { subscribable_id: 10, address: "test@example.com" }
+        post "/subscriptions", params: { subscriber_list_id: 10, address: "test@example.com" }
         expect(response.status).to eq(401)
       end
     end
@@ -174,7 +174,7 @@ RSpec.describe "Subscriptions", type: :request do
   context "without authorisation" do
     it "returns a 403" do
       login_with_signin
-      post "/subscriptions", params: { subscribable_id: 10, address: "test@example.com" }
+      post "/subscriptions", params: { subscriber_list_id: 10, address: "test@example.com" }
       expect(response.status).to eq(403)
     end
   end

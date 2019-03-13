@@ -76,7 +76,7 @@ changed and should produce an alert.
 - Be considered as part of an Alert supertype which may represent other types
   of alerts in the system
 
-### Subscribable
+### Subscriber List
 
 **Responsibility**: Being a type of list that a user can subscribe to and storing
 information specific to that list.
@@ -93,7 +93,7 @@ information specific to that list.
 - Temporarily maintain a relationship with corresponding govdelivery list
 - Store information about what subscription criteria it matches
   (links, tags, document_supertypes)
-- Have information to source where the Subscribable originated from
+- Have information to source where the Subscriber List originated from
 
 #### May
 
@@ -107,7 +107,7 @@ information specific to that list.
 
 #### To determine
 
-- In what scenarios is a Subscribable removed
+- In what scenarios is a Subscriber List removed
 
 ### Subscriber
 
@@ -139,13 +139,13 @@ stores information related to all subscriptions the user may have
 
 ### Subscription
 
-**Responsibility**: Store that a Subscriber has an association to a Subscribable
-and any associated data (e.g. preferences)
+**Responsibility**: Store that a Subscriber has an association to a Subscriber
+List and any associated data (e.g. preferences)
 
 #### Shall
 
 - Store an association to a Subscriber
-- Store an association to a Subscribable
+- Store an association to a Subscriber List
 
 #### Should
 
@@ -153,7 +153,7 @@ and any associated data (e.g. preferences)
 
 #### Should Not
 
-- Be removed from the system when a user unsubscribes from a Subscribable as
+- Be removed from the system when a user unsubscribes from a Subscriber List as
   this provides a log that a user has been subscribed with the associated
   content and maintaining the record allows us to restore preferences if
   subscription is resumed
@@ -166,7 +166,7 @@ and any associated data (e.g. preferences)
 
 #### To determine
 
-- What should happen if either Subscribable or Subscriber are removed/archived
+- What should happen if either Subscriber List or Subscriber are removed/archived
 
 ### SubscriptionContent
 
@@ -428,4 +428,3 @@ tried to send or not
 - Which system (if any) and what rules and behaviour it will follow for
   removing/suspending accounts that receive permanent failure messages from
   Notify
-
