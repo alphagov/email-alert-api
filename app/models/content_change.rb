@@ -20,7 +20,8 @@ class ContentChange < ApplicationRecord
 
   def content_purpose_supergroup
     @content_purpose_supergroup ||= begin
-      GovukDocumentTypes.supertypes(document_type: document_type)['content_purpose_supergroup']
+      group = GovukDocumentTypes.supertypes(document_type: document_type)['content_purpose_supergroup']
+      group == 'other' ? nil : group
     end
   end
 end

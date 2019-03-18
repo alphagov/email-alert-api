@@ -65,24 +65,6 @@ RSpec.describe SubscriberList, type: :model do
       expect(subject).to be_valid
     end
 
-    it "is valid with a correct reject_content_purpose_supergroup" do
-      subject.reject_content_purpose_supergroup = 'news_and_communications'
-
-      expect(subject).to be_valid
-    end
-
-    it "is invalid with an incorrect reject_content_purpose_supergroup" do
-      subject.reject_content_purpose_supergroup = 'blah_blah'
-
-      expect(subject).to be_invalid
-    end
-
-    it "is valid with a nil reject_content_purpose_supergroup" do
-      subject.reject_content_purpose_supergroup = nil
-
-      expect(subject).to be_valid
-    end
-
     it "is invalid when links 'hash' has 'any' values that are not arrays" do
       subject.links = { foo: { any: "bar" } }
 

@@ -128,22 +128,6 @@ RSpec.describe SubscriberListQuery do
       query = described_class.new(defaults.merge(query_params))
       expect(query.lists).not_to include(subscriber_list)
     end
-
-    it "excludes subscriber lists where reject_content_purpose_supergroup is set to the document's content_purpose_supergroup value" do
-      list_params = { reject_content_purpose_supergroup: 'guidance_and_regulation' }
-      subscriber_list = create(:subscriber_list, defaults.merge(list_params))
-      query = described_class.new(query_params)
-      expect(query.lists).not_to include(subscriber_list)
-    end
-
-    it "includes subscriber lists where reject_content_purpose_supergroup is different to the document's content_purpose_supergroup value" do
-      # this is equivalent to the /all-content finder
-      list_params = { reject_content_purpose_supergroup: 'other' }
-
-      subscriber_list = create(:subscriber_list, defaults.merge(list_params))
-      query = described_class.new(query_params)
-      expect(query.lists).to include(subscriber_list)
-    end
   end
 
   def create_subscriber_list(options)

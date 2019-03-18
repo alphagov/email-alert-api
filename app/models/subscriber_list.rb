@@ -6,7 +6,6 @@ class SubscriberList < ApplicationRecord
   validate :tag_values_are_valid
   validate :link_values_are_valid
   validate :content_purpose_supergroup_is_valid
-  validate :reject_content_purpose_supergroup_is_valid
 
   validates :title, presence: true
   validates_uniqueness_of :slug
@@ -75,20 +74,12 @@ private
     GovukDocumentTypes.supergroup_document_types supergroup
   end
 
-  def validate_supergroup_field(supergroup, field)
-    valid = supergroup.nil? || supergroup_document_types(supergroup).any? || supergroup == 'other'
+  def content_purpose_supergroup_is_valid
+    valid = content_purpose_supergroup.nil? || supergroup_document_types(content_purpose_supergroup).any?
 
     unless valid
-      self.errors.add(field, "Invalid supergroup '#{supergroup}'")
+      self.errors.add(:content_purpose_supergroup, "Invalid supergroup '#{content_purpose_supergroup}'")
     end
-  end
-
-  def content_purpose_supergroup_is_valid
-    validate_supergroup_field(content_purpose_supergroup, :content_purpose_supergroup)
-  end
-
-  def reject_content_purpose_supergroup_is_valid
-    validate_supergroup_field(reject_content_purpose_supergroup, :reject_content_purpose_supergroup)
   end
 
   def valid_subscriber_criteria(link_or_tags)
