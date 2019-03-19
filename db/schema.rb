@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_06_130316) do
+ActiveRecord::Schema.define(version: 2019_03_13_155146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -116,7 +116,6 @@ ActiveRecord::Schema.define(version: 2019_02_06_130316) do
     t.string "signon_user_uid"
     t.string "slug", limit: 10000, null: false
     t.string "content_purpose_supergroup", limit: 100
-    t.string "reject_content_purpose_supergroup", limit: 100
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
     t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
     t.index ["government_document_supertype"], name: "index_subscriber_lists_on_government_document_supertype"
