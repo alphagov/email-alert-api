@@ -23,20 +23,6 @@ class DataExporter
     export_csv(living_in_europe_subscriber_lists)
   end
 
-  def export_csv_from_sectors_in_business_readiness
-    business_sectors.each do |sector|
-      CSV($stdout, headers: %i(title count), write_headers: true) do |csv|
-        csv << {
-          title: sector["label"],
-          count: SubscriberList
-                  .where("slug LIKE '#{BUSINESS_READINESS_FINDER_SLUG_PREFIX}%'")
-                  .where("tags->>'sector_business_area' LIKE ?", "%#{sector['value']}%")
-                  .map(&:subscribers).flatten.count,
-        }
-      end
-    end
-  end
-
 private
 
   CSV_HEADERS = %i(id title count).freeze
@@ -50,14 +36,6 @@ private
   def living_in_europe_subscriber_lists
     slugs = EUROPEAN_COUNTRIES.map { |country| "living-in-#{country}" }
     SubscriberList.where(slug: slugs)
-  end
-
-  def business_sectors
-    facets_filename = File.join(Rails.root, "config", "find-eu-exit-guidance-business.yml")
-    if File.exist?(facets_filename)
-      @facet_config ||= YAML.load_file(facets_filename)
-      @facet_config["details"]["facets"].first["allowed_values"]
-    end
   end
 
   def subscriber_list_count(subscriber_list, date)
