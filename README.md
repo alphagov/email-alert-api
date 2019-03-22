@@ -50,6 +50,22 @@ subscribers to those tags via the external services.
 * Check that the configuration in `config/database.yml` is correct
 * Run `bundle exec rake db:setup` to load the database
 
+#### Troubleshooting
+
+If you get this error when setting up the database:
+
+```
+ActiveRecord::StatementInvalid: PG::InsufficientPrivilege: ERROR:  permission denied to create extension "uuid-ossp"
+HINT:  Must be superuser to create this extension.
+: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+/var/govuk/email-alert-api/db/schema.rb:17:in `block in <main>'
+/var/govuk/email-alert-api/db/schema.rb:13:in `<main>'
+/usr/lib/rbenv/versions/2.6.1/bin/bundle:23:in `load'
+/usr/lib/rbenv/versions/2.6.1/bin/bundle:23:in `<main>'
+```
+
+Try running `govuk_puppet` in the VM.
+
 ### Running the application
 
 ```bash
