@@ -11,11 +11,11 @@ module Healthcheck
     end
 
     def critical_threshold
-      0.2
+      0.25
     end
 
     def warning_threshold
-      0.1
+      0.166
     end
 
     def enabled?
