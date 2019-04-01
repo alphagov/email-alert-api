@@ -64,6 +64,10 @@ RSpec.describe "creating and delivering digests", type: :request do
       &nbsp;
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
+
+      &nbsp;
+
+      ^Do not reply to this email. Feedback? Visit http://www.dev.gov.uk/contact
     BODY
   end
 
@@ -95,6 +99,10 @@ RSpec.describe "creating and delivering digests", type: :request do
       &nbsp;
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
+
+      &nbsp;
+
+      ^Do not reply to this email. Feedback? Visit http://www.dev.gov.uk/contact
     BODY
   end
 
@@ -284,6 +292,10 @@ RSpec.describe "creating and delivering digests", type: :request do
       &nbsp;
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
+
+      &nbsp;
+
+      ^Do not reply to this email. Feedback? Visit http://www.dev.gov.uk/contact
     BODY
   end
 
@@ -315,6 +327,10 @@ RSpec.describe "creating and delivering digests", type: :request do
       &nbsp;
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
+
+      &nbsp;
+
+      ^Do not reply to this email. Feedback? Visit http://www.dev.gov.uk/contact
     BODY
   end
   scenario "weekly digest run" do
