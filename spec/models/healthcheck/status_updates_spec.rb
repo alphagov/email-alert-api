@@ -12,18 +12,19 @@ RSpec.describe Healthcheck::StatusUpdates do
       specify { expect(subject.status).to eq(:ok) }
     end
 
-    context "at 10%" do
+    context "at 16.6%" do
       before do
         create_delivery_attempt(:sending, 15.minutes.ago)
-        9.times { create_delivery_attempt(:delivered, 15.minutes.ago) }
+        5.times { create_delivery_attempt(:delivered, 15.minutes.ago) }
       end
+
       specify { expect(subject.status).to eq(:warning) }
     end
 
-    context "at 20%" do
+    context "at 25%" do
       before do
         create_delivery_attempt(:sending, 15.minutes.ago)
-        4.times { create_delivery_attempt(:delivered, 15.minutes.ago) }
+        3.times { create_delivery_attempt(:delivered, 15.minutes.ago) }
       end
       specify { expect(subject.status).to eq(:critical) }
     end
