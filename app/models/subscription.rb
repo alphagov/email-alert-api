@@ -12,6 +12,10 @@ class Subscription < ApplicationRecord
 
   scope :active, -> { where(ended_at: nil) }
   scope :ended, -> { where.not(ended_at: nil) }
+  scope :active_on, ->(date) do
+    where("created_at <= ?", date)
+      .where("ended_at IS NULL OR ended_at > ?", date)
+  end
 
   def as_json(options = {})
     options[:except] ||= %i(signon_user_uid subscriber_list_id subscriber_id)
