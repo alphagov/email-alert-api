@@ -21,7 +21,7 @@ RSpec.describe "Healthcheck", type: :request do
 
   context "when one of the healthchecks is critical" do
     before do
-      allow(ActiveRecord::Base).to receive(:connected?).and_return(false)
+      allow(ActiveRecord::Base).to receive(:connection).and_return(true)
     end
 
     it "returns a status of 'critical'" do
