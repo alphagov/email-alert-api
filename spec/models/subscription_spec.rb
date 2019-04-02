@@ -53,6 +53,20 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
+  describe ".active_on" do
+    before do
+      create(:subscription, created_at: "2018-01-01", ended_at: "2019-01-01")
+    end
+
+    it "returns subscriptions active on a valid date" do
+      expect(Subscription.active_on("2018-06-01").count).to eq(1)
+    end
+
+    it "returns no subscriptions active on an invalid date" do
+      expect(Subscription.active_on("2019-02-01").count).to eq(0)
+    end
+  end
+
   describe ".ended" do
     it "returns subscriptions with ended_at nil" do
       create(:subscription, :ended)

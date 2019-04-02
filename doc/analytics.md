@@ -28,14 +28,16 @@ endpoints or rake tasks.
 
 Here are some example queries to pull out particular insights.
 
-### How many subscribers does a list have at a particular point in time
+### How many subscribers does a list have
 
 ```ruby
-Subscription.where(
-    "created_at > ? AND (ended_at IS NULL OR ended_at <= ?)",
-    "2018-06-01",
-    "2018-07-01"
-  ).where(subscriber_list_id: 4194).count
+SubscriberList.find(4194).active_subscriptions_count
+```
+
+### How many subscribers did a list have at a particular point in time
+
+```ruby
+Subscription.active_on("2018-06-01").where(subscriber_list_id: 4194).count
 ```
 
 ### Lists with most new subscriptions in a time frame
