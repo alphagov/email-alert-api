@@ -38,7 +38,11 @@ private
 
   def body(content_change, subscriptions, address)
     if Array(subscriptions).empty?
-      presented_content_change(content_change)
+      <<~BODY
+        #{presented_content_change(content_change)}
+        ---
+        #{feedback_link.strip}
+      BODY
     else
       <<~BODY
         #{presented_content_change(content_change)}
@@ -50,9 +54,19 @@ private
 
         &nbsp;
 
-        ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
+        #{feedback_link.strip}
       BODY
     end
+  end
+
+  def feedback_link
+    <<~BODY
+      ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
+
+      &nbsp;
+
+      ^Do not reply to this email. Feedback? Visit #{Plek.new.website_root}/contact
+    BODY
   end
 
   def presented_content_change(content_change)

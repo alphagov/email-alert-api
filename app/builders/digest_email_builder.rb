@@ -25,7 +25,9 @@ private
   attr_reader :subscriber, :digest_run, :results
 
   def body
-    presented_results.concat("\n").concat(spam_prevention_survey_links)
+    presented_results.concat("\n")
+      .concat(subscription_link).concat("\n")
+      .concat(feedback_link)
   end
 
   def presented_results
@@ -43,14 +45,22 @@ private
     RESULT
   end
 
-  def spam_prevention_survey_links
+  def subscription_link
     <<~BODY
       You’re getting this email because you subscribed to these topic updates on GOV.UK.
       #{presented_manage_subscriptions_links}
+    BODY
+  end
 
+  def feedback_link
+    <<~BODY
       &nbsp;
 
       ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
+
+      &nbsp;
+
+      ^Do not reply to this email. Feedback? Visit #{Plek.new.website_root}/contact
     BODY
   end
 
