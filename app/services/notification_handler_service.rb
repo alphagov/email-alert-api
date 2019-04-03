@@ -29,7 +29,7 @@ private
       description: params[:description],
       base_path: params[:base_path],
       links: params[:links],
-      tags: params[:tags],
+      tags: content_change_tags,
       public_updated_at: Time.parse(params[:public_updated_at]),
       email_document_supertype: params[:email_document_supertype],
       government_document_supertype: params[:government_document_supertype],
@@ -39,10 +39,16 @@ private
       priority: params.fetch(:priority, "normal").to_sym,
       signon_user_uid: user&.uid,
       footnote: params.fetch(:footnote, ""),
-    }.tap do |content_change|
-      content_change[:tags] = Services.business_readiness.inject(
-        content_change[:base_path], content_change[:tags]
-      )
-    end
+    }
+  end
+
+  def content_change_tags
+    tags = Services.business_readiness.inject(params[:base_path], params[:tags])
+
+    content_change_supertypes.merge(tags)
+  end
+
+  def content_change_supertypes
+    GovukDocumentTypes.supertypes(document_type: params[:document_type])
   end
 end

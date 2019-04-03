@@ -212,6 +212,33 @@ RSpec.describe "Getting a subscriber list", type: :request do
         expect(subscriber_list.fetch("id")).to eq(beta.id)
       end
     end
+
+    context "when passing in content_purpose_subgroup" do
+      it "does not find a subscriber list if the content_purpose_subgroup does not match" do
+        get_subscriber_list(
+          tags: {
+            topics: { any: ["vat-rates"] },
+            content_purpose_subgroup: { any: %w(news) }
+          },
+          document_type: "tax",
+        )
+        expect(response.status).to eq(404)
+      end
+
+      it "finds the subscriber list if the content_purpose_subgroup matches" do
+        _alpha = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] }, content_purpose_subgroup: { any: %w(updates_and_alerts) } })
+        beta = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] }, content_purpose_subgroup: { any: %w(news) } })
+        _gamma = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] }, content_purpose_subgroup: { any: %w() } })
+
+        get_subscriber_list(
+          tags: { topics: { any: ["vat-rates"] }, content_purpose_subgroup: { any: %w(news) } }
+        )
+        expect(response.status).to eq(200)
+
+        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
+        expect(subscriber_list.fetch("id")).to eq(beta.id)
+      end
+    end
   end
 
   context "without authentication" do

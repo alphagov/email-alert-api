@@ -130,6 +130,24 @@ RSpec.describe SubscriberListQuery do
     end
   end
 
+  context 'when a content_purpose_subgroup is provided' do
+    query_params = { tags: { content_purpose_subgroup: %w[updates_and_alerts] } }
+    list_params = { tags: { content_purpose_subgroup: { any: %w[updates_and_alerts] } } }
+
+    it "includes subscriber lists where the content_purpose_subgroup is set to the desired value" do
+      subscriber_list = create(:subscriber_list, defaults.merge(list_params))
+      query = described_class.new(defaults.merge(query_params))
+      expect(query.lists).to include(subscriber_list)
+    end
+
+    it "excludes subscriber lists where the content_purpose_subgroup is set to a different value" do
+      list_params = { tags: { content_purpose_subgroup: { any: %w[speeches_and_statements] } } }
+      subscriber_list = create(:subscriber_list, defaults.merge(list_params))
+      query = described_class.new(defaults.merge(query_params))
+      expect(query.lists).not_to include(subscriber_list)
+    end
+  end
+
   def create_subscriber_list(options)
     create(:subscriber_list, options)
   end

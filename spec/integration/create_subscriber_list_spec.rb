@@ -166,6 +166,26 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
     end
 
+    describe "creating a subscriber list with content_purpose_subgroups" do
+      it "returns a 201" do
+        create_subscriber_list(tags: { content_purpose_subgroups: { any: %w[news] } })
+
+        expect(response.status).to eq(201)
+      end
+
+      it "sets content_purpose_subgroups on the subscriber list" do
+        create_subscriber_list(
+          tags: {
+            countries: { any: %w[andorra] },
+            content_purpose_subgroups: { any: %w[news] }
+          }
+        )
+
+        subscriber_list = SubscriberList.last
+        expect(subscriber_list.tags[:content_purpose_subgroups]).to eq(any: %w[news])
+      end
+    end
+
     context "when creating a subscriber list with no tags or links" do
       context "and a document_type is provided" do
         it "returns a 201" do
