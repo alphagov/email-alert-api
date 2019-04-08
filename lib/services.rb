@@ -10,8 +10,7 @@ module Services
   def self.business_readiness
     @business_readiness ||= begin
       path = File.join(Rails.root, "config", "business_readiness.csv")
-      base_paths_with_tags = BusinessReadiness::Loader.new(path).base_paths_with_tags
-      BusinessReadiness::ContentChangeInjector.new(base_paths_with_tags)
+      BusinessReadiness::Loader.new(path).base_paths_with_tags
     end
   end
 end

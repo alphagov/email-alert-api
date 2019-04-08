@@ -43,9 +43,7 @@ private
   end
 
   def content_change_tags
-    tags = Services.business_readiness.inject(params[:base_path], params[:tags])
-
-    content_change_supertypes.merge(tags)
+    content_change_supertypes.merge(params[:tags])
   end
 
   def content_change_supertypes
