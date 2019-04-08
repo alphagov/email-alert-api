@@ -6,11 +6,4 @@ module Services
   def self.rate_limiter
     @rate_limiter ||= Ratelimit.new("deliveries")
   end
-
-  def self.business_readiness
-    @business_readiness ||= begin
-      path = File.join(Rails.root, "config", "business_readiness.csv")
-      BusinessReadiness::Loader.new(path).base_paths_with_tags
-    end
-  end
 end
