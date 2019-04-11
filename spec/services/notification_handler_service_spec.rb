@@ -34,7 +34,7 @@ RSpec.describe NotificationHandlerService do
       public_updated_at: Time.now.to_s,
       email_document_supertype: "email document supertype",
       government_document_supertype: "government document supertype",
-      document_type: "document type",
+      document_type: "news_article",
       publishing_app: "publishing app",
       govuk_request_id: "request-id",
     }
@@ -56,6 +56,45 @@ RSpec.describe NotificationHandlerService do
     end
 
     let(:content_change) { create(:content_change) }
+
+    it "adds GovukDocumentTypes to the content_change tags" do
+      described_class.call(params: params)
+
+      expect(ContentChange.last).to have_attributes(
+        title: "Travel advice",
+        base_path: "/government/things",
+        change_note: "This is a change note",
+        description: "This is a description",
+        links: {
+          organisations: {
+            any: ["c380ea42-5d91-41cc-b3cd-0a4cfe439461"]
+          },
+          taxon_tree: {
+            all: ["6416e4e0-c0c1-457a-8337-4bf8ed9d5f80"]
+          }
+        },
+        tags: {
+          navigation_document_supertype: "other",
+          content_purpose_document_supertype: "news",
+          user_journey_document_supertype: "thing",
+          search_user_need_document_supertype: "government",
+          email_document_supertype: "other",
+          government_document_supertype: "other",
+          content_purpose_subgroup: "news",
+          content_purpose_supergroup: "news_and_communications",
+          topics: ["oil-and-gas/licensing"],
+        },
+        email_document_supertype: "email document supertype",
+        government_document_supertype: "government document supertype",
+        govuk_request_id: "request-id",
+        document_type: "news_article",
+        publishing_app: "publishing app",
+        processed_at: nil,
+        priority: "normal",
+        signon_user_uid: nil,
+        footnote: ""
+      )
+    end
 
     it "enqueues the content change to be processed by the subscription content worker" do
       allow(ContentChange).to receive(:create!).and_return(content_change)
