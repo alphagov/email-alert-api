@@ -1,8 +1,6 @@
 require "csv"
 
 class DataExporter
-  BUSINESS_READINESS_FINDER_SLUG_PREFIX = "find-eu-exit-guidance-for-your-business-with-sector".freeze
-
   def export_csv_from_ids(ids)
     export_csv(SubscriberList.where(id: ids))
   end

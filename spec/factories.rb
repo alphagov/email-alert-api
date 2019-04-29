@@ -113,10 +113,6 @@ FactoryBot.define do
       tags { { format: %w[medical_safety_alert], alert_type: %w(devices drugs field-safety-notices company-led-drugs) } }
     end
 
-    trait :business_sectors do
-      tags { { sector_business_area: { any: %w[foo bar] } } }
-    end
-
     factory :subscriber_list_with_subscribers do
       transient do
         subscriber_count { 5 }
