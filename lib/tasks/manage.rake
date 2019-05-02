@@ -95,6 +95,16 @@ namespace :manage do
     end
   end
 
+  desc "Deactivated legacy subscriber lists"
+  task deactivate_legacy_subscriber_lists: :environment do
+    RemoveCpsService.new.deactivate_subscriber_lists
+  end
+
+  desc "Remove legacy subscriber lists"
+  task delete_subscriber_lists: :environment do
+    RemoveCpsService.new.delete_subscriber_lists
+  end
+
   desc "Change the email address of a subscriber"
   task :change_email_address, %i[old_email_address new_email_address] => :environment do |_t, args|
     change_email_address(old_email_address: args[:old_email_address], new_email_address: args[:new_email_address])
