@@ -59,7 +59,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
           email_document_supertype
           government_document_supertype
           active_subscriptions_count
-          content_purpose_supergroup
         }.to_set.sort
       )
 
@@ -139,30 +138,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
         subscriber_list = SubscriberList.last
         expect(subscriber_list.document_type).to eq("travel_advice")
-      end
-    end
-
-    describe "creating a subscriber list with a content_purpose_supergroup" do
-      it "returns a 201" do
-        create_subscriber_list(content_purpose_supergroup: "news_and_communications")
-
-        expect(response.status).to eq(201)
-      end
-
-      it "enforces supergroup types contraint" do
-        create_subscriber_list(content_purpose_supergroup: "invalid_supergroup")
-
-        expect(response.status).to eq(422)
-      end
-
-      it "sets content_purpose_supergroup on the subscriber list" do
-        create_subscriber_list(
-          tags: { countries: { any: %w[andorra] } },
-          content_purpose_supergroup: "services"
-        )
-
-        subscriber_list = SubscriberList.last
-        expect(subscriber_list.content_purpose_supergroup).to eq("services")
       end
     end
 

@@ -7,15 +7,13 @@ class FindExactQuery
     document_type:,
     email_document_supertype:,
     government_document_supertype:,
-    slug: nil,
-    content_purpose_supergroup:
+    slug: nil
   )
     @tags = tags.deep_symbolize_keys
     @links = links.deep_symbolize_keys
     @document_type = document_type
     @email_document_supertype = email_document_supertype
     @government_document_supertype = government_document_supertype
-    @content_purpose_supergroup = content_purpose_supergroup
     @slug = slug
   end
 
@@ -34,7 +32,6 @@ private
         .where(document_type: @document_type)
         .where(email_document_supertype: @email_document_supertype)
         .where(government_document_supertype: @government_document_supertype)
-        .where(content_purpose_supergroup: @content_purpose_supergroup)
       scope = scope.where(slug: @slug) if @slug.present?
       scope
     end

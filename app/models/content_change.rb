@@ -17,11 +17,4 @@ class ContentChange < ApplicationRecord
   def processed?
     processed_at.present?
   end
-
-  def content_purpose_supergroup
-    @content_purpose_supergroup ||= begin
-      group = GovukDocumentTypes.supertypes(document_type: document_type)['content_purpose_supergroup']
-      group == 'other' ? nil : group
-    end
-  end
 end

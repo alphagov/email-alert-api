@@ -34,8 +34,7 @@ private
       links: content_change.links,
       document_type: content_change.document_type,
       email_document_supertype: content_change.email_document_supertype,
-      government_document_supertype: content_change.government_document_supertype,
-      content_purpose_supergroup: content_change.content_purpose_supergroup,
+      government_document_supertype: content_change.government_document_supertype
     ).lists
   end
 end

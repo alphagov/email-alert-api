@@ -6,7 +6,6 @@ RSpec.describe SubscriberListQuery do
       document_type: 'travel_advice',
       email_document_supertype: 'publications',
       government_document_supertype: 'news_stories',
-      content_purpose_supergroup: nil
     )
   end
 
@@ -17,8 +16,6 @@ RSpec.describe SubscriberListQuery do
     it { is_excluded_from_links tags_or_links, email_document_supertype: 'other' }
     it { is_included_in_links tags_or_links, government_document_supertype: 'news_stories' }
     it { is_excluded_from_links tags_or_links, government_document_supertype: 'other' }
-    it { is_included_in_links(tags_or_links, content_purpose_supergroup: nil) }
-    it { is_excluded_from_links(tags_or_links, content_purpose_supergroup: 'news_and_communications') }
 
     it do
       is_included_in_links(
@@ -83,13 +80,15 @@ RSpec.describe SubscriberListQuery do
   end
 
   context 'when a content_purpose_supergroup is provided' do
-    query_params = {
-      document_type: 'travel_advice',
-      content_purpose_supergroup: 'guidance_and_regulation'
+    let(:query_params) {
+      {
+        document_type: 'travel_advice',
+        tags: { content_purpose_supergroup: 'guidance_and_regulation' }
+      }
     }
 
     it "includes subscriber lists where the content_purpose_supergroup is set to the desired value" do
-      list_params = { document_type: 'travel_advice', content_purpose_supergroup: 'guidance_and_regulation' }
+      list_params = { document_type: 'travel_advice', tags: { content_purpose_supergroup: { any: %w[guidance_and_regulation] } } }
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
       query = described_class.new(defaults.merge(query_params))
       expect(query.lists).to include(subscriber_list)
@@ -103,27 +102,21 @@ RSpec.describe SubscriberListQuery do
     end
 
     it "includes subscriber lists where the content_purpose_supergroup is set to the same value" do
-      list_params = { content_purpose_supergroup: 'guidance_and_regulation' }
-
-      query_params = defaults.merge(
-        document_type: 'travel_advice',
-        content_purpose_supergroup: 'guidance_and_regulation'
-      )
-
+      list_params = { tags: { content_purpose_supergroup: { any: %w[guidance_and_regulation] } } }
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
-      query = described_class.new(query_params)
+      query = described_class.new(defaults.merge(query_params))
       expect(query.lists).to include(subscriber_list)
     end
 
     it "excludes subscriber lists where the content_purpose_supergroup is set to a different value" do
-      list_params = { document_type: 'travel_advice', content_purpose_supergroup: 'news_and_communications' }
+      list_params = { document_type: 'travel_advice', tags: { content_purpose_supergroup: { any: %w[news_and_communications] } } }
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
       query = described_class.new(defaults.merge(query_params))
       expect(query.lists).not_to include(subscriber_list)
     end
 
     it "excludes subscriber lists where the content_purpose_supergroup is set to the same value but the document type is different" do
-      list_params = { content_purpose_supergroup: 'guidance_and_regulation', document_type: 'edition' }
+      list_params = { tags: { content_purpose_supergroup: { any: %w[guidance_and_regulation] } }, document_type: 'edition' }
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
       query = described_class.new(defaults.merge(query_params))
       expect(query.lists).not_to include(subscriber_list)
@@ -159,7 +152,6 @@ RSpec.describe SubscriberListQuery do
       document_type: '',
       email_document_supertype: '',
       government_document_supertype: '',
-      content_purpose_supergroup: nil,
     }
   end
 
