@@ -12,10 +12,10 @@ RSpec.describe MatchedForNotification do
       @list3 = create(:subscriber_list, links: { topics: { any: ["uuid-123"] }, policies: { any: ["uuid-888"] } })
 
       @list4 = create(:subscriber_list,
-        links: { topics: { any: ["uuid-123"] } },
-        tags: {
-          topics: { any: ["environmental-management/boating"] },
-        })
+                      links: { topics: { any: ["uuid-123"] } },
+                      tags: {
+                        topics: { any: ["environmental-management/boating"] },
+                      })
 
       @list5 = create(:subscriber_list, links: { topics: { all: ["uuid-123", "uuid-234"] } })
 

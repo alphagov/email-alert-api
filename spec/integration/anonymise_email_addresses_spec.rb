@@ -91,7 +91,7 @@ RSpec.describe "Anonymising email addresses" do
     end
 
     expect(cases_not_covered).to be_empty,
-      "#{cases_not_covered.inspect} should have been anonymised"
+                                 "#{cases_not_covered.inspect} should have been anonymised"
   end
 
   it "assigns the same anonymous address if the original addresses were the same" do

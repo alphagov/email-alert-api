@@ -97,8 +97,8 @@ RSpec.describe RemoveCpsService do
             @duplicated_content_change_id = @content_changes.first.id
 
             FactoryBot.create(:matched_content_change,
-                            subscriber_list: @duplicate_subscriber_list,
-                            content_change_id: duplicated_content_change.content_change_id)
+                              subscriber_list: @duplicate_subscriber_list,
+                              content_change_id: duplicated_content_change.content_change_id)
           end
           it 'does not raise an error' do
             expect { RemoveCpsService.new.delete_subscriber_lists }.to_not raise_error

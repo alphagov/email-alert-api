@@ -177,7 +177,7 @@ FactoryBot.define do
   end
 
   factory :client_notification,
-    class: Notifications::Client::Notification do
+          class: Notifications::Client::Notification do
     initialize_with do
       new(body)
     end
@@ -206,7 +206,7 @@ FactoryBot.define do
   end
 
   factory :client_notifications_collection,
-    class: Notifications::Client::NotificationsCollection do
+          class: Notifications::Client::NotificationsCollection do
     initialize_with do
       new(body)
     end
@@ -225,7 +225,7 @@ FactoryBot.define do
   end
 
   factory :empty_client_notifications_collection,
-    class: Notifications::Client::NotificationsCollection do
+          class: Notifications::Client::NotificationsCollection do
     initialize_with do
       new(body)
     end
@@ -238,7 +238,7 @@ FactoryBot.define do
   end
 
   factory :client_request_error,
-    class: Notifications::Client::RequestError do
+          class: Notifications::Client::RequestError do
     code { '400' }
     body do
       {

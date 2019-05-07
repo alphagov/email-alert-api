@@ -9,7 +9,7 @@ RSpec.describe UnpublishHandlerService do
   end
 
   def create_subscriber_list(
-        links: {},
+    links: {},
         tags: {},
         title: 'First Subscription',
         address: 'test@example.com'
