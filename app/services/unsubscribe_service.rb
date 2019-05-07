@@ -35,7 +35,7 @@ module UnsubscribeService
   private
 
     def unsubscribe!(
-          subscriber,
+      subscriber,
           subscriptions,
           reason,
           email_marked_as_spam: nil,

@@ -24,7 +24,7 @@ module BulkUnsubscribeService
   end
 
   def self.call(
-        subscriber_limit: 1_000_000,
+    subscriber_limit: 1_000_000,
         courtesy_emails_every_nth_email: 500,
         people: [], #[{content_id: ..., slug: ....}]
         world_locations: [], #[{content_id: ..., slug: ....}]
@@ -90,7 +90,7 @@ module BulkUnsubscribeService
   end
 
   def self.process_subscriber(
-        subscriber,
+    subscriber,
         subscription_details,
         send_courtesy_copy:
       )

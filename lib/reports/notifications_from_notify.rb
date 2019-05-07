@@ -36,8 +36,8 @@ module Reports
       else
         puts "No results found"
       end
-    rescue Notifications::Client::RequestError => error
-      puts "Returns request error #{error.code}, message: #{error.message}"
+    rescue Notifications::Client::RequestError => e
+      puts "Returns request error #{e.code}, message: #{e.message}"
     end
 
   private
