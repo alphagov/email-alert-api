@@ -129,7 +129,6 @@ RSpec.describe FindExactQuery do
       document_type: '',
       email_document_supertype: '',
       government_document_supertype: '',
-      content_purpose_supergroup: nil,
     }
 
     described_class.new(defaults.merge(params))
@@ -142,7 +141,6 @@ RSpec.describe FindExactQuery do
       document_type: '',
       email_document_supertype: '',
       government_document_supertype: '',
-      content_purpose_supergroup: nil,
     }
     create(:subscriber_list, defaults.merge(params))
   end

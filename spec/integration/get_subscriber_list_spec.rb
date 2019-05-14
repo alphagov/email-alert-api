@@ -190,22 +190,37 @@ RSpec.describe "Getting a subscriber list", type: :request do
     context "when passing in content_purpose_supergroup" do
       it "does not find a subscriber list if the content_purpose_supergroup does not match" do
         get_subscriber_list(
-          tags: { topics: { any: ["vat-rates"] } },
-          document_type: "tax",
-          content_purpose_supergroup: "news_and_communications"
+          tags: {
+            topics: { any: ["vat-rates"] },
+            content_purpose_supergroup: { any: %w[news_and_communications] }
+          },
+          document_type: "tax"
         )
         expect(response.status).to eq(404)
       end
 
       it "finds the subscriber list if the content_purpose_supergroup matches" do
-        _alpha = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] } }, content_purpose_supergroup: "services")
-        beta = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] } }, content_purpose_supergroup: "news_and_communications")
-        _gamma = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] } }, content_purpose_supergroup: nil)
+        _alpha = create(:subscriber_list,
+                        tags: {
+                          topics: { any: ["vat-rates"] },
+                          content_purpose_supergroup: { any: %w[services] }
+                        })
+        beta = create(:subscriber_list,
+                      tags: {
+                        topics: { any: ["vat-rates"] },
+                        content_purpose_supergroup: { any: %w[news_and_communications] }
+                      })
+        _gamma = create(:subscriber_list,
+                        tags: {
+                          topics: { any: ["vat-rates"] }
+                        })
 
         get_subscriber_list(
-          tags: { topics: { any: ["vat-rates"] } },
-          content_purpose_supergroup: "news_and_communications"
-        )
+          tags: {
+            topics: { any: ["vat-rates"] },
+            content_purpose_supergroup: { any: %w[news_and_communications] }
+          }
+)
         expect(response.status).to eq(200)
 
         subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
