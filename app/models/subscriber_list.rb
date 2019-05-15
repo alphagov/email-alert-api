@@ -29,6 +29,11 @@ class SubscriberList < ApplicationRecord
     where(sql, id: "\"#{content_id}\"")
   end
 
+  #TODO Remove this once migration has been run
+  def self.columns
+    super.reject { |c| c.name == "content_purpose_supergroup" }
+  end
+
   def subscription_url
     PublicUrlService.subscription_url(slug: slug)
   end
