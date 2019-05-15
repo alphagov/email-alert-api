@@ -63,7 +63,8 @@ class SubscriptionsController < ApplicationController
   end
 
   def latest_matching
-    render json: { todo: true, comment: "Need to check that this method is correctly called!" }, status: ok
+    subscription = Subscription.find(subscription_params.require(:id))
+    render json: { subscription: FindLatestMatchingSubscription.call(subscription) }, status: ok
   end
 
 private
