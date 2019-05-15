@@ -62,6 +62,10 @@ class SubscriptionsController < ApplicationController
     render json: { subscription: subscription }, status: :ok
   end
 
+  def latest_matching
+    render json: { todo: true, comment: "Need to check that this method is correctly called!" }, status: ok
+  end
+
 private
 
   def smoke_test_address?
