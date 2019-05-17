@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     resources :status_updates, path: "status-updates", only: %i[create]
     resources :subscriptions, only: %i[create show update]
 
+    get "/subscriptions/:id/latest", to: "subscriptions#latest_matching"
+
     patch "/subscribers/:id", to: "subscribers#change_address"
     delete "/subscribers/:id", to: "unsubscribe#unsubscribe_all"
     get "/subscribers/:id/subscriptions", to: "subscribers#subscriptions"

@@ -62,6 +62,11 @@ class SubscriptionsController < ApplicationController
     render json: { subscription: subscription }, status: :ok
   end
 
+  def latest_matching
+    subscription = Subscription.find(subscription_params.require(:id))
+    render json: { subscription: FindLatestMatchingSubscription.call(subscription) }, status: :ok
+  end
+
 private
 
   def smoke_test_address?
