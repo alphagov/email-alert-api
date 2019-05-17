@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe DigestRunSubscriber do
-  subject { build(:digest_run_subscriber) }
+  subject { create(:digest_run_subscriber) }
 
   describe "mark_complete!" do
     it "sets completed_at to Time.now" do
