@@ -114,8 +114,15 @@ namespace :manage do
       subscriptions_to_move.each do |subscription|
         old_subscriber_list = subscription.subscriber_list_id
         subscription.subscriber_list_id = primary_business_finder_subscriber_list_id
-        subscription.save!
-        puts "Moved subscription #{subscription.id} from Subscriber List #{old_subscriber_list} to #{subscription.subscriber_list_id}"
+        updated = subscription.save
+
+        if updated
+          puts "Moved subscription #{subscription.id} from Subscriber List #{old_subscriber_list} to #{subscription.subscriber_list_id}"
+        else
+          puts "Could not move subscription #{subscription.id} from #{old_subscriber_list} to #{subscription.subscriber_list_id}"
+          puts "Subscriber id: #{subscription.subscriber_id}"
+          puts "Error: #{subscription.errors.full_messages}"
+        end
       end
 
       # If Subscriber already moved to the primary, old Subscriptions remain under that Subscriber List and cannot be deleted
