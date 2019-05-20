@@ -98,24 +98,37 @@ namespace :manage do
   def update_business_finder_subscriptions
     facet_group_content_id = "52435175-82ed-4a04-adef-74c0199d0f46".freeze
 
+    primary_business_finder_subscriber_list_id = SubscriberList.where(title: "EU Exit guidance for your business or organisation").pluck(:id)
+
+    other_business_finder_subscriber_lists = SubscriberList
+      .where.not(id: primary_business_finder_subscriber_list_id)
+      .find_by_links_value(facet_group_content_id)
+    other_business_finder_subscriber_list_ids = other_business_finder_subscriber_lists.pluck(:id)
+
+    business_finder_subscriptions = Subscription.where(subscriber_list_id: other_business_finder_subscriber_list_ids)
+    subscriber_ids_that_moved_to_primary_subscriber_list = Subscription
+      .where(
+        subscriber_id: business_finder_subscriptions.pluck(:subscriber_id),
+        subscriber_list_id: primary_business_finder_subscriber_list_id
+      )
+      .pluck(:subscriber_id)
+
+    subscriptions_to_move = business_finder_subscriptions.where.not(subscriber_id: subscriber_ids_that_moved_to_primary_subscriber_list)
+    subscriber_lists_to_change = SubscriberList.where(id: subscriptions_to_move.map(&:subscriber_list_id)).pluck(:id)
+
     Subscription.transaction do
-      primary_business_finder_subscriber_list = SubscriberList.where(title: "EU Exit guidance for your business or organisation")
-      primary_business_finder_subscriber_list_id = primary_business_finder_subscriber_list.ids[0]
-
-      other_business_finder_subscriber_lists = SubscriberList.find_by_links_value(facet_group_content_id) - primary_business_finder_subscriber_list
-      other_business_finder_subscriber_list_ids = other_business_finder_subscriber_lists.map(&:id)
-
-      business_finder_subscriptions = Subscription.where(subscriber_list_id: other_business_finder_subscriber_list_ids)
-      subscriber_ids_that_moved_to_primary_subscriber_list = Subscription.where(subscriber_id: business_finder_subscriptions.map(&:subscriber_id)).where(subscriber_list_id: primary_business_finder_subscriber_list_id).map(&:subscriber_id)
-      subscriptions_to_move = business_finder_subscriptions.where.not(subscriber_id: subscriber_ids_that_moved_to_primary_subscriber_list)
-
-      subscriber_lists_to_change = SubscriberList.where(id: subscriptions_to_move.map(&:subscriber_list_id)).map(&:id)
-
       subscriptions_to_move.each do |subscription|
         old_subscriber_list = subscription.subscriber_list_id
         subscription.subscriber_list_id = primary_business_finder_subscriber_list_id
-        subscription.save!
-        puts "Moved subscription #{subscription.id} from Subscriber List #{old_subscriber_list} to #{subscription.subscriber_list_id}"
+        updated = subscription.save
+
+        if updated
+          puts "Moved subscription #{subscription.id} from Subscriber List #{old_subscriber_list} to #{subscription.subscriber_list_id}"
+        else
+          puts "Could not move subscription #{subscription.id} from #{old_subscriber_list} to #{subscription.subscriber_list_id}"
+          puts "Subscriber id: #{subscription.subscriber_id}"
+          puts "Error: #{subscription.errors.full_messages}"
+        end
       end
 
       # If Subscriber already moved to the primary, old Subscriptions remain under that Subscriber List and cannot be deleted
