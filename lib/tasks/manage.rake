@@ -96,13 +96,11 @@ namespace :manage do
   end
 
   def update_business_finder_subscriptions
-    facet_group_content_id = "52435175-82ed-4a04-adef-74c0199d0f46".freeze
-
-    primary_business_finder_subscriber_list_id = SubscriberList.where(title: "EU Exit guidance for your business or organisation").pluck(:id)
+    primary_business_finder_subscriber_list_id = SubscriberList.find_by(title: "EU Exit guidance for your business or organisation").pluck(:id)
 
     other_business_finder_subscriber_lists = SubscriberList
       .where.not(id: primary_business_finder_subscriber_list_id)
-      .find_by_links_value(facet_group_content_id)
+      .where("slug LIKE 'find-eu-exit-guidance-for-your-business%'")
     other_business_finder_subscriber_list_ids = other_business_finder_subscriber_lists.pluck(:id)
 
     business_finder_subscriptions = Subscription.where(subscriber_list_id: other_business_finder_subscriber_list_ids)
