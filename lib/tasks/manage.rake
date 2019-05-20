@@ -96,7 +96,7 @@ namespace :manage do
   end
 
   def update_business_finder_subscriptions
-    primary_business_finder_subscriber_list_id = SubscriberList.find_by(title: "EU Exit guidance for your business or organisation").pluck(:id)
+    primary_business_finder_subscriber_list_id = SubscriberList.where(title: "EU Exit guidance for your business or organisation").pluck(:id).first
 
     other_business_finder_subscriber_lists = SubscriberList
       .where.not(id: primary_business_finder_subscriber_list_id)
