@@ -1,0 +1,3 @@
+class AndJoinedFacetSubscriberList < SubscriberList
+
+end
