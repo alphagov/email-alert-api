@@ -59,15 +59,31 @@ RSpec.describe MatchedForNotification do
       expect(lists).to include(@list5)
     end
 
+    it 'does not find subscriber list for all topics when not all topics present' do
+      lists = execute_query(field: :links, query_hash: { topics: ["uuid-234", "other2"] })
+      expect(lists).not_to include(@list5)
+    end
+
     it 'finds subscriber lists matching any and all topics' do
       lists = execute_query(field: :links, query_hash: { topics: ["uuid-345", "uuid-678", "uuid-456"] })
       expect(lists).to include(@list6)
+    end
+
+    it 'does not find subscriber list for mixture of all and any topics when not all topics present' do
+      lists = execute_query(field: :links, query_hash: { topics: ["uuid-345", "uuid-678"] })
+      expect(lists).not_to include(@list6)
     end
 
     it 'finds subscriber lists matching a mix of all topics and policies' do
       lists = execute_query(field: :links, query_hash: { topics: ["uuid-345", "uuid-456", "other1"],
                                                          policies: ["uuid-567", "uuid-678", "other2"] })
       expect(lists).to include(@list7)
+    end
+
+    it 'does not find subscriber list for mix of all topics and policies when not all policies present' do
+      lists = execute_query(field: :links, query_hash: { topics: ["uuid-345", "uuid-456", "other1"],
+                                                         policies: ["uuid-678", "other2"] })
+      expect(lists).not_to include(@list7)
     end
 
     context "there are other, non-matching link types in the query hash" do
