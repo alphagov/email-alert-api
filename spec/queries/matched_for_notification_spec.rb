@@ -64,7 +64,7 @@ RSpec.describe MatchedForNotification do
       expect(lists).to include(@list6)
     end
 
-    it 'finds subscriber lists matching a mix of any and all topics and policies' do
+    it 'finds subscriber lists matching a mix of all topics and policies' do
       lists = execute_query(field: :links, query_hash: { topics: ["uuid-345", "uuid-456", "other1"],
                                                          policies: ["uuid-567", "uuid-678", "other2"] })
       expect(lists).to include(@list7)
