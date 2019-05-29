@@ -39,7 +39,13 @@ private
       title: title,
       slug: slug,
       signon_user_uid: current_user.uid,
+      type: type
     )
+  end
+
+  def type
+    combine_mode = params[:combine_mode].present? && params[:combine_mode] == "or"
+    combine_mode ? 'OrJoinedFacetSubscriberList' : ''
   end
 
   def convert_legacy_params(link_or_tags)
