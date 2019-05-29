@@ -11,6 +11,14 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(SubscriberList.count).to eq(1)
     end
 
+    it "creates an or_joined_subscriber_list" do
+      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
+                                     taxon_tree: { all: %w[taxon1 taxon2] } },
+                             combine_mode: "or")
+
+      expect(OrJoinedFacetSubscriberList.count).to eq(1)
+    end
+
     it "returns a 201" do
       create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
                                      taxon_tree: { all: %w[taxon1 taxon2] } })
