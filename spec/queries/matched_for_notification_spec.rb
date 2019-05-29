@@ -81,20 +81,52 @@ RSpec.describe MatchedForNotification do
         lists = execute_query(topics: %w(vat tax licensing))
         expect(lists).to eq([@all_topics_tax_vat_any_topics_licensing_paye])
       end
+
+      it "does not find subscriber list for mixture of all and any topics when not all topics present" do
+        lists = execute_query(field: :links, query_hash: { topics: %w(vat licensing) })
+        expect(lists).not_to include(@all_topics_tax_vat_any_topics_licensing_paye)
+      end
     end
 
-    context "matches on all of both topics and organisations" do
+    context "matches on all topics and any policies" do
       before do
-        @all_topics_tax_vat_all_orgs_defra_hmrc = create_subscriber_list_with_tags_facets(topics: { all: %w(vat tax) }, organisations: { all: %w(defra hmrc) })
-        @all_topics_vat_organisations_defra_hmrc = create_subscriber_list_with_tags_facets(topics: { all: %w(paye schools) }, organisations: { all: %w(defra dfe) })
+        @all_topics_tax_vat_any_policies_economy_industry = create_subscriber_list_with_tags_facets(topics: { all: %w(vat tax) }, policies: { any: %w(economy industry) })
+        @all_topics_vat_any_policies_economy_industry = create_subscriber_list_with_tags_facets(topics: { all: %w(paye schools) }, policies: { any: %w(economy industry) })
       end
 
-      it "finds subscriber lists matching a mix of all topics and organisations" do
-        lists = execute_query(topics: %w(vat tax licensing), organisations: %w(defra hmrc oft))
-        expect(lists).to eq([@all_topics_tax_vat_all_orgs_defra_hmrc])
+      it "finds subscriber lists matching a mix of all topics and any policies" do
+        lists = execute_query(topics: %w(vat tax), policies: %w(economy industry))
+        expect(lists).to eq([@all_topics_tax_vat_any_policies_economy_industry])
+      end
+
+      it "does not find subscriber list for mix of all topics and any policies when not all topics present" do
+        lists = execute_query(field: :links, query_hash: { topics: %w(vat), policies: %w(economy) })
+        expect(lists).not_to include(@all_topics_tax_vat_any_policies_economy_industry)
       end
     end
 
+    context "matches on all topics and all policies" do
+      before do
+        @all_topics_tax_vat = create_subscriber_list_with_tags_facets(topics: { all: %w(vat tax) })
+        @all_topics_tax_vat_all_policies_economy_industry = create_subscriber_list_with_tags_facets(topics: { all: %w(vat tax) }, policies: { all: %w(economy industry) })
+        @all_topics_vat_policies_economy_industry = create_subscriber_list_with_tags_facets(topics: { all: %w(paye schools) }, policies: { all: %w(economy broadband) })
+      end
+
+      it "finds subscriber lists matching a mix of all topics and policies" do
+        lists = execute_query(topics: %w(vat tax licensing), policies: %w(economy industry))
+        expect(lists).to include(@all_topics_tax_vat_all_policies_economy_industry)
+      end
+
+      it "does not find subscriber list for all topics when not all topics present" do
+        lists = execute_query(topics: %w(vat schools))
+        expect(lists).not_to include(@all_topics_tax_vat)
+      end
+
+      it "does not find subscriber list for mix of all topics and policies when not all policies present" do
+        lists = execute_query(topics: %w(vat tax ufos), policies: %w(economy acceptable_footwear))
+        expect(lists).to_not include(@all_topics_tax_vat_all_policies_economy_schools)
+      end
+    end
 
     context "or_joined_subscriber_lists match on tag and links keys" do
       before do
@@ -206,7 +238,6 @@ RSpec.describe MatchedForNotification do
         end
       end
     end
-
 
     context "can return subscriber_lists and or_joined_facet_subscriber_lists" do
       before do
