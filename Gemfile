@@ -18,7 +18,7 @@ gem 'govuk_document_types', '~> 0.9.0'
 gem 'jwt', '~> 2.2'
 gem 'nokogiri', '~> 1.10'
 gem 'notifications-ruby-client', '~> 3.1'
-gem 'plek', '~> 2.1'
+gem 'plek', '~> 3.0'
 gem 'redcarpet', '~> 3.4'
 
 gem 'govuk_sidekiq', '~> 3.0'
