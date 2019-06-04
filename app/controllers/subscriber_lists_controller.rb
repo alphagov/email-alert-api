@@ -39,7 +39,6 @@ private
       title: title,
       slug: slug,
       signon_user_uid: current_user.uid,
-      type: type
     )
   end
 
@@ -56,7 +55,7 @@ private
 
   def find_exact_query_params
     permitted_params = params.permit!.to_h
-    {
+    exact_query_params = {
       tags: convert_legacy_params(permitted_params.fetch(:tags, {})),
       links: convert_legacy_params(permitted_params.fetch(:links, {})),
       document_type: permitted_params.fetch(:document_type, ""),
@@ -64,6 +63,8 @@ private
       government_document_supertype: permitted_params.fetch(:government_document_supertype, ""),
       slug: params[:gov_delivery_id],
     }
+    exact_query_params[:type] = type if params[:combine_mode].present?
+    exact_query_params
   end
 
   def slugify(title)
