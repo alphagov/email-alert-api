@@ -47,7 +47,12 @@ private
 
   def subscription_link
     <<~BODY
-      You’re getting this email because you subscribed to these topic updates on GOV.UK.
+
+      &nbsp;
+
+      ---
+
+      You’re getting this email because you subscribed to GOV.UK email alerts.
       #{presented_manage_subscriptions_links}
     BODY
   end
