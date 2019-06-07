@@ -12,7 +12,7 @@ gem 'faraday', '0.15.4'
 gem 'foreman', '~> 0.85'
 gem 'gds-api-adapters', '~> 59.5'
 gem 'gds-sso', '~> 14.0'
-gem 'govuk_app_config', '~> 1.17'
+gem 'govuk_app_config', '~> 1.18'
 gem 'govuk_document_types', '~> 0.9.0'
 # This is pinned < 2 until gds-sso supports JWT > 2
 gem 'jwt', '~> 2.2'
