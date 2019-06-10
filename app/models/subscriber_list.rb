@@ -44,7 +44,7 @@ class SubscriberList < ApplicationRecord
   def to_json(options = {})
     options[:except] ||= %i{signon_user_uid}
     options[:methods] ||= %i{subscription_url gov_delivery_id active_subscriptions_count}
-    super(options)
+    convert_to_subscriber_list_json(as_json(options))
   end
 
   def is_travel_advice?
@@ -75,5 +75,17 @@ private
         %i[all any].include?(operator) && values.is_a?(Array)
       end
     end
+  end
+
+  def convert_to_subscriber_list_json(subscriber_list_hash)
+    # If it is already correct, just return
+    return ActiveSupport::JSON.encode(subscriber_list_hash) if subscriber_list_hash.has_key?("subscriber_list")
+
+    # to_json and as_json will return a hash with the root key as
+    # or_joined_facet_subscriber_list, for that type which
+    # will make breaking changes.
+    # Instead, just change the root key to 'subscriber_list'
+    result_with_super_table_type = { "subscriber_list" => subscriber_list_hash.delete(type.underscore) }
+    ActiveSupport::JSON.encode(result_with_super_table_type)
   end
 end

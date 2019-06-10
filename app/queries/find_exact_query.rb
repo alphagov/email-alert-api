@@ -7,7 +7,8 @@ class FindExactQuery
     document_type:,
     email_document_supertype:,
     government_document_supertype:,
-    slug: nil
+    slug: nil,
+    type: nil
   )
     @tags = tags.deep_symbolize_keys
     @links = links.deep_symbolize_keys
@@ -15,6 +16,7 @@ class FindExactQuery
     @email_document_supertype = email_document_supertype
     @government_document_supertype = government_document_supertype
     @slug = slug
+    @type = type
   end
 
   def exact_match
@@ -33,6 +35,7 @@ private
         .where(email_document_supertype: @email_document_supertype)
         .where(government_document_supertype: @government_document_supertype)
       scope = scope.where(slug: @slug) if @slug.present?
+      scope = scope.where(type: @type) if @type.present?
       scope
     end
   end

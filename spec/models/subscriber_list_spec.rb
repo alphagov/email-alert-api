@@ -120,4 +120,44 @@ RSpec.describe SubscriberList, type: :model do
       )
     end
   end
+
+  describe "#to_json for a record without a type" do
+    subject { SubscriberList.new }
+
+    it "returns a hash as a subscriber list" do
+      assert subject.to_json.is_a?(String)
+      parsed_json = JSON.parse(subject.to_json)
+      assert parsed_json.has_key?("subscriber_list")
+      assert_equal expected_subscriber_list_keys,
+                   parsed_json["subscriber_list"].keys
+    end
+  end
+
+  describe "#to_json for an OrJoinedFacetSubscriberList" do
+    subject { OrJoinedFacetSubscriberList.new }
+
+    it "returns a hash as a subscriber list" do
+      assert subject.to_json.is_a?(String)
+      parsed_json = JSON.parse(subject.to_json)
+      assert parsed_json.has_key?("subscriber_list")
+      assert_equal expected_subscriber_list_keys,
+                   parsed_json["subscriber_list"].keys
+    end
+  end
+
+  def expected_subscriber_list_keys
+    %w(id
+       title
+       created_at
+       updated_at
+       document_type
+       tags
+       links
+       email_document_supertype
+       government_document_supertype
+       slug
+       subscription_url
+       gov_delivery_id
+       active_subscriptions_count)
+  end
 end
