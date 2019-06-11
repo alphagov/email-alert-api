@@ -43,6 +43,12 @@ FactoryBot.define do
       sent_at { nil }
       completed_at { Time.zone.now }
     end
+
+    factory :internal_failure_delivery_attempt do
+      status { :internal_failure }
+      sent_at { nil }
+      completed_at { Time.zone.now }
+    end
   end
 
   factory :digest_run do
