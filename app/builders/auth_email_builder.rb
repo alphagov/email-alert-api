@@ -34,13 +34,13 @@ private
 
       ^ [Confirm your email address](#{link})
 
-      We need to check that #{subscriber.address} is your email address so that you can manage your GOV.UK email subscriptions. This link will stop working in 7 days.
+      You need to do this to manage your GOV.UK email subscriptions. The link will stop working in 7 days.
 
       # Didn’t request this email?
 
       Ignore or delete this email if you didn’t request it. Your subscriptions won’t be changed.
 
-      [Contact us](https://www.gov.uk/contact/govuk) if you have problems with your GOV.UK email subscription.
+      [Contact GOV.UK](https://www.gov.uk/contact/govuk) if you have any problems with your email subscriptions.
     BODY
   end
 
