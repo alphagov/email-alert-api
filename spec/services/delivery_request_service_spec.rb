@@ -56,6 +56,17 @@ RSpec.describe DeliveryRequestService do
       expect(attempted).to be true
     end
 
+    context "when the provider raises an exception" do
+      before do
+        expect(subject.provider).to receive(:call).and_raise("Unknown error!")
+      end
+
+      it "sets the status to internal_failure" do
+        subject.call(email: email)
+        expect(DeliveryAttempt.last.status).to eq("internal_failure")
+      end
+    end
+
     context "when the email address is overridden" do
       let(:subject) do
         described_class.new(config: config.merge(email_address_override: address))
