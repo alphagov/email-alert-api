@@ -95,59 +95,6 @@ namespace :manage do
     end
   end
 
-  def update_business_finder_subscriptions
-    primary_business_finder_subscriber_list_id = SubscriberList.where(title: "EU Exit guidance for your business or organisation").pluck(:id).first
-
-    other_business_finder_subscriber_lists = SubscriberList
-      .where.not(id: primary_business_finder_subscriber_list_id)
-      .where("slug LIKE 'find-eu-exit-guidance-for-your-business%'")
-    other_business_finder_subscriber_list_ids = other_business_finder_subscriber_lists.pluck(:id)
-
-    business_finder_subscriptions = Subscription.where(subscriber_list_id: other_business_finder_subscriber_list_ids)
-    subscriber_ids_that_moved_to_primary_subscriber_list = Subscription
-      .where(
-        subscriber_id: business_finder_subscriptions.pluck(:subscriber_id),
-        subscriber_list_id: primary_business_finder_subscriber_list_id
-      )
-      .pluck(:subscriber_id)
-
-    subscriptions_to_move = business_finder_subscriptions.where.not(subscriber_id: subscriber_ids_that_moved_to_primary_subscriber_list)
-    subscriber_lists_to_change = SubscriberList.where(id: subscriptions_to_move.map(&:subscriber_list_id)).pluck(:id)
-
-    Subscription.transaction do
-      subscriptions_to_move.each do |subscription|
-        old_subscriber_list = subscription.subscriber_list_id
-        subscription.subscriber_list_id = primary_business_finder_subscriber_list_id
-        updated = subscription.save
-
-        if updated
-          puts "Moved subscription #{subscription.id} from Subscriber List #{old_subscriber_list} to #{subscription.subscriber_list_id}"
-        else
-          puts "Could not move subscription #{subscription.id} from #{old_subscriber_list} to #{subscription.subscriber_list_id}"
-          puts "Subscriber id: #{subscription.subscriber_id}"
-          puts "Error: #{subscription.errors.full_messages}"
-        end
-      end
-
-      # If Subscriber already moved to the primary, old Subscriptions remain under that Subscriber List and cannot be deleted
-      # Delete Subscriber Lists that have no Subscriptions
-      subscriber_lists_to_delete = []
-      subscriber_lists_to_change.each { |id|
-        subscriber_lists_to_delete << id if Subscription.where(subscriber_list_id: id) == []
-      }
-      SubscriberList.destroy(subscriber_lists_to_delete)
-
-      # If Subscriber List cannot be deleted, remove the links
-      subscriber_lists_to_remove_links = other_business_finder_subscriber_lists - subscriber_lists_to_delete
-
-      subscriber_lists_to_remove_links.each do |list|
-        list.links = {}
-        list.save!
-        puts "Removed facet_group links from Subscriber List #{list.id}"
-      end
-    end
-  end
-
   desc "Change the email address of a subscriber"
   task :change_email_address, %i[old_email_address new_email_address] => :environment do |_t, args|
     change_email_address(old_email_address: args[:old_email_address], new_email_address: args[:new_email_address])
@@ -208,10 +155,5 @@ namespace :manage do
   desc "Update subscriber list title and slug"
   task :update_subscriber_list, %i[slug new_title new_slug] => :environment do |_t, args|
     update_subscriber_list(slug: args[:slug], new_title: args[:new_title], new_slug: args[:new_slug])
-  end
-
-  desc "Update business finder subscriptions"
-  task update_business_finder_subscriptions: :environment do |_t|
-    update_business_finder_subscriptions
   end
 end
