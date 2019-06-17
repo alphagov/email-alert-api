@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       Healthcheck::StatusUpdates,
       Healthcheck::SubscriptionContents,
       Healthcheck::TechnicalFailures,
+      Healthcheck::InternalFailures,
     )
   end
 end

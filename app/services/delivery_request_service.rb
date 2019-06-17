@@ -26,12 +26,7 @@ class DeliveryRequestService
     delivery_attempt = create_delivery_attempt(email, reference)
 
     MetricsService.email_send_request(provider_name) do
-      status = provider.call(
-        address: address,
-        subject: subject_prefix + email.subject,
-        body: email.body,
-        reference: reference,
-      )
+      status = call_provider(address, reference, email)
 
       ActiveRecord::Base.transaction do
         delivery_attempt.update!(status: status) if status != :sending
@@ -43,6 +38,18 @@ class DeliveryRequestService
   end
 
 private
+
+  def call_provider(address, reference, email)
+    provider.call(
+      address: address,
+      subject: subject_prefix + email.subject,
+      body: email.body,
+      reference: reference,
+    )
+  rescue StandardError => e
+    GovukError.notify(e)
+    :internal_failure
+  end
 
   def determine_address(email, reference)
     overrider.destination_address(email.address).tap do |address|

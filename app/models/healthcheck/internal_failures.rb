@@ -1,11 +1,11 @@
 module Healthcheck
-  class TechnicalFailures < DeliveryStatus
+  class InternalFailures < DeliveryStatus
     def name
-      :technical_failures
+      :internal_failures
     end
 
     def delivery_status
-      4
+      5
     end
   end
 end

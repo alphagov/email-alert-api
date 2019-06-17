@@ -5,7 +5,7 @@ class DeliveryAttempt < ApplicationRecord
 
   FINAL_STATUSES = %i[delivered permanent_failure].freeze
 
-  enum status: { sending: 0, delivered: 1, permanent_failure: 2, temporary_failure: 3, technical_failure: 4 }
+  enum status: { sending: 0, delivered: 1, permanent_failure: 2, temporary_failure: 3, technical_failure: 4, internal_failure: 5 }
   enum provider: { pseudo: 0, notify: 1 }
 
   def has_final_status?
