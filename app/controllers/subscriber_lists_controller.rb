@@ -42,11 +42,6 @@ private
     )
   end
 
-  def type
-    combine_mode = params[:combine_mode].present? && params[:combine_mode] == "or"
-    combine_mode ? 'OrJoinedFacetSubscriberList' : ''
-  end
-
   def convert_legacy_params(link_or_tags)
     link_or_tags.transform_values do |link_or_tag|
       link_or_tag.is_a?(Hash) ? link_or_tag : { any: link_or_tag }
@@ -55,7 +50,7 @@ private
 
   def find_exact_query_params
     permitted_params = params.permit!.to_h
-    exact_query_params = {
+    {
       tags: convert_legacy_params(permitted_params.fetch(:tags, {})),
       links: convert_legacy_params(permitted_params.fetch(:links, {})),
       document_type: permitted_params.fetch(:document_type, ""),
@@ -63,8 +58,6 @@ private
       government_document_supertype: permitted_params.fetch(:government_document_supertype, ""),
       slug: params[:gov_delivery_id],
     }
-    exact_query_params[:type] = type if params[:combine_mode].present?
-    exact_query_params
   end
 
   def slugify(title)

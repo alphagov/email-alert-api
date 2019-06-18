@@ -130,21 +130,6 @@ FactoryBot.define do
     end
   end
 
-  factory :or_joined_facet_subscriber_list do
-    sequence(:title) { |n| "or joined title #{n}" }
-    sequence(:slug) { |n| "or-joined-title-#{n}" }
-    tags { { topics: { any: ["motoring/road_rage"] } } }
-    created_at { 1.year.ago }
-
-    trait :travel_advice do
-      links { { countries: { any: [SecureRandom.uuid] } } }
-    end
-
-    trait :medical_safety_alert do
-      tags { { format: %w[medical_safety_alert], alert_type: %w(devices drugs field-safety-notices company-led-drugs) } }
-    end
-  end
-
   factory :subscription do
     subscriber
     subscriber_list
