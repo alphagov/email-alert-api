@@ -1,4 +1,5 @@
 class DigestEmailBuilder
+  include EmailBuilderHelper
   def initialize(subscriber:, digest_run:, subscription_content_change_results:)
     @subscriber = subscriber
     @digest_run = digest_run
@@ -25,8 +26,9 @@ private
   attr_reader :subscriber, :digest_run, :results
 
   def body
-    presented_results.concat("\n")
-      .concat(subscription_link).concat("\n")
+    presented_results.concat("\n\n&nbsp;\n\n---\n\n")
+      .concat(permission_reminder).concat("\n")
+      .concat(presented_manage_subscriptions_links).concat("\n\n&nbsp;\n\n")
       .concat(feedback_link)
   end
 
@@ -45,38 +47,6 @@ private
     RESULT
   end
 
-  def subscription_link
-    <<~BODY
-
-      &nbsp;
-
-      ---
-
-      You’re getting this email because you subscribed to GOV.UK email alerts.
-      #{presented_manage_subscriptions_links}
-    BODY
-  end
-
-  def feedback_link
-    <<~BODY
-      &nbsp;
-
-      ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
-
-      &nbsp;
-
-      ^Do not reply to this email. Feedback? Visit #{Plek.new.website_root}/contact
-    BODY
-  end
-
-  def subject
-    if digest_run.daily?
-      "GOV.UK: your daily update"
-    else
-      "GOV.UK: your weekly update"
-    end
-  end
-
   def deduplicate_and_present(content_changes)
     presented_content_changes(
       deduplicated_content_changes(content_changes)
@@ -89,7 +59,6 @@ private
 
   def presented_content_changes(content_changes)
     changes = content_changes.map do |content_change|
-      frequency = digest_run.daily? ? "daily" : "weekly"
       ContentChangePresenter.call(content_change, frequency: frequency)
     end
 

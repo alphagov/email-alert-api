@@ -1,5 +1,5 @@
 RSpec.describe DigestEmailBuilder do
-  let(:digest_run) { double(daily?: true) }
+  let(:digest_run) { double(range: "daily") }
   let(:subscriber) { build(:subscriber) }
   let(:subscription_content_change_results) {
     [
@@ -133,7 +133,7 @@ RSpec.describe DigestEmailBuilder do
   end
 
   context "weekly" do
-    let(:digest_run) { double(daily?: false) }
+    let(:digest_run) { double(range: "weekly") }
     it "sets the subject" do
       expect(email.subject).to eq("GOV.UK: your weekly update")
     end

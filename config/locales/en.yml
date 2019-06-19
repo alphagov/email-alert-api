@@ -30,4 +30,21 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  frequencies:
+    immediately:
+      subject: "GOV.UK update – %{title}"
+      permission_reminder_topic: " about ‘%{title}’"
+      survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate
+    daily:
+      subject: "GOV.UK: your daily update"
+      survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
+    weekly:
+      subject: "GOV.UK: your weekly update"
+      survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
+  permission_reminder: "You’re getting this email because you subscribed to GOV.UK email alerts%{title}."
+  feedback_link: |
+        ^Is this email useful? [Answer some questions to tell us more](%{survey_link}).
+
+        &nbsp;
+
+        ^Do not reply to this email. Feedback? Visit %{feedback_link}
