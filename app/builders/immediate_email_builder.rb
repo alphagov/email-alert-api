@@ -47,7 +47,7 @@ private
       <<~BODY
         #{presented_content_change(content_change)}
         ---
-        You’re getting this email because you subscribed to ‘#{subscriptions.first.subscriber_list.title}’ updates on GOV.UK.
+        You’re getting this email because you subscribed to GOV.UK email alerts about ‘#{subscriptions.first.subscriber_list.title}’.
 
         #{presented_unsubscribe_links(subscriptions)}
         #{presented_manage_subscriptions_links(address)}
