@@ -16,4 +16,19 @@ module EmailBuilderHelper
   def frequency
     defined?(digest_run).nil? ? "immediately" : digest_run.range
   end
+
+  def presented_content_change(content_change)
+    ContentChangePresenter.call(content_change, frequency: frequency)
+  end
+
+  def presented_unsubscribe_link(subscription_id, subscriber_list_title)
+    UnsubscribeLinkPresenter.call(
+      id: subscription_id,
+      title: subscriber_list_title
+    )
+  end
+
+  def presented_manage_subscriptions_links(address)
+    ManageSubscriptionsLinkPresenter.call(address: address)
+  end
 end

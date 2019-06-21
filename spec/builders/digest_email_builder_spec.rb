@@ -1,7 +1,9 @@
 RSpec.describe DigestEmailBuilder do
   let(:digest_run) { double(range: "daily") }
   let(:subscriber) { build(:subscriber) }
-  let(:subscription_content_change_results) {
+  let(:address) { subscriber.address }
+  let(:subscriber_id) { subscriber.id }
+  let(:subscription_content_changes) {
     [
       double(
         subscription_id: "ABC1",
@@ -26,9 +28,10 @@ RSpec.describe DigestEmailBuilder do
 
   let(:email) {
     described_class.call(
-      subscriber: subscriber,
+      address: address,
+      subscription_content_changes: subscription_content_changes,
       digest_run: digest_run,
-      subscription_content_change_results: subscription_content_change_results,
+      subscriber_id: subscriber_id
     )
   }
 
@@ -41,7 +44,7 @@ RSpec.describe DigestEmailBuilder do
   end
 
   it "sets the subscriber id on the email" do
-    expect(email.subscriber_id).to eq(subscriber.id)
+    expect(email.subscriber_id).to eq(subscriber_id)
   end
 
   it "adds an entry to body for each content change" do
@@ -55,11 +58,11 @@ RSpec.describe DigestEmailBuilder do
       title: "Test title 2"
     ).and_return("unsubscribe_link_2")
 
-    first_content_changes = subscription_content_change_results
+    first_content_changes = subscription_content_changes
       .first
       .content_changes
 
-    second_content_changes = subscription_content_change_results
+    second_content_changes = subscription_content_changes
       .second
       .content_changes
 

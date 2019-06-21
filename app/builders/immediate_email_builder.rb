@@ -56,20 +56,9 @@ private
     end
   end
 
-  def presented_content_change(content_change)
-    ContentChangePresenter.call(content_change, frequency: frequency)
-  end
-
-  def presented_manage_subscriptions_links(address)
-    ManageSubscriptionsLinkPresenter.call(address: address)
-  end
-
   def presented_unsubscribe_links(subscriptions)
     links_array = subscriptions.map do |subscription|
-      UnsubscribeLinkPresenter.call(
-        id: subscription.id,
-        title: subscription.subscriber_list.title,
-      )
+      presented_unsubscribe_link(subscription.id, subscription.subscriber_list.title)
     end
 
     links_array.join("\n")

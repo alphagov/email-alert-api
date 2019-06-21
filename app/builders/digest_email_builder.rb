@@ -1,9 +1,10 @@
 class DigestEmailBuilder
   include EmailBuilderHelper
-  def initialize(subscriber:, digest_run:, subscription_content_change_results:)
-    @subscriber = subscriber
+  def initialize(address:, subscription_content_changes:, digest_run:, subscriber_id:)
+    @address = address
+    @subscription_content_changes = subscription_content_changes
     @digest_run = digest_run
-    @results = subscription_content_change_results
+    @subscriber_id = subscriber_id
   end
 
   def self.call(*args)
@@ -12,10 +13,10 @@ class DigestEmailBuilder
 
   def call
     Email.create!(
+      address: address,
       subject: subject,
       body: body,
-      address: subscriber.address,
-      subscriber_id: subscriber.id,
+      subscriber_id: subscriber_id,
     )
   end
 
@@ -23,27 +24,37 @@ class DigestEmailBuilder
 
 private
 
-  attr_reader :subscriber, :digest_run, :results
+  attr_reader :address, :subscription_content_changes, :digest_run, :subscriber_id
 
   def body
-    presented_results.concat("\n\n&nbsp;\n\n---\n\n")
-      .concat(permission_reminder).concat("\n")
-      .concat(presented_manage_subscriptions_links).concat("\n\n&nbsp;\n\n")
-      .concat(feedback_link)
+    <<~BODY
+      #{presented_results}
+
+      &nbsp;
+
+      ---
+
+      #{permission_reminder}
+      #{presented_manage_subscriptions_links(address)}
+
+      &nbsp;
+
+      #{feedback_link.strip}
+    BODY
   end
 
   def presented_results
-    results.map { |result| presented_segment(result) }.join("\n&nbsp;\n\n")
+    subscription_content_changes.map { |content_change| presented_segment(content_change) }.join("\n&nbsp;\n\n")
   end
 
-  def presented_segment(result)
+  def presented_segment(subscription_content_changes)
     <<~RESULT
-      ##{result.subscriber_list_title}&nbsp;
+      ##{subscription_content_changes.subscriber_list_title}&nbsp;
 
-      #{deduplicate_and_present(result.content_changes)}
+      #{deduplicate_and_present(subscription_content_changes.content_changes)}
       ---
 
-      #{unsubscribe_link(result)}
+      #{presented_unsubscribe_link(subscription_content_changes.subscription_id, subscription_content_changes.subscriber_list_title)}
     RESULT
   end
 
@@ -59,20 +70,9 @@ private
 
   def presented_content_changes(content_changes)
     changes = content_changes.map do |content_change|
-      ContentChangePresenter.call(content_change, frequency: frequency)
+      presented_content_change(content_change)
     end
 
     changes.join("\n---\n\n")
-  end
-
-  def unsubscribe_link(result)
-    UnsubscribeLinkPresenter.call(
-      id: result.subscription_id,
-      title: result.subscriber_list_title
-    )
-  end
-
-  def presented_manage_subscriptions_links
-    ManageSubscriptionsLinkPresenter.call(address: subscriber.address)
   end
 end

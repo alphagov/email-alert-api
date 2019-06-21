@@ -67,9 +67,10 @@ private
 
   def create_email(digest_run_subscriber, content_changes)
     DigestEmailBuilder.call(
-      subscriber: digest_run_subscriber.subscriber,
+      address: digest_run_subscriber.subscriber.address,
+      subscription_content_changes: content_changes,
       digest_run: digest_run_subscriber.digest_run,
-      subscription_content_change_results: content_changes,
+      subscriber_id: digest_run_subscriber.subscriber.id
     )
   end
 
