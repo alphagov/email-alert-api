@@ -36,12 +36,16 @@ private
   def body(content_change, subscriptions, address)
     if Array(subscriptions).empty?
       <<~BODY
+        #{opening_line}
+
         #{presented_content_change(content_change)}
         ---
         #{feedback_link.strip}
       BODY
     else
       <<~BODY
+        #{opening_line}
+
         #{presented_content_change(content_change)}
         ---
         #{permission_reminder(subscriptions.first.subscriber_list.title)}

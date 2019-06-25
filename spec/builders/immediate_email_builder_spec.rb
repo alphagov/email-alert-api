@@ -57,7 +57,7 @@ RSpec.describe ImmediateEmailBuilder do
     end
 
     it "sets the subject" do
-      expect(email.subject).to eq("GOV.UK update – Title")
+      expect(email.subject).to eq("Update from GOV.UK – Title")
     end
 
     it "sets the body and unsubscribe links" do
@@ -66,6 +66,8 @@ RSpec.describe ImmediateEmailBuilder do
 
       expect(email.body).to eq(
         <<~BODY
+          Update on GOV.UK.
+
           presented_content_change
 
           ---
@@ -115,6 +117,8 @@ RSpec.describe ImmediateEmailBuilder do
 
         expect(email.body).to eq(
           <<~BODY
+            Update on GOV.UK.
+
             presented_content_change
 
             ---

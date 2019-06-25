@@ -41,7 +41,7 @@ RSpec.describe UnpublishEmailBuilder do
       describe 'return one email' do
         it 'sets the subject' do
           imported_email = Email.find(described_class.call(emails, 'body').first)
-          expect(imported_email.subject).to eq('GOV.UK update – subject_test')
+          expect(imported_email.subject).to eq('Update from GOV.UK – subject_test')
         end
         it 'contains the subscriber id' do
           imported_email = Email.find(described_class.call(emails, 'body').first)

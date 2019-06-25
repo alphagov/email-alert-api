@@ -79,6 +79,8 @@ RSpec.describe DigestEmailBuilder do
 
     expect(email.body).to eq(
       <<~BODY
+        Daily update from GOV.UK.
+
         #Test title 1&nbsp;
 
         presented_content_change
@@ -131,14 +133,14 @@ RSpec.describe DigestEmailBuilder do
 
   context "daily" do
     it "sets the subject" do
-      expect(email.subject).to eq("GOV.UK: your daily update")
+      expect(email.subject).to eq("Daily update from GOV.UK")
     end
   end
 
   context "weekly" do
     let(:digest_run) { double(range: "weekly") }
     it "sets the subject" do
-      expect(email.subject).to eq("GOV.UK: your weekly update")
+      expect(email.subject).to eq("Weekly update from GOV.UK")
     end
   end
 end

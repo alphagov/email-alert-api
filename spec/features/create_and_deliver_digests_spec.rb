@@ -20,6 +20,8 @@ RSpec.describe "creating and delivering digests", type: :request do
 
   def first_expected_daily_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four, subscriber)
     <<~BODY
+      Daily update from GOV.UK.
+
       #Subscriber list one&nbsp;
 
       [Title one](#{base_path}#{utm_params(content_change_one.id, 'daily')})
@@ -102,6 +104,8 @@ RSpec.describe "creating and delivering digests", type: :request do
 
   def second_expected_daily_email_body(subscription, content_change_one, content_change_two, subscriber)
     <<~BODY
+      Daily update from GOV.UK.
+
       #Subscriber list one&nbsp;
 
       [Title one](#{base_path}#{utm_params(content_change_one.id, 'daily')})
@@ -257,7 +261,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your daily update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "Daily update from GOV.UK")))
       .with(
         body: hash_including(
           personalisation: hash_including(
@@ -269,7 +273,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     second_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-two@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your daily update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "Daily update from GOV.UK")))
       .with(
         body: hash_including(
           personalisation: hash_including(
@@ -288,6 +292,8 @@ RSpec.describe "creating and delivering digests", type: :request do
 
   def first_expected_weekly_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four, subscriber)
     <<~BODY
+      Updates on GOV.UK this week.
+
       #Subscriber list one&nbsp;
 
       [Title one](#{base_path}#{utm_params(content_change_one.id, 'weekly')})
@@ -370,6 +376,8 @@ RSpec.describe "creating and delivering digests", type: :request do
 
   def second_expected_weekly_email_body(subscription, content_change_one, content_change_two, subscriber)
     <<~BODY
+      Updates on GOV.UK this week.
+
       #Subscriber list one&nbsp;
 
       [Title one](#{base_path}#{utm_params(content_change_one.id, 'weekly')})
@@ -528,7 +536,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-one@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your weekly update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "Weekly update from GOV.UK")))
       .with(
         body: hash_including(
           personalisation: hash_including(
@@ -540,7 +548,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
     second_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(body: hash_including(email_address: "test-two@example.com"))
-      .with(body: hash_including(personalisation: hash_including("subject" => "GOV.UK: your weekly update")))
+      .with(body: hash_including(personalisation: hash_including("subject" => "Weekly update from GOV.UK")))
       .with(
         body: hash_including(
           personalisation: hash_including(

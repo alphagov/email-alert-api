@@ -32,14 +32,17 @@
 en:
   frequencies:
     immediately:
-      subject: "GOV.UK update – %{title}"
+      subject: "Update from GOV.UK – %{title}"
+      opening_line: Update on GOV.UK.
       permission_reminder_topic: " about ‘%{title}’"
       survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate
     daily:
-      subject: "GOV.UK: your daily update"
+      subject: "Daily update from GOV.UK"
+      opening_line: Daily update from GOV.UK.
       survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
     weekly:
-      subject: "GOV.UK: your weekly update"
+      subject: "Weekly update from GOV.UK"
+      opening_line: Updates on GOV.UK this week.
       survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
   description_header: "Page summary"
   change_note_header: "Change made"

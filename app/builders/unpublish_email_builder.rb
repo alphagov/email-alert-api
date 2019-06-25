@@ -13,7 +13,7 @@ private
     email_parameters.map do |email|
       {
         address: email.subscriber.address,
-        subject: "GOV.UK update – #{email.subject}",
+        subject: "Update from GOV.UK – #{email.subject}",
         body: ERB.new(template).result(
           EmailTemplateContext.new(
             email.template_data

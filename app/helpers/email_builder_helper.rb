@@ -3,6 +3,10 @@ module EmailBuilderHelper
     I18n.t("frequencies.#{frequency}.subject", title: content_change&.title)
   end
 
+  def opening_line
+    I18n.t("frequencies.#{frequency}.opening_line")
+  end
+
   def permission_reminder(*subscription_title)
     title = I18n.t("frequencies.#{frequency}.permission_reminder_topic", :missing, default: "", title: subscription_title.first)
     I18n.t("permission_reminder", title: title)
