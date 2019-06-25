@@ -104,12 +104,7 @@ RSpec.describe ImmediateEmailBuilder do
 
       let(:email) { Email.find(email_import.ids.first) }
 
-      it "sets the body and unsubscribe links" do
-        expect(UnsubscribeLinkPresenter).to receive(:call).with(
-          id: "bef9b608-05ba-46ce-abb7-8567f4180a25",
-          title: "First Subscription"
-        ).and_return("unsubscribe_link")
-
+      it "sets the body" do
         expect(ContentChangePresenter).to receive(:call)
           .and_return("presented_content_change\n")
 
@@ -124,8 +119,7 @@ RSpec.describe ImmediateEmailBuilder do
             ---
             You’re getting this email because you subscribed to GOV.UK email alerts about ‘#{subscriptions.first.subscriber_list.title}’.
 
-            unsubscribe_link
-            [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
+            [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
 
             &nbsp;
 

@@ -69,7 +69,7 @@ RSpec.describe "Anonymising email addresses" do
         You’re getting this email because you subscribed to ‘Thailand  - travel advice’ updates on GOV.UK.
 
         [Unsubscribe from ‘Thailand  - travel advice’](https://www.gov.uk/email/unsubscribe/8697f282-21f5-474f-a69f-abc3f70b18a8)
-        [View and manage your subscriptions](https://www.gov.uk/email/authenticate?address=foo@example.com)
+        [View, unsubscribe or change the frequency of your subscriptions](https://www.gov.uk/email/authenticate?address=foo@example.com)
       HDOC
     )
 
@@ -78,7 +78,7 @@ RSpec.describe "Anonymising email addresses" do
     expect(email.body).not_to match(/foo@example.com/)
     expect(email.subject).to eq("Email for anonymous-1@example.com")
     expect(email.body).to match(
-      /#{Regexp.escape("[View and manage your subscriptions](https://www.gov.uk/email/authenticate?address=anonymous-1@example.com)")}/
+      /#{Regexp.escape("[View, unsubscribe or change the frequency of your subscriptions](https://www.gov.uk/email/authenticate?address=anonymous-1@example.com)")}/
     )
   end
 

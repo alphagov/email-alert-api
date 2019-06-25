@@ -8,7 +8,7 @@ class ManageSubscriptionsLinkPresenter
   end
 
   def call
-    "[View and manage your subscriptions](#{url})"
+    "[View, unsubscribe or change the frequency of your subscriptions](#{url})"
   end
 
   private_class_method :new
