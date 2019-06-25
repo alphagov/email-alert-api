@@ -14,23 +14,37 @@ RSpec.describe "creating and delivering digests", type: :request do
     Timecop.return
   end
 
+  def base_path
+    "http://www.dev.gov.uk/base-path?"
+  end
+
   def first_expected_daily_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four, subscriber)
     <<~BODY
       #Subscriber list one&nbsp;
 
-      [Title one](http://www.dev.gov.uk/base-path?#{utm_params(content_change_one.id, 'daily')})
+      [Title one](#{base_path}#{utm_params(content_change_one.id, 'daily')})
 
+      Page summary
       Description one
 
-      10:00am, 1 January 2017: Change note one
+      Change made
+      Change note one
+
+      Time updated
+      10:00am, 1 January 2017
 
       ---
 
-      [Title two](http://www.dev.gov.uk/base-path?#{utm_params(content_change_two.id, 'daily')})
+      [Title two](#{base_path}#{utm_params(content_change_two.id, 'daily')})
 
+      Page summary
       Description two
 
-       9:00am, 1 January 2017: Change note two
+      Change made
+      Change note two
+
+      Time updated
+      9:00am, 1 January 2017
 
       ---
 
@@ -40,19 +54,29 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       #Subscriber list two&nbsp;
 
-      [Title four](http://www.dev.gov.uk/base-path?#{utm_params(content_change_four.id, 'daily')})
+      [Title four](#{base_path}#{utm_params(content_change_four.id, 'daily')})
 
+      Page summary
       Description four
 
-       9:30am, 1 January 2017: Change note four
+      Change made
+      Change note four
+
+      Time updated
+      9:30am, 1 January 2017
 
       ---
 
-      [Title three](http://www.dev.gov.uk/base-path?#{utm_params(content_change_three.id, 'daily')})
+      [Title three](#{base_path}#{utm_params(content_change_three.id, 'daily')})
 
+      Page summary
       Description three
 
-       9:00am, 1 January 2017: Change note three
+      Change made
+      Change note three
+
+      Time updated
+      9:00am, 1 January 2017
 
       ---
 
@@ -80,19 +104,29 @@ RSpec.describe "creating and delivering digests", type: :request do
     <<~BODY
       #Subscriber list one&nbsp;
 
-      [Title one](http://www.dev.gov.uk/base-path?#{utm_params(content_change_one.id, 'daily')})
+      [Title one](#{base_path}#{utm_params(content_change_one.id, 'daily')})
 
+      Page summary
       Description one
 
-      10:00am, 1 January 2017: Change note one
+      Change made
+      Change note one
+
+      Time updated
+      10:00am, 1 January 2017
 
       ---
 
-      [Title two](http://www.dev.gov.uk/base-path?#{utm_params(content_change_two.id, 'daily')})
+      [Title two](#{base_path}#{utm_params(content_change_two.id, 'daily')})
 
+      Page summary
       Description two
 
-       9:00am, 1 January 2017: Change note two
+      Change made
+      Change note two
+
+      Time updated
+      9:00am, 1 January 2017
 
       ---
 
@@ -256,19 +290,29 @@ RSpec.describe "creating and delivering digests", type: :request do
     <<~BODY
       #Subscriber list one&nbsp;
 
-      [Title one](http://www.dev.gov.uk/base-path?#{utm_params(content_change_one.id, 'weekly')})
+      [Title one](#{base_path}#{utm_params(content_change_one.id, 'weekly')})
 
+      Page summary
       Description one
 
-      10:00am, 28 December 2016: Change note one
+      Change made
+      Change note one
+
+      Time updated
+      10:00am, 28 December 2016
 
       ---
 
-      [Title two](http://www.dev.gov.uk/base-path?#{utm_params(content_change_two.id, 'weekly')})
+      [Title two](#{base_path}#{utm_params(content_change_two.id, 'weekly')})
 
+      Page summary
       Description two
 
-       9:00am, 27 December 2016: Change note two
+      Change made
+      Change note two
+
+      Time updated
+      9:00am, 27 December 2016
 
       ---
 
@@ -278,19 +322,29 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       #Subscriber list two&nbsp;
 
-      [Title four](http://www.dev.gov.uk/base-path?#{utm_params(content_change_four.id, 'weekly')})
+      [Title four](#{base_path}#{utm_params(content_change_four.id, 'weekly')})
 
+      Page summary
       Description four
 
-       9:30am, 1 January 2017: Change note four
+      Change made
+      Change note four
+
+      Time updated
+      9:30am, 1 January 2017
 
       ---
 
-      [Title three](http://www.dev.gov.uk/base-path?#{utm_params(content_change_three.id, 'weekly')})
+      [Title three](#{base_path}#{utm_params(content_change_three.id, 'weekly')})
 
+      Page summary
       Description three
 
-       9:00am, 30 December 2016: Change note three
+      Change made
+      Change note three
+
+      Time updated
+      9:00am, 30 December 2016
 
       ---
 
@@ -318,19 +372,29 @@ RSpec.describe "creating and delivering digests", type: :request do
     <<~BODY
       #Subscriber list one&nbsp;
 
-      [Title one](http://www.dev.gov.uk/base-path?#{utm_params(content_change_one.id, 'weekly')})
+      [Title one](#{base_path}#{utm_params(content_change_one.id, 'weekly')})
 
+      Page summary
       Description one
 
-      10:00am, 28 December 2016: Change note one
+      Change made
+      Change note one
+
+      Time updated
+      10:00am, 28 December 2016
 
       ---
 
-      [Title two](http://www.dev.gov.uk/base-path?#{utm_params(content_change_two.id, 'weekly')})
+      [Title two](#{base_path}#{utm_params(content_change_two.id, 'weekly')})
 
+      Page summary
       Description two
 
-       9:00am, 27 December 2016: Change note two
+      Change made
+      Change note two
+
+      Time updated
+      9:00am, 27 December 2016
 
       ---
 

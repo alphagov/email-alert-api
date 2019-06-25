@@ -16,9 +16,14 @@ RSpec.describe ContentChangePresenter do
       expected = <<~CONTENT_CHANGE
         [Change title](http://www.dev.gov.uk/government/test-slug?#{utm_params(content_change.id, 'immediate')})
 
+        Page summary
         Test description
 
-        11:00am, 28 March 2018: Test change note
+        Change made
+        Test change note
+
+        Time updated
+        11:00am, 28 March 2018
       CONTENT_CHANGE
 
       expect(described_class.call(content_change)).to eq(expected)
@@ -39,9 +44,14 @@ RSpec.describe ContentChangePresenter do
         expected = <<~CONTENT_CHANGE
           [Change title](http://www.dev.gov.uk/government/test-slug?#{utm_params(content_change.id, 'immediate')})
 
+          Page summary
           more markdown
 
-          10:30am, 28 March 2018: Test change note markdown test (https://gov.uk)
+          Change made
+          Test change note markdown test (https://gov.uk)
+
+          Time updated
+          10:30am, 28 March 2018
         CONTENT_CHANGE
 
         expect(described_class.call(content_change)).to eq(expected)
@@ -60,7 +70,11 @@ RSpec.describe ContentChangePresenter do
         expected = <<~CONTENT_CHANGE
           [title](http://www.dev.gov.uk/government/base_path?#{utm_params(content_change.id, 'immediate')})
 
-          10:00am, 1 January 2018: change note
+          Change made
+          change note
+
+          Time updated
+          10:00am, 1 January 2018
         CONTENT_CHANGE
 
         expect(described_class.call(content_change)).to eq(expected)
@@ -79,9 +93,14 @@ RSpec.describe ContentChangePresenter do
         expected = <<~CONTENT_CHANGE
           [title](http://www.dev.gov.uk/government/base_path?#{utm_params(content_change.id, 'immediate')})
 
+          Page summary
           description
 
-          10:00am, 1 January 2018: change note
+          Change made
+          change note
+
+          Time updated
+          10:00am, 1 January 2018
 
           footnote
         CONTENT_CHANGE

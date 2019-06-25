@@ -41,6 +41,9 @@ en:
     weekly:
       subject: "GOV.UK: your weekly update"
       survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
+  description_header: "Page summary"
+  change_note_header: "Change made"
+  public_updated_at_header: "Time updated"
   permission_reminder: "You’re getting this email because you subscribed to GOV.UK email alerts%{title}."
   feedback_link: |
         ^Is this email useful? [Answer some questions to tell us more](%{survey_link}).
