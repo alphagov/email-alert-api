@@ -89,7 +89,8 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      You’re getting this email because you subscribed to GOV.UK email alerts.
+      ^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK.
+
       [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
 
       &nbsp;
@@ -141,7 +142,8 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      You’re getting this email because you subscribed to GOV.UK email alerts.
+      ^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK.
+
       [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
 
       &nbsp;
@@ -361,7 +363,8 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      You’re getting this email because you subscribed to GOV.UK email alerts.
+      ^You’re getting this email because you subscribed to weekly updates on these topics on GOV.UK.
+
       [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
 
       &nbsp;
@@ -413,7 +416,8 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      You’re getting this email because you subscribed to GOV.UK email alerts.
+      ^You’re getting this email because you subscribed to weekly updates on these topics on GOV.UK.
+
       [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
 
       &nbsp;

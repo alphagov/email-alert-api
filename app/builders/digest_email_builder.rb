@@ -37,6 +37,7 @@ private
       ---
 
       #{permission_reminder}
+
       #{presented_manage_subscriptions_links(address)}
 
       &nbsp;

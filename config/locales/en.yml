@@ -31,23 +31,25 @@
 
 en:
   frequencies:
-    immediately:
+    immediate:
       subject: "Update from GOV.UK – %{title}"
       opening_line: Update on GOV.UK.
-      permission_reminder_topic: " about ‘%{title}’"
+      permission_reminder_topic: to ‘%{title}’
       survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate
     daily:
       subject: "Daily update from GOV.UK"
       opening_line: Daily update from GOV.UK.
+      permission_reminder_topic: on these topics
       survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
     weekly:
       subject: "Weekly update from GOV.UK"
       opening_line: Updates on GOV.UK this week.
+      permission_reminder_topic: on these topics
       survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
   description_header: "Page summary"
   change_note_header: "Change made"
   public_updated_at_header: "Time updated"
-  permission_reminder: "You’re getting this email because you subscribed to GOV.UK email alerts%{title}."
+  permission_reminder: "^You’re getting this email because you subscribed to %{frequency} updates %{permission_reminder_topic} on GOV.UK."
   feedback_link: |
         ^Is this email useful? [Answer some questions to tell us more](%{survey_link}).
 
