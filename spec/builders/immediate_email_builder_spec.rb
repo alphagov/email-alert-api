@@ -71,11 +71,7 @@ RSpec.describe ImmediateEmailBuilder do
           presented_content_change
 
           ---
-          ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
-
-          &nbsp;
-
-          ^Do not reply to this email. Feedback? Visit http://www.dev.gov.uk/contact
+          Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
         BODY
       )
     end
@@ -121,13 +117,7 @@ RSpec.describe ImmediateEmailBuilder do
 
             [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
 
-            &nbsp;
-
-            ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
-
-            &nbsp;
-
-            ^Do not reply to this email. Feedback? Visit http://www.dev.gov.uk/contact
+            Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
           BODY
         )
       end

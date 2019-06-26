@@ -50,9 +50,4 @@ en:
   change_note_header: "Change made"
   public_updated_at_header: "Time updated"
   permission_reminder: "^You’re getting this email because you subscribed to %{frequency} updates %{permission_reminder_topic} on GOV.UK."
-  feedback_link: |
-        ^Is this email useful? [Answer some questions to tell us more](%{survey_link}).
-
-        &nbsp;
-
-        ^Do not reply to this email. Feedback? Visit %{feedback_link}
+  feedback_link: "Is this email useful? [Answer some questions to tell us more](%{survey_link})."

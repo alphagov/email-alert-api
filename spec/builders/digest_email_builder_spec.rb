@@ -116,13 +116,7 @@ RSpec.describe DigestEmailBuilder do
 
         [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
 
-        &nbsp;
-
-        ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
-
-        &nbsp;
-
-        ^Do not reply to this email. Feedback? Visit http://www.dev.gov.uk/contact
+        Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
       BODY
     )
   end

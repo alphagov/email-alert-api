@@ -40,8 +40,6 @@ private
 
       #{presented_manage_subscriptions_links(address)}
 
-      &nbsp;
-
       #{feedback_link.strip}
     BODY
   end
