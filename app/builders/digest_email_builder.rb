@@ -31,11 +31,6 @@ private
       #{opening_line}
 
       #{presented_results}
-
-      &nbsp;
-
-      ---
-
       #{permission_reminder}
 
       #{presented_manage_subscriptions_links(address)}

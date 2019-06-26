@@ -107,11 +107,6 @@ RSpec.describe DigestEmailBuilder do
 
         unsubscribe_link_2
 
-
-        &nbsp;
-
-        ---
-
         ^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK.
 
         [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
