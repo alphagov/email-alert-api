@@ -38,6 +38,7 @@ private
       <<~BODY
         #{opening_line}
 
+        ---
         #{presented_content_change(content_change)}
         ---
         #{feedback_link.strip}
@@ -46,6 +47,7 @@ private
       <<~BODY
         #{opening_line}
 
+        ---
         #{presented_content_change(content_change)}
         ---
         #{permission_reminder(subscriptions.first.subscriber_list.title)}

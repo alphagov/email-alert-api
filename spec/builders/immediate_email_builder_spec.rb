@@ -68,6 +68,7 @@ RSpec.describe ImmediateEmailBuilder do
         <<~BODY
           Update on GOV.UK.
 
+          ---
           presented_content_change
 
           ---
@@ -110,6 +111,7 @@ RSpec.describe ImmediateEmailBuilder do
           <<~BODY
             Update on GOV.UK.
 
+            ---
             presented_content_change
 
             ---
