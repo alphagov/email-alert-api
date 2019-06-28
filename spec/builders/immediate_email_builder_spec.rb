@@ -57,7 +57,7 @@ RSpec.describe ImmediateEmailBuilder do
     end
 
     it "sets the subject" do
-      expect(email.subject).to eq("GOV.UK update – Title")
+      expect(email.subject).to eq("Update from GOV.UK – Title")
     end
 
     it "sets the body and unsubscribe links" do
@@ -66,14 +66,13 @@ RSpec.describe ImmediateEmailBuilder do
 
       expect(email.body).to eq(
         <<~BODY
+          Update on GOV.UK.
+
+          ---
           presented_content_change
 
           ---
-          ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
-
-          &nbsp;
-
-          ^Do not reply to this email. Feedback? Visit http://www.dev.gov.uk/contact
+          Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
         BODY
       )
     end
@@ -102,12 +101,7 @@ RSpec.describe ImmediateEmailBuilder do
 
       let(:email) { Email.find(email_import.ids.first) }
 
-      it "sets the body and unsubscribe links" do
-        expect(UnsubscribeLinkPresenter).to receive(:call).with(
-          id: "bef9b608-05ba-46ce-abb7-8567f4180a25",
-          title: "First Subscription"
-        ).and_return("unsubscribe_link")
-
+      it "sets the body" do
         expect(ContentChangePresenter).to receive(:call)
           .and_return("presented_content_change\n")
 
@@ -115,21 +109,17 @@ RSpec.describe ImmediateEmailBuilder do
 
         expect(email.body).to eq(
           <<~BODY
+            Update on GOV.UK.
+
+            ---
             presented_content_change
 
             ---
-            You’re getting this email because you subscribed to GOV.UK email alerts about ‘#{subscriptions.first.subscriber_list.title}’.
+            ^You’re getting this email because you subscribed to immediate updates to ‘#{subscriptions.first.subscriber_list.title}’ on GOV.UK.
 
-            unsubscribe_link
-            [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
+            [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
 
-            &nbsp;
-
-            ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
-
-            &nbsp;
-
-            ^Do not reply to this email. Feedback? Visit http://www.dev.gov.uk/contact
+            Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
           BODY
         )
       end

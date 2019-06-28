@@ -1,7 +1,9 @@
 RSpec.describe DigestEmailBuilder do
-  let(:digest_run) { double(daily?: true) }
+  let(:digest_run) { double(range: "daily") }
   let(:subscriber) { build(:subscriber) }
-  let(:subscription_content_change_results) {
+  let(:address) { subscriber.address }
+  let(:subscriber_id) { subscriber.id }
+  let(:subscription_content_changes) {
     [
       double(
         subscription_id: "ABC1",
@@ -26,9 +28,10 @@ RSpec.describe DigestEmailBuilder do
 
   let(:email) {
     described_class.call(
-      subscriber: subscriber,
+      address: address,
+      subscription_content_changes: subscription_content_changes,
       digest_run: digest_run,
-      subscription_content_change_results: subscription_content_change_results,
+      subscriber_id: subscriber_id
     )
   }
 
@@ -41,7 +44,7 @@ RSpec.describe DigestEmailBuilder do
   end
 
   it "sets the subscriber id on the email" do
-    expect(email.subscriber_id).to eq(subscriber.id)
+    expect(email.subscriber_id).to eq(subscriber_id)
   end
 
   it "adds an entry to body for each content change" do
@@ -55,11 +58,11 @@ RSpec.describe DigestEmailBuilder do
       title: "Test title 2"
     ).and_return("unsubscribe_link_2")
 
-    first_content_changes = subscription_content_change_results
+    first_content_changes = subscription_content_changes
       .first
       .content_changes
 
-    second_content_changes = subscription_content_change_results
+    second_content_changes = subscription_content_changes
       .second
       .content_changes
 
@@ -76,6 +79,8 @@ RSpec.describe DigestEmailBuilder do
 
     expect(email.body).to eq(
       <<~BODY
+        Daily update from GOV.UK.
+
         #Test title 1&nbsp;
 
         presented_content_change
@@ -102,21 +107,11 @@ RSpec.describe DigestEmailBuilder do
 
         unsubscribe_link_2
 
+        ^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK.
 
-        &nbsp;
+        [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
 
-        ---
-
-        You’re getting this email because you subscribed to GOV.UK email alerts.
-        [View and manage your subscriptions](http://www.dev.gov.uk/email/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
-
-        &nbsp;
-
-        ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
-
-        &nbsp;
-
-        ^Do not reply to this email. Feedback? Visit http://www.dev.gov.uk/contact
+        Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
       BODY
     )
   end
@@ -128,14 +123,14 @@ RSpec.describe DigestEmailBuilder do
 
   context "daily" do
     it "sets the subject" do
-      expect(email.subject).to eq("GOV.UK: your daily update")
+      expect(email.subject).to eq("Daily update from GOV.UK")
     end
   end
 
   context "weekly" do
-    let(:digest_run) { double(daily?: false) }
+    let(:digest_run) { double(range: "weekly") }
     it "sets the subject" do
-      expect(email.subject).to eq("GOV.UK: your weekly update")
+      expect(email.subject).to eq("Weekly update from GOV.UK")
     end
   end
 end

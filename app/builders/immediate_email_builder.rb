@@ -1,4 +1,5 @@
 class ImmediateEmailBuilder
+  include EmailBuilderHelper
   def initialize(recipients_and_content)
     @recipients_and_content = recipients_and_content
   end
@@ -32,59 +33,29 @@ private
     %i(address subject body subscriber_id)
   end
 
-  def subject(content_change)
-    "GOV.UK update – #{content_change.title}"
-  end
-
   def body(content_change, subscriptions, address)
     if Array(subscriptions).empty?
       <<~BODY
+        #{opening_line}
+
+        ---
         #{presented_content_change(content_change)}
         ---
         #{feedback_link.strip}
       BODY
     else
       <<~BODY
+        #{opening_line}
+
+        ---
         #{presented_content_change(content_change)}
         ---
-        You’re getting this email because you subscribed to GOV.UK email alerts about ‘#{subscriptions.first.subscriber_list.title}’.
+        #{permission_reminder(subscriptions.first.subscriber_list.title)}
 
-        #{presented_unsubscribe_links(subscriptions)}
         #{presented_manage_subscriptions_links(address)}
-
-        &nbsp;
 
         #{feedback_link.strip}
       BODY
     end
-  end
-
-  def feedback_link
-    <<~BODY
-      ^Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
-
-      &nbsp;
-
-      ^Do not reply to this email. Feedback? Visit #{Plek.new.website_root}/contact
-    BODY
-  end
-
-  def presented_content_change(content_change)
-    ContentChangePresenter.call(content_change, frequency: "immediate")
-  end
-
-  def presented_manage_subscriptions_links(address)
-    ManageSubscriptionsLinkPresenter.call(address: address)
-  end
-
-  def presented_unsubscribe_links(subscriptions)
-    links_array = subscriptions.map do |subscription|
-      UnsubscribeLinkPresenter.call(
-        id: subscription.id,
-        title: subscription.subscriber_list.title,
-      )
-    end
-
-    links_array.join("\n")
   end
 end
