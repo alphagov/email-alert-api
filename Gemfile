@@ -17,7 +17,7 @@ gem 'govuk_document_types', '~> 0.9.2'
 # This is pinned < 2 until gds-sso supports JWT > 2
 gem 'jwt', '~> 2.2'
 gem 'nokogiri', '~> 1.10'
-gem 'notifications-ruby-client', '~> 3.1'
+gem 'notifications-ruby-client', '~> 4.0'
 gem 'plek', '~> 3.0'
 gem 'redcarpet', '~> 3.4'
 
