@@ -28,8 +28,8 @@ private
       change_note: params[:change_note],
       description: params[:description],
       base_path: params[:base_path],
-      links: params[:links],
-      tags: content_change_tags,
+      links: with_content_change_supertypes(params[:links]),
+      tags: with_content_change_supertypes(params[:tags]),
       public_updated_at: Time.parse(params[:public_updated_at]),
       email_document_supertype: params[:email_document_supertype],
       government_document_supertype: params[:government_document_supertype],
@@ -42,11 +42,8 @@ private
     }
   end
 
-  def content_change_tags
-    content_change_supertypes.merge(params[:tags])
-  end
-
-  def content_change_supertypes
-    GovukDocumentTypes.supertypes(document_type: params[:document_type])
+  def with_content_change_supertypes(hash)
+    content_change_supertypes = GovukDocumentTypes.supertypes(document_type: params[:document_type])
+    content_change_supertypes.merge(hash)
   end
 end
