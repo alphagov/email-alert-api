@@ -7,8 +7,6 @@ module Healthcheck
     def status
       if critical_subscription_contents.positive?
         :critical
-      elsif warning_subscription_contents.positive?
-        :warning
       else
         :ok
       end
@@ -17,14 +15,12 @@ module Healthcheck
     def details
       {
         critical: critical_subscription_contents,
-        warning: warning_subscription_contents,
       }
     end
 
     def message
       <<~MESSAGE
         #{critical_subscription_contents} created over #{critical_latency} seconds ago.
-        #{warning_subscription_contents} created over #{warning_latency} seconds ago.
       MESSAGE
     end
 
@@ -32,10 +28,6 @@ module Healthcheck
 
     def critical_subscription_contents
       @critical_subscription_contents ||= count_subscription_contents(critical_latency)
-    end
-
-    def warning_subscription_contents
-      @warning_subscription_contents ||= count_subscription_contents(warning_latency)
     end
 
     def count_subscription_contents(age)
@@ -55,10 +47,6 @@ module Healthcheck
     end
 
     def critical_latency
-      is_scheduled_publishing_time? ? 20.minutes : 10.minutes
-    end
-
-    def warning_latency
       is_scheduled_publishing_time? ? 15.minutes : 5.minutes
     end
 
