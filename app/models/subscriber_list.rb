@@ -1,6 +1,8 @@
 class SubscriberList < ApplicationRecord
   include SymbolizeJSON
 
+  TAGS_BLACKLIST = %i(organisations people world_locations part_of_taxonomy_tree).freeze
+
   self.include_root_in_json = true
 
   validate :tag_values_are_valid
@@ -53,6 +55,14 @@ class SubscriberList < ApplicationRecord
 
   def is_medical_safety_alert?
     self[:tags].fetch("format", []).include?("medical_safety_alert")
+  end
+
+  def invalid_tags?
+    invalid_tags.any?
+  end
+
+  def invalid_tags
+    TAGS_BLACKLIST & self.tags.keys
   end
 
 private
