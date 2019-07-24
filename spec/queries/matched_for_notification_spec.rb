@@ -2,7 +2,7 @@ RSpec.describe MatchedForNotification do
   describe "#call" do
     before do
       @subscriber_list_that_should_never_match = create(:subscriber_list, tags: {
-        topics: { any: ["Badical Turbo Radness"] }, organisations: { any: ["Sirius Cybernetics Corporation"] }
+        topics: { any: ["Badical Turbo Radness"] }, format: { any: %w[news_story] }
       })
     end
 
@@ -23,12 +23,12 @@ RSpec.describe MatchedForNotification do
         @lists = {
           tags:
             {
-              any_topic_paye_any_org_defra_hmrc: create_subscriber_list_with_tags_facets(topics: { any: %w(paye) }, organisations: { any: %w(defra hmrc) }),
+              any_topic_paye_any_format_guides: create_subscriber_list_with_tags_facets(topics: { any: %w(paye) }, format: { any: %w(policy guide) }),
               any_topic_vat_licensing: create_subscriber_list_with_tags_facets(topics: { any: %w(vat licensing) }),
             },
           links:
             {
-              any_topic_paye_any_org_defra_hmrc: create_subscriber_list_with_links_facets(topics: { any: %w(paye) }, organisations: { any: %w(defra hmrc) }),
+              any_topic_paye_any_format_guides: create_subscriber_list_with_links_facets(topics: { any: %w(paye) }, format: { any: %w(policy guide) }),
               any_topic_vat_licensing: create_subscriber_list_with_links_facets(topics: { any: %w(vat licensing) }),
             }
         }
@@ -36,11 +36,11 @@ RSpec.describe MatchedForNotification do
 
       %i(links tags).each do |key|
         it "finds subscriber lists where at least one value of each #{key} in the subscription is present in the query_hash" do
-          lists = execute_query({ topics: %w(paye), organisations: %w(defra) }, field: key)
-          expect(lists).to eq([@lists[key][:any_topic_paye_any_org_defra_hmrc]])
+          lists = execute_query({ topics: %w(paye), format: %w(guide) }, field: key)
+          expect(lists).to eq([@lists[key][:any_topic_paye_any_format_guides]])
 
-          lists = execute_query({ topics: %w(paye), organisations: %w(hmrc) }, field: key)
-          expect(lists).to eq([@lists[key][:any_topic_paye_any_org_defra_hmrc]])
+          lists = execute_query({ topics: %w(paye), format: %w(guide) }, field: key)
+          expect(lists).to eq([@lists[key][:any_topic_paye_any_format_guides]])
 
           lists = execute_query({ topics: %w(vat) }, field: key)
           expect(lists).to eq([@lists[key][:any_topic_vat_licensing]])

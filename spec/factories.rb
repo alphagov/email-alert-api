@@ -15,6 +15,10 @@ FactoryBot.define do
     publishing_app { "publishing app" }
   end
 
+  trait :skip_validation do
+    to_create { |instance| instance.save!(validate: false) }
+  end
+
   factory :delivery_attempt, aliases: [:sending_delivery_attempt] do
     email
     status { :sending }
@@ -126,6 +130,25 @@ FactoryBot.define do
 
       after(:create) do |list, evaluator|
         create_list(:subscriber, evaluator.subscriber_count, subscriber_lists: [list])
+      end
+    end
+
+    factory :subscriber_list_with_invalid_tags do
+      tags {
+        {
+          organisations: { any: %w[bar] },
+          people: { all: %w[bar] },
+          world_locations: { all: %w[bar] },
+        }
+      }
+
+      transient do
+        subscriber_count { 5 }
+      end
+
+      after(:create) do |list, evaluator|
+        list = build_list(:subscriber, evaluator.subscriber_count, subscriber_lists: [list])
+        list.each { |item| item.save!(validate: false) }
       end
     end
   end

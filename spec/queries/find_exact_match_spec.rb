@@ -4,7 +4,7 @@ RSpec.describe FindExactMatch do
       :subscriber_list,
       tags: {
         topics: { any: ["oil-and-gas/licensing"] },
-        organisations: { any: ["environment-agency", "hm-revenue-customs"] }
+        format: { any: %w[guide news_story] }
       },
       links: {
         topics: { any: ["uuid-888"] },
@@ -38,7 +38,7 @@ RSpec.describe FindExactMatch do
     it "not matched when query contains more keys than the subscriber_list" do
       found_lists = described_class.new(query_field: :tags)
         .call(topics:  { any: ["oil-and-gas/licensing"] },
-          organisations:  { any: ["environment-agency", "hm-revenue-customs"] },
+          format: { any: %w[guide news_story] },
           foo:  { any: %w[bar] })
       expect(found_lists).to eq([])
     end
@@ -46,21 +46,21 @@ RSpec.describe FindExactMatch do
     it "not matched when matching keys, but different values for each key" do
       found_lists = described_class.new(query_field: :tags)
         .call(topics:  { any: ["oil-and-gas/conservation"] },
-          organisations:  { any: ["environment-agency", "hm-revenue-customs"] })
+          format: { any: %w[guide news_story] })
       expect(found_lists).to eq([])
     end
 
     it "matched when matching keys with matching values" do
       found_lists = described_class.new(query_field: :tags)
         .call(topics: { any: ["oil-and-gas/licensing"] },
-          organisations:  { any: ["environment-agency", "hm-revenue-customs"] })
+          format: { any: %w[guide news_story] })
       expect(found_lists).to eq([list_with_tags])
     end
 
     it "order of values for keys does not affect matching" do
       found_lists = described_class.new(query_field: :tags)
         .call(topics:  { any: ["oil-and-gas/licensing"] },
-          organisations:  { any: ["hm-revenue-customs", "environment-agency"] })
+          format: { any: %w[news_story guide] })
       expect(found_lists).to eq([list_with_tags])
     end
 
