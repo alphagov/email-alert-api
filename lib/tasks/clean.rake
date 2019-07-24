@@ -30,6 +30,13 @@ namespace :clean do
     }
   end
 
+  desc "Deactivate subcriptions to invalid SubscriberLists"
+  task :deactivate_invalid_subscriptions, [:id] => :environment do |_t, _args|
+    dry_run = is_dry_run?
+    cleaner = Clean::InvalidSubscriberLists.new
+    cleaner.deactivate_invalid_subscriptions(dry_run: dry_run)
+  end
+
   def is_dry_run?
     dry = ENV["DRY_RUN"] != 'no'
     puts "Warning: Running in DRY_RUN mode. Use DRY_RUN=no to run live." if dry

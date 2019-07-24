@@ -77,6 +77,20 @@ module Clean
       puts "#{dry} #{moved} of #{total_subscribers} subscribers from list #{from_list.slug} to #{to_list.slug}"
     end
 
+    def deactivate_invalid_subscriptions(dry_run: true)
+      dry_msg = dry_run ? "[DRY RUN] Would have deactivated" : "Deactivated"
+      lists.each do |list|
+        SubscriberList.transaction do
+          subscriptions = list.subscriptions.active
+          count = subscriptions.count
+          subscriptions.each do |subscription|
+            subscription.end(reason: :subscriber_list_changed) unless dry_run
+          end
+          puts "#{dry_msg} #{count} subscription(s) on subscriber list #{list.slug}"
+        end
+      end
+    end
+
   private
 
     def tags_to_links(tags)

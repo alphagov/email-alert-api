@@ -137,6 +137,40 @@ RSpec.describe Clean::InvalidSubscriberLists do
     end
   end
 
+  describe "deactivate_invalid_subscriptions" do
+    let!(:invalid_list1) { create(:subscriber_list_with_invalid_tags, :skip_validation) }
+    let!(:invalid_list2) { create(:subscriber_list_with_invalid_tags, :skip_validation) }
+    let!(:valid_list) { create(:subscriber_list) }
+    let!(:subscriber) { create(:subscriber) }
+    let!(:subscription1) { create(:subscription, subscriber: subscriber, subscriber_list: invalid_list1) }
+    let!(:subscription2) { create(:subscription, subscriber: subscriber, subscriber_list: invalid_list2) }
+    let!(:subscription3) { create(:subscription, subscriber: subscriber, subscriber_list: valid_list) }
+
+    it "deactivates a subscribers subscriptions to invalid lists" do
+      expect {
+        subject.deactivate_invalid_subscriptions(dry_run: false)
+      }.to(change {
+        subscriber.subscriptions.active.count
+      }.by(-2))
+    end
+
+    it "deactivates invalid subscriptions" do
+      expect(subscription1.ended?).to be false
+      expect(subscription2.ended?).to be false
+      subject.deactivate_invalid_subscriptions(dry_run: false)
+      expect(subscription1.reload.ended?).to be true
+      expect(subscription2.reload.ended?).to be true
+    end
+
+    it "does nothing during a dry run, which is the default" do
+      expect {
+        subject.deactivate_invalid_subscriptions
+      }.not_to(change {
+        subscriber.subscriptions.active.count
+      })
+    end
+  end
+
   def content_store_has_organisations
     content_store_has_item(
       '/government/organisations/ministry-of-silly-walks',
