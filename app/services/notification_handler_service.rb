@@ -44,6 +44,7 @@ private
 
   def with_content_change_supertypes(hash)
     content_change_supertypes = GovukDocumentTypes.supertypes(document_type: params[:document_type])
-    content_change_supertypes.merge(hash)
+    content_store_document_type = { content_store_document_type: params[:document_type] }
+    content_change_supertypes.merge(hash).merge(content_store_document_type)
   end
 end

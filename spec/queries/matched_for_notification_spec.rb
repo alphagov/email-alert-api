@@ -147,6 +147,16 @@ RSpec.describe MatchedForNotification do
       end
     end
 
+    context "matches on content_store_document_type" do
+      let!(:list1) { create(:subscriber_list, links: { content_store_document_type: { any: %w[news_article] } }) }
+      let!(:list2) { create(:subscriber_list, links: { content_store_document_type: { any: %w[other_type] } }) }
+
+      it "finds subscriber lists matching content_store_document_type" do
+        lists = execute_query({ content_store_document_type: 'news_article' }, field: :links)
+        expect(lists).to eq([list1])
+      end
+    end
+
     context "Specialist publisher edge case in format tag" do
       before do
         @subscriber_list = create_subscriber_list_with_tags_facets(format: { any: %w[employment_tribunal_decision] })
