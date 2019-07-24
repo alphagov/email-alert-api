@@ -54,6 +54,7 @@ RSpec.describe NotificationHandlerService do
         government_document_supertype: "other",
         content_purpose_subgroup: "news",
         content_purpose_supergroup: "news_and_communications",
+        content_store_document_type: "news_article",
     }
   end
 
@@ -83,12 +84,14 @@ RSpec.describe NotificationHandlerService do
             organisations: {
               any: ["c380ea42-5d91-41cc-b3cd-0a4cfe439461"]
             },
+            content_store_document_type: "news_article",
             taxon_tree: {
               all: ["6416e4e0-c0c1-457a-8337-4bf8ed9d5f80"]
             }
 ),
         tags: hash_including(
           topics: ["oil-and-gas/licensing"],
+          content_store_document_type: "news_article",
         ),
         email_document_supertype: "email document supertype",
         government_document_supertype: "government document supertype",
