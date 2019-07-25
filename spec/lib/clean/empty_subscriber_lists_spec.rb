@@ -10,6 +10,16 @@ RSpec.describe Clean::EmptySubscriberLists do
         expect(subject.lists).to include(list)
       end
     end
+
+    context "during a dry run" do
+      it "wont remove the list" do
+        expect { subject.remove_empty_subscriberlists }.not_to(change { SubscriberList.count })
+      end
+    end
+
+    it "removes the list" do
+      expect { subject.remove_empty_subscriberlists(dry_run: false) }.to(change { SubscriberList.count })
+    end
   end
 
   context "when there are lists with subscribers" do
