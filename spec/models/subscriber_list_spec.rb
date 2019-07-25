@@ -28,6 +28,19 @@ RSpec.describe SubscriberList, type: :model do
       expect(subject).to be_valid
     end
 
+    it "is invalid when tags 'hash' has values that are blacklisted" do
+      subject.tags = {
+        foo: { any: %w[bar] },
+        dogs: { all: %w[bark] },
+        organisations: { any: %w[bar] },
+        people: { any: %w[bar] },
+        world_locations: { all: %w[bar] },
+      }
+
+      expect(subject).to be_invalid
+      expect(subject.errors[:tags]).to include("organisations, people, and world_locations are not valid tags. Should they be links?")
+    end
+
     it "is invalid when tags 'hash' has values that are not arrays" do
       subject.tags = { foo: { any: "bar" } }
 
@@ -70,6 +83,33 @@ RSpec.describe SubscriberList, type: :model do
     end
   end
 
+  context "when a subscriber_list is deleted" do
+    subject { create(:subscriber_list_with_invalid_tags, :skip_validation) }
+    let!(:a_sanity_check_list) { build(:subscriber_list) }
+    let!(:subscriber) { create(:subscriber) }
+    let!(:subscriber2) { create(:subscriber) }
+    let!(:subscription1) { create(:subscription, subscriber: subscriber, subscriber_list: subject) }
+    let!(:subscription2) { create(:subscription, subscriber: subscriber2, subscriber_list: subject) }
+    let!(:subscription3) { create(:subscription, subscriber: subscriber, subscriber_list: a_sanity_check_list) }
+
+    it "will delete all dependent subscriptions" do
+      expect { subject.destroy! }.to(change { subscriber.subscriptions.count }.by(-1))
+    end
+
+    it "will not delete subscribers" do
+      expect { subject.destroy! }.not_to(change { Subscriber.count })
+    end
+
+    it "will not delete non-dependent subscriptions" do
+      expect { subject.destroy! }.to(change { SubscriberList.count }.by(-1))
+    end
+
+    it "will not delete other subscriptions" do
+      subject.destroy!
+      expect(subscription3.reload.active?).to be true
+    end
+  end
+
   context "with a subscription" do
     subject { create(:subscriber_list) }
 
@@ -77,12 +117,6 @@ RSpec.describe SubscriberList, type: :model do
 
     it "can access the subscribers" do
       expect(subject.subscribers.size).to eq(1)
-    end
-
-    it "cannot be deleted" do
-      expect {
-        subject.destroy
-      }.to raise_error(ActiveRecord::InvalidForeignKey)
     end
   end
 

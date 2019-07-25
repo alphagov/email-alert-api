@@ -78,4 +78,15 @@ RSpec.describe Subscription, type: :model do
       expect(Subscription.ended.count).to eq(0)
     end
   end
+
+  describe "when it is deleted" do
+    subject { create(:subscription) }
+    let!(:subscription_content) { create(:subscription_content, subscription: subject) }
+
+    it "deletes associated subscription_contents" do
+      expect { subject.destroy }.to(change {
+        SubscriptionContent.count
+      }.by(-1))
+    end
+  end
 end

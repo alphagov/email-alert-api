@@ -3,13 +3,13 @@ module Clean
   # with invalid tags.
   class InvalidSubscriberLists
     def lists
-      SubscriberList.select(&:invalid_tags?)
+      SubscriberList.select(&:invalid?)
     end
 
     def valid_list(invalid_list, dry_run: true)
       return unless subscriber_lists?([invalid_list])
 
-      return unless invalid_list.invalid_tags?
+      return unless invalid_list.invalid?
 
       unless invalid_list.subscribers.activated.any?
         puts "NoSubscribersError: Did not create a new subscriber list for invalid list #{invalid_list.id}: #{invalid_list.slug}, as there were no active subscribers"
@@ -89,6 +89,19 @@ module Clean
           puts "#{dry_msg} #{count} subscription(s) on subscriber list #{list.slug}"
         end
       end
+    end
+
+    def destroy_invalid_subscriber_lists(dry_run: true)
+      count = 0
+      lists.each do |list|
+        next if list.subscriptions.active.any?
+
+        count += 1
+        puts "#{dry_run ? '[DRY RUN]' : ''} Deleting subscriber_list #{list.slug}"
+        list.destroy unless dry_run
+      end
+      dry_msg = dry_run ? "[DRY RUN] Would have deleted" : "Deleted"
+      puts "#{dry_msg} #{count} subscriber lists"
     end
 
   private

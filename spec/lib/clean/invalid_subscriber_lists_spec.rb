@@ -64,7 +64,7 @@ RSpec.describe Clean::InvalidSubscriberLists do
         new_list = subject.valid_list(invalid_list, dry_run: false)
         expect(SubscriberList.count).to eq(3)
         expect(new_list).to be_instance_of(SubscriberList)
-        expect(new_list.invalid_tags?).to be false
+        expect(new_list.invalid?).to be false
         expect(new_list.tags).to eq({})
         expect(new_list.links).to eq(
           organisations: { any: %w[silly-walks-id sillier-walks-walks-id] },
@@ -168,6 +168,34 @@ RSpec.describe Clean::InvalidSubscriberLists do
       }.not_to(change {
         subscriber.subscriptions.active.count
       })
+    end
+  end
+
+  describe "#destroy_invalid_subscriber_lists" do
+    let!(:invalid_list1) { create(:subscriber_list_with_invalid_tags, :skip_validation, subscriber_count: 0) }
+    let!(:invalid_list2) { create(:subscriber_list_with_invalid_tags, :skip_validation) }
+    let!(:valid_list) { create(:subscriber_list) }
+    let!(:subscriber) { create(:subscriber) }
+    let!(:subscription) { create(:subscription, :ended, subscriber: subscriber, subscriber_list: invalid_list1) }
+
+    it "deletes invalid subscriber lists which don't have active subscriptions" do
+      expect {
+        subject.destroy_invalid_subscriber_lists(dry_run: false)
+      }.to(change {
+        SubscriberList.count
+      }.by(-1))
+    end
+
+    it "deletes subscriptions to invalid subscriber lists" do
+      expect {
+        subject.destroy_invalid_subscriber_lists(dry_run: false)
+      }.to(change { subscriber.subscriptions.count }.by(-1))
+    end
+
+    it "does nothing during a dry run, which is the default" do
+      expect {
+        subject.destroy_invalid_subscriber_lists
+      }.not_to(change { SubscriberList.count })
     end
   end
 
