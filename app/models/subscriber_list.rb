@@ -11,7 +11,7 @@ class SubscriberList < ApplicationRecord
   validates :title, presence: true
   validates_uniqueness_of :slug
 
-  has_many :subscriptions
+  has_many :subscriptions, dependent: :destroy
   has_many :subscribers, through: :subscriptions
   has_many :matched_content_changes
 
