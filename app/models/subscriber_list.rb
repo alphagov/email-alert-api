@@ -57,10 +57,6 @@ class SubscriberList < ApplicationRecord
     self[:tags].fetch("format", []).include?("medical_safety_alert")
   end
 
-  def invalid_tags?
-    invalid_tags.any?
-  end
-
   def invalid_tags
     TAGS_BLACKLIST & self.tags.keys
   end
@@ -70,6 +66,10 @@ private
   def tag_values_are_valid
     unless valid_subscriber_criteria(:tags)
       self.errors.add(:tags, "All tag values must be sent as Arrays")
+    end
+
+    if invalid_tags?
+      self.errors.add(:tags, "#{invalid_tags.to_sentence} are not valid tags. Should they be links?")
     end
   end
 
@@ -85,5 +85,9 @@ private
         %i[all any].include?(operator) && values.is_a?(Array)
       end
     end
+  end
+
+  def invalid_tags?
+    invalid_tags.any?
   end
 end

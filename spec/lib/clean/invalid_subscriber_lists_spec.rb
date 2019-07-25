@@ -64,7 +64,7 @@ RSpec.describe Clean::InvalidSubscriberLists do
         new_list = subject.valid_list(invalid_list, dry_run: false)
         expect(SubscriberList.count).to eq(3)
         expect(new_list).to be_instance_of(SubscriberList)
-        expect(new_list.invalid_tags?).to be false
+        expect(new_list.invalid?).to be false
         expect(new_list.tags).to eq({})
         expect(new_list.links).to eq(
           organisations: { any: %w[silly-walks-id sillier-walks-walks-id] },

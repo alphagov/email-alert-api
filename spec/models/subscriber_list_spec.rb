@@ -28,6 +28,19 @@ RSpec.describe SubscriberList, type: :model do
       expect(subject).to be_valid
     end
 
+    it "is invalid when tags 'hash' has values that are blacklisted" do
+      subject.tags = {
+        foo: { any: %w[bar] },
+        dogs: { all: %w[bark] },
+        organisations: { any: %w[bar] },
+        people: { any: %w[bar] },
+        world_locations: { all: %w[bar] },
+      }
+
+      expect(subject).to be_invalid
+      expect(subject.errors[:tags]).to include("organisations, people, and world_locations are not valid tags. Should they be links?")
+    end
+
     it "is invalid when tags 'hash' has values that are not arrays" do
       subject.tags = { foo: { any: "bar" } }
 

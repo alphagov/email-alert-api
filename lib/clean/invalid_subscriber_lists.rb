@@ -3,13 +3,13 @@ module Clean
   # with invalid tags.
   class InvalidSubscriberLists
     def lists
-      SubscriberList.select(&:invalid_tags?)
+      SubscriberList.select(&:invalid?)
     end
 
     def valid_list(invalid_list, dry_run: true)
       return unless subscriber_lists?([invalid_list])
 
-      return unless invalid_list.invalid_tags?
+      return unless invalid_list.invalid?
 
       unless invalid_list.subscribers.activated.any?
         puts "NoSubscribersError: Did not create a new subscriber list for invalid list #{invalid_list.id}: #{invalid_list.slug}, as there were no active subscribers"
