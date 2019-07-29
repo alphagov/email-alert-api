@@ -68,11 +68,11 @@ module Healthcheck
     end
 
     def critical_latency
-      is_scheduled_publishing_time? ? 20.minutes : 10.minutes
+      is_scheduled_publishing_time? ? 30.minutes : 15.minutes
     end
 
     def warning_latency
-      is_scheduled_publishing_time? ? 15.minutes : 5.minutes
+      is_scheduled_publishing_time? ? 20.minutes : 10.minutes
     end
 
     # There's a lot of scheduled publishing at 09:30 UK time, so we
