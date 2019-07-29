@@ -86,6 +86,7 @@ module Healthcheck
 
     SCHEDULED_PUBLISHING_TIMES = [
       [Time.zone.parse("09:30"), Time.zone.parse("10:30")],
-    ]
+      [Time.zone.parse("12:30"), Time.zone.parse("13:30")],
+    ].freeze
   end
 end
