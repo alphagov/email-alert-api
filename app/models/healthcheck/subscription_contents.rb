@@ -31,27 +31,40 @@ module Healthcheck
   private
 
     def critical_subscription_contents
-      @critical_subscription_contents ||= count_subscription_contents(critical_latency)
+      @critical_subscription_contents ||= count_subscription_contents.fetch(:critical)
     end
 
     def warning_subscription_contents
-      @warning_subscription_contents ||= count_subscription_contents(warning_latency)
+      @warning_subscription_contents ||= count_subscription_contents.fetch(:warning)
     end
 
-    def count_subscription_contents(age)
-      # The `merge(Subscription.active)` check is because there is a
-      # race condition in email generation: if someone unsubscribes
-      # after the `ContentChange` has been processed but before the
-      # generated `SubscriptionContent`s have been, then those
-      # `SubscriptionContent`s will never get an email associated with
-      # them - this is the correct behaviour, we don't want to email
-      # people who have unsubscribed.
-      SubscriptionContent
-        .where("subscription_contents.created_at < ?", age.ago)
-        .where(email: nil)
-        .joins(:subscription)
-        .merge(Subscription.active)
-        .count
+    def count_subscription_contents
+      @count_subscription_contents ||= begin
+        group_sql = ActiveRecord::Base::sanitize_sql([
+          "CASE WHEN subscription_contents.created_at < ? THEN 'critical' ELSE 'warning' END",
+          critical_latency.ago
+        ])
+
+        # The `merge(Subscription.active)` check is because there is a
+        # race condition in email generation: if someone unsubscribes
+        # after the `ContentChange` has been processed but before the
+        # generated `SubscriptionContent`s have been, then those
+        # `SubscriptionContent`s will never get an email associated with
+        # them - this is the correct behaviour, we don't want to email
+        # people who have unsubscribed.
+        counts = SubscriptionContent
+          .where(email: nil)
+          .joins(:subscription)
+          .merge(Subscription.active)
+          .where("subscription_contents.created_at < ?", warning_latency.ago)
+          .group(group_sql)
+          .count
+
+        warning = counts.fetch("warning", 0)
+        critical = counts.fetch("critical", 0)
+
+        { warning: warning + critical, critical: critical }
+      end
     end
 
     def critical_latency
