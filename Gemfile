@@ -19,7 +19,7 @@ gem 'jwt', '~> 2.2'
 gem 'nokogiri', '~> 1.10'
 gem 'notifications-ruby-client', '~> 4.0'
 gem 'plek', '~> 3.0'
-gem 'redcarpet', '~> 3.4'
+gem 'redcarpet', '~> 3.5'
 
 gem 'govuk_sidekiq', '~> 3.0'
 gem 'ratelimit', '~> 1.0'
