@@ -2,32 +2,32 @@ RSpec.describe Healthcheck::SubscriptionContents do
   context "when scheduled publishing" do
     shared_examples "an ok healthcheck" do
       specify { expect(subject.status).to eq(:ok) }
-      specify { expect(subject.message).to match(/0 created over 1800 seconds ago/) }
+      specify { expect(subject.message).to match(/0 created over 2700 seconds ago/) }
     end
 
     shared_examples "a warning healthcheck" do
       specify { expect(subject.status).to eq(:warning) }
-      specify { expect(subject.message).to match(/1 created over 1200 seconds ago/) }
+      specify { expect(subject.message).to match(/1 created over 1800 seconds ago/) }
     end
 
     shared_examples "a critical healthcheck" do
       specify { expect(subject.status).to eq(:critical) }
-      specify { expect(subject.message).to match(/1 created over 1800 seconds ago/) }
+      specify { expect(subject.message).to match(/1 created over 2700 seconds ago/) }
     end
 
     shared_examples "tests all three states" do
-      context "when a subscription content was created 10 minutes ago" do
-        before { create(:subscription_content, created_at: 20.minutes.ago) }
+      context "when a subscription content was created 15 minutes ago" do
+        before { create(:subscription_content, created_at: 15.minutes.ago) }
         it_behaves_like "an ok healthcheck"
-      end
-
-      context "when a subscription content was created over 20 minutes ago" do
-        before { create(:subscription_content, created_at: 21.minutes.ago) }
-        it_behaves_like "a warning healthcheck"
       end
 
       context "when a subscription content was created over 30 minutes ago" do
         before { create(:subscription_content, created_at: 31.minutes.ago) }
+        it_behaves_like "a warning healthcheck"
+      end
+
+      context "when a subscription content was created over 45 minutes ago" do
+        before { create(:subscription_content, created_at: 46.minutes.ago) }
         it_behaves_like "a critical healthcheck"
       end
     end
