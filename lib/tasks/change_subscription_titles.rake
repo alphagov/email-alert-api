@@ -29,7 +29,7 @@ namespace :subscriber_list do
 
   desc "Update business readiness titles containing `EU Exit` to `Brexit`"
   task change_business_readiness_titles: :environment do
-    title = "Find EU Exit guidance for your business"
+    title = "EU Exit guidance for your business"
 
     subscriber_lists = SubscriberList.where("title ILIKE ?", "%#{title}%")
 
@@ -44,8 +44,8 @@ namespace :subscriber_list do
       puts "Original title: '#{subscriber_list.title}'"
       puts "Original slug: '#{subscriber_list.slug}'"
 
-      new_title = subscriber_list.title.gsub("Find EU Exit guidance", "Find Brexit guidance")
-      new_slug = subscriber_list.slug.gsub("find-eu-exit-guidance", "find-brexit-guidance")
+      new_title = subscriber_list.title.gsub("EU Exit guidance", "Brexit guidance")
+      new_slug = subscriber_list.slug.gsub("eu-exit-guidance", "brexit-guidance")
 
       subscriber_list.title = new_title
       subscriber_list.slug = new_slug
