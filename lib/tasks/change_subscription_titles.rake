@@ -26,4 +26,35 @@ namespace :subscriber_list do
 
     puts " All done now!"
   end
+
+  desc "Update business readiness titles containing `EU Exit` to `Brexit`"
+  task change_business_readiness_titles: :environment do
+    title = "Find EU Exit guidance for your business"
+
+    subscriber_lists = SubscriberList.where("title ILIKE ?", "%#{title}%")
+
+    raise "Cannot find any subscriber lists with title containing `#{title}`" if subscriber_lists.nil?
+
+    puts "============================="
+
+    puts "Found #{subscriber_lists.count} subscriber lists containing '#{title}'"
+
+    subscriber_lists.each do |subscriber_list|
+      puts "============================="
+      puts "Original title: '#{subscriber_list.title}'"
+      puts "Original slug: '#{subscriber_list.slug}'"
+
+      new_title = subscriber_list.title.gsub("Find EU Exit guidance", "Find Brexit guidance")
+      new_slug = subscriber_list.slug.gsub("find-eu-exit-guidance", "find-brexit-guidance")
+
+      subscriber_list.title = new_title
+      subscriber_list.slug = new_slug
+
+      if subscriber_list.save!
+        puts "Subscriber list updated with title: '#{new_title}' and slug: '#{new_slug}'"
+      else
+        puts "Error updating subscriber list with title: '#{new_title}' and slug: '#{new_slug}'"
+      end
+    end
+  end
 end
