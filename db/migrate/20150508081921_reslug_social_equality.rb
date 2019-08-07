@@ -4,7 +4,7 @@ class ReslugSocialEquality < ActiveRecord::Migration[4.2]
   def up
     return
 
-    list = SubscriberListQuery.where_tags_equal(policies: ["social-equality"]).first
+    list = SubscriberListQuery.where_tags_equal(policies: %w[social-equality]).first
 
     if list
       list.update(tags: {
@@ -22,7 +22,7 @@ class ReslugSocialEquality < ActiveRecord::Migration[4.2]
 
     if list
       list.update(tags: {
-        policies: ["social-equality"]
+        policies: %w[social-equality]
       })
       list.reload
       puts %{Reslugged "equality" to #{list.tags[:policies]}}

@@ -8,8 +8,8 @@ RSpec.describe "Sending a notification", type: :request do
           topics: ["oil-and-gas/licensing"]
         },
         links: {
-          organisations: [
-            "c380ea42-5d91-41cc-b3cd-0a4cfe439461"
+          organisations: %w[
+            c380ea42-5d91-41cc-b3cd-0a4cfe439461
           ]
         },
         content_id: "afe78383-6b27-45a4-92ae-a579e416373a",

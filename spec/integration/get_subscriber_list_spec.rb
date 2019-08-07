@@ -39,7 +39,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
       create(
         :subscriber_list,
         links: {
-          topics: { any: ["vat-rates"] },
+          topics: { any: %w[vat-rates] },
         },
         tags: {},
         document_type: "tax",
@@ -51,7 +51,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
         :subscriber_list,
         links: {},
         tags: {
-          topics: { any: ["vat-rates"] },
+          topics: { any: %w[vat-rates] },
         },
         document_type: "tax",
       )
@@ -101,7 +101,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
 
     it "finds subscriber lists that match links and document type" do
       get_subscriber_list(
-        links: { topics: { any: ["vat-rates"] } },
+        links: { topics: { any: %w[vat-rates] } },
         document_type: "tax",
       )
       expect(response.status).to eq(200)
@@ -112,7 +112,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
 
     it "finds subscriber lists that match tags and document type" do
       get_subscriber_list(
-        tags: { topics: { any: ["vat-rates"] } },
+        tags: { topics: { any: %w[vat-rates] } },
         document_type: "tax",
       )
       expect(response.status).to eq(200)
@@ -122,12 +122,12 @@ RSpec.describe "Getting a subscriber list", type: :request do
     end
 
     it "does not find subscriber lists that match some of the links" do
-      get_subscriber_list(links: { topics: { any: ["drug-device-alert"] } })
+      get_subscriber_list(links: { topics: { any: %w[drug-device-alert] } })
       expect(response.status).to eq(404)
     end
 
     it "does not find subscriber lists that match some of the tags" do
-      get_subscriber_list(tags: { topics: { any: ["drug-device-alert"] } })
+      get_subscriber_list(tags: { topics: { any: %w[drug-device-alert] } })
       expect(response.status).to eq(404)
     end
 
@@ -137,7 +137,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
     end
 
     it "does not find subscriber lists that match links but not document type" do
-      get_subscriber_list(links: { topics: { any: ["vat-rates"] } })
+      get_subscriber_list(links: { topics: { any: %w[vat-rates] } })
       expect(response.status).to eq(404)
     end
 
@@ -147,7 +147,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
     end
 
     it "does not find subscriber lists that match tags but not document type" do
-      get_subscriber_list(tags: { topics: { any: ["vat-rates"] } })
+      get_subscriber_list(tags: { topics: { any: %w[vat-rates] } })
       expect(response.status).to eq(404)
     end
 
@@ -164,7 +164,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
     context "when passing in gov_delivery_id" do
       it "does not find a subscriber list of the gov_delivery_id does not match" do
         get_subscriber_list(
-          tags: { topics: { any: ["vat-rates"] } },
+          tags: { topics: { any: %w[vat-rates] } },
           document_type: "tax",
           gov_delivery_id: "NEW-TOPIC"
         )
@@ -172,12 +172,12 @@ RSpec.describe "Getting a subscriber list", type: :request do
       end
 
       it "finds the subscriber list if the gov_delivery_id matches" do
-        _alpha = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] } }, slug: "alpha")
-        beta = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] } }, slug: "beta")
-        _gamma = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] } }, slug: "gamma")
+        _alpha = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] } }, slug: "alpha")
+        beta = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] } }, slug: "beta")
+        _gamma = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] } }, slug: "gamma")
 
         get_subscriber_list(
-          tags: { topics: { any: ["vat-rates"] } },
+          tags: { topics: { any: %w[vat-rates] } },
           gov_delivery_id: "beta"
         )
         expect(response.status).to eq(200)
@@ -191,7 +191,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
       it "does not find a subscriber list if the content_purpose_supergroup does not match" do
         get_subscriber_list(
           tags: {
-            topics: { any: ["vat-rates"] },
+            topics: { any: %w[vat-rates] },
             content_purpose_supergroup: { any: %w[news_and_communications] }
           },
           document_type: "tax"
@@ -202,22 +202,22 @@ RSpec.describe "Getting a subscriber list", type: :request do
       it "finds the subscriber list if the content_purpose_supergroup matches" do
         _alpha = create(:subscriber_list,
                         tags: {
-                          topics: { any: ["vat-rates"] },
+                          topics: { any: %w[vat-rates] },
                           content_purpose_supergroup: { any: %w[services] }
                         })
         beta = create(:subscriber_list,
                       tags: {
-                        topics: { any: ["vat-rates"] },
+                        topics: { any: %w[vat-rates] },
                         content_purpose_supergroup: { any: %w[news_and_communications] }
                       })
         _gamma = create(:subscriber_list,
                         tags: {
-                          topics: { any: ["vat-rates"] }
+                          topics: { any: %w[vat-rates] }
                         })
 
         get_subscriber_list(
           tags: {
-            topics: { any: ["vat-rates"] },
+            topics: { any: %w[vat-rates] },
             content_purpose_supergroup: { any: %w[news_and_communications] }
           }
 )
@@ -232,7 +232,7 @@ RSpec.describe "Getting a subscriber list", type: :request do
       it "does not find a subscriber list if the content_purpose_subgroup does not match" do
         get_subscriber_list(
           tags: {
-            topics: { any: ["vat-rates"] },
+            topics: { any: %w[vat-rates] },
             content_purpose_subgroup: { any: %w(news) }
           },
           document_type: "tax",
@@ -241,12 +241,12 @@ RSpec.describe "Getting a subscriber list", type: :request do
       end
 
       it "finds the subscriber list if the content_purpose_subgroup matches" do
-        _alpha = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] }, content_purpose_subgroup: { any: %w(updates_and_alerts) } })
-        beta = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] }, content_purpose_subgroup: { any: %w(news) } })
-        _gamma = create(:subscriber_list, tags: { topics: { any: ["vat-rates"] }, content_purpose_subgroup: { any: %w() } })
+        _alpha = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w(updates_and_alerts) } })
+        beta = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w(news) } })
+        _gamma = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w() } })
 
         get_subscriber_list(
-          tags: { topics: { any: ["vat-rates"] }, content_purpose_subgroup: { any: %w(news) } }
+          tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w(news) } }
         )
         expect(response.status).to eq(200)
 
