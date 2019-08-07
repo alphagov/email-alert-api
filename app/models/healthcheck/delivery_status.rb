@@ -3,7 +3,7 @@ module Healthcheck
     def value
       return 0 if total.zero?
 
-      total_failing.to_f / total.to_f
+      total_failing.to_f / total
     end
 
     def critical_threshold

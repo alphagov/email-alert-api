@@ -38,7 +38,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       create_subscriber_list(
         title: "oil and gas licensing",
         tags: { topics: { any: ["oil-and-gas/licensing"] } },
-        links: { topics: { any: ["uuid-888"] },
+        links: { topics: { any: %w[uuid-888] },
                  taxon_tree: { all: %w[taxon1 taxon2] } }
       )
       response_hash = JSON.parse(response.body)
@@ -70,7 +70,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
         },
         "links" => {
           "topics" => {
-            "any" => ["uuid-888"],
+            "any" => %w[uuid-888],
           },
           "taxon_tree" => {
             "all" => %w[taxon1 taxon2]
@@ -87,7 +87,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
         expect {
           create_subscriber_list(
             title: "oil and gas licensing",
-            links: { topics: ["uuid-888"] }
+            links: { topics: %w[uuid-888] }
           )
         }.to change { SubscriberList.count }.by(1)
       end
@@ -109,7 +109,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
     end
 
     it "successfully creates two SubscriberList objects with the same title" do
-      create_subscriber_list(title: "oil and gas", links: { taxons: { any: ["oil-and-gas"] } })
+      create_subscriber_list(title: "oil and gas", links: { taxons: { any: %w[oil-and-gas] } })
       create_subscriber_list(title: "oil and gas", links: { policies: { any: ["oil-and-gas/licensing"] } })
 
       expect(response.status).to eq(201)

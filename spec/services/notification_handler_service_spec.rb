@@ -16,13 +16,13 @@ RSpec.describe NotificationHandlerService do
       },
       links: {
         organisations: {
-          any: [
-            "c380ea42-5d91-41cc-b3cd-0a4cfe439461"
+          any: %w[
+            c380ea42-5d91-41cc-b3cd-0a4cfe439461
           ]
         },
         taxon_tree: {
-          all: [
-            "6416e4e0-c0c1-457a-8337-4bf8ed9d5f80"
+          all: %w[
+            6416e4e0-c0c1-457a-8337-4bf8ed9d5f80
           ]
         }
       },
@@ -82,11 +82,11 @@ RSpec.describe NotificationHandlerService do
         links:
           hash_including(
             organisations: {
-              any: ["c380ea42-5d91-41cc-b3cd-0a4cfe439461"]
+              any: %w[c380ea42-5d91-41cc-b3cd-0a4cfe439461]
             },
             content_store_document_type: "news_article",
             taxon_tree: {
-              all: ["6416e4e0-c0c1-457a-8337-4bf8ed9d5f80"]
+              all: %w[6416e4e0-c0c1-457a-8337-4bf8ed9d5f80]
             }
 ),
         tags: hash_including(

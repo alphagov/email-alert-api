@@ -52,7 +52,6 @@ module BulkUnsubscribeService
       .sort_by { |_subscriber, subscriptions| subscriptions.length * -1 } # start with most subscriptions
       .take(subscriber_limit)
       .each_with_index do |(subscriber, subscriptions), index|
-
       subscription_details = subscriptions.map do |subscription|
         subscription_content_ids = subscription
                                 .subscriber_list

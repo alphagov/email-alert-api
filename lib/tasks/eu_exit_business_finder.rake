@@ -40,35 +40,35 @@ end
 module EuExitFacetMigrationConfig
   def self.facet_values_to_replace
     {
-      "9f3476e1-8ff0-455d-a14e-003236b2797c" => ["53f9ce4c-7cbb-447f-bdf1-a9b022896d3a"],
-      "b4e507df-f067-4749-9468-3de120775216" => ["24fd50fa-6619-46ca-96cd-8ce90fa076ce"],
-      "356f46a0-17d3-4ba4-8952-8c02244f904" => ["18c3892e-8a0e-4884-906e-5938380eceee"],
-      "356f46a0-17d3-4ba4-8952-8c02244f9045" => ["18c3892e-8a0e-4884-906e-5938380eceee"],
+      "9f3476e1-8ff0-455d-a14e-003236b2797c" => %w[53f9ce4c-7cbb-447f-bdf1-a9b022896d3a],
+      "b4e507df-f067-4749-9468-3de120775216" => %w[24fd50fa-6619-46ca-96cd-8ce90fa076ce],
+      "356f46a0-17d3-4ba4-8952-8c02244f904" => %w[18c3892e-8a0e-4884-906e-5938380eceee],
+      "356f46a0-17d3-4ba4-8952-8c02244f9045" => %w[18c3892e-8a0e-4884-906e-5938380eceee],
       # "34a6edd0-46ea-4a76-ae80-8c96709d4f5" is worth noting as
       # it's the result of a merge between two facets. The
       # find-and-replace works the same way regardless.
-      "1e3e8abd-135d-4844-afa8-5c51df3d3c57" => ["34a6edd0-46ea-4a76-ae80-8c96709d4f59"],
-      "c1d8057c-76bf-431c-9ac8-6281a4b7b9ca" => ["34a6edd0-46ea-4a76-ae80-8c96709d4f59"],
+      "1e3e8abd-135d-4844-afa8-5c51df3d3c57" => %w[34a6edd0-46ea-4a76-ae80-8c96709d4f59],
+      "c1d8057c-76bf-431c-9ac8-6281a4b7b9ca" => %w[34a6edd0-46ea-4a76-ae80-8c96709d4f59],
       # "94b3cfe2-af89-4744-b8d7-7fc79edcbc85" is a special case
       # as it's been split into two facets. We should assume the
       # user wants to remain subscribed to both.
-      "94b3cfe2-af89-4744-b8d7-7fc79edcbc85" => [
-        "9d54c591-f5ca-4d0c-a484-12d5591987cb",
-        "afd45eef-743a-417d-9245-3eab8322116d"
+      "94b3cfe2-af89-4744-b8d7-7fc79edcbc85" => %w[
+        9d54c591-f5ca-4d0c-a484-12d5591987cb
+        afd45eef-743a-417d-9245-3eab8322116d
       ],
       # to fix a missing character issue introduced in
       # https://github.com/alphagov/search-api/commit/8fce3db218821dfc7a2b50dbd1b03984b1ec41b1
-      "7620da7a-0427-4b3c-9498-db9dc25209b" => ["7620da7a-0427-4b3c-9498-db9dc25209b0"]
+      "7620da7a-0427-4b3c-9498-db9dc25209b" => %w[7620da7a-0427-4b3c-9498-db9dc25209b0]
     }
   end
 
   def self.facet_values_to_remove
-    [
-      "7536c0c4-fb41-43f4-a2c4-08f4fa9f5427",
-      "5faa1741-fc55-4110-b342-de92f6324118",
-      "14cf2a68-3297-44d3-ba01-a4426845b1b8",
-      "040649fc-4e2c-4028-b846-77fe3eebd1f7",
-      "94b3cfe2-af89-4744-b8d7-7fc79edcbc85"
+    %w[
+      7536c0c4-fb41-43f4-a2c4-08f4fa9f5427
+      5faa1741-fc55-4110-b342-de92f6324118
+      14cf2a68-3297-44d3-ba01-a4426845b1b8
+      040649fc-4e2c-4028-b846-77fe3eebd1f7
+      94b3cfe2-af89-4744-b8d7-7fc79edcbc85
     ]
   end
 

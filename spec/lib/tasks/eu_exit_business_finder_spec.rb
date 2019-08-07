@@ -43,46 +43,46 @@ RSpec.describe 'eu_exit_business_finder:update_subscriber_list_titles_and_facet_
     }
 
     context "given values that should not be removed" do
-      let(:facet_values) { ["123-keep-me"] }
+      let(:facet_values) { %w[123-keep-me] }
 
-      it { is_expected.to eql ["123-keep-me"] }
+      it { is_expected.to eql %w[123-keep-me] }
     end
 
     context "given only values to remove" do
-      let(:facet_values) { ["000-remove-me"] }
-      let(:mock_behaviour!) { mock_facet_values_to_remove(["000-remove-me"]) }
+      let(:facet_values) { %w[000-remove-me] }
+      let(:mock_behaviour!) { mock_facet_values_to_remove(%w[000-remove-me]) }
 
       it { is_expected.to eql [] }
     end
 
     context "given a mixture of values to keep and remove" do
-      let(:facet_values) { ["123-keep-me", "000-remove-me"] }
-      let(:mock_behaviour!) { mock_facet_values_to_remove(["000-remove-me"]) }
+      let(:facet_values) { %w[123-keep-me 000-remove-me] }
+      let(:mock_behaviour!) { mock_facet_values_to_remove(%w[000-remove-me]) }
 
-      it { is_expected.to eql ["123-keep-me"] }
+      it { is_expected.to eql %w[123-keep-me] }
     end
 
     context "given values to replace" do
-      let(:facet_values) { ["000-old"] }
+      let(:facet_values) { %w[000-old] }
       let(:mock_behaviour!) {
-        mock_facet_values_to_replace("000-old" => ["111-new"])
+        mock_facet_values_to_replace("000-old" => %w[111-new])
       }
 
-      it { is_expected.to eql ["111-new"] }
+      it { is_expected.to eql %w[111-new] }
     end
 
     context "given a mixture of values to replace, remove and keep" do
-      let(:facet_values) { ["000-old", "000-remove-me", "123-keep-me"] }
+      let(:facet_values) { %w[000-old 000-remove-me 123-keep-me] }
       let(:mock_behaviour!) {
-        mock_facet_values_to_remove(["000-remove-me", "000-old"])
-        mock_facet_values_to_replace("000-old" => ["111-new"])
+        mock_facet_values_to_remove(%w[000-remove-me 000-old])
+        mock_facet_values_to_replace("000-old" => %w[111-new])
       }
 
-      it { is_expected.to eql ["111-new", "123-keep-me"] }
+      it { is_expected.to eql %w[111-new 123-keep-me] }
     end
 
     context "given facet replacements which could lead to duplicates" do
-      let(:facet_values) { ["000-old", "001-also-old"] }
+      let(:facet_values) { %w[000-old 001-also-old] }
       let(:mock_behaviour!) {
         mock_facet_values_to_replace(
           "000-old" => "111-new",
@@ -90,18 +90,18 @@ RSpec.describe 'eu_exit_business_finder:update_subscriber_list_titles_and_facet_
         )
       }
 
-      it { is_expected.to eql ["111-new"] } # `111-new` should only appear once
+      it { is_expected.to eql %w[111-new] } # `111-new` should only appear once
     end
 
     context "given a facet value which has been split into multiple new facets" do
-      let(:facet_values) { ["000-old"] }
+      let(:facet_values) { %w[000-old] }
       let(:mock_behaviour!) {
         mock_facet_values_to_replace(
-          "000-old" => ["111-new", "222-new"]
+          "000-old" => %w[111-new 222-new]
         )
       }
 
-      it { is_expected.to eql ["111-new", "222-new"] }
+      it { is_expected.to eql %w[111-new 222-new] }
     end
   end
 
@@ -129,7 +129,7 @@ RSpec.describe 'eu_exit_business_finder:update_subscriber_list_titles_and_facet_
     }
 
     context "build title from single facet value" do
-      let(:facet_values) { ["000-content-id-of-food-drink-tobacco-facet"] }
+      let(:facet_values) { %w[000-content-id-of-food-drink-tobacco-facet] }
 
       it {
         is_expected.to eql "EU Exit guidance for your business in the following category: 'Food, drink and tobacco (retail and wholesale)'"
@@ -137,7 +137,7 @@ RSpec.describe 'eu_exit_business_finder:update_subscriber_list_titles_and_facet_
     end
 
     context "build title from multiple facet values" do
-      let(:facet_values) { ["000-content-id-of-food-drink-tobacco-facet", "111-content-id-of-ports-airports"] }
+      let(:facet_values) { %w[000-content-id-of-food-drink-tobacco-facet 111-content-id-of-ports-airports] }
 
       it {
         is_expected.to eql "EU Exit guidance for your business in the following categories: 'Food, drink and tobacco (retail and wholesale)', 'Ports and airports'"
@@ -145,7 +145,7 @@ RSpec.describe 'eu_exit_business_finder:update_subscriber_list_titles_and_facet_
     end
 
     context "build title from facet value whose title has been overridden" do
-      let(:facet_values) { ["000-content-id-of-food-drink-tobacco-facet"] }
+      let(:facet_values) { %w[000-content-id-of-food-drink-tobacco-facet] }
       let(:mock_behaviour!) {
         mock_facet_value_label_overrides(
           "000-content-id-of-food-drink-tobacco-facet" => "Special category",
@@ -157,11 +157,11 @@ RSpec.describe 'eu_exit_business_finder:update_subscriber_list_titles_and_facet_
 
     context "build title from a mixture of facet values and overridden facet titles" do
       let(:facet_values) {
-        [
-          "000-content-id-of-food-drink-tobacco-facet",
-          "111-content-id-of-ports-airports",
-          "777-content-id-of-employing-eu-citizens",
-          "444-content-id-of-eu-funding",
+        %w[
+          000-content-id-of-food-drink-tobacco-facet
+          111-content-id-of-ports-airports
+          777-content-id-of-employing-eu-citizens
+          444-content-id-of-eu-funding
         ]
       }
       let(:mock_behaviour!) {

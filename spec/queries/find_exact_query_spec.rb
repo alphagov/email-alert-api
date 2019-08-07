@@ -1,48 +1,48 @@
 RSpec.describe FindExactQuery do
   context "when links are in the query" do
     it "matched when subscriber list has the same links" do
-      query = build_query(links: { policies: { any: ['aa-11'] }, taxon_tree: { all: %w[taxon] } })
-      subscriber_list = create_subscriber_list(links: { policies: { any: ['aa-11'] },
+      query = build_query(links: { policies: { any: %w[aa-11] }, taxon_tree: { all: %w[taxon] } })
+      subscriber_list = create_subscriber_list(links: { policies: { any: %w[aa-11] },
                                                         taxon_tree: { all: %w[taxon] } })
       expect(query.exact_match).to eq(subscriber_list)
     end
 
     it "matched when subscriber list has the same links and matching document_type" do
-      query = build_query(links: { policies: { any: ['aa-11'] },
+      query = build_query(links: { policies: { any: %w[aa-11] },
                                    taxon_tree: { all: %w[taxon] } },
                           document_type: 'travel_advice')
-      subscriber_list = create_subscriber_list(links: { policies: { any: ['aa-11'] },
+      subscriber_list = create_subscriber_list(links: { policies: { any: %w[aa-11] },
                                                         taxon_tree: { all: %w[taxon] } },
                                                document_type: 'travel_advice')
       expect(query.exact_match).to eq(subscriber_list)
     end
 
     it "matched when subscriber list has the same links and matching email_document_supertype" do
-      query = build_query(links: { policies: { any: ['aa-11'] } }, email_document_supertype: 'publications')
-      subscriber_list = create_subscriber_list(links: { policies: { any: ['aa-11'] } }, email_document_supertype: 'publications')
+      query = build_query(links: { policies: { any: %w[aa-11] } }, email_document_supertype: 'publications')
+      subscriber_list = create_subscriber_list(links: { policies: { any: %w[aa-11] } }, email_document_supertype: 'publications')
       expect(query.exact_match).to eq(subscriber_list)
     end
 
     it "not matched when subscriber list has different links" do
-      query = build_query(links: { policies: { any: ['aa-11'] } })
-      _subscriber_list = create_subscriber_list(links: { policies: { any: ['11-aa'] } })
+      query = build_query(links: { policies: { any: %w[aa-11] } })
+      _subscriber_list = create_subscriber_list(links: { policies: { any: %w[11-aa] } })
       expect(query.exact_match).to be_nil
     end
 
     it "not matched when subscriber list has no links" do
-      query = build_query(links: { policies: { any: ['aa-11'] } })
+      query = build_query(links: { policies: { any: %w[aa-11] } })
       _subscriber_list = create_subscriber_list
       expect(query.exact_match).to be_nil
     end
 
     it "not matched on tags if unable to match links - even if it would match" do
-      query = build_query(links: { policies: { any:  ['aa-11'] } }, tags: { policies: { any: %w[apples] } })
+      query = build_query(links: { policies: { any:  %w[aa-11] } }, tags: { policies: { any: %w[apples] } })
       _subscriber_list = create_subscriber_list(tags: { policies: { any: %w[apples] } })
       expect(query.exact_match).to be_nil
     end
 
     it "not matched on document type - even if they match" do
-      query = build_query(links: { policies: { any: ['aa-11'] } }, document_type: 'travel_advice')
+      query = build_query(links: { policies: { any: %w[aa-11] } }, document_type: 'travel_advice')
       _subscriber_list = create_subscriber_list(document_type: 'travel_advice')
       expect(query.exact_match).to be_nil
     end
