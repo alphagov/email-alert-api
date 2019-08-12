@@ -51,18 +51,18 @@ RSpec.describe FindExactQuery do
   context "when tags are in the query" do
     it "matched when subscriber tags has the same tags" do
       query = build_query(tags: { policies: { any: %w[beer] },
-                                  taxon_tree: { all: %w[taxon] } })
+                                  topics: { all: %w[taxon] } })
       subscriber_list = create_subscriber_list(tags: { policies: { any: %w[beer] },
-                                                       taxon_tree: { all: %w[taxon] } })
+                                                       topics: { all: %w[taxon] } })
       expect(query.exact_match).to eq(subscriber_list)
     end
 
     it "matched when subscriber list has the same tags and matching document_type" do
       query = build_query(tags: { policies: { any: %w[beer] },
-                                  taxon_tree: { all: %w[taxon] } },
+                                  topics: { all: %w[taxon] } },
                           document_type: 'document_type')
       subscriber_list = create_subscriber_list(tags: { policies: { any: %w[beer] },
-                                                      taxon_tree: { all: %w[taxon] } },
+                                                      topics: { all: %w[taxon] } },
                                                document_type: 'document_type')
       expect(query.exact_match).to eq(subscriber_list)
     end

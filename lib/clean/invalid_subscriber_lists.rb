@@ -110,7 +110,7 @@ module Clean
       tags.each_with_object({}) do |(key, value), links|
         if key == :part_of_taxonomy_tree
           links[:taxon_tree] = value
-        elsif SubscriberList::TAGS_BLACKLIST.include? key
+        elsif ValidTags::ALLOWED_TAGS.exclude? key
           value.keys.each { |any_or_all|
             links[key] ||= {}
             links[key][any_or_all] = tag_slugs_to_ids(key, value[any_or_all])

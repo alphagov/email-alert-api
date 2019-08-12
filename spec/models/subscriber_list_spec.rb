@@ -17,18 +17,18 @@ RSpec.describe SubscriberList, type: :model do
     end
 
     it "is valid when tags 'hash' has 'any' values that are arrays" do
-      subject.tags = { foo: { any: %w[bar] } }
+      subject.tags = { topics: { any: %w[bar] } }
 
       expect(subject).to be_valid
     end
 
     it "is valid when tags 'hash' has 'all' values that are arrays" do
-      subject.tags = { foo: { all: %w[bar] } }
+      subject.tags = { topics: { all: %w[bar] } }
 
       expect(subject).to be_valid
     end
 
-    it "is invalid when tags 'hash' has values that are blacklisted" do
+    it "is invalid when tags 'hash' has values that are not whitelisted" do
       subject.tags = {
         foo: { any: %w[bar] },
         dogs: { all: %w[bark] },
@@ -38,11 +38,11 @@ RSpec.describe SubscriberList, type: :model do
       }
 
       expect(subject).to be_invalid
-      expect(subject.errors[:tags]).to include("organisations, people, and world_locations are not valid tags. Should they be links?")
+      expect(subject.errors[:tags]).to include("foo, dogs, organisations, people, and world_locations are not valid tags.")
     end
 
     it "is invalid when tags 'hash' has values that are not arrays" do
-      subject.tags = { foo: { any: "bar" } }
+      subject.tags = { topics: { any: "bar" } }
 
       expect(subject).to be_invalid
       expect(subject.errors[:tags]).to include("All tag values must be sent as Arrays")
