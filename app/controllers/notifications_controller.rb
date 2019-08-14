@@ -10,14 +10,6 @@ class NotificationsController < ApplicationController
     render json: { message: "Notification queued for sending" }, status: 202
   end
 
-  def index
-    render json: {}
-  end
-
-  def show
-    render json: {}
-  end
-
 private
 
   def notification_params
