@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_15_150119) do
+ActiveRecord::Schema.define(version: 2019_08_15_192913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -165,11 +165,13 @@ ActiveRecord::Schema.define(version: 2019_08_15_150119) do
     t.integer "digest_run_subscriber_id"
     t.uuid "email_id"
     t.uuid "subscription_id", null: false
-    t.uuid "content_change_id", null: false
+    t.uuid "content_change_id"
+    t.uuid "message_id"
     t.index ["content_change_id"], name: "index_subscription_contents_on_content_change_id"
     t.index ["digest_run_subscriber_id"], name: "index_subscription_contents_on_digest_run_subscriber_id"
     t.index ["email_id"], name: "index_subscription_contents_on_email_id"
     t.index ["subscription_id", "content_change_id"], name: "index_subscription_contents_on_subscription_and_content_change", unique: true
+    t.index ["subscription_id", "message_id"], name: "index_subscription_contents_on_subscription_id_and_message_id", unique: true
     t.index ["subscription_id"], name: "index_subscription_contents_on_subscription_id"
   end
 
@@ -213,6 +215,7 @@ ActiveRecord::Schema.define(version: 2019_08_15_150119) do
   add_foreign_key "subscription_contents", "content_changes", on_delete: :restrict
   add_foreign_key "subscription_contents", "digest_run_subscribers", on_delete: :cascade
   add_foreign_key "subscription_contents", "emails", on_delete: :cascade
+  add_foreign_key "subscription_contents", "messages", on_delete: :restrict
   add_foreign_key "subscription_contents", "subscriptions", on_delete: :restrict
   add_foreign_key "subscriptions", "subscriber_lists", on_delete: :restrict
   add_foreign_key "subscriptions", "subscribers", on_delete: :restrict

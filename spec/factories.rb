@@ -188,6 +188,11 @@ FactoryBot.define do
     subscription
     content_change
 
+    trait :with_message do
+      content_change { nil }
+      message
+    end
+
     trait :with_archivable_email do
       association :email, factory: :archivable_email
 
