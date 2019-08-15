@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_17_121233) do
+ActiveRecord::Schema.define(version: 2019_08_14_163542) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,6 +102,25 @@ ActiveRecord::Schema.define(version: 2019_07_17_121233) do
     t.index ["content_change_id", "subscriber_list_id"], name: "index_matched_content_changes_content_change_subscriber_list", unique: true
     t.index ["content_change_id"], name: "index_matched_content_changes_on_content_change_id"
     t.index ["subscriber_list_id"], name: "index_matched_content_changes_on_subscriber_list_id"
+  end
+
+  create_table "messages", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.text "sender_message_id"
+    t.text "title", null: false
+    t.text "url"
+    t.text "body", null: false
+    t.json "links", default: {}, null: false
+    t.json "tags", default: {}, null: false
+    t.string "document_type"
+    t.string "email_document_supertype"
+    t.string "government_document_supertype"
+    t.datetime "processed_at"
+    t.string "signon_user_uid"
+    t.string "govuk_request_id", null: false
+    t.integer "priority", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sender_message_id"], name: "index_messages_on_sender_message_id", unique: true
   end
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|

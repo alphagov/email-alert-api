@@ -1,4 +1,8 @@
 FactoryBot.define do
+  trait :skip_validation do
+    to_create { |instance| instance.save!(validate: false) }
+  end
+
   factory :content_change do
     content_id { SecureRandom.uuid }
     title { "title" }
@@ -15,8 +19,10 @@ FactoryBot.define do
     publishing_app { "publishing app" }
   end
 
-  trait :skip_validation do
-    to_create { |instance| instance.save!(validate: false) }
+  factory :message do
+    title { "Title" }
+    body { "Body" }
+    sequence(:govuk_request_id) { |i| "request-id-#{i}" }
   end
 
   factory :delivery_attempt, aliases: [:sending_delivery_attempt] do
