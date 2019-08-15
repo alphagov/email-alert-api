@@ -1,6 +1,8 @@
 class Message < ApplicationRecord
   include SymbolizeJSON
 
+  has_many :matched_messages
+
   validates_presence_of :title, :body
   validates :path, absolute_path: true, allow_nil: true
 

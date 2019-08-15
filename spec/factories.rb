@@ -202,6 +202,11 @@ FactoryBot.define do
     subscriber_list
   end
 
+  factory :matched_message do
+    message
+    subscriber_list
+  end
+
   factory :user
 
   factory :content_item do
