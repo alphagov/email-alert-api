@@ -13,6 +13,7 @@ class SubscriberList < ApplicationRecord
   has_many :subscriptions, dependent: :destroy
   has_many :subscribers, through: :subscriptions
   has_many :matched_content_changes
+  has_many :matched_messages
 
   scope :find_by_links_value, ->(content_id) do
       # For this query to return the content id has to be wrapped in a
