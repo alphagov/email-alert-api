@@ -1,27 +1,9 @@
 RSpec.describe "Receiving a notification", type: :request do
   context "with authentication and authorisation" do
     describe "#create" do
-      let(:body) {
-        <<~BODY
-          <div>
-            <div>Travel advice</div>
-          </div>
-        BODY
-      }
-
-      let(:expected_body) {
-        <<~BODY
-          <div>
-            <div>Travel advice</div>
-          </div>
-          <span data-govuk-request-id="12345-67890"></span>
-        BODY
-      }
-
       let(:notification_params) {
         {
           subject: "This is a subject",
-          body: body,
           tags: {
             topics: ["oil-and-gas/licensing"]
           },
@@ -34,7 +16,6 @@ RSpec.describe "Receiving a notification", type: :request do
       let(:expected_notification_params) {
         notification_params
           .merge(links: {})
-          .merge(body: expected_body.strip)
           .merge(govuk_request_id: '12345-67890')
       }
 

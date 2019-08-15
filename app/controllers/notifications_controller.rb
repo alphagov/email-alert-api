@@ -10,14 +10,6 @@ class NotificationsController < ApplicationController
     render json: { message: "Notification queued for sending" }, status: 202
   end
 
-  def index
-    render json: {}
-  end
-
-  def show
-    render json: {}
-  end
-
 private
 
   def notification_params
@@ -27,12 +19,7 @@ private
                            :government_document_supertype, :title, :description, :change_note, :base_path, :priority, :footnote)
       .merge(tags: permitted_params.fetch(:tags, {}))
       .merge(links: permitted_params.fetch(:links, {}))
-      .merge(body: notification_body)
-      .merge(govuk_request_id: GovukRequestId.govuk_request_id)
-  end
-
-  def notification_body
-    GovukRequestId.insert(params[:body])
+      .merge(govuk_request_id: GdsApi::GovukHeaders.headers[:govuk_request_id])
   end
 
   def render_conflict

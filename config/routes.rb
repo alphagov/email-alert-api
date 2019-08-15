@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
     post "/unpublish-messages", to: "unpublish_messages#create"
 
-    resources :notifications, only: %i[create index show]
+    resources :notifications, only: %i[create]
     resources :spam_reports, path: "spam-reports", only: %i[create]
     resources :status_updates, path: "status-updates", only: %i[create]
     resources :subscriptions, only: %i[create show update]

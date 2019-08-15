@@ -10,7 +10,6 @@ RSpec.describe NotificationHandlerService do
   let(:params) {
     {
       subject: "This is a subject",
-      body: "body stuff",
       tags: {
         topics: ["oil-and-gas/licensing"]
       },
