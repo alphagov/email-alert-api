@@ -12,6 +12,7 @@ RSpec.describe UnprocessedSubscriptionContentsBySubscriberQuery do
 
   let!(:subscription_content_two) do
     create(:subscription_content,
+           :with_message,
            subscription: create(:subscription, subscriber: subscriber_one))
   end
 

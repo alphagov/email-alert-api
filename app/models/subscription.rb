@@ -23,6 +23,11 @@ class Subscription < ApplicationRecord
       .where(matched_content_changes: { content_change_id: content_change.id })
   end
 
+  scope :for_message, ->(message) do
+    joins(subscriber_list: :matched_messages)
+      .where(matched_messages: { message_id: message.id })
+  end
+
   scope :subscription_ids_by_subscriber, -> do
     group(:subscriber_id)
       .pluck(:subscriber_id, Arel.sql("ARRAY_AGG(subscriptions.id)"))

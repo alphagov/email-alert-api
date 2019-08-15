@@ -2,6 +2,7 @@ class Message < ApplicationRecord
   include SymbolizeJSON
 
   has_many :matched_messages
+  has_many :subscription_contents
 
   validates_presence_of :title, :body
   validates :tags, tags: true
