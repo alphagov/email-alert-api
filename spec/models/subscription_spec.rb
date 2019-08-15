@@ -25,19 +25,14 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
-  describe "end" do
+  describe "deletion behaviour" do
     subject { create(:subscription) }
+    let!(:subscription_content) { create(:subscription_content, subscription: subject) }
 
-    it "doesn't delete the record" do
-      subject.end(reason: :unsubscribed)
-      expect(described_class.find(subject.id)).to eq(subject)
-    end
-
-    it "sets ended_at to Time.now" do
-      Timecop.freeze do
-        subject.end(reason: :unsubscribed)
-        expect(subject.ended_at).to eq(Time.now)
-      end
+    it "deletes associated subscription_contents" do
+      expect { subject.destroy }.to(change {
+        SubscriptionContent.count
+      }.by(-1))
     end
   end
 
@@ -50,6 +45,18 @@ RSpec.describe Subscription, type: :model do
     it "doesn't return subscriptions with ended_at" do
       create(:subscription, :ended)
       expect(Subscription.active.count).to eq(0)
+    end
+  end
+
+  describe ".ended" do
+    it "returns subscriptions with ended_at nil" do
+      create(:subscription, :ended)
+      expect(Subscription.ended.count).to eq(1)
+    end
+
+    it "doesn't return subscriptions with ended_at" do
+      create(:subscription)
+      expect(Subscription.ended.count).to eq(0)
     end
   end
 
@@ -67,26 +74,20 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
-  describe ".ended" do
-    it "returns subscriptions with ended_at nil" do
-      create(:subscription, :ended)
-      expect(Subscription.ended.count).to eq(1)
-    end
-
-    it "doesn't return subscriptions with ended_at" do
-      create(:subscription)
-      expect(Subscription.ended.count).to eq(0)
-    end
-  end
-
-  describe "when it is deleted" do
+  describe "#end" do
     subject { create(:subscription) }
-    let!(:subscription_content) { create(:subscription_content, subscription: subject) }
 
-    it "deletes associated subscription_contents" do
-      expect { subject.destroy }.to(change {
-        SubscriptionContent.count
-      }.by(-1))
+    it "doesn't delete the record" do
+      subject.end(reason: :unsubscribed)
+      expect(described_class.find(subject.id)).to eq(subject)
+    end
+
+    it "sets ended_at to Time.now" do
+      Timecop.freeze do
+        subject.end(reason: :unsubscribed)
+        expect(subject.ended_at).to eq(Time.now)
+      end
     end
   end
+
 end
