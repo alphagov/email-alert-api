@@ -74,6 +74,37 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
+  describe ".for_content_change" do
+    it "returns subscriptions associated with a content change" do
+      associated_subscription = create(:subscription)
+      associated_content_change = create(:content_change)
+      create(:matched_content_change,
+             subscriber_list: associated_subscription.subscriber_list,
+             content_change: associated_content_change)
+      unassociated_subscription = create(:subscription)
+      unassociated_content_change = create(:content_change)
+      create(:matched_content_change,
+             subscriber_list: unassociated_subscription.subscriber_list,
+             content_change: unassociated_content_change)
+
+      expect(Subscription.for_content_change(associated_content_change))
+        .to include(associated_subscription)
+      expect(Subscription.for_content_change(associated_content_change))
+        .not_to include(unassociated_subscription)
+    end
+  end
+
+  describe ".subscription_ids_by_subscriber" do
+    it "returns a hash of subscriber id to an array of subscriptions" do
+      subscriber = create(:subscriber)
+      subscription1 = create(:subscription, subscriber: subscriber)
+      subscription2 = create(:subscription, subscriber: subscriber)
+
+      expect(Subscription.subscription_ids_by_subscriber)
+        .to match(subscriber.id => match_array([subscription1.id, subscription2.id]))
+    end
+  end
+
   describe "#end" do
     subject { create(:subscription) }
 
@@ -89,5 +120,4 @@ RSpec.describe Subscription, type: :model do
       end
     end
   end
-
 end
