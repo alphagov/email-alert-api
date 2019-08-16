@@ -36,7 +36,7 @@ private
     subscriber = Subscriber.find_by(address: Email::COURTESY_EMAIL)
     return unless subscriber
 
-    email_id = ImmediateEmailBuilder.call([
+    email_id = ContentChangeEmailBuilder.call([
       {
         address: subscriber.address,
         subscriptions: [],

@@ -1,4 +1,4 @@
-class ImmediateEmailBuilder
+class ContentChangeEmailBuilder
   include EmailBuilderHelper
   def initialize(recipients_and_content)
     @recipients_and_content = recipients_and_content

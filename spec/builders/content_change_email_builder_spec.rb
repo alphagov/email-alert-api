@@ -1,4 +1,4 @@
-RSpec.describe ImmediateEmailBuilder do
+RSpec.describe ContentChangeEmailBuilder do
   let(:subscriber) { build(:subscriber, address: "test@example.com") }
 
   let(:subscription_one) {

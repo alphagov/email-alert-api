@@ -113,7 +113,7 @@ private
       }
     end
 
-    ImmediateEmailBuilder.call(email_params)
+    ContentChangeEmailBuilder.call(email_params)
   end
 
   def update_subscription_contents(values)
