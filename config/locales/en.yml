@@ -1,5 +1,9 @@
 en:
   emails:
+    message:
+      subject: "Update from GOV.UK – %{title}"
+      opening_line: Update on GOV.UK.
+      permission_reminder: to ‘%{title}’
     content_change:
       subject: "Update from GOV.UK – %{title}"
       opening_line: Update on GOV.UK.
