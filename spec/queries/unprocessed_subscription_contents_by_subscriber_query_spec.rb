@@ -4,32 +4,31 @@ RSpec.describe UnprocessedSubscriptionContentsBySubscriberQuery do
   let!(:subscriber_one) { create(:subscriber) }
   let!(:subscriber_two) { create(:subscriber) }
   let!(:subscriber_three) { create(:subscriber) }
-  let(:content_change_one) { create(:content_change) }
-  let(:content_change_two) { create(:content_change) }
 
-  before do
-    create(:subscription_content, subscription: create(:subscription, subscriber: subscriber_one), content_change: content_change_one)
-    create(:subscription_content, subscription: create(:subscription, subscriber: subscriber_one), content_change: content_change_one)
-    create(:subscription_content, subscription: create(:subscription, subscriber: subscriber_one), content_change: content_change_two)
-    create(:subscription_content, subscription: create(:subscription, subscriber: subscriber_three), content_change: content_change_two)
+  let!(:subscription_content_one) do
+    create(:subscription_content,
+           subscription: create(:subscription, subscriber: subscriber_one))
   end
 
-  subject { described_class.call([subscriber_one.id, subscriber_two.id]) }
-
-  it "returns a hash keyed by subscriber_id" do
-    expect(subject.keys).to match_array([subscriber_one.id])
+  let!(:subscription_content_two) do
+    create(:subscription_content,
+           subscription: create(:subscription, subscriber: subscriber_one))
   end
 
-  it "creates a hash keyed by content_change_id per subscriber key" do
-    expect(subject[subscriber_one.id].keys).to match_array(ContentChange.pluck(:id))
+  let!(:subscription_content_three) do
+    create(:subscription_content,
+           subscription: create(:subscription, subscriber: subscriber_two))
   end
 
-  it "creates an array of subscription contents at each content change key" do
-    expect(subject[subscriber_one.id][content_change_one.id])
-      .to match_array(SubscriptionContent.where(content_change: content_change_one))
-  end
+  subject(:result) { described_class.call([subscriber_one.id, subscriber_two.id]) }
 
-  it "only returns the subscribers requested" do
-    expect(subject[subscriber_three.id]).to be_nil
+  it "returns a hash of subscription contents for subscription contents" do
+    expected = {
+      subscriber_one.id => match_array([subscription_content_one, subscription_content_two]),
+      subscriber_two.id => match_array([subscription_content_three]),
+    }
+
+    expect(described_class.call([subscriber_one.id, subscriber_two.id]))
+      .to match(expected)
   end
 end
