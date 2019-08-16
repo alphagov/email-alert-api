@@ -3,7 +3,7 @@ en:
     message:
       subject: "Update from GOV.UK – %{title}"
       opening_line: Update on GOV.UK.
-      permission_reminder: to ‘%{title}’
+      permission_reminder: "^You’re getting this email because you subscribed to immediate updates to ‘%{topic}’ on GOV.UK."
     content_change:
       subject: "Update from GOV.UK – %{title}"
       opening_line: Update on GOV.UK.
