@@ -10,7 +10,9 @@ class ImmediateEmailGenerationWorker
       SubscribersForImmediateEmailQuery.call.find_in_batches do |group|
         subscription_contents = grouped_subscription_contents(group.pluck(:id))
         update_content_change_cache(subscription_contents)
+        update_message_cache(subscription_contents)
         create_content_change_emails(group, subscription_contents)
+        create_message_emails(group, subscription_contents)
       end
     end
   end
@@ -38,6 +40,19 @@ private
     ids = content_change_ids - content_changes.keys
 
     content_changes.merge!(ContentChange.where(id: ids).index_by(&:id))
+  end
+
+  def messages
+    @messages ||= {}
+  end
+
+  def update_message_cache(subscription_contents)
+    message_ids = subscription_contents.flat_map { |_, sc| sc.map(&:message_id) }
+                                       .compact
+                                       .uniq
+    ids = message_ids - messages.keys
+
+    messages.merge!(Message.where(id: ids).index_by(&:id))
   end
 
   def create_content_change_emails(subscribers, subscription_contents)
@@ -69,7 +84,38 @@ private
     end
   end
 
+  def create_message_emails(subscribers, subscription_contents)
+    email_data = subscribers.flat_map do |subscriber|
+      subscribers_message_email_data(subscriber,
+                                     subscription_contents[subscriber.id])
+    end
+
+    email_ids = MessageEmailBuilder.call(email_data.map { |e| e[:params] }).ids
+    update_subscription_contents(email_data, email_ids)
+    queue_for_delivery(email_data, email_ids)
+  end
+
+  def subscribers_message_email_data(subscriber, subscription_contents)
+    by_message_id = subscription_contents.select(&:message_id)
+                                         .group_by(&:message_id)
+
+    by_message_id.map do |message_id, matching_subscription_contents|
+      {
+        params: {
+          address: subscriber.address,
+          message: messages[message_id],
+          subscriptions: matching_subscription_contents.map(&:subscription),
+          subscriber_id: subscriber.id,
+        },
+        subscription_contents: matching_subscription_contents,
+        priority: messages[message_id].priority.to_sym,
+      }
+    end
+  end
+
   def update_subscription_contents(email_data, email_ids)
+    return if email_data.empty?
+
     values = email_data.flat_map.with_index do |data, index|
       data[:subscription_contents].map do |subscription_content|
         "(#{subscription_content.id}, '#{email_ids[index]}'::UUID)"
