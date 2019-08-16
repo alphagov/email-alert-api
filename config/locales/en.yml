@@ -30,6 +30,10 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
+  message:
+    subject: "Update from GOV.UK – %{title}"
+    opening_line: Update on GOV.UK.
+    permission_reminder_topic: to ‘%{title}’
   frequencies:
     immediate:
       subject: "Update from GOV.UK – %{title}"
