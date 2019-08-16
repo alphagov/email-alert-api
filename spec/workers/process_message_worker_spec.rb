@@ -43,4 +43,25 @@ RSpec.describe ProcessMessageWorker do
       subject.perform(message.id)
     end
   end
+
+  context "with a courtesy subscription" do
+    let!(:subscriber) { create(:subscriber, address: Email::COURTESY_EMAIL) }
+
+    it "creates an email for the courtesy email group" do
+      expect(MessageEmailBuilder)
+        .to receive(:call)
+        .with([hash_including(address: subscriber.address)])
+        .and_call_original
+
+      subject.perform(message.id)
+    end
+
+    it "enqueues the email to send to the courtesy subscription group" do
+      expect(DeliveryRequestWorker)
+        .to receive(:perform_async_in_queue)
+        .with(kind_of(String), queue: :delivery_immediate)
+
+      subject.perform(message.id)
+    end
+  end
 end
