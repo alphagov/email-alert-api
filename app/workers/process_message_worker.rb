@@ -6,7 +6,7 @@ class ProcessMessageWorker
     return if message.processed?
 
     import_subscription_content(message)
-    # queue_courtesy_email(message) TODO
+    queue_courtesy_email(message)
 
     message.mark_processed!
   end
@@ -19,7 +19,7 @@ private
       subscription_ids(message).map { |id| [message.id, id] },
     )
 
-    # ImmediateEmailGenerationWorker.perform_async TODO
+    ImmediateEmailGenerationWorker.perform_async
   end
 
   def subscription_ids(message)
@@ -30,5 +30,23 @@ private
       .subscription_ids_by_subscriber
       .values
       .flatten
+  end
+
+  def queue_courtesy_email(message)
+    subscriber = Subscriber.find_by(address: Email::COURTESY_EMAIL)
+    return unless subscriber
+
+    email_id = MessageEmailBuilder.call([
+      {
+        address: subscriber.address,
+        subscriptions: [],
+        message: message,
+        subscriber_id: subscriber.id,
+      }
+    ]).ids.first
+
+    DeliveryRequestWorker.perform_async_in_queue(
+      email_id, queue: :delivery_immediate,
+    )
   end
 end
