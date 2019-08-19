@@ -38,7 +38,7 @@
 
 and it will respond with the JSON response for the `GET` call above.
 
-* `POST /notifications` with data:
+* `POST /content-changes` with data:
 
 ```json
 {

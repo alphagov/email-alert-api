@@ -1,18 +1,18 @@
-class NotificationsController < ApplicationController
+class ContentChangesController < ApplicationController
   def create
     return render_conflict if content_change_exists?
 
-    NotificationHandlerService.call(
-      params: notification_params,
+    ContentChangeHandlerService.call(
+      params: content_change_params,
       user: current_user,
     )
 
-    render json: { message: "Notification queued for sending" }, status: 202
+    render json: { message: "Content change queued for sending" }, status: 202
   end
 
 private
 
-  def notification_params
+  def content_change_params
     permitted_params = params.permit!.to_h
     permitted_params.slice(:subject, :from_address_id, :urgent, :header, :footer, :document_type,
                            :content_id, :public_updated_at, :publishing_app, :email_document_supertype,
@@ -28,9 +28,9 @@ private
 
   def content_change_exists?
     ContentChange.where(
-      base_path: notification_params[:base_path],
-      content_id: notification_params[:content_id],
-      public_updated_at: notification_params[:public_updated_at]
+      base_path: content_change_params[:base_path],
+      content_id: content_change_params[:content_id],
+      public_updated_at: content_change_params[:public_updated_at]
     ).exists?
   end
 end

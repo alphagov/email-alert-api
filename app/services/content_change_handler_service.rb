@@ -1,4 +1,4 @@
-class NotificationHandlerService
+class ContentChangeHandlerService
   def initialize(params:, user: nil)
     @params = params
     @user = user

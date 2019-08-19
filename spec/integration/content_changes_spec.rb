@@ -1,7 +1,7 @@
-RSpec.describe "Receiving a notification", type: :request do
+RSpec.describe "Receiving a content change", type: :request do
   context "with authentication and authorisation" do
     describe "#create" do
-      let(:notification_params) {
+      let(:content_change_params) {
         {
           subject: "This is a subject",
           tags: {
@@ -13,8 +13,8 @@ RSpec.describe "Receiving a notification", type: :request do
         }
       }
 
-      let(:expected_notification_params) {
-        notification_params
+      let(:expected_content_change_params) {
+        content_change_params
           .merge(links: {})
           .merge(govuk_request_id: '12345-67890')
       }
@@ -25,43 +25,43 @@ RSpec.describe "Receiving a notification", type: :request do
           .and_return(govuk_request_id: "12345-67890")
       end
 
-      it "serializes the tags and passes them to the NotificationHandlerService" do
-        expect(NotificationHandlerService).to receive(:call).with(
-          params: expected_notification_params,
+      it "serializes the tags and passes them to the ContentChangeHandlerService" do
+        expect(ContentChangeHandlerService).to receive(:call).with(
+          params: expected_content_change_params,
           user: anything,
         )
 
-        post "/notifications", params: notification_params.merge(format: :json)
+        post "/content-changes", params: content_change_params.merge(format: :json)
       end
 
       it "allows an optional document_type parameter" do
-        notification_params[:document_type] = "travel_advice"
-        expect(NotificationHandlerService).to receive(:call).with(
-          params: expected_notification_params,
+        content_change_params[:document_type] = "travel_advice"
+        expect(ContentChangeHandlerService).to receive(:call).with(
+          params: expected_content_change_params,
           user: anything,
         )
 
-        post "/notifications", params: notification_params.merge(format: :json)
+        post "/content-changes", params: content_change_params.merge(format: :json)
       end
 
       it "allows an optional email_document_supertype parameter" do
-        notification_params[:email_document_supertype] = "travel_advice"
-        expect(NotificationHandlerService).to receive(:call).with(
-          params: expected_notification_params,
+        content_change_params[:email_document_supertype] = "travel_advice"
+        expect(ContentChangeHandlerService).to receive(:call).with(
+          params: expected_content_change_params,
           user: anything,
         )
 
-        post "/notifications", params: notification_params.merge(format: :json)
+        post "/content-changes", params: content_change_params.merge(format: :json)
       end
 
       it "allows an optional government_document_supertype parameter" do
-        notification_params[:government_document_supertype] = "travel_advice"
-        expect(NotificationHandlerService).to receive(:call).with(
-          params: expected_notification_params,
+        content_change_params[:government_document_supertype] = "travel_advice"
+        expect(ContentChangeHandlerService).to receive(:call).with(
+          params: expected_content_change_params,
           user: anything,
         )
 
-        post "/notifications", params: notification_params.merge(format: :json)
+        post "/content-changes", params: content_change_params.merge(format: :json)
       end
 
       context "when a duplicate content change exists" do
@@ -75,13 +75,13 @@ RSpec.describe "Receiving a notification", type: :request do
         end
 
         it "returns a 409" do
-          post "/notifications", params: notification_params.merge(format: :json)
+          post "/content-changes", params: content_change_params.merge(format: :json)
           expect(response.status).to eq(409)
         end
 
-        it "doesn't call NotificationHandlerService" do
-          expect(NotificationHandlerService).not_to receive(:call)
-          post "/notifications", params: notification_params.merge(format: :json)
+        it "doesn't call ContentChangeHandlerService" do
+          expect(ContentChangeHandlerService).not_to receive(:call)
+          post "/content-changes", params: content_change_params.merge(format: :json)
         end
       end
     end
@@ -90,7 +90,7 @@ RSpec.describe "Receiving a notification", type: :request do
   context "without authentication" do
     it "returns a 401" do
       without_login do
-        post "/notifications", params: {}
+        post "/content-changes", params: {}
         expect(response.status).to eq(401)
       end
     end
@@ -99,7 +99,7 @@ RSpec.describe "Receiving a notification", type: :request do
   context "without authorisation" do
     it "returns a 403" do
       login_with_signin
-      post "/notifications", params: {}
+      post "/content-changes", params: {}
       expect(response.status).to eq(403)
     end
   end

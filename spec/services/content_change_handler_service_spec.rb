@@ -1,4 +1,4 @@
-RSpec.describe NotificationHandlerService do
+RSpec.describe ContentChangeHandlerService do
   around(:example) do |example|
     Timecop.freeze(Time.local(2017, 1, 1, 9)) do
       Sidekiq::Testing.fake! do

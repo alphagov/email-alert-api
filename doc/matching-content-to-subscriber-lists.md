@@ -83,7 +83,7 @@ query params. The order of keys and the items within the arrays in
 
 ### Sending emails
 
-When a `POST /notifications` request is made to email-alert-api, the
+When a `POST /content-changes` request is made to email-alert-api, the
 data in that request is used to find all subscriber lists in the
 database which it matches. The matching criteria on each list act as
 filters on the stream of published content: as long as the request
