@@ -21,13 +21,15 @@ RSpec.describe "Sending a content change", type: :request do
       government_document_supertype: "government document supertype",
       document_type: "document type",
       publishing_app: "publishing app",
-    }.to_json
+    }
   end
 
   context "with authentication and authorisation" do
     before do
       login_with_internal_app
-      post "/content-changes", params: valid_request_params, headers: JSON_HEADERS
+      post "/content-changes",
+           params: valid_request_params.to_json,
+           headers: JSON_HEADERS
     end
 
     it "creates a ContentChange" do
@@ -35,10 +37,26 @@ RSpec.describe "Sending a content change", type: :request do
     end
   end
 
+  context "when a duplicate content change exists" do
+    before do
+      create(:content_change,
+             base_path: valid_request_params[:base_path],
+             content_id: valid_request_params[:content_id],
+             public_updated_at: valid_request_params[:public_updated_at])
+    end
+
+    it "returns a 409" do
+      post "/content-changes",
+           params: valid_request_params.to_json,
+           headers: JSON_HEADERS
+      expect(response.status).to eq(409)
+    end
+  end
+
   context "without authentication" do
     it "returns 401" do
       without_login do
-        post "/content-changes", params: {}, headers: {}
+        post "/content-changes", params: {}.to_json, headers: {}
         expect(response.status).to eq(401)
       end
     end
@@ -47,7 +65,7 @@ RSpec.describe "Sending a content change", type: :request do
   context "without authorisation" do
     it "returns 403" do
       login_with_signin
-      post "/content-changes", params: {}, headers: {}
+      post "/content-changes", params: {}.to_json, headers: {}
 
       expect(response.status).to eq(403)
     end
@@ -56,7 +74,7 @@ RSpec.describe "Sending a content change", type: :request do
   context "with legacy endpoint" do
     it "creates a ContentChange" do
       login_with_internal_app
-      expect { post "/notifications", params: valid_request_params, headers: JSON_HEADERS }
+      expect { post "/notifications", params: valid_request_params.to_json, headers: JSON_HEADERS }
         .to change { ContentChange.count }
         .by(1)
     end

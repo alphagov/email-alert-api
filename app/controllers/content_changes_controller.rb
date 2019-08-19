@@ -3,8 +3,9 @@ class ContentChangesController < ApplicationController
     return render_conflict if content_change_exists?
 
     ContentChangeHandlerService.call(
-      params: content_change_params,
+      params: content_change_params.to_h,
       user: current_user,
+      govuk_request_id: GdsApi::GovukHeaders.headers[:govuk_request_id],
     )
 
     render json: { message: "Content change queued for sending" }, status: 202
@@ -13,13 +14,25 @@ class ContentChangesController < ApplicationController
 private
 
   def content_change_params
-    permitted_params = params.permit!.to_h
-    permitted_params.slice(:subject, :from_address_id, :urgent, :header, :footer, :document_type,
-                           :content_id, :public_updated_at, :publishing_app, :email_document_supertype,
-                           :government_document_supertype, :title, :description, :change_note, :base_path, :priority, :footnote)
-      .merge(tags: permitted_params.fetch(:tags, {}))
-      .merge(links: permitted_params.fetch(:links, {}))
-      .merge(govuk_request_id: GdsApi::GovukHeaders.headers[:govuk_request_id])
+    params.permit(:subject,
+                  :from_address_id,
+                  :urgent,
+                  :header,
+                  :footer,
+                  :document_type,
+                  :content_id,
+                  :public_updated_at,
+                  :publishing_app,
+                  :email_document_supertype,
+                  :government_document_supertype,
+                  :title,
+                  :description,
+                  :change_note,
+                  :base_path,
+                  :priority,
+                  :footnote,
+                  tags: {},
+                  links: {})
   end
 
   def render_conflict
@@ -27,10 +40,10 @@ private
   end
 
   def content_change_exists?
-    ContentChange.where(
+    ContentChange.exists?(
       base_path: content_change_params[:base_path],
       content_id: content_change_params[:content_id],
       public_updated_at: content_change_params[:public_updated_at]
-    ).exists?
+    )
   end
 end

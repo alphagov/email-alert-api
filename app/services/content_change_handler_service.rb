@@ -1,6 +1,7 @@
 class ContentChangeHandlerService
-  def initialize(params:, user: nil)
+  def initialize(params:, govuk_request_id:, user: nil)
     @params = params
+    @govuk_request_id = govuk_request_id
     @user = user
   end
 
@@ -19,7 +20,7 @@ class ContentChangeHandlerService
 
 private
 
-  attr_reader :params, :user
+  attr_reader :params, :govuk_request_id, :user
 
   def content_change_params
     {
@@ -28,12 +29,12 @@ private
       change_note: params[:change_note],
       description: params[:description],
       base_path: params[:base_path],
-      links: with_content_change_supertypes(params[:links]),
-      tags: with_content_change_supertypes(params[:tags]),
+      links: with_supertypes(params.fetch(:links, {})),
+      tags: with_supertypes(params.fetch(:tags, {})),
       public_updated_at: Time.parse(params[:public_updated_at]),
       email_document_supertype: params[:email_document_supertype],
       government_document_supertype: params[:government_document_supertype],
-      govuk_request_id: params[:govuk_request_id],
+      govuk_request_id: govuk_request_id,
       document_type: params[:document_type],
       publishing_app: params[:publishing_app],
       priority: params.fetch(:priority, "normal").to_sym,
@@ -42,9 +43,9 @@ private
     }
   end
 
-  def with_content_change_supertypes(hash)
-    content_change_supertypes = GovukDocumentTypes.supertypes(document_type: params[:document_type])
+  def with_supertypes(hash)
+    supertypes = GovukDocumentTypes.supertypes(document_type: params[:document_type])
     content_store_document_type = { content_store_document_type: params[:document_type] }
-    content_change_supertypes.merge(hash).merge(content_store_document_type)
+    supertypes.merge(hash).merge(content_store_document_type)
   end
 end
