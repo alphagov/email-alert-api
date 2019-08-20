@@ -34,6 +34,11 @@ Here are some example queries to pull out particular insights.
 SubscriberList.find(4194).active_subscriptions_count
 ```
 
+There is a [rake task][rake-count-subscribers] that does this for you, and
+includes a breakdown of subscriptions that are Immediate, Daily or Weekly:
+
+`query:count_subscribers['subscriber-list-slug']`
+
 ### How many subscribers did a list have at a particular point in time
 
 ```ruby
@@ -185,8 +190,9 @@ ORDER BY count DESC
 LIMIT 10;
 ```
 
-[console-instructions]: https://docs.publishing.service.gov.uk/manual/seeing-things-in-the-aws-console.html
-[aws]: https://aws.amazon.com
 [athena]: https://aws.amazon.com/athena/
 [athena-queries]: https://docs.aws.amazon.com/athena/latest/ug/functions-operators-reference-section.html
+[aws]: https://aws.amazon.com
+[console-instructions]: https://docs.publishing.service.gov.uk/manual/seeing-things-in-the-aws-console.html
+[rake-count-subscribers]: https://deploy.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=query:count_subscribers['subscriber-list-slug']
 [schema.rb]: https://github.com/alphagov/email-alert-api/tree/master/db/schema.rb
