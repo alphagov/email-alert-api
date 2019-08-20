@@ -17,12 +17,40 @@ FactoryBot.define do
     sequence(:govuk_request_id) { |i| "request-id-#{i}" }
     document_type { "document type" }
     publishing_app { "publishing app" }
+
+    trait :matched do
+      transient do
+        subscriber_list { build(:subscriber_list) }
+      end
+
+      after(:build) do |content_change, evaluator|
+        content_change.matched_content_changes << evaluator.association(
+          :matched_content_change,
+          content_change: content_change,
+          subscriber_list: evaluator.subscriber_list,
+        )
+      end
+    end
   end
 
   factory :message do
     title { "Title" }
     body { "Body" }
     sequence(:govuk_request_id) { |i| "request-id-#{i}" }
+
+    trait :matched do
+      transient do
+        subscriber_list { build(:subscriber_list) }
+      end
+
+      after(:build) do |message, evaluator|
+        message.matched_messages << evaluator.association(
+          :matched_message,
+          message: message,
+          subscriber_list: evaluator.subscriber_list,
+        )
+      end
+    end
   end
 
   factory :delivery_attempt, aliases: [:sending_delivery_attempt] do
