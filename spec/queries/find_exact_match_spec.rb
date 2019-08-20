@@ -18,7 +18,7 @@ RSpec.describe FindExactMatch do
       :subscriber_list,
       tags: {
         topics: { all: ["oil-and-gas/licensing", 'something/else'] },
-        taxon_tree: { all: %w[ship-crew-health-and-safety mental-health-service-reform], any: %w[product-safety] }
+        policies: { all: %w[ship-crew-health-and-safety mental-health-service-reform], any: %w[product-safety] }
       },
       links: {
         topics: { all: %w[uuid-888 uuid-999], any: %w[uuid-777] },
@@ -67,7 +67,7 @@ RSpec.describe FindExactMatch do
     it "requires and and any operators to be correctly set" do
       found_lists = described_class.new(query_field: :tags)
                       .call(topics: { all: ["oil-and-gas/licensing", 'something/else'] },
-                            taxon_tree: { all: %w[ship-crew-health-and-safety mental-health-service-reform], any: %w[product-safety] })
+                            policies: { all: %w[ship-crew-health-and-safety mental-health-service-reform], any: %w[product-safety] })
       expect(found_lists).to eq([list_with_all_and_any])
     end
 

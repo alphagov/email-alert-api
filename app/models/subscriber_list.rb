@@ -1,11 +1,10 @@
 class SubscriberList < ApplicationRecord
   include SymbolizeJSON
-
-  TAGS_BLACKLIST = %i(organisations people world_locations part_of_taxonomy_tree).freeze
+  include ActiveModel::Validations
 
   self.include_root_in_json = true
 
-  validate :tag_values_are_valid
+  validates :tags, tags: true
   validate :link_values_are_valid
 
   validates :title, presence: true
@@ -57,21 +56,7 @@ class SubscriberList < ApplicationRecord
     self[:tags].fetch("format", []).include?("medical_safety_alert")
   end
 
-  def invalid_tags
-    TAGS_BLACKLIST & self.tags.keys
-  end
-
 private
-
-  def tag_values_are_valid
-    unless valid_subscriber_criteria(:tags)
-      self.errors.add(:tags, "All tag values must be sent as Arrays")
-    end
-
-    if invalid_tags?
-      self.errors.add(:tags, "#{invalid_tags.to_sentence} are not valid tags. Should they be links?")
-    end
-  end
 
   def link_values_are_valid
     unless valid_subscriber_criteria(:links)
@@ -85,9 +70,5 @@ private
         %i[all any].include?(operator) && values.is_a?(Array)
       end
     end
-  end
-
-  def invalid_tags?
-    invalid_tags.any?
   end
 end

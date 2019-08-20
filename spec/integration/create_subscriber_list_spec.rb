@@ -6,14 +6,14 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
     it "creates a subscriber_list" do
       create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
-                                     taxon_tree: { all: %w[taxon1 taxon2] } })
+                                     location: { all: %w[france germany] } })
 
       expect(SubscriberList.count).to eq(1)
     end
 
     it "returns a 201" do
       create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
-                                     taxon_tree: { all: %w[taxon1 taxon2] } })
+                                     location: { all: %w[france germany] } })
 
       expect(response.status).to eq(201)
     end
@@ -132,7 +132,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
       it "sets the document_type on the subscriber list" do
         create_subscriber_list(
-          tags: { countries: { any: %w[andorra] } },
+          tags: { location: { any: %w[andorra] } },
           document_type: "travel_advice"
         )
 
@@ -141,23 +141,23 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
     end
 
-    describe "creating a subscriber list with content_purpose_subgroups" do
+    describe "creating a subscriber list with content_purpose_subgroup" do
       it "returns a 201" do
-        create_subscriber_list(tags: { content_purpose_subgroups: { any: %w[news] } })
+        create_subscriber_list(tags: { content_purpose_subgroup: { any: %w[news] } })
 
         expect(response.status).to eq(201)
       end
 
-      it "sets content_purpose_subgroups on the subscriber list" do
+      it "sets content_purpose_subgroup on the subscriber list" do
         create_subscriber_list(
           tags: {
-            countries: { any: %w[andorra] },
-            content_purpose_subgroups: { any: %w[news] }
+            location: { any: %w[andorra] },
+            content_purpose_subgroup: { any: %w[news] }
           }
         )
 
         subscriber_list = SubscriberList.last
-        expect(subscriber_list.tags[:content_purpose_subgroups]).to eq(any: %w[news])
+        expect(subscriber_list.tags[:content_purpose_subgroup]).to eq(any: %w[news])
       end
     end
 
