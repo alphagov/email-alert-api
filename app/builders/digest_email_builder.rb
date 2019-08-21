@@ -1,8 +1,9 @@
 class DigestEmailBuilder
   include EmailBuilderHelper
-  def initialize(address:, subscription_content_changes:, digest_run:, subscriber_id:)
+
+  def initialize(address:, subscription_content:, digest_run:, subscriber_id:)
     @address = address
-    @subscription_content_changes = subscription_content_changes
+    @subscription_content = subscription_content
     @digest_run = digest_run
     @subscriber_id = subscriber_id
   end
@@ -24,7 +25,7 @@ class DigestEmailBuilder
 
 private
 
-  attr_reader :address, :subscription_content_changes, :digest_run, :subscriber_id
+  attr_reader :address, :subscription_content, :digest_run, :subscriber_id
 
   def body
     <<~BODY
@@ -40,33 +41,31 @@ private
   end
 
   def presented_results
-    subscription_content_changes.map { |content_change| presented_segment(content_change) }.join("\n&nbsp;\n\n")
+    subscription_content.map { |result| presented_segment(result) }
+                        .join("\n&nbsp;\n\n")
   end
 
-  def presented_segment(subscription_content_changes)
+  def presented_segment(segment)
     <<~RESULT
-      ##{subscription_content_changes.subscriber_list_title}&nbsp;
+      ##{segment.subscriber_list_title}&nbsp;
 
-      #{deduplicate_and_present(subscription_content_changes.content_changes)}
+      #{presented_content(segment.content)}
       ---
 
-      #{presented_unsubscribe_link(subscription_content_changes.subscription_id, subscription_content_changes.subscriber_list_title)}
+      #{presented_unsubscribe_link(segment.subscription_id, segment.subscriber_list_title)}
     RESULT
   end
 
-  def deduplicate_and_present(content_changes)
-    presented_content_changes(
-      deduplicated_content_changes(content_changes)
-    )
-  end
-
-  def deduplicated_content_changes(content_changes)
-    ContentChangeDeduplicatorService.call(content_changes)
-  end
-
-  def presented_content_changes(content_changes)
-    changes = content_changes.map do |content_change|
-      presented_content_change(content_change)
+  def presented_content(content)
+    changes = content.map do |item|
+      case item
+      when ContentChange
+        ContentChangePresenter.call(item, frequency: digest_run.range)
+      when Message
+        MessagePresenter.call(item, frequency: digest_run.range)
+      else
+        raise "Unexpected content type: #{item.class}"
+      end
     end
 
     changes.join("\n---\n\n")

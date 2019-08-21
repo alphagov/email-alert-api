@@ -3,24 +3,22 @@ RSpec.describe DigestEmailBuilder do
   let(:subscriber) { build(:subscriber) }
   let(:address) { subscriber.address }
   let(:subscriber_id) { subscriber.id }
-  let(:subscription_content_changes) {
+  let(:subscription_content) {
     [
       double(
         subscription_id: "ABC1",
         subscriber_list_title: "Test title 1",
-        content_changes: [
-          build(:content_change, public_updated_at: "1/1/2016 10:00"),
-          build(:content_change, public_updated_at: "2/1/2016 11:00"),
-          build(:content_change, public_updated_at: "3/1/2016 12:00"),
+        content: [
+          build(:content_change),
+          build(:message),
         ],
       ),
       double(
         subscription_id: "ABC2",
         subscriber_list_title: "Test title 2",
-        content_changes: [
-          build(:content_change, public_updated_at: "4/1/2016 10:00"),
-          build(:content_change, public_updated_at: "5/1/2016 11:00"),
-          build(:content_change, public_updated_at: "6/1/2016 12:00"),
+        content: [
+          build(:message),
+          build(:content_change),
         ],
       ),
     ]
@@ -29,15 +27,11 @@ RSpec.describe DigestEmailBuilder do
   let(:email) {
     described_class.call(
       address: address,
-      subscription_content_changes: subscription_content_changes,
+      subscription_content: subscription_content,
       digest_run: digest_run,
       subscriber_id: subscriber_id
     )
   }
-
-  def simulated_deduplification(content_changes)
-    content_changes.slice(0, content_changes.length - 1)
-  end
 
   it "returns an Email" do
     expect(email).to be_a(Email)
@@ -58,24 +52,11 @@ RSpec.describe DigestEmailBuilder do
       title: "Test title 2"
     ).and_return("unsubscribe_link_2")
 
-    first_content_changes = subscription_content_changes
-      .first
-      .content_changes
-
-    second_content_changes = subscription_content_changes
-      .second
-      .content_changes
-
-    expect(ContentChangeDeduplicatorService).to receive(:call)
-      .with(first_content_changes)
-      .and_return(simulated_deduplification(first_content_changes))
-
-    expect(ContentChangeDeduplicatorService).to receive(:call)
-      .with(second_content_changes)
-      .and_return(simulated_deduplification(second_content_changes))
-
-    expect(ContentChangePresenter).to receive(:call).exactly(4).times
+    expect(ContentChangePresenter).to receive(:call).exactly(2).times
       .and_return("presented_content_change\n")
+
+    expect(MessagePresenter).to receive(:call).exactly(2).times
+      .and_return("presented_message\n")
 
     expect(email.body).to eq(
       <<~BODY
@@ -87,7 +68,7 @@ RSpec.describe DigestEmailBuilder do
 
         ---
 
-        presented_content_change
+        presented_message
 
         ---
 
@@ -97,7 +78,7 @@ RSpec.describe DigestEmailBuilder do
 
         #Test title 2&nbsp;
 
-        presented_content_change
+        presented_message
 
         ---
 
