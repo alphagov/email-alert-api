@@ -14,17 +14,22 @@ RSpec.describe "creating and delivering digests", type: :request do
     Timecop.return
   end
 
-  def base_path
+  def url
     "http://www.dev.gov.uk/base-path?"
   end
 
-  def first_expected_daily_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four, subscriber)
+  def first_expected_daily_email_body(subscription_one,
+                                      subscription_two,
+                                      content_change_one,
+                                      content_change_two,
+                                      content_change_three,
+                                      subscriber)
     <<~BODY
       Daily update from GOV.UK.
 
       #Subscriber list one&nbsp;
 
-      [Title one](#{base_path}#{utm_params(content_change_one.id, 'daily')})
+      [Title one](#{url}#{utm_params(content_change_one.id, 'daily')})
 
       Page summary
       Description one
@@ -37,16 +42,9 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      [Title two](#{base_path}#{utm_params(content_change_two.id, 'daily')})
+      Title two
 
-      Page summary
-      Description two
-
-      Change made
-      Change note two
-
-      Time updated
-      9:00am, 1 January 2017
+      Body
 
       ---
 
@@ -56,20 +54,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       #Subscriber list two&nbsp;
 
-      [Title four](#{base_path}#{utm_params(content_change_four.id, 'daily')})
-
-      Page summary
-      Description four
-
-      Change made
-      Change note four
-
-      Time updated
-      9:30am, 1 January 2017
-
-      ---
-
-      [Title three](#{base_path}#{utm_params(content_change_three.id, 'daily')})
+      [Title three](#{url}#{utm_params(content_change_two.id, 'daily')})
 
       Page summary
       Description three
@@ -79,6 +64,19 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Time updated
       9:00am, 1 January 2017
+
+      ---
+
+      [Title four](#{url}#{utm_params(content_change_three.id, 'daily')})
+
+      Page summary
+      Description four
+
+      Change made
+      Change note four
+
+      Time updated
+      9:30am, 1 January 2017
 
       ---
 
@@ -92,13 +90,15 @@ RSpec.describe "creating and delivering digests", type: :request do
     BODY
   end
 
-  def second_expected_daily_email_body(subscription, content_change_one, content_change_two, subscriber)
+  def second_expected_daily_email_body(subscription,
+                                       content_change_one,
+                                       subscriber)
     <<~BODY
       Daily update from GOV.UK.
 
       #Subscriber list one&nbsp;
 
-      [Title one](#{base_path}#{utm_params(content_change_one.id, 'daily')})
+      [Title one](#{url}#{utm_params(content_change_one.id, 'daily')})
 
       Page summary
       Description one
@@ -111,16 +111,9 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       ---
 
-      [Title two](#{base_path}#{utm_params(content_change_two.id, 'daily')})
+      Title two
 
-      Page summary
-      Description two
-
-      Change made
-      Change note two
-
-      Time updated
-      9:00am, 1 January 2017
+      Body
 
       ---
 
@@ -182,7 +175,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     )
 
     #publish two items to each list
-    Timecop.freeze "2017-01-01 09:30:00" do
+    Timecop.freeze "2017-01-01 09:30" do
       create_content_change(
         title: "Title one",
         content_id: SecureRandom.uuid,
@@ -195,20 +188,16 @@ RSpec.describe "creating and delivering digests", type: :request do
       )
     end
 
-    Timecop.freeze "2017-01-01 09:30:01" do
-      create_content_change(
+    Timecop.freeze "2017-01-01 09:31" do
+      create_message(
         title: "Title two",
-        content_id: SecureRandom.uuid,
-        description: "Description two",
-        change_note: "Change note two",
-        public_updated_at: "2017-01-01 09:00:00",
         links: {
           topics: [list_one_topic_id, list_two_topic_id]
         }
       )
     end
 
-    Timecop.freeze "2017-01-01 09:30:02" do
+    Timecop.freeze "2017-01-01 09:32" do
       create_content_change(
         title: "Title three",
         content_id: SecureRandom.uuid,
@@ -221,7 +210,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       )
     end
 
-    Timecop.freeze "2017-01-01 09:30:03" do
+    Timecop.freeze "2017-01-01 09:33" do
       create_content_change(
         title: "Title four",
         content_id: SecureRandom.uuid,
@@ -234,7 +223,6 @@ RSpec.describe "creating and delivering digests", type: :request do
       )
     end
 
-    #TODO retrieve this via the API when we have an endpoint
     subscriptions = Subscription.all
     content_changes = ContentChange.order(:created_at)
     subscribers = Subscriber.all
@@ -245,7 +233,12 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => first_expected_daily_email_body(subscriptions[0], subscriptions[1], content_changes[0], content_changes[1], content_changes[2], content_changes[3], subscribers[0])
+            "body" => first_expected_daily_email_body(subscriptions[0],
+                                                      subscriptions[1],
+                                                      content_changes[0],
+                                                      content_changes[1],
+                                                      content_changes[2],
+                                                      subscribers[0])
           )
         )
       )
@@ -257,7 +250,9 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => second_expected_daily_email_body(subscriptions[2], content_changes[0], content_changes[1], subscribers[1])
+            "body" => second_expected_daily_email_body(subscriptions[2],
+                                                       content_changes[0],
+                                                       subscribers[1])
           )
         )
       )
@@ -270,13 +265,19 @@ RSpec.describe "creating and delivering digests", type: :request do
     expect(second_digest_stub).to have_been_requested
   end
 
-  def first_expected_weekly_email_body(subscription_one, subscription_two, content_change_one, content_change_two, content_change_three, content_change_four, subscriber)
+  def first_expected_weekly_email_body(subscription_one,
+                                       subscription_two,
+                                       content_change_one,
+                                       message_one,
+                                       content_change_two,
+                                       content_change_three,
+                                       subscriber)
     <<~BODY
       Updates on GOV.UK this week.
 
       #Subscriber list one&nbsp;
 
-      [Title one](#{base_path}#{utm_params(content_change_one.id, 'weekly')})
+      [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
 
       Page summary
       Description one
@@ -285,20 +286,13 @@ RSpec.describe "creating and delivering digests", type: :request do
       Change note one
 
       Time updated
-      10:00am, 28 December 2016
+      10:00am, 27 December 2016
 
       ---
 
-      [Title two](#{base_path}#{utm_params(content_change_two.id, 'weekly')})
+      [Title two](#{url}#{message_utm_params(message_one.id, 'weekly')})
 
-      Page summary
-      Description two
-
-      Change made
-      Change note two
-
-      Time updated
-      9:00am, 27 December 2016
+      Body
 
       ---
 
@@ -308,20 +302,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       #Subscriber list two&nbsp;
 
-      [Title four](#{base_path}#{utm_params(content_change_four.id, 'weekly')})
-
-      Page summary
-      Description four
-
-      Change made
-      Change note four
-
-      Time updated
-      9:30am, 1 January 2017
-
-      ---
-
-      [Title three](#{base_path}#{utm_params(content_change_three.id, 'weekly')})
+      [Title three](#{url}#{utm_params(content_change_two.id, 'weekly')})
 
       Page summary
       Description three
@@ -331,6 +312,19 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       Time updated
       9:00am, 30 December 2016
+
+      ---
+
+      [Title four](#{url}#{utm_params(content_change_three.id, 'weekly')})
+
+      Page summary
+      Description four
+
+      Change made
+      Change note four
+
+      Time updated
+      9:30am, 1 January 2017
 
       ---
 
@@ -344,13 +338,16 @@ RSpec.describe "creating and delivering digests", type: :request do
     BODY
   end
 
-  def second_expected_weekly_email_body(subscription, content_change_one, content_change_two, subscriber)
+  def second_expected_weekly_email_body(subscription,
+                                        content_change_one,
+                                        message_one,
+                                        subscriber)
     <<~BODY
       Updates on GOV.UK this week.
 
       #Subscriber list one&nbsp;
 
-      [Title one](#{base_path}#{utm_params(content_change_one.id, 'weekly')})
+      [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
 
       Page summary
       Description one
@@ -359,20 +356,13 @@ RSpec.describe "creating and delivering digests", type: :request do
       Change note one
 
       Time updated
-      10:00am, 28 December 2016
+      10:00am, 27 December 2016
 
       ---
 
-      [Title two](#{base_path}#{utm_params(content_change_two.id, 'weekly')})
+      [Title two](#{url}#{message_utm_params(message_one.id, 'weekly')})
 
-      Page summary
-      Description two
-
-      Change made
-      Change note two
-
-      Time updated
-      9:00am, 27 December 2016
+      Body
 
       ---
 
@@ -385,6 +375,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY
   end
+
   scenario "weekly digest run" do
     login_with_internal_app
 
@@ -433,33 +424,30 @@ RSpec.describe "creating and delivering digests", type: :request do
     )
 
     #publish two items to each list
-    Timecop.freeze "2016-12-28 10:00" do
+    Timecop.freeze "2016-12-27 09:30" do
       create_content_change(
         title: "Title one",
         content_id: SecureRandom.uuid,
         description: "Description one",
         change_note: "Change note one",
-        public_updated_at: "2016-12-28 10:00:00",
+        public_updated_at: "2016-12-27 10:00:00",
         links: {
           topics: [list_one_topic_id]
         }
       )
     end
 
-    Timecop.freeze "2016-12-27 09:00" do
-      create_content_change(
+    Timecop.freeze "2016-12-27 09:31" do
+      create_message(
         title: "Title two",
-        content_id: SecureRandom.uuid,
-        description: "Description two",
-        change_note: "Change note two",
-        public_updated_at: "2016-12-27 09:00:00",
+        url: "/base-path",
         links: {
           topics: [list_one_topic_id]
         }
       )
     end
 
-    Timecop.freeze "2016-12-30 09:00:00" do
+    Timecop.freeze "2016-12-30 09:32" do
       create_content_change(
         title: "Title three",
         content_id: SecureRandom.uuid,
@@ -472,7 +460,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       )
     end
 
-    Timecop.freeze "2017-01-01 09:30:00" do
+    Timecop.freeze "2017-01-01 09:33" do
       create_content_change(
         title: "Title four",
         content_id: SecureRandom.uuid,
@@ -489,9 +477,9 @@ RSpec.describe "creating and delivering digests", type: :request do
       )
     end
 
-    #TODO retrieve this via the API when we have an endpoint
     subscriptions = Subscription.all
-    content_changes = ContentChange.all
+    content_changes = ContentChange.order(:created_at)
+    messages = Message.order(:created_at)
     subscribers = Subscriber.all
 
     first_digest_stub = stub_request(:post, "http://fake-notify.com/v2/notifications/email")
@@ -500,7 +488,13 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => first_expected_weekly_email_body(subscriptions[0], subscriptions[1], content_changes[0], content_changes[1], content_changes[2], content_changes[3], subscribers[0])
+            "body" => first_expected_weekly_email_body(subscriptions[0],
+                                                       subscriptions[1],
+                                                       content_changes[0],
+                                                       messages[0],
+                                                       content_changes[1],
+                                                       content_changes[2],
+                                                       subscribers[0])
           )
         )
       )
@@ -512,7 +506,10 @@ RSpec.describe "creating and delivering digests", type: :request do
       .with(
         body: hash_including(
           personalisation: hash_including(
-            "body" => second_expected_weekly_email_body(subscriptions[2], content_changes[0], content_changes[1], subscribers[1])
+            "body" => second_expected_weekly_email_body(subscriptions[2],
+                                                        content_changes[0],
+                                                        messages[0],
+                                                        subscribers[1])
           )
         )
       )
