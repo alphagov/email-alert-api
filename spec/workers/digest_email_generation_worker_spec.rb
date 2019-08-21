@@ -30,31 +30,25 @@ RSpec.describe DigestEmailGenerationWorker do
       create(:digest_run_subscriber, digest_run: digest_run, subscriber: subscriber)
     end
 
-    let(:subscription_content_change_query_results) do
+    let(:subscription_content) do
       [
         double(
           subscription_id: subscription_one.id,
           subscriber_list_title: "Test title 1",
-          content_changes: [create(:content_change)],
+          content: [create(:content_change)],
         ),
         double(
           subscription_id: subscription_two.id,
           subscriber_list_title: "Test title 2",
-          content_changes: [create(:content_change)],
+          content: [create(:message)],
         ),
       ]
     end
 
     before do
-      allow(SubscriptionContentChangeQuery).to receive(:call).and_return(
-        subscription_content_change_query_results
-      )
-    end
-
-    it "accepts digest_run_subscriber_id" do
-      expect {
-        subject.perform(digest_run_subscriber.id)
-      }.not_to raise_error
+      allow(DigestSubscriptionContentQuery)
+        .to receive(:call)
+        .and_return(subscription_content)
     end
 
     it "creates an email" do
@@ -79,14 +73,13 @@ RSpec.describe DigestEmailGenerationWorker do
     it "marks the DigestRunSubscriber completed" do
       expect { subject.perform(digest_run_subscriber.id) }
         .to change { digest_run_subscriber.reload.completed? }
-        .from(false)
         .to(true)
     end
 
     it "creates SubscriptionContents" do
       expect { subject.perform(digest_run_subscriber.id) }
         .to change(SubscriptionContent, :count)
-        .by(subscription_content_change_query_results.count)
+        .by(2)
     end
 
     it "doesn't mark the digest run complete" do
@@ -95,7 +88,7 @@ RSpec.describe DigestEmailGenerationWorker do
     end
 
     context "when there are no content changes to send" do
-      let(:subscription_content_change_query_results) { [] }
+      let(:subscription_content) { [] }
 
       it "doesn't create an email" do
         expect { subject.perform(digest_run_subscriber.id) }
@@ -105,7 +98,6 @@ RSpec.describe DigestEmailGenerationWorker do
       it "marks the digest run subscriber completed" do
         expect { subject.perform(digest_run_subscriber.id) }
           .to change { digest_run_subscriber.reload.completed? }
-          .from(false)
           .to(true)
       end
     end
