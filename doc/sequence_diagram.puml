@@ -5,7 +5,7 @@ skinparam dpi 300
 actor email_alert_service as "email-alert-service"
 participant controller as "ContentChangeController"
 database content_change as "ContentChange"
-participant subscription_content_worker as "SubscriptionContentWorker"
+participant process_content_change_worker as "ProcessContentChangeWorker"
 participant subscription_matcher as "SubscriptionMatcher"
 database subscription_content as "SubscriptionContent"
 participant email_generation_worker as "EmailGenerationWorker"
@@ -20,18 +20,18 @@ participant govuk_notify as "GOV.UK Notify" #orange
 email_alert_service -> controller : POST /create
 controller -> content_change : create
 content_change -> controller : id
-controller -> subscription_content_worker : enqueue with id
+controller -> process_content_change_worker : enqueue with id
 controller -> email_alert_service : acknowledge
 
 group sidekiq
-  subscription_content_worker -> content_change : find by id
-  content_change -> subscription_content_worker : instance
-  subscription_content_worker -> subscription_matcher : content_change
+  process_content_change_worker -> content_change : find by id
+  content_change -> process_content_change_worker : instance
+  process_content_change_worker -> subscription_matcher : content_change
   subscription_matcher -> subscription_matcher : ... existing logic
-  subscription_matcher -> subscription_content_worker : subscriptions
-  subscription_content_worker -> subscription_content : create with subscription, content_change
-  subscription_content_worker -> email_generation_worker : enqueue with 'immediate'
-  subscription_content_worker -> content_change : set processed_at and save
+  subscription_matcher -> process_content_change_worker : subscriptions
+  process_content_change_worker -> subscription_content : create with subscription, content_change
+  process_content_change_worker -> email_generation_worker : enqueue with 'immediate'
+  process_content_change_worker -> content_change : set processed_at and save
 end group
 
 group daily timer
