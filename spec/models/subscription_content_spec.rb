@@ -1,19 +1,25 @@
 RSpec.describe SubscriptionContent do
   describe "validations" do
-    subject { build(:subscription_content) }
-
     it "is valid for the default factory" do
-      expect(subject).to be_valid
+      expect(build(:subscription_content)).to be_valid
     end
 
-    it "requires a subscription" do
-      subject.subscription = nil
-      expect(subject).to be_invalid
+    it "is valid with a message" do
+      expect(build(:subscription_content, :with_message)).to be_valid
     end
 
-    it "requires a content change" do
-      subject.content_change = nil
-      expect(subject).to be_invalid
+    it "is invalid with a message and a content_change" do
+      subscription_content = build(:subscription_content,
+                                   message: build(:message),
+                                   content_change: build(:content_change))
+      expect(subscription_content).to be_invalid
+    end
+
+    it "is invalid without a message or a content_change" do
+      subscription_content = build(:subscription_content,
+                                   message: nil,
+                                   content_change: nil)
+      expect(subscription_content).to be_invalid
     end
   end
 

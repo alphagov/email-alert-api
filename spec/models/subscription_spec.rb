@@ -94,6 +94,26 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
+  describe ".for_message" do
+    it "returns subscriptions associated with a message" do
+      associated_subscription = create(:subscription)
+      associated_message = create(:message)
+      create(:matched_message,
+             subscriber_list: associated_subscription.subscriber_list,
+             message: associated_message)
+      unassociated_subscription = create(:subscription)
+      unassociated_message = create(:message)
+      create(:matched_message,
+             subscriber_list: unassociated_subscription.subscriber_list,
+             message: unassociated_message)
+
+      expect(Subscription.for_message(associated_message))
+        .to include(associated_subscription)
+      expect(Subscription.for_message(associated_message))
+        .not_to include(unassociated_subscription)
+    end
+  end
+
   describe ".subscription_ids_by_subscriber" do
     it "returns a hash of subscriber id to an array of subscriptions" do
       subscriber = create(:subscriber)

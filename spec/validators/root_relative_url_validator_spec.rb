@@ -1,48 +1,48 @@
-RSpec.describe AbsolutePathValidator do
-  class AbsolutePathValidatable
+RSpec.describe RootRelativeUrlValidator do
+  class RootRelativeUrlValidatable
     include ActiveModel::Validations
     include ActiveModel::Model
 
-    attr_accessor :path
-    validates :path, absolute_path: true
+    attr_accessor :url
+    validates :url, root_relative_url: true
   end
 
-  subject(:model) { AbsolutePathValidatable.new }
+  subject(:model) { RootRelativeUrlValidatable.new }
 
   context "when an absolute path is provided" do
-    before { model.path = "/test" }
+    before { model.url = "/test" }
     it { is_expected.to be_valid }
   end
 
   context "when a relative path is provided" do
-    before { model.path = "test" }
+    before { model.url = "test" }
 
     it "has an error" do
       expect(model.valid?).to be false
-      expect(model.errors[:path]).to match(["must be an absolute path"])
+      expect(model.errors[:url]).to match(["must be a root-relative URL"])
     end
   end
 
   context "when an invalid URI is provided" do
-    before { model.path = "bad URI" }
+    before { model.url = "bad URI" }
 
     it { is_expected.not_to be_valid }
   end
 
   context "when a full url is provided" do
-    before { model.path = "https://example.com/test" }
+    before { model.url = "https://example.com/test" }
 
     it { is_expected.not_to be_valid }
   end
 
   context "when a path with query string is provided" do
-    before { model.path = "/test?test=this" }
+    before { model.url = "/test?test=this" }
 
     it { is_expected.to be_valid }
   end
 
   context "when a path with a fragment is provided" do
-    before { model.path = "/test#fragment" }
+    before { model.url = "/test#fragment" }
 
     it { is_expected.to be_valid }
   end

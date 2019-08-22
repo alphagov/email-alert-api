@@ -1,4 +1,4 @@
-RSpec.describe MatchedContentChange, type: :model do
+RSpec.describe MatchedContentChange do
   context "validations" do
     subject { build(:matched_content_change) }
 

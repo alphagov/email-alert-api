@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_17_121233) do
+ActiveRecord::Schema.define(version: 2019_08_15_192913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -104,6 +104,35 @@ ActiveRecord::Schema.define(version: 2019_07_17_121233) do
     t.index ["subscriber_list_id"], name: "index_matched_content_changes_on_subscriber_list_id"
   end
 
+  create_table "matched_messages", force: :cascade do |t|
+    t.uuid "message_id", null: false
+    t.bigint "subscriber_list_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["message_id", "subscriber_list_id"], name: "index_matched_messages_on_message_id_and_subscriber_list_id", unique: true
+    t.index ["message_id"], name: "index_matched_messages_on_message_id"
+    t.index ["subscriber_list_id"], name: "index_matched_messages_on_subscriber_list_id"
+  end
+
+  create_table "messages", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.text "sender_message_id"
+    t.text "title", null: false
+    t.text "url"
+    t.text "body", null: false
+    t.json "links", default: {}, null: false
+    t.json "tags", default: {}, null: false
+    t.string "document_type"
+    t.string "email_document_supertype"
+    t.string "government_document_supertype"
+    t.datetime "processed_at"
+    t.string "signon_user_uid"
+    t.string "govuk_request_id", null: false
+    t.integer "priority", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sender_message_id"], name: "index_messages_on_sender_message_id", unique: true
+  end
+
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
     t.string "title", limit: 10000, null: false
     t.datetime "created_at"
@@ -136,11 +165,13 @@ ActiveRecord::Schema.define(version: 2019_07_17_121233) do
     t.integer "digest_run_subscriber_id"
     t.uuid "email_id"
     t.uuid "subscription_id", null: false
-    t.uuid "content_change_id", null: false
+    t.uuid "content_change_id"
+    t.uuid "message_id"
     t.index ["content_change_id"], name: "index_subscription_contents_on_content_change_id"
     t.index ["digest_run_subscriber_id"], name: "index_subscription_contents_on_digest_run_subscriber_id"
     t.index ["email_id"], name: "index_subscription_contents_on_email_id"
     t.index ["subscription_id", "content_change_id"], name: "index_subscription_contents_on_subscription_and_content_change", unique: true
+    t.index ["subscription_id", "message_id"], name: "index_subscription_contents_on_subscription_id_and_message_id", unique: true
     t.index ["subscription_id"], name: "index_subscription_contents_on_subscription_id"
   end
 
@@ -179,9 +210,12 @@ ActiveRecord::Schema.define(version: 2019_07_17_121233) do
   add_foreign_key "emails", "subscribers", name: "emails_subscriber_id_fk", on_delete: :cascade
   add_foreign_key "matched_content_changes", "content_changes", on_delete: :cascade
   add_foreign_key "matched_content_changes", "subscriber_lists", on_delete: :cascade
+  add_foreign_key "matched_messages", "messages", on_delete: :cascade
+  add_foreign_key "matched_messages", "subscriber_lists", on_delete: :cascade
   add_foreign_key "subscription_contents", "content_changes", on_delete: :restrict
   add_foreign_key "subscription_contents", "digest_run_subscribers", on_delete: :cascade
   add_foreign_key "subscription_contents", "emails", on_delete: :cascade
+  add_foreign_key "subscription_contents", "messages", on_delete: :restrict
   add_foreign_key "subscription_contents", "subscriptions", on_delete: :restrict
   add_foreign_key "subscriptions", "subscriber_lists", on_delete: :restrict
   add_foreign_key "subscriptions", "subscribers", on_delete: :restrict
