@@ -1,16 +1,4 @@
 RSpec.describe Message do
-  describe "tags" do
-    it "is valid with known tags" do
-      tags = { topics: { any: %w[value] } }
-      expect(build(:message, tags: tags)).to be_valid
-    end
-
-    it "is invalid with unknown tags" do
-      tags = { unknown: { any: %w[value] } }
-      expect(build(:message, tags: tags)).to be_invalid
-    end
-  end
-
   describe "url" do
     it "is valid when url is nil" do
       expect(build(:message, url: nil)).to be_valid
