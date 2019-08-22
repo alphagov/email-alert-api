@@ -5,63 +5,17 @@ class ImmediateEmailGenerationWorker
 
   LOCK_NAME = "immediate_email_generation_worker".freeze
 
-  attr_reader :content_changes
-
   def perform
-    @content_changes = {}
-
     ensure_only_running_once do
-      subscribers.find_in_batches do |group|
+      SubscribersForImmediateEmailQuery.call.find_in_batches do |group|
         subscription_contents = grouped_subscription_contents(group.pluck(:id))
         update_content_change_cache(subscription_contents)
-        import_and_associate_emails(group, subscription_contents)
+        create_content_change_emails(group, subscription_contents)
       end
     end
   end
 
 private
-
-  def import_and_associate_emails(subscribers, subscription_contents)
-    queue = []
-
-    Subscriber.transaction do
-      values = []
-
-      email_ids = import_emails(subscribers, subscription_contents).ids
-
-      subscriber_id_content_change_id_in_order = map_subscriber_content_change_id_in_order(subscribers, subscription_contents) do |subscriber, content_change_id|
-        [subscriber.id, content_change_id]
-      end
-
-      email_ids.each_with_index do |email_id, i|
-        subscriber_id = subscriber_id_content_change_id_in_order[i][0]
-        content_change_id = subscriber_id_content_change_id_in_order[i][1]
-        subscription_contents_in_this_email = subscription_contents[subscriber_id][content_change_id]
-
-        queue << [email_id, content_changes[content_change_id].priority.to_sym]
-
-        subscription_contents_in_this_email.each do |subscription_content|
-          values << "(#{subscription_content.id}, '#{email_id}'::UUID)"
-        end
-      end
-
-      update_subscription_contents(values)
-    end
-
-    queue_delivery_request_workers(queue)
-  end
-
-  def update_content_change_cache(subscription_contents)
-    content_change_ids = subscription_contents.flat_map { |_k, v| v.keys }.uniq
-    existing_content_change_ids = content_changes.keys
-    missing_content_change_ids = content_change_ids - existing_content_change_ids
-
-    if missing_content_change_ids.any?
-      ContentChange.where(id: missing_content_change_ids).each do |cc|
-        content_changes[cc.id] = cc
-      end
-    end
-  end
 
   def ensure_only_running_once
     Subscriber.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
@@ -69,54 +23,59 @@ private
     end
   end
 
-  def queue_delivery_request_workers(queue)
-    queue.each do |email_id, priority|
-      DeliveryRequestWorker.perform_async_in_queue(
-        email_id, queue: queue_for_priority(priority)
-      )
-    end
-  end
-
-  def queue_for_priority(priority)
-    if priority == :high
-      :delivery_immediate_high
-    elsif priority == :normal
-      :delivery_immediate
-    else
-      raise ArgumentError, "priority should be :high or :normal"
-    end
-  end
-
   def grouped_subscription_contents(subscriber_ids)
     UnprocessedSubscriptionContentsBySubscriberQuery.call(subscriber_ids)
   end
 
-  def subscribers
-    SubscribersForImmediateEmailQuery.call
+  def content_changes
+    @content_changes ||= {}
   end
 
-  def map_subscriber_content_change_id_in_order(subscribers, subscription_contents)
-    subscribers.flat_map do |subscriber|
-      subscription_contents[subscriber.id].keys.map do |content_change_id|
-        yield subscriber, content_change_id
-      end
+  def update_content_change_cache(subscription_contents)
+    content_change_ids = subscription_contents.flat_map { |_, sc| sc.map(&:content_change_id) }
+                                              .compact
+                                              .uniq
+    ids = content_change_ids - content_changes.keys
+
+    content_changes.merge!(ContentChange.where(id: ids).index_by(&:id))
+  end
+
+  def create_content_change_emails(subscribers, subscription_contents)
+    email_data = subscribers.flat_map do |subscriber|
+      subscribers_content_change_email_data(subscriber,
+                                            subscription_contents[subscriber.id])
     end
+
+    email_ids = ContentChangeEmailBuilder.call(email_data.map { |e| e[:params] }).ids
+    update_subscription_contents(email_data, email_ids)
+    queue_for_delivery(email_data, email_ids)
   end
 
-  def import_emails(subscribers, subscription_contents)
-    email_params = map_subscriber_content_change_id_in_order(subscribers, subscription_contents) do |subscriber, content_change_id|
+  def subscribers_content_change_email_data(subscriber, subscription_contents)
+    by_content_change_id = subscription_contents.select(&:content_change_id)
+                                                .group_by(&:content_change_id)
+
+    by_content_change_id.map do |content_change_id, matching_subscription_contents|
       {
-        address: subscriber.address,
-        content_change: content_changes[content_change_id],
-        subscriptions: subscription_contents[subscriber.id][content_change_id].map(&:subscription),
-        subscriber_id: subscriber.id,
+        params: {
+          address: subscriber.address,
+          content_change: content_changes[content_change_id],
+          subscriptions: matching_subscription_contents.map(&:subscription),
+          subscriber_id: subscriber.id,
+        },
+        subscription_contents: matching_subscription_contents,
+        priority: content_changes[content_change_id].priority.to_sym,
       }
     end
-
-    ImmediateEmailBuilder.call(email_params)
   end
 
-  def update_subscription_contents(values)
+  def update_subscription_contents(email_data, email_ids)
+    values = email_data.flat_map.with_index do |data, index|
+      data[:subscription_contents].map do |subscription_content|
+        "(#{subscription_content.id}, '#{email_ids[index]}'::UUID)"
+      end
+    end
+
     ActiveRecord::Base.connection.execute(
       %(
         UPDATE subscription_contents SET email_id = v.email_id
@@ -124,5 +83,12 @@ private
         WHERE subscription_contents.id = v.id
       )
     )
+  end
+
+  def queue_for_delivery(email_data, email_ids)
+    email_data.each.with_index do |data, index|
+      queue = data[:priority] == :high ? :delivery_immediate_high : :delivery_immediate
+      DeliveryRequestWorker.perform_async_in_queue(email_ids[index], queue: queue)
+    end
   end
 end

@@ -34,7 +34,7 @@ RSpec.describe ProcessContentChangeWorker do
     let!(:subscriber) { create(:subscriber, address: Email::COURTESY_EMAIL) }
 
     it "creates an email for the courtesy email group" do
-      expect(ImmediateEmailBuilder)
+      expect(ContentChangeEmailBuilder)
         .to receive(:call)
         .with([hash_including(address: subscriber.address)])
         .and_call_original

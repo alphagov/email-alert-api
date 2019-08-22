@@ -1,13 +1,13 @@
 class SubscribersForImmediateEmailQuery
   def self.call
-    new.call
-  end
+    unprocessed_subscription_content_exists =
+      SubscriptionContent
+        .joins(:subscription)
+        .where(email_id: nil)
+        .where("subscriptions.subscriber_id = subscribers.id")
+        .arel
+        .exists
 
-  def call
-    subscriber_ids = Subscription.
-        joins(:subscription_contents).
-        where(subscription_contents: { email_id: nil }).
-        select(:subscriber_id)
-    Subscriber.activated.where(id: subscriber_ids)
+    Subscriber.activated.where(unprocessed_subscription_content_exists)
   end
 end
