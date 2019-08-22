@@ -12,9 +12,21 @@ class Subscription < ApplicationRecord
 
   scope :active, -> { where(ended_at: nil) }
   scope :ended, -> { where.not(ended_at: nil) }
+
   scope :active_on, ->(date) do
     where("created_at <= ?", date)
       .where("ended_at IS NULL OR ended_at > ?", date)
+  end
+
+  scope :for_content_change, ->(content_change) do
+    joins(subscriber_list: :matched_content_changes)
+      .where(matched_content_changes: { content_change_id: content_change.id })
+  end
+
+  scope :subscription_ids_by_subscriber, -> do
+    group(:subscriber_id)
+      .pluck(:subscriber_id, Arel.sql("ARRAY_AGG(subscriptions.id)"))
+      .to_h
   end
 
   def as_json(options = {})

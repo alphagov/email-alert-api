@@ -25,19 +25,14 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
-  describe "end" do
+  describe "deletion behaviour" do
     subject { create(:subscription) }
+    let!(:subscription_content) { create(:subscription_content, subscription: subject) }
 
-    it "doesn't delete the record" do
-      subject.end(reason: :unsubscribed)
-      expect(described_class.find(subject.id)).to eq(subject)
-    end
-
-    it "sets ended_at to Time.now" do
-      Timecop.freeze do
-        subject.end(reason: :unsubscribed)
-        expect(subject.ended_at).to eq(Time.now)
-      end
+    it "deletes associated subscription_contents" do
+      expect { subject.destroy }.to(change {
+        SubscriptionContent.count
+      }.by(-1))
     end
   end
 
@@ -50,6 +45,18 @@ RSpec.describe Subscription, type: :model do
     it "doesn't return subscriptions with ended_at" do
       create(:subscription, :ended)
       expect(Subscription.active.count).to eq(0)
+    end
+  end
+
+  describe ".ended" do
+    it "returns subscriptions with ended_at nil" do
+      create(:subscription, :ended)
+      expect(Subscription.ended.count).to eq(1)
+    end
+
+    it "doesn't return subscriptions with ended_at" do
+      create(:subscription)
+      expect(Subscription.ended.count).to eq(0)
     end
   end
 
@@ -67,26 +74,50 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
-  describe ".ended" do
-    it "returns subscriptions with ended_at nil" do
-      create(:subscription, :ended)
-      expect(Subscription.ended.count).to eq(1)
-    end
+  describe ".for_content_change" do
+    it "returns subscriptions associated with a content change" do
+      associated_subscription = create(:subscription)
+      associated_content_change = create(:content_change)
+      create(:matched_content_change,
+             subscriber_list: associated_subscription.subscriber_list,
+             content_change: associated_content_change)
+      unassociated_subscription = create(:subscription)
+      unassociated_content_change = create(:content_change)
+      create(:matched_content_change,
+             subscriber_list: unassociated_subscription.subscriber_list,
+             content_change: unassociated_content_change)
 
-    it "doesn't return subscriptions with ended_at" do
-      create(:subscription)
-      expect(Subscription.ended.count).to eq(0)
+      expect(Subscription.for_content_change(associated_content_change))
+        .to include(associated_subscription)
+      expect(Subscription.for_content_change(associated_content_change))
+        .not_to include(unassociated_subscription)
     end
   end
 
-  describe "when it is deleted" do
-    subject { create(:subscription) }
-    let!(:subscription_content) { create(:subscription_content, subscription: subject) }
+  describe ".subscription_ids_by_subscriber" do
+    it "returns a hash of subscriber id to an array of subscriptions" do
+      subscriber = create(:subscriber)
+      subscription1 = create(:subscription, subscriber: subscriber)
+      subscription2 = create(:subscription, subscriber: subscriber)
 
-    it "deletes associated subscription_contents" do
-      expect { subject.destroy }.to(change {
-        SubscriptionContent.count
-      }.by(-1))
+      expect(Subscription.subscription_ids_by_subscriber)
+        .to match(subscriber.id => match_array([subscription1.id, subscription2.id]))
+    end
+  end
+
+  describe "#end" do
+    subject { create(:subscription) }
+
+    it "doesn't delete the record" do
+      subject.end(reason: :unsubscribed)
+      expect(described_class.find(subject.id)).to eq(subject)
+    end
+
+    it "sets ended_at to Time.now" do
+      Timecop.freeze do
+        subject.end(reason: :unsubscribed)
+        expect(subject.ended_at).to eq(Time.now)
+      end
     end
   end
 end
