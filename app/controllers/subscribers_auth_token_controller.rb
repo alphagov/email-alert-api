@@ -51,7 +51,7 @@ private
     validates :address, email_address: true, allow_blank: true
 
     validates :destination, presence: true
-    validates :destination, absolute_path: true, allow_blank: true
-    validates :redirect, absolute_path: true, allow_blank: true
+    validates :destination, root_relative_url: true, allow_blank: true
+    validates :redirect, root_relative_url: true, allow_blank: true
   end
 end
