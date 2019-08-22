@@ -1,53 +1,22 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t 'hello'
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t('hello') %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# The following keys must be escaped otherwise they will not be retrieved by
-# the default I18n backend:
-#
-# true, false, on, off, yes, no
-#
-# Instead, surround them with single quotes.
-#
-# en:
-#   'true': 'foo'
-#
-# To learn more, please read the Rails Internationalization guide
-# available at http://guides.rubyonrails.org/i18n.html.
-
 en:
-  frequencies:
-    immediate:
+  emails:
+    content_change:
       subject: "Update from GOV.UK – %{title}"
       opening_line: Update on GOV.UK.
-      permission_reminder_topic: to ‘%{title}’
+      permission_reminder: "^You’re getting this email because you subscribed to immediate updates to ‘%{topic}’ on GOV.UK."
       survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate
-    daily:
-      subject: "Daily update from GOV.UK"
-      opening_line: Daily update from GOV.UK.
-      permission_reminder_topic: on these topics
-      survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
-    weekly:
-      subject: "Weekly update from GOV.UK"
-      opening_line: Updates on GOV.UK this week.
-      permission_reminder_topic: on these topics
-      survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
-  description_header: "Page summary"
-  change_note_header: "Change made"
-  public_updated_at_header: "Time updated"
-  permission_reminder: "^You’re getting this email because you subscribed to %{frequency} updates %{permission_reminder_topic} on GOV.UK."
-  feedback_link: "Is this email useful? [Answer some questions to tell us more](%{survey_link})."
+    digests:
+      daily:
+        subject: "Daily update from GOV.UK"
+        opening_line: Daily update from GOV.UK.
+        permission_reminder: "^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK."
+        survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
+      weekly:
+        subject: "Weekly update from GOV.UK"
+        opening_line: Updates on GOV.UK this week.
+        permission_reminder: "^You’re getting this email because you subscribed to weekly updates on these topics on GOV.UK."
+        survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
+    description_header: "Page summary"
+    change_note_header: "Change made"
+    public_updated_at_header: "Time updated"
+    feedback_link: "Is this email useful? [Answer some questions to tell us more](%{survey_link})."

@@ -1,5 +1,4 @@
 class ContentChangeEmailBuilder
-  include EmailBuilderHelper
   def initialize(recipients_and_content)
     @recipients_and_content = recipients_and_content
   end
@@ -29,33 +28,43 @@ private
     end
   end
 
+  def subject(content_change)
+    I18n.t!("emails.content_change.subject", title: content_change.title)
+  end
+
   def columns
     %i(address subject body subscriber_id)
   end
 
   def body(content_change, subscriptions, address)
-    if Array(subscriptions).empty?
-      <<~BODY
-        #{opening_line}
+    <<~BODY
+      #{I18n.t!('emails.content_change.opening_line')}
 
-        ---
-        #{presented_content_change(content_change)}
-        ---
-        #{feedback_link.strip}
-      BODY
-    else
-      <<~BODY
-        #{opening_line}
+      ---
+      #{ContentChangePresenter.call(content_change)}
+      ---
+      #{footer(subscriptions, address).strip}
+    BODY
+  end
 
-        ---
-        #{presented_content_change(content_change)}
-        ---
-        #{permission_reminder(subscriptions.first.subscriber_list.title)}
+  def footer(subscriptions, address)
+    return feedback_link if subscriptions.empty?
 
-        #{presented_manage_subscriptions_links(address)}
+    permission_reminder = I18n.t!("emails.content_change.permission_reminder",
+                                  topic: subscriptions.first.subscriber_list.title)
 
-        #{feedback_link.strip}
-      BODY
-    end
+    <<~BODY
+      #{permission_reminder}
+
+      #{ManageSubscriptionsLinkPresenter.call(address)}
+
+      #{feedback_link}
+    BODY
+  end
+
+  def feedback_link
+    I18n.t!("emails.feedback_link",
+            survey_link: I18n.t!("emails.content_change.survey_link"),
+            feedback_link: "#{Plek.new.website_root}/contact")
   end
 end
