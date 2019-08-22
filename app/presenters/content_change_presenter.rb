@@ -39,7 +39,7 @@ private
   end
 
   def public_updated_at_header
-    I18n.t("public_updated_at_header")
+    I18n.t!("emails.public_updated_at_header")
   end
 
   def public_updated_at
@@ -59,17 +59,17 @@ private
   end
 
   def description_header
-    I18n.t("description_header")
+    I18n.t!("emails.description_header")
   end
 
   def description_markdown
     return nil if description.blank?
 
-    description_header.concat("\n").concat(strip_markdown(description))
+    description_header + "\n" + strip_markdown(description)
   end
 
   def change_note_header
-    I18n.t("change_note_header")
+    I18n.t!("emails.change_note_header")
   end
 
   def change_note_markdown

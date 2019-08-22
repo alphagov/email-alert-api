@@ -1,5 +1,4 @@
 class DigestEmailBuilder
-  include EmailBuilderHelper
   def initialize(address:, subscription_content_changes:, digest_run:, subscriber_id:)
     @address = address
     @subscription_content_changes = subscription_content_changes
@@ -14,7 +13,7 @@ class DigestEmailBuilder
   def call
     Email.create!(
       address: address,
-      subject: subject,
+      subject: I18n.t!("emails.digests.#{digest_run.range}.subject"),
       body: body,
       subscriber_id: subscriber_id,
     )
@@ -28,12 +27,12 @@ private
 
   def body
     <<~BODY
-      #{opening_line}
+      #{I18n.t!("emails.digests.#{digest_run.range}.opening_line")}
 
       #{presented_results}
-      #{permission_reminder}
+      #{I18n.t!("emails.digests.#{digest_run.range}.permission_reminder")}
 
-      #{presented_manage_subscriptions_links(address)}
+      #{ManageSubscriptionsLinkPresenter.call(address)}
 
       #{feedback_link.strip}
     BODY
@@ -50,7 +49,7 @@ private
       #{deduplicate_and_present(subscription_content_changes.content_changes)}
       ---
 
-      #{presented_unsubscribe_link(subscription_content_changes.subscription_id, subscription_content_changes.subscriber_list_title)}
+      #{UnsubscribeLinkPresenter.call(subscription_content_changes.subscription_id, subscription_content_changes.subscriber_list_title)}
     RESULT
   end
 
@@ -66,9 +65,15 @@ private
 
   def presented_content_changes(content_changes)
     changes = content_changes.map do |content_change|
-      presented_content_change(content_change)
+      ContentChangePresenter.call(content_change, frequency: digest_run.range)
     end
 
     changes.join("\n---\n\n")
+  end
+
+  def feedback_link
+    I18n.t!("emails.feedback_link",
+            survey_link: I18n.t!("emails.digests.#{digest_run.range}.survey_link"),
+            feedback_link: "#{Plek.new.website_root}/contact")
   end
 end

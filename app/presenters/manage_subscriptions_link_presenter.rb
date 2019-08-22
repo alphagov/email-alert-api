@@ -1,5 +1,5 @@
 class ManageSubscriptionsLinkPresenter
-  def initialize(address:)
+  def initialize(address)
     @address = address
   end
 

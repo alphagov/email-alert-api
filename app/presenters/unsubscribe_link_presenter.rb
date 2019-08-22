@@ -1,5 +1,5 @@
 class UnsubscribeLinkPresenter
-  def initialize(id:, title:)
+  def initialize(id, title)
     @id = id
     @title = title
   end

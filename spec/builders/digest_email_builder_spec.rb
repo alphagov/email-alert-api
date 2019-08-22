@@ -48,15 +48,13 @@ RSpec.describe DigestEmailBuilder do
   end
 
   it "adds an entry to body for each content change" do
-    expect(UnsubscribeLinkPresenter).to receive(:call).with(
-      id: "ABC1",
-      title: "Test title 1"
-    ).and_return("unsubscribe_link_1")
+    expect(UnsubscribeLinkPresenter)
+      .to receive(:call).with("ABC1", "Test title 1")
+      .and_return("unsubscribe_link_1")
 
-    expect(UnsubscribeLinkPresenter).to receive(:call).with(
-      id: "ABC2",
-      title: "Test title 2"
-    ).and_return("unsubscribe_link_2")
+    expect(UnsubscribeLinkPresenter)
+      .to receive(:call).with("ABC2", "Test title 2")
+      .and_return("unsubscribe_link_2")
 
     first_content_changes = subscription_content_changes
       .first
