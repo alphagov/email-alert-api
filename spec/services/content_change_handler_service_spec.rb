@@ -1,4 +1,4 @@
-RSpec.describe NotificationHandlerService do
+RSpec.describe ContentChangeHandlerService do
   around(:example) do |example|
     Timecop.freeze(Time.local(2017, 1, 1, 9)) do
       Sidekiq::Testing.fake! do
@@ -14,16 +14,8 @@ RSpec.describe NotificationHandlerService do
         topics: ["oil-and-gas/licensing"]
       },
       links: {
-        organisations: {
-          any: %w[
-            c380ea42-5d91-41cc-b3cd-0a4cfe439461
-          ]
-        },
-        taxon_tree: {
-          all: %w[
-            6416e4e0-c0c1-457a-8337-4bf8ed9d5f80
-          ]
-        }
+        organisations: %w[c380ea42-5d91-41cc-b3cd-0a4cfe439461],
+        taxon_tree: %w[6416e4e0-c0c1-457a-8337-4bf8ed9d5f80],
       },
       content_id: "afe78383-6b27-45a4-92ae-a579e416373a",
       title: "Travel advice",
@@ -35,9 +27,10 @@ RSpec.describe NotificationHandlerService do
       government_document_supertype: "government document supertype",
       document_type: "news_article",
       publishing_app: "publishing app",
-      govuk_request_id: "request-id",
     }
   }
+
+  let(:govuk_request_id) { SecureRandom.uuid }
 
   let!(:subscriber_list) do
     create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } })
@@ -59,19 +52,19 @@ RSpec.describe NotificationHandlerService do
 
   describe ".call" do
     it "creates a ContentChange" do
-      expect { described_class.call(params: params) }
+      expect { described_class.call(params: params, govuk_request_id: govuk_request_id) }
         .to change { ContentChange.count }.by(1)
     end
 
     it "creates a MatchedContentChange" do
-      expect { described_class.call(params: params) }
+      expect { described_class.call(params: params, govuk_request_id: govuk_request_id) }
         .to change { MatchedContentChange.count }.by(1)
     end
 
     let(:content_change) { create(:content_change) }
 
     it "adds GovukDocumentTypes to the content_change tags" do
-      described_class.call(params: params)
+      described_class.call(params: params, govuk_request_id: govuk_request_id)
 
       expect(ContentChange.last).to have_attributes(
         title: "Travel advice",
@@ -80,13 +73,9 @@ RSpec.describe NotificationHandlerService do
         description: "This is a description",
         links:
           hash_including(
-            organisations: {
-              any: %w[c380ea42-5d91-41cc-b3cd-0a4cfe439461]
-            },
+            organisations: %w[c380ea42-5d91-41cc-b3cd-0a4cfe439461],
             content_store_document_type: "news_article",
-            taxon_tree: {
-              all: %w[6416e4e0-c0c1-457a-8337-4bf8ed9d5f80]
-            }
+            taxon_tree: %w[6416e4e0-c0c1-457a-8337-4bf8ed9d5f80],
 ),
         tags: hash_including(
           topics: ["oil-and-gas/licensing"],
@@ -94,7 +83,7 @@ RSpec.describe NotificationHandlerService do
         ),
         email_document_supertype: "email document supertype",
         government_document_supertype: "government document supertype",
-        govuk_request_id: "request-id",
+        govuk_request_id: govuk_request_id,
         document_type: "news_article",
         publishing_app: "publishing app",
         processed_at: nil,
@@ -105,12 +94,12 @@ RSpec.describe NotificationHandlerService do
     end
 
     it "adds GovukDocumentTypes to the content_change links" do
-      described_class.call(params: params)
+      described_class.call(params: params, govuk_request_id: govuk_request_id)
       expect(ContentChange.last.links).to include(document_type_hash)
     end
 
     it "adds GovukDocumentTypes to the content_change tags" do
-      described_class.call(params: params)
+      described_class.call(params: params, govuk_request_id: govuk_request_id)
       expect(ContentChange.last.tags).to include(document_type_hash)
     end
 
@@ -121,7 +110,7 @@ RSpec.describe NotificationHandlerService do
         .to receive(:perform_async)
         .with(content_change.id)
 
-      described_class.call(params: params)
+      described_class.call(params: params, govuk_request_id: govuk_request_id)
     end
 
     it "Raises errors if the ContentChange is invalid" do
@@ -129,7 +118,7 @@ RSpec.describe NotificationHandlerService do
         ActiveRecord::RecordInvalid
       )
 
-      expect { described_class.call(params: params) }
+      expect { described_class.call(params: params, govuk_request_id: govuk_request_id) }
         .to raise_error(ActiveRecord::RecordInvalid)
     end
   end

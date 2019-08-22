@@ -8,7 +8,8 @@ Rails.application.routes.draw do
 
     post "/unpublish-messages", to: "unpublish_messages#create"
 
-    resources :notifications, only: %i[create]
+    post "/notifications", to: "content_changes#create" # for backwards compaibility
+    resources :content_changes, only: %i[create], path: "content-changes"
     resources :spam_reports, path: "spam-reports", only: %i[create]
     resources :status_updates, path: "status-updates", only: %i[create]
     resources :subscriptions, only: %i[create show update]

@@ -61,7 +61,7 @@ module FeatureHelpers
       links: {},
     }.merge(overrides)
 
-    post "/notifications", params: params.to_json, headers: JSON_HEADERS
+    post "/content-changes", params: params.to_json, headers: JSON_HEADERS
     expect(response.status).to eq(202)
   end
 
