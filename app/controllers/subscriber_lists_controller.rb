@@ -38,6 +38,7 @@ private
     find_exact_query_params.merge(
       title: title,
       slug: slug,
+      url: params[:url],
       signon_user_uid: current_user.uid,
     )
   end
