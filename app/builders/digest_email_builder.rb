@@ -45,13 +45,21 @@ private
 
   def presented_segment(segment)
     <<~RESULT
-      ##{segment.subscriber_list_title}&nbsp;
+      # #{presented_title(segment)} &nbsp;
 
       #{presented_content(segment.content)}
       ---
 
       #{UnsubscribeLinkPresenter.call(segment.subscription_id, segment.subscriber_list_title)}
     RESULT
+  end
+
+  def presented_title(segment)
+    if segment.subscriber_list_url
+      "[#{segment.subscriber_list_title}](#{Plek.new.website_root}#{segment.subscriber_list_url})"
+    else
+      segment.subscriber_list_title
+    end
   end
 
   def presented_content(content)
