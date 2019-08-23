@@ -57,6 +57,29 @@ The following fields are accepted on this endpoint: `subject`, `from_address_id`
 `document_type`, `content_id`, `public_updated_at`, `publishing_app`, `email_document_supertype`,
 `government_document_supertype`, `title`, `description`, `change_note`, `base_path`, `priority` and `footnote`.
 
+* `POST /messages` with data:
+
+```json
+{
+  "sender_message_id": "unique-identifier-for-each-message",
+  "title": "This is the title of my bulletin",
+  "url": "https://www.url.com",
+  "body": "Email body here",
+  "document_type": "",
+  "email_document_supertype": "",
+  "government_document_supertype": "",
+  "priority": "weekly",
+  "tags": {
+    "tag": ["some-tag"]
+  },
+  "links": {
+    "link": ["some-link"]
+  }
+}
+```
+
+and it will respond with `202 Accepted` (the call is queued).
+
 * `POST /emails` with data:
 
 ```json
