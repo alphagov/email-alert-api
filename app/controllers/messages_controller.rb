@@ -8,7 +8,7 @@ class MessagesController < ApplicationController
       govuk_request_id: GdsApi::GovukHeaders.headers[:govuk_request_id],
     )
 
-    render json: { message: "Content change queued for sending" }, status: 202
+    render json: { message: "Message queued for sending" }, status: 202
   end
 
 private
