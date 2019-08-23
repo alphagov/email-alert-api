@@ -81,6 +81,20 @@ RSpec.describe SubscriberList, type: :model do
     it "is not recognised as medical safety alert" do
       expect(subject.is_medical_safety_alert?).to be false
     end
+
+    describe "url" do
+      it "is valid when url is nil" do
+        expect(build(:subscriber_list, url: nil)).to be_valid
+      end
+
+      it "is valid when url is an absolute path" do
+        expect(build(:subscriber_list, url: "/test")).to be_valid
+      end
+
+      it "is invalid when url is an absolute URI" do
+        expect(build(:subscriber_list, url: "https://example.com/test")).to be_invalid
+      end
+    end
   end
 
   context "when a subscriber_list is deleted" do
