@@ -7,5 +7,7 @@ class EmailsController < ApplicationController
     )
 
     DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_immediate)
+
+    render json: { message: "Email has been queued for sending" }, status: 202
   end
 end
