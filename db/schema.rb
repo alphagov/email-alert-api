@@ -144,6 +144,7 @@ ActiveRecord::Schema.define(version: 2019_08_29_070710) do
     t.string "government_document_supertype", default: "", null: false
     t.string "signon_user_uid"
     t.string "slug", limit: 10000, null: false
+    t.uuid "content_id"
     t.string "url"
     t.string "description", default: "", null: false
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
