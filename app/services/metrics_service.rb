@@ -16,6 +16,10 @@ class MetricsService
       increment("content_changes_created")
     end
 
+    def message_created
+      increment("messages_created")
+    end
+
     def email_send_request(provider_name, &block)
       time("#{provider_name}.email_send_request.timing", &block)
     end

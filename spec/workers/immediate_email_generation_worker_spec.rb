@@ -70,12 +70,9 @@ RSpec.describe ImmediateEmailGenerationWorker do
       end
 
       it "should create an email" do
-        expect {
-          perform_with_fake_sidekiq
-        }
+        expect { perform_with_fake_sidekiq }
           .to change { Email.count }
-          .from(1)
-          .to(2)
+          .by(1)
       end
 
       it "should associate the subscription content with the email" do
@@ -99,6 +96,27 @@ RSpec.describe ImmediateEmailGenerationWorker do
 
           perform_with_fake_sidekiq
         end
+      end
+    end
+
+    context "with messages" do
+      it "creates emails" do
+        create_list(:subscription_content, 3, :with_message)
+
+        expect { perform_with_fake_sidekiq }
+          .to change { Email.count }
+          .by(3)
+      end
+    end
+
+    context "with messages and content changes" do
+      it "creates emails" do
+        create_list(:subscription_content, 3, :with_message)
+        create_list(:subscription_content, 2)
+
+        expect { perform_with_fake_sidekiq }
+          .to change { Email.count }
+          .by(5)
       end
     end
   end

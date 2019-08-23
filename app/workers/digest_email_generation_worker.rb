@@ -4,80 +4,60 @@ class DigestEmailGenerationWorker
   sidekiq_options queue: :email_generation_digest
 
   def perform(digest_run_subscriber_id)
-    digest_run_subscriber = DigestRunSubscriber.includes(:subscriber, :digest_run).find(digest_run_subscriber_id)
-    content_changes = fetch_subscriber_content_changes(digest_run_subscriber)
+    digest_run_subscriber = DigestRunSubscriber.includes(:subscriber, :digest_run)
+                                               .find(digest_run_subscriber_id)
+    subscription_content = DigestSubscriptionContentQuery.call(
+      digest_run_subscriber.subscriber,
+      digest_run_subscriber.digest_run,
+    )
 
-    if content_changes.count.zero?
-      mark_digest_run_subscriber_completed(digest_run_subscriber)
+    if subscription_content.empty?
+      digest_run_subscriber.mark_complete!
     else
-      create_and_send_email(digest_run_subscriber, content_changes)
+      create_and_send_email(digest_run_subscriber, subscription_content)
     end
   end
 
 private
 
-  def create_and_send_email(digest_run_subscriber, content_changes)
-    range = digest_run_subscriber.digest_run.range
+  def create_and_send_email(digest_run_subscriber, subscription_content)
+    digest_run = digest_run_subscriber.digest_run
+    subscriber = digest_run_subscriber.subscriber
 
-    MetricsService.digest_email_generation(range) do
-      email = Email.transaction do
-        mark_digest_run_subscriber_completed(digest_run_subscriber)
-        generate_email_and_subscription_contents(
-          digest_run_subscriber,
-          content_changes
-        )
+    MetricsService.digest_email_generation(digest_run.range) do
+      email = nil
+      Email.transaction do
+        digest_run_subscriber.mark_complete!
+        email = DigestEmailBuilder.call(address: subscriber.address,
+                                        subscription_content: subscription_content,
+                                        digest_run: digest_run,
+                                        subscriber_id: subscriber.id)
+        fill_subscription_content(email, subscription_content, digest_run_subscriber)
       end
 
       DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_digest)
     end
   end
 
-  def mark_digest_run_subscriber_completed(digest_run_subscriber)
-    digest_run_subscriber.mark_complete!
-  end
+  def fill_subscription_content(email, subscription_content, digest_run_subscriber)
+    columns = %i[email_id
+                 subscription_id
+                 content_change_id
+                 message_id
+                 digest_run_subscriber_id]
 
-  def generate_email_and_subscription_contents(digest_run_subscriber, content_changes)
-    email = create_email(digest_run_subscriber, content_changes)
-    columns = formatted_subscription_content_change_columns
-    values = formatted_subscription_content_changes(
-      email, digest_run_subscriber, content_changes
-    )
-
-    SubscriptionContent.import!(columns, values)
-
-    email
-  end
-
-  def formatted_subscription_content_change_columns
-    %i(email_id subscription_id content_change_id digest_run_subscriber_id)
-  end
-
-  def formatted_subscription_content_changes(email, digest_run_subscriber, content_changes)
-    content_changes.flat_map do |result|
-      result.content_changes.map do |content_change|
+    rows = subscription_content.flat_map do |result|
+      result.content.map do |content|
         [
           email.id,
           result.subscription_id,
-          content_change.id,
+          content.is_a?(ContentChange) ? content.id : nil,
+          content.is_a?(Message) ? content.id : nil,
           digest_run_subscriber.id,
         ]
       end
     end
-  end
 
-  def create_email(digest_run_subscriber, content_changes)
-    DigestEmailBuilder.call(
-      address: digest_run_subscriber.subscriber.address,
-      subscription_content_changes: content_changes,
-      digest_run: digest_run_subscriber.digest_run,
-      subscriber_id: digest_run_subscriber.subscriber.id
-    )
-  end
-
-  def fetch_subscriber_content_changes(digest_run_subscriber)
-    SubscriptionContentChangeQuery.call(
-      subscriber: digest_run_subscriber.subscriber,
-      digest_run: digest_run_subscriber.digest_run,
-    )
+    SubscriptionContent.import!(columns, rows)
   end
 end
