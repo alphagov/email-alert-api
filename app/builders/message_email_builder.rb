@@ -47,7 +47,7 @@ private
     if subscriptions.any?
       copy += <<~BODY
         ---
-        #{permission_reminder(subscriptions)}
+        #{permission_reminder(subscriptions.first.subscriber_list)}
 
         #{ManageSubscriptionsLinkPresenter.call(address)}
       BODY
@@ -56,8 +56,13 @@ private
     copy
   end
 
-  def permission_reminder(subscriptions)
-    title = subscriptions.first.subscriber_list.title
-    I18n.t!("emails.message.permission_reminder", topic: title)
+  def permission_reminder(subscriber_list)
+    topic = if subscriber_list.url
+              "[#{subscriber_list.title}](#{Plek.new.website_root}#{subscriber_list.url})"
+            else
+              subscriber_list.title
+            end
+
+    I18n.t!("emails.message.permission_reminder", topic: topic)
   end
 end

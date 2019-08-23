@@ -7,12 +7,16 @@ RSpec.describe MessageEmailBuilder do
            subscriber_list: build(:subscriber_list, title: "First Subscription"))
   end
 
+  let(:subscription_two) do
+    create(:subscription,
+           subscriber: subscriber,
+           subscriber_list: build(:subscriber_list, title: "Second Subscription", url: "/subscription"))
+  end
+
   let(:subscriptions) do
     [
       subscription_one,
-      create(:subscription,
-             subscriber: subscriber,
-             subscriber_list: build(:subscriber_list, title: "Second Subscription")),
+      subscription_two,
     ]
   end
 
@@ -61,12 +65,14 @@ RSpec.describe MessageEmailBuilder do
     end
 
     context "with a subscription" do
+      let(:subscription) { nil }
+
       let(:params) do
         [
           {
             address: subscriber.address,
             message: message,
-            subscriptions: [subscription_one],
+            subscriptions: [subscription],
             subscriber_id: subscriber.id,
           }
         ]
@@ -76,24 +82,52 @@ RSpec.describe MessageEmailBuilder do
 
       let(:email) { Email.find(email_import.ids.first) }
 
-      it "sets the body" do
-        email = Email.find(email_import.ids.first)
+      context "without a URL" do
+        let(:subscription) { subscription_one }
 
-        expect(email.body).to eq(
-          <<~BODY
-            Update on GOV.UK.
+        it "sets the body" do
+          email = Email.find(email_import.ids.first)
 
-            ---
-            Title
+          expect(email.body).to eq(
+            <<~BODY
+              Update on GOV.UK.
 
-            Some content
+              ---
+              Title
 
-            ---
-            ^You’re getting this email because you subscribed to immediate updates to ‘#{subscriptions.first.subscriber_list.title}’ on GOV.UK.
+              Some content
 
-            [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
-          BODY
-        )
+              ---
+              ^You’re getting this email because you subscribed to immediate updates to ‘#{subscriptions.first.subscriber_list.title}’ on GOV.UK.
+
+              [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
+            BODY
+          )
+        end
+      end
+
+      context "with a URL" do
+        let(:subscription) { subscription_two }
+
+        it "sets the body" do
+          email = Email.find(email_import.ids.first)
+
+          expect(email.body).to eq(
+            <<~BODY
+              Update on GOV.UK.
+
+              ---
+              Title
+
+              Some content
+
+              ---
+              ^You’re getting this email because you subscribed to immediate updates to ‘[#{subscription.subscriber_list.title}](#{Plek.new.website_root}#{subscription.subscriber_list.url})’ on GOV.UK.
+
+              [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
+            BODY
+          )
+        end
       end
     end
   end
