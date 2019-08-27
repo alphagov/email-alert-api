@@ -24,6 +24,8 @@ class SubscriptionsController < ApplicationController
       )
     end
 
+    send_subscription_confirmation_email(subscription)
+
     status = existing_subscription ? :ok : :created
     render json: { id: subscription.id }, status: status
   end
@@ -101,5 +103,10 @@ private
 
   def subscription_params
     params.permit(:id, :address, :subscribable_id, :subscriber_list_id, :frequency)
+  end
+
+  def send_subscription_confirmation_email(subscription)
+    email = SubscriptionConfirmationEmailBuilder.call(subscription: subscription)
+    DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_immediate)
   end
 end

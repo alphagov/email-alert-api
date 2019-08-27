@@ -39,6 +39,7 @@ module FeatureHelpers
     }
     post "/subscriptions", params: params.to_json, headers: JSON_HEADERS
     expect(response.status).to eq(expected_status)
+    expect_a_subscription_confirmation_email_was_sent
   end
 
   def unsubscribe_from_subscriber_list(id, expected_status: 204)
@@ -85,12 +86,18 @@ module FeatureHelpers
   def expect_an_email_was_sent
     request_data = nil
     expectation = ->(request) { request_data = data(request.body) }
-    expect(a_request(:post, /fake-notify/).with(&expectation)).to have_been_made
+    expect(a_request(:post, /fake-notify/).with(&expectation)).to have_been_made.at_least_once
     request_data
   end
 
   def expect_an_email_was_not_sent
     expect(a_request(:post, /fake-notify/)).not_to have_been_made
+  end
+
+  def expect_a_subscription_confirmation_email_was_sent
+    email_data = expect_an_email_was_sent
+    subject = email_data.fetch(:personalisation).fetch(:subject)
+    expect(subject).to match(/new subscription/)
   end
 
   def extract_unsubscribe_id(email_data)
