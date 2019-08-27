@@ -32,6 +32,7 @@ private
     SubscriberListQuery.new(
       tags: content_change.tags,
       links: content_change.links,
+      content_id: content_change.content_id,
       document_type: content_change.document_type,
       email_document_supertype: content_change.email_document_supertype,
       government_document_supertype: content_change.government_document_supertype

@@ -29,6 +29,7 @@ private
     SubscriberListQuery.new(
       tags: message.tags,
       links: message.links,
+      content_id: message.content_id,
       document_type: message.document_type,
       email_document_supertype: message.email_document_supertype,
       government_document_supertype: message.government_document_supertype

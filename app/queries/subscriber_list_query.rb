@@ -1,7 +1,8 @@
 class SubscriberListQuery
-  def initialize(tags:, links:, document_type:, email_document_supertype:, government_document_supertype:)
+  def initialize(tags:, links:, content_id:, document_type:, email_document_supertype:, government_document_supertype:)
     @tags = tags.symbolize_keys
     @links = links.symbolize_keys
+    @content_id = content_id
     @document_type = document_type
     @email_document_supertype = email_document_supertype
     @government_document_supertype = government_document_supertype
@@ -31,6 +32,7 @@ private
 
   def base_scope
     SubscriberList
+      .where(content_id: [nil, @content_id])
       .where(document_type: ['', @document_type])
       .where(email_document_supertype: ['', @email_document_supertype])
       .where(government_document_supertype: ['', @government_document_supertype])
