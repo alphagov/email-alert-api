@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(version: 2019_08_29_070710) do
     t.integer "priority", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "content_id"
     t.index ["sender_message_id"], name: "index_messages_on_sender_message_id", unique: true
   end
 
