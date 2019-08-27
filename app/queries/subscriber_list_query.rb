@@ -11,7 +11,7 @@ class SubscriberListQuery
     @lists ||= (
       lists_matched_on_links +
       lists_matched_on_tags +
-      lists_matched_on_document_type_only
+      lists_matched_on_empty_links_and_tags_only
     ).uniq(&:id)
   end
 
@@ -25,7 +25,7 @@ private
     MatchedForNotification.new(query_field: :links, scope: base_scope).call(@links)
   end
 
-  def lists_matched_on_document_type_only
+  def lists_matched_on_empty_links_and_tags_only
     FindWithoutLinksAndTags.new(scope: base_scope).call
   end
 
