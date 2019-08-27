@@ -27,6 +27,7 @@ private
       .slice(:title, :url, :body, :sender_message_id)
       .merge(links: with_supertypes(params.fetch(:links, {})),
              tags: with_supertypes(params.fetch(:tags, {})),
+             document_type: params[:document_type].presence,
              email_document_supertype: params[:email_document_supertype].presence,
              government_document_supertype: params[:government_document_supertype].presence,
              priority: params.fetch(:priority, "normal"),

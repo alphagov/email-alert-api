@@ -4,6 +4,7 @@ RSpec.describe MessageHandlerService do
       {
         title: "Message title",
         body: "Message body",
+        document_type: "document_type",
         tags: {
           topics: ["oil-and-gas/licensing"],
         },
@@ -23,6 +24,7 @@ RSpec.describe MessageHandlerService do
       expect(Message.last).to have_attributes(
         title: "Message title",
         body: "Message body",
+        document_type: "document_type",
       )
     end
 
