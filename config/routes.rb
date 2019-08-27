@@ -30,6 +30,7 @@ Rails.application.routes.draw do
       GovukHealthcheck::SidekiqRedis,
       GovukHealthcheck::ActiveRecord,
       Healthcheck::ContentChanges,
+      Healthcheck::Messages,
       Healthcheck::DigestRuns,
       Healthcheck::QueueLatency,
       Healthcheck::QueueSize,
