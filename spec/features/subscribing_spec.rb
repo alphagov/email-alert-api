@@ -1,4 +1,8 @@
 RSpec.describe "Subscribing to a subscriber_list", type: :request do
+  before do
+    stub_notify
+  end
+
   scenario "subscribing to a subscriber_list" do
     login_with_internal_app
 
