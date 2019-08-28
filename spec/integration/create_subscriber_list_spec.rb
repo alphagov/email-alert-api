@@ -54,6 +54,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
           gov_delivery_id
           created_at
           updated_at
+          url
           tags
           links
           email_document_supertype
@@ -80,6 +81,15 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
       expect(subscriber_list["gov_delivery_id"]).to eq("oil-and-gas-licensing")
       expect(subscriber_list["slug"]).to eq("oil-and-gas-licensing")
+    end
+
+    it "creates a subscriber_list with a url" do
+      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
+                                     location: { all: %w[france germany] } },
+                             url: "/oil-and-gas")
+
+      expect(SubscriberList.count).to eq(1)
+      expect(SubscriberList.first.url).to eq("/oil-and-gas")
     end
 
     describe 'using legacy parameters' do

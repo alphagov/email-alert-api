@@ -33,6 +33,7 @@ RSpec.describe DigestSubscriptionContentQuery do
         expect(results.first.to_h)
           .to match(subscription_id: subscription.id,
                     subscriber_list_title: subscriber_list.title,
+                    subscriber_list_url: subscriber_list.url,
                     content: [content_change, message])
       end
 
@@ -76,7 +77,7 @@ RSpec.describe DigestSubscriptionContentQuery do
 
     context "with multiple subscriber lists" do
       let(:subscriber_list1) { create(:subscriber_list, title: "Subscriber List A") }
-      let(:subscriber_list2) { create(:subscriber_list, title: "Subscriber List B") }
+      let(:subscriber_list2) { create(:subscriber_list, title: "Subscriber List B", url: "/example") }
 
       let!(:subscription1) do
         create(:subscription,
@@ -107,11 +108,13 @@ RSpec.describe DigestSubscriptionContentQuery do
         expect(results.first.to_h)
           .to match(subscription_id: subscription1.id,
                     subscriber_list_title: subscriber_list1.title,
+                    subscriber_list_url: subscriber_list1.url,
                     content: [content_change1])
 
         expect(results.last.to_h)
           .to match(subscription_id: subscription2.id,
                     subscriber_list_title: subscriber_list2.title,
+                    subscriber_list_url: subscriber_list2.url,
                     content: [content_change2])
       end
 
@@ -124,6 +127,7 @@ RSpec.describe DigestSubscriptionContentQuery do
         expect(results.first.to_h)
           .to match(subscription_id: subscription1.id,
                     subscriber_list_title: subscriber_list1.title,
+                    subscriber_list_url: subscriber_list1.url,
                     content: [message])
       end
     end

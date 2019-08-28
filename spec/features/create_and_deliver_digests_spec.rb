@@ -27,7 +27,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     <<~BODY
       Daily update from GOV.UK.
 
-      #Subscriber list one&nbsp;
+      # Subscriber list one &nbsp;
 
       [Title one](#{url}#{utm_params(content_change_one.id, 'daily')})
 
@@ -52,7 +52,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       &nbsp;
 
-      #Subscriber list two&nbsp;
+      # Subscriber list two &nbsp;
 
       [Title three](#{url}#{utm_params(content_change_two.id, 'daily')})
 
@@ -96,7 +96,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     <<~BODY
       Daily update from GOV.UK.
 
-      #Subscriber list one&nbsp;
+      # Subscriber list one &nbsp;
 
       [Title one](#{url}#{utm_params(content_change_one.id, 'daily')})
 
@@ -275,7 +275,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     <<~BODY
       Updates on GOV.UK this week.
 
-      #Subscriber list one&nbsp;
+      # Subscriber list one &nbsp;
 
       [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
 
@@ -300,7 +300,7 @@ RSpec.describe "creating and delivering digests", type: :request do
 
       &nbsp;
 
-      #Subscriber list two&nbsp;
+      # Subscriber list two &nbsp;
 
       [Title three](#{url}#{utm_params(content_change_two.id, 'weekly')})
 
@@ -345,7 +345,7 @@ RSpec.describe "creating and delivering digests", type: :request do
     <<~BODY
       Updates on GOV.UK this week.
 
-      #Subscriber list one&nbsp;
+      # Subscriber list one &nbsp;
 
       [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
 

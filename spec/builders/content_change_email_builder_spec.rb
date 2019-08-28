@@ -1,23 +1,26 @@
 RSpec.describe ContentChangeEmailBuilder do
   let(:subscriber) { build(:subscriber, address: "test@example.com") }
 
-  let(:subscription_one) {
+  let(:subscription_one) do
     build(
       :subscription,
       id: "bef9b608-05ba-46ce-abb7-8567f4180a25",
       subscriber: subscriber,
-      subscriber_list: build(:subscriber_list, title: "First Subscription")
+      subscriber_list: build(:subscriber_list, title: "First Subscription"),
     )
-  }
+  end
+  let(:subscription_two) do
+    build(
+      :subscription,
+      id: "69ca6fce-34f5-4ebd-943c-83bd1b2e70fb",
+      subscriber: subscriber,
+      subscriber_list: build(:subscriber_list, title: "Second Subscription", url: "/subscription"),
+    )
+  end
   let(:subscriptions) do
     [
       subscription_one,
-      build(
-        :subscription,
-        id: "69ca6fce-34f5-4ebd-943c-83bd1b2e70fb",
-        subscriber: subscriber,
-        subscriber_list: build(:subscriber_list, title: "Second Subscription")
-      ),
+      subscription_two,
     ]
   end
 
@@ -82,16 +85,12 @@ RSpec.describe ContentChangeEmailBuilder do
     end
 
     context "with a subscription" do
-      let(:subscription_content) do
-        double(subscription: subscription_one, content_change: content_change)
-      end
-
       let(:params) {
         [
           {
             address: subscriber.address,
             content_change: content_change,
-            subscriptions: [subscription_one],
+            subscriptions: [subscription_content.subscription],
             subscriber_id: subscriber.id,
           }
         ]
@@ -101,27 +100,62 @@ RSpec.describe ContentChangeEmailBuilder do
 
       let(:email) { Email.find(email_import.ids.first) }
 
-      it "sets the body" do
-        expect(ContentChangePresenter).to receive(:call)
-          .and_return("presented_content_change\n")
+      context "without a URL" do
+        let(:subscription_content) do
+          double(subscription: subscription_one, content_change: content_change)
+        end
 
-        expect(email.status).to eq "pending"
+        it "sets the body" do
+          expect(ContentChangePresenter).to receive(:call)
+            .and_return("presented_content_change\n")
 
-        expect(email.body).to eq(
-          <<~BODY
-            Update on GOV.UK.
+          expect(email.status).to eq "pending"
 
-            ---
-            presented_content_change
+          expect(email.body).to eq(
+            <<~BODY
+              Update on GOV.UK.
 
-            ---
-            ^You’re getting this email because you subscribed to immediate updates to ‘#{subscriptions.first.subscriber_list.title}’ on GOV.UK.
+              ---
+              presented_content_change
 
-            [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
+              ---
+              ^You’re getting this email because you subscribed to immediate updates to ‘#{subscriptions.first.subscriber_list.title}’ on GOV.UK.
 
-            Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
-          BODY
-        )
+              [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
+
+              Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
+            BODY
+          )
+        end
+      end
+
+      context "with a URL" do
+        let(:subscription_content) do
+          double(subscription: subscription_two, content_change: content_change)
+        end
+
+        it "sets the body" do
+          expect(ContentChangePresenter).to receive(:call)
+            .and_return("presented_content_change\n")
+
+          expect(email.status).to eq "pending"
+
+          expect(email.body).to eq(
+            <<~BODY
+              Update on GOV.UK.
+
+              ---
+              presented_content_change
+
+              ---
+              ^You’re getting this email because you subscribed to immediate updates to ‘[#{subscriptions.second.subscriber_list.title}](#{Plek.new.website_root}#{subscriptions.second.subscriber_list.url})’ on GOV.UK.
+
+              [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
+
+              Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
+            BODY
+          )
+        end
       end
     end
   end
