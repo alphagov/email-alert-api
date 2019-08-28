@@ -33,7 +33,7 @@ private
 
   def subscriber_list_params
     title = params.fetch(:title)
-    slug = slugify(title)
+    slug = (params[:slug] || slugify(title))
 
     find_exact_query_params.merge(
       title: title,
