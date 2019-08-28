@@ -31,7 +31,7 @@ private
   end
 
   def subject
-    "Your new subscription"
+    "You've subscribed to #{subscriber_list.title}"
   end
 
   def body
@@ -42,7 +42,7 @@ private
             end
 
     <<~BODY
-      You are now subscribed to #{title}.
+      You’ll get an email each time there are changes to #{title}.
       ---
       #{ManageSubscriptionsLinkPresenter.call(subscriber.address)}
     BODY

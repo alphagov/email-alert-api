@@ -16,7 +16,9 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
     it "includes the title of the subscriber list" do
       title = "Example"
       email = call
+      expect(email.subject).to include(title)
       expect(email.body).to include(title)
+      expect(email.body).to match(/You’ll get an email each time there are changes to/)
     end
 
     it "includes a link to manage subscriptions" do
