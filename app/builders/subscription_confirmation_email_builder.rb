@@ -35,12 +35,6 @@ private
   end
 
   def body
-    title = if subscriber_list.url
-              "[#{subscriber_list.title}](#{Plek.new.website_root}#{subscriber_list.url})"
-            else
-              subscriber_list.title
-            end
-
     <<~BODY
       You’ll get an email each time there are changes to #{title}.
 
@@ -50,5 +44,24 @@ private
 
       #{ManageSubscriptionsLinkPresenter.call(subscriber.address)}
     BODY
+  end
+
+  def title
+    return subscriber_list.title unless subscriber_list.url
+
+    "[#{subscriber_list.title}](#{title_url})"
+  end
+
+  def title_url
+    query = {
+      utm_source: subscriber_list.slug,
+      utm_medium: "email",
+      utm_campaign: "govuk-notifications-subscription-confirmation",
+    }.to_query
+
+    url = subscriber_list.url
+    tracked_url = url + (url.include?("?") ? "&" : "?") + query
+
+    PublicUrlService.url_for(base_path: tracked_url)
   end
 end
