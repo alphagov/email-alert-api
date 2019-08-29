@@ -54,6 +54,20 @@ RSpec.describe "Getting a subscriber list", type: :request do
           expect(subscriber_list['description']).to eq("Some description")
         end
       end
+
+      context "creating subscriber list with a content_id" do
+        it "returns a 201" do
+          post "/subscriber-lists", params: {
+            title: "General title",
+            content_id: "71a573cc-916c-4724-9ab7-758e4637e537",
+          }
+
+          expect(response.status).to eq(201)
+
+          subscriber_list = JSON.parse(response.body)['subscriber_list']
+          expect(subscriber_list["content_id"]).to eq("71a573cc-916c-4724-9ab7-758e4637e537")
+        end
+      end
     end
 
     context "without authentication" do

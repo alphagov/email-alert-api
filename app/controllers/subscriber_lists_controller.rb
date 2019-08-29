@@ -55,6 +55,7 @@ private
     {
       tags: convert_legacy_params(permitted_params.fetch(:tags, {})),
       links: convert_legacy_params(permitted_params.fetch(:links, {})),
+      content_id: permitted_params[:content_id],
       document_type: permitted_params.fetch(:document_type, ""),
       email_document_supertype: permitted_params.fetch(:email_document_supertype, ""),
       government_document_supertype: permitted_params.fetch(:government_document_supertype, ""),
