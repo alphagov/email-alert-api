@@ -62,5 +62,21 @@ RSpec.describe "Getting a subscriber list", type: :request do
         expect(subscriber_list['title']).to eq("General title")
       end
     end
+
+    context "creating subscriber list with a description" do
+      it "returns a 201" do
+        login_with_internal_app
+
+        post "/subscriber-lists", params: {
+          title: "General title",
+          description: "Some description",
+        }
+
+        expect(response.status).to eq(201)
+
+        subscriber_list = JSON.parse(response.body)['subscriber_list']
+        expect(subscriber_list['description']).to eq("Some description")
+      end
+    end
   end
 end
