@@ -36,5 +36,15 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
         expect(email.body).to include(link)
       end
     end
+
+    context "when the subscriber list has a description" do
+      let(:subscriber_list) { create(:subscriber_list, description: "Example description") }
+
+      it "includes the description of the subscriber list" do
+        description = "Example description"
+        email = call
+        expect(email.body).to include(description)
+      end
+    end
   end
 end

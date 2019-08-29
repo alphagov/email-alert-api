@@ -39,6 +39,7 @@ private
       title: title,
       slug: slug,
       url: params[:url],
+      description: (params[:description] || ""),
       signon_user_uid: current_user.uid,
     )
   end
