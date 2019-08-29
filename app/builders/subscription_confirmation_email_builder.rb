@@ -43,7 +43,11 @@ private
 
     <<~BODY
       You’ll get an email each time there are changes to #{title}.
+
+      #{subscriber_list.description}
+
       ---
+
       #{ManageSubscriptionsLinkPresenter.call(subscriber.address)}
     BODY
   end
