@@ -31,7 +31,7 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
       let(:subscriber_list) { create(:subscriber_list, url: "/example") }
 
       it "includes a link to the subscriber list" do
-        link = "http://www.dev.gov.uk/example"
+        link = "http://www.dev.gov.uk/example?utm_campaign=govuk-notifications-subscription-confirmation&utm_medium=email&utm_source=#{subscriber_list.slug}"
         email = call
         expect(email.body).to include(link)
       end
