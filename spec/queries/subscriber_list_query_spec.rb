@@ -58,7 +58,7 @@ RSpec.describe SubscriberListQuery do
     it_behaves_like "#links matching", tags: { policies: { any: %w[eggs] } }, links: {}
 
     it "excluded when non-matching tags" do
-      subscriber_list = create_subscriber_list(tags: { policies: { any: %w[apples] } })
+      subscriber_list = create(:subscriber_list, tags: { policies: { any: %w[apples] } })
       expect(subject.lists).not_to include(subscriber_list)
     end
   end
@@ -69,8 +69,8 @@ RSpec.describe SubscriberListQuery do
                                        tags: {}
 
     it "excluded when non-matching links" do
-      subscriber_list = create_subscriber_list(links: { policies: { any: %w[aa11] },
-                                                        taxon_tree: { all: %w[taxon1 taxon2] } })
+      subscriber_list = create(:subscriber_list, links: { policies: { any: %w[aa11] },
+                                                          taxon_tree: { all: %w[taxon1 taxon2] } })
       expect(subject.lists).not_to include(subscriber_list)
     end
   end
@@ -139,10 +139,6 @@ RSpec.describe SubscriberListQuery do
       query = described_class.new(defaults.merge(query_params))
       expect(query.lists).not_to include(subscriber_list)
     end
-  end
-
-  def create_subscriber_list(options)
-    create(:subscriber_list, options)
   end
 
   def defaults
