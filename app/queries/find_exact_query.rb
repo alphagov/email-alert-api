@@ -4,6 +4,7 @@ class FindExactQuery
   def initialize(
     tags:,
     links:,
+    content_id:,
     document_type:,
     email_document_supertype:,
     government_document_supertype:,
@@ -11,6 +12,7 @@ class FindExactQuery
   )
     @tags = tags.deep_symbolize_keys
     @links = links.deep_symbolize_keys
+    @content_id = content_id
     @document_type = document_type
     @email_document_supertype = email_document_supertype
     @government_document_supertype = government_document_supertype
@@ -29,6 +31,7 @@ private
   def base_scope
     @base_scope ||= begin
       scope = SubscriberList
+        .where(content_id: @content_id)
         .where(document_type: @document_type)
         .where(email_document_supertype: @email_document_supertype)
         .where(government_document_supertype: @government_document_supertype)

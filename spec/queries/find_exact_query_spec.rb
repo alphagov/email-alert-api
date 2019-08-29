@@ -46,6 +46,12 @@ RSpec.describe FindExactQuery do
       _subscriber_list = create_subscriber_list(document_type: 'travel_advice')
       expect(query.exact_match).to be_nil
     end
+
+    it "not matched on content_id - even if they match" do
+      query = build_query(links: { policies: { any: %w[aa-11] } }, document_type: 'cd4179c9-6fe4-49bc-8790-da8a1406c8c5')
+      _subscriber_list = create_subscriber_list(document_type: 'cd4179c9-6fe4-49bc-8790-da8a1406c8c5')
+      expect(query.exact_match).to be_nil
+    end
   end
 
   context "when tags are in the query" do
@@ -90,6 +96,12 @@ RSpec.describe FindExactQuery do
       _subscriber_list = create_subscriber_list(document_type: 'travel_advice')
       expect(query.exact_match).to be_nil
     end
+
+    it "not matched on content_id - even if they match" do
+      query = build_query(tags: { policies: { any: %w[beer] } }, document_type: "cd4179c9-6fe4-49bc-8790-da8a1406c8c5")
+      _subscriber_list = create_subscriber_list(document_type: "cd4179c9-6fe4-49bc-8790-da8a1406c8c5")
+      expect(query.exact_match).to be_nil
+    end
   end
 
   it "matched on document type only" do
@@ -101,6 +113,18 @@ RSpec.describe FindExactQuery do
   it "not matched on different document type" do
     query = build_query(tags: { policies: { any: %w[beer] } }, document_type: 'travel_advice')
     _subscriber_list = create_subscriber_list(document_type: 'other')
+    expect(query.exact_match).to be_nil
+  end
+
+  it "matched on content_id only" do
+    query = build_query(document_type: 'cd4179c9-6fe4-49bc-8790-da8a1406c8c5')
+    subscriber_list = create_subscriber_list(document_type: 'cd4179c9-6fe4-49bc-8790-da8a1406c8c5')
+    expect(query.exact_match).to eq(subscriber_list)
+  end
+
+  it "not matched on different document type" do
+    query = build_query(tags: { policies: { any: %w[beer] } }, document_type: 'cd4179c9-6fe4-49bc-8790-da8a1406c8c5')
+    _subscriber_list = create_subscriber_list(document_type: '82ff776b-8762-4e31-8f5f-43d99cd4cee8')
     expect(query.exact_match).to be_nil
   end
 
@@ -126,6 +150,7 @@ RSpec.describe FindExactQuery do
     defaults = {
       tags: {},
       links: {},
+      content_id: nil,
       document_type: '',
       email_document_supertype: '',
       government_document_supertype: '',
@@ -138,6 +163,7 @@ RSpec.describe FindExactQuery do
     defaults = {
       tags: {},
       links: {},
+      content_id: nil,
       document_type: '',
       email_document_supertype: '',
       government_document_supertype: '',
