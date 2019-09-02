@@ -17,6 +17,11 @@ class SubscriberList < ApplicationRecord
   has_many :matched_content_changes
   has_many :matched_messages
 
+  before_save do
+    self.tags_digest = HashDigest.new(tags).generate
+    self.links_digest = HashDigest.new(links).generate
+  end
+
   scope :find_by_links_value, ->(content_id) do
       # For this query to return the content id has to be wrapped in a
       # double quote blame psql 9.
