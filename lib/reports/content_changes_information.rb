@@ -16,11 +16,16 @@ class Reports::ContentChangesInformation
                  emails_sent
                  subscriber_list_titles]
 
+    puts "CSV is being generated for content_changes between #{start_date} - #{end_date}"
+    puts "The information being returned includes content_change_id, content_change_base_path, created_at, emails_sent, subscriber_list_titles"
+
     CSV.open(path, 'wb', headers: headers, write_headers: true) do |csv|
       email_data.each do |data|
         csv << data
       end
     end
+
+    puts "The CSV file is available at - #{path}"
   end
 
 private

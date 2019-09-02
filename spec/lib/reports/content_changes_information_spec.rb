@@ -27,6 +27,16 @@ RSpec.describe Reports::ContentChangesInformation do
         ]
       )
     end
+
+    it "outputs text to stdout describing the report" do
+      expect { described_class.new(@start_date, @end_date).report }.to output(
+        <<~TEXT
+          CSV is being generated for content_changes between #{@start_date} - #{@end_date}
+          The information being returned includes content_change_id, content_change_base_path, created_at, emails_sent, subscriber_list_titles
+          The CSV file is available at - #{@file_path}
+        TEXT
+      ).to_stdout
+    end
   end
 
   it "raises an error if the time passed in is not in date/time format" do
