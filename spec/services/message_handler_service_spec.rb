@@ -5,6 +5,13 @@ RSpec.describe MessageHandlerService do
         title: "Message title",
         body: "Message body",
         document_type: "document_type",
+        criteria_rules: [
+          {
+            type: "tag",
+            key: "brexit_checker_criteria",
+            value: "eu-national"
+          },
+        ],
         tags: {
           topics: ["oil-and-gas/licensing"],
         },
