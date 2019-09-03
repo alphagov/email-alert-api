@@ -36,6 +36,16 @@ FactoryBot.define do
   factory :message do
     title { "Title" }
     body { "Body" }
+    criteria_rules {
+      [
+        {
+          type: "tag",
+          key: "brexit_checker_criteria",
+          value: "eu-national"
+        },
+      ]
+    }
+
     sequence(:govuk_request_id) { |i| "request-id-#{i}" }
 
     trait :matched do
