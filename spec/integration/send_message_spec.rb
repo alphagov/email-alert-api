@@ -7,6 +7,15 @@ RSpec.describe "Sending a message", type: :request do
     }
   end
 
+  context "with an invalid request" do
+    it "returns a 422" do
+      post "/messages",
+           params: valid_request_params.merge(url: "invalid").to_json,
+           headers: JSON_HEADERS
+      expect(response.status).to eq(422)
+    end
+  end
+
   context "with authentication and authorisation" do
     before do
       login_with_internal_app
