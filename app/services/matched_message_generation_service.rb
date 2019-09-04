@@ -22,16 +22,8 @@ private
   end
 
   def records
-    subscriber_lists.map { |subscriber_list| [message.id, subscriber_list.id] }
-  end
-
-  def subscriber_lists
-    SubscriberListQuery.new(
-      tags: message.tags,
-      links: message.links,
-      document_type: message.document_type,
-      email_document_supertype: message.email_document_supertype,
-      government_document_supertype: message.government_document_supertype
-    ).lists
+    SubscriberList
+      .matching_criteria_rules(message.criteria_rules)
+      .map { |subscriber_list| [message.id, subscriber_list.id] }
   end
 end

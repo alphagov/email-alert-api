@@ -36,7 +36,7 @@ FactoryBot.define do
   factory :message do
     title { "Title" }
     body { "Body" }
-    criteria_rules {
+    criteria_rules do
       [
         {
           type: "tag",
@@ -44,7 +44,7 @@ FactoryBot.define do
           value: "eu-national"
         },
       ]
-    }
+    end
 
     sequence(:govuk_request_id) { |i| "request-id-#{i}" }
 

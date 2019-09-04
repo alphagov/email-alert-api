@@ -1,5 +1,11 @@
 RSpec.describe ProcessMessageWorker do
-  let(:message) { create(:message, tags: { topics: ["oil-and-gas/licensing"] }) }
+  let(:message) do
+    create(:message,
+           criteria_rules: [
+             { type: "tag", key: "topics", value: "oil-and-gas/licensing" }
+           ])
+  end
+
   let(:email) { create(:email) }
 
   context "with a subscription" do
