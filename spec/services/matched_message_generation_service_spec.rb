@@ -9,7 +9,7 @@ RSpec.describe MatchedMessageGenerationService do
 
   describe ".call" do
     it "creates a MatchedMessage" do
-      expect { described_class.call(message: message) }
+      expect { described_class.call(message) }
         .to change { MatchedMessage.count }.by(1)
     end
   end

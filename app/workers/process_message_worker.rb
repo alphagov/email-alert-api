@@ -5,6 +5,7 @@ class ProcessMessageWorker
     message = Message.find(message_id)
     return if message.processed?
 
+    MatchedMessageGenerationService.call(message)
     import_subscription_content(message)
     queue_courtesy_email(message)
 

@@ -1,11 +1,10 @@
 RSpec.describe ProcessMessageWorker do
-  let(:message) { create(:message, tags: { topics: { any: ["oil-and-gas/licensing"] } }) }
+  let(:message) { create(:message, tags: { topics: ["oil-and-gas/licensing"] }) }
   let(:email) { create(:email) }
 
   context "with a subscription" do
     let(:subscriber) { create(:subscriber) }
     let(:subscriber_list) { create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } }) }
-    let!(:matched_message) { create(:matched_message, subscriber_list: subscriber_list, message: message) }
     let!(:subscription) { create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list) }
 
     it "creates subscription content for the message" do
@@ -18,6 +17,11 @@ RSpec.describe ProcessMessageWorker do
       expect { subject.perform(message.id) }
         .to change { message.reload.processed? }
         .to(true)
+    end
+
+    it "creates a MatchedMessage" do
+      expect { subject.perform(message.id) }
+        .to change { MatchedMessage.count }.by(1)
     end
 
     context "when the subscription content has already been imported for the message" do

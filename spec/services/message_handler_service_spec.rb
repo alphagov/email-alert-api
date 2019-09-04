@@ -21,10 +21,6 @@ RSpec.describe MessageHandlerService do
 
     let(:govuk_request_id) { SecureRandom.uuid }
 
-    let!(:subscriber_list) do
-      create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } })
-    end
-
     it "creates a Message" do
       expect { described_class.call(params: params, govuk_request_id: govuk_request_id) }
         .to change { Message.count }.by(1)
@@ -33,11 +29,6 @@ RSpec.describe MessageHandlerService do
         body: "Message body",
         document_type: "document_type",
       )
-    end
-
-    it "creates a MatchedMessage" do
-      expect { described_class.call(params: params, govuk_request_id: govuk_request_id) }
-        .to change { MatchedMessage.count }.by(1)
     end
 
     it "records a metric" do
