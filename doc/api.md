@@ -61,24 +61,20 @@ The following fields are accepted on this endpoint: `subject`, `from_address_id`
 
 ```json
 {
-  "sender_message_id": "unique-identifier-for-each-message",
-  "title": "This is the title of my bulletin",
-  "url": "https://www.url.com",
-  "body": "Email body here",
-  "document_type": "",
-  "email_document_supertype": "",
-  "government_document_supertype": "",
-  "priority": "weekly",
-  "tags": {
-    "tag": ["some-tag"]
-  },
-  "links": {
-    "link": ["some-link"]
-  }
+  "sender_message_id": "4da7a6a7-c8f7-482e-aeb9-a26cea90780c",
+  "title": "Message title",
+  "url": "/path-to-a-govuk-page",
+  "body": "Message body",
+  "criteria_rules": [
+    { "type": "tag", "key": "tag-name", "value": "tag-value" }
+  ]
 }
 ```
 
 and it will respond with `202 Accepted` (the call is queued).
+
+The following fields are accepted on this endpoint: `sender_message_id`,
+`title`, `url`, `body`, `criteria_rules`, and `priority`.
 
 * `POST /emails` with data:
 
@@ -88,6 +84,7 @@ and it will respond with `202 Accepted` (the call is queued).
   "body": "Email body here",
   "address": "recipient-email@address.com"
 }
+```
 
 and it will respond with `202 Accepted` (the call is queued).
 
