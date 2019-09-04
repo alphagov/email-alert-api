@@ -32,6 +32,23 @@ RSpec.describe Message do
     end
   end
 
+  describe "sender_message_id validation" do
+    it "is valid when nil" do
+      message = build(:message, sender_message_id: nil)
+      expect(message).to be_valid
+    end
+
+    it "is valid with a UUID" do
+      message = build(:message, sender_message_id: SecureRandom.uuid)
+      expect(message).to be_valid
+    end
+
+    it "is not valid without a UUID" do
+      message = build(:message, sender_message_id: "12345")
+      expect(message).not_to be_valid
+    end
+  end
+
   describe "#mark_processed!" do
     it "sets processed_at" do
       Timecop.freeze do
