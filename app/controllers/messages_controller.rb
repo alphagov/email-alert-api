@@ -21,12 +21,7 @@ private
       :title,
       :url,
       :body,
-      :document_type,
-      :email_document_supertype,
-      :government_document_supertype,
       :priority,
-      links: {},
-      tags: {}
     ).merge(
       criteria_rules: criteria_rules
     )

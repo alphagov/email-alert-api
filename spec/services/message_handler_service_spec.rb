@@ -4,18 +4,13 @@ RSpec.describe MessageHandlerService do
       {
         title: "Message title",
         body: "Message body",
-        document_type: "document_type",
         criteria_rules: [
           {
             type: "tag",
             key: "brexit_checker_criteria",
             value: "eu-national"
           },
-        ],
-        tags: {
-          topics: ["oil-and-gas/licensing"],
-        },
-        links: {},
+        ]
       }
     end
 
@@ -27,7 +22,6 @@ RSpec.describe MessageHandlerService do
       expect(Message.last).to have_attributes(
         title: "Message title",
         body: "Message body",
-        document_type: "document_type",
       )
     end
 
@@ -55,35 +49,6 @@ RSpec.describe MessageHandlerService do
                            user: user)
 
       expect(Message.last).to have_attributes(signon_user_uid: user.uid)
-    end
-
-    it "can add content_store_document_type to links and tags" do
-      document_type = "news_story"
-      modified_params = params.merge(document_type: document_type)
-
-      described_class.call(params: modified_params,
-                           govuk_request_id: govuk_request_id)
-
-      expect(Message.last).to have_attributes(
-        links: a_hash_including(content_store_document_type: document_type),
-        tags: a_hash_including(content_store_document_type: document_type),
-      )
-    end
-
-    it "can add GOV.UK supertypes to links and tags" do
-      allow(GovukDocumentTypes)
-        .to receive(:supertypes)
-        .and_return(navigation_document_supertype: "other")
-
-      modified_params = params.merge(document_type: "news_story")
-
-      described_class.call(params: modified_params,
-                           govuk_request_id: govuk_request_id)
-
-      expect(Message.last).to have_attributes(
-        links: a_hash_including(navigation_document_supertype: "other"),
-        tags: a_hash_including(navigation_document_supertype: "other"),
-      )
     end
   end
 end
