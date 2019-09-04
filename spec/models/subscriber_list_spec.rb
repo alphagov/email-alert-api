@@ -168,4 +168,19 @@ RSpec.describe SubscriberList, type: :model do
       )
     end
   end
+
+  describe "matching_criteria_rules scope" do
+    it "can look up subscriber lists that match criteria rules" do
+      list = create(:subscriber_list, tags: { format: { any: %w[match] } })
+      create(:subscriber_list)
+
+      result = described_class.matching_criteria_rules(
+        [
+          { type: "tag", key: "format", value: "match" }
+        ]
+      )
+
+      expect(result).to match([list])
+    end
+  end
 end

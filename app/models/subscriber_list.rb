@@ -32,6 +32,10 @@ class SubscriberList < ApplicationRecord
     where(sql, id: "\"#{content_id}\"")
   end
 
+  scope :matching_criteria_rules, ->(criteria_rules) do
+    SubscriberListsByCriteriaQuery.call(self, criteria_rules)
+  end
+
   def subscription_url
     PublicUrlService.subscription_url(slug: slug)
   end
