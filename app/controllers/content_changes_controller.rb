@@ -36,7 +36,7 @@ private
   end
 
   def render_conflict
-    render json: { message: "Content change already received" }, status: 409
+    render json: { error: "Content change already received" }, status: 409
   end
 
   def content_change_exists?

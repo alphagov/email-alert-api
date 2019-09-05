@@ -4,7 +4,7 @@ class SubscriberListsController < ApplicationController
     if subscriber_list
       render json: subscriber_list.to_json
     else
-      render json: { message: "Could not find the subscriber list" }, status: 404
+      render json: { error: "Could not find the subscriber list" }, status: 404
     end
   end
 
@@ -16,7 +16,7 @@ class SubscriberListsController < ApplicationController
         subscriber_list: subscriber_list.attributes,
       }, status: status
     else
-      render json: { message: "Could not find the subcsriber list" }, status: 404
+      render json: { error: "Could not find the subcsriber list" }, status: 404
     end
   end
 

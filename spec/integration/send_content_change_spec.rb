@@ -31,9 +31,8 @@ RSpec.describe "Sending a content change", type: :request do
            headers: JSON_HEADERS
       expect(response.status).to eq(422)
       expect(JSON.parse(response.body)).to match(
-        a_hash_including(
-          "errors" => { "title" => ["can't be blank"] }
-        )
+        "error" => "Unprocessable Entity",
+        "details" => { "title" => ["can't be blank"] }
       )
     end
   end

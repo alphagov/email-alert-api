@@ -4,8 +4,8 @@ class ApplicationController < ActionController::API
   before_action :authorise
 
   rescue_from ActiveRecord::RecordInvalid do |exception|
-    render json: { message: "Unprocessable Entity",
-                   errors: exception.record.errors.messages },
+    render json: { error: "Unprocessable Entity",
+                   details: exception.record.errors.messages },
            status: :unprocessable_entity
   end
 

@@ -21,9 +21,8 @@ RSpec.describe "Sending a message", type: :request do
            headers: JSON_HEADERS
       expect(response.status).to eq(422)
       expect(JSON.parse(response.body)).to match(
-        a_hash_including(
-          "errors" => { "url" => ["must be a root-relative URL"] }
-        )
+        "error" => "Unprocessable Entity",
+        "details" => { "url" => ["must be a root-relative URL"] }
       )
     end
   end
