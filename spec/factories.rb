@@ -40,7 +40,7 @@ FactoryBot.define do
       [
         {
           type: "tag",
-          key: "brexit_checker_criteria",
+          key: "brexit_checklist_criteria",
           value: "eu-national"
         },
       ]

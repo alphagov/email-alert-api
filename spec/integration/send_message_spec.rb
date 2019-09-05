@@ -7,7 +7,7 @@ RSpec.describe "Sending a message", type: :request do
       criteria_rules: [
         {
           type: "tag",
-          key: "brexit_checker_criteria",
+          key: "brexit_checklist_criteria",
           value: "eu-national"
         },
       ]
