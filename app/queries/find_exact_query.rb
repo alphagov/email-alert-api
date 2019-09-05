@@ -38,6 +38,6 @@ private
   end
 
   def find_exact(query_field, query)
-    FindExactMatch.new(query_field: query_field, scope: base_scope).call(query).first
+    FindExactMatch.new(query_field: query_field, scope: base_scope).call(query)
   end
 end
