@@ -50,5 +50,17 @@ RSpec.describe MessageHandlerService do
 
       expect(Message.last).to have_attributes(signon_user_uid: user.uid)
     end
+
+    it "can use the sender_message_id as the Message id" do
+      uuid = SecureRandom.uuid
+
+      described_class.call(params: params.merge(sender_message_id: uuid),
+                           govuk_request_id: govuk_request_id)
+
+      expect(Message.last).to have_attributes(
+        id: uuid,
+        sender_message_id: uuid,
+      )
+    end
   end
 end

@@ -47,6 +47,13 @@ RSpec.describe Message do
       message = build(:message, sender_message_id: "12345")
       expect(message).not_to be_valid
     end
+
+    it "disallows a non unique sender_message_id" do
+      uuid = SecureRandom.uuid
+      create(:message, sender_message_id: uuid)
+      message = build(:message, sender_message_id: uuid)
+      expect(message).not_to be_valid
+    end
   end
 
   describe "#mark_processed!" do
