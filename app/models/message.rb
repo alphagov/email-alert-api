@@ -6,7 +6,7 @@ class Message < ApplicationRecord
 
   validates_presence_of :title, :body, :criteria_rules, :govuk_request_id
   validates :url, root_relative_url: true, allow_nil: true
-  validates :criteria_rules, criteria_schema: true
+  validates :criteria_rules, criteria_schema: true, allow_blank: true
   validates :sender_message_id,
             format: {
               with: /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\Z/i,
