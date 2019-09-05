@@ -6,6 +6,7 @@ class Message < ApplicationRecord
 
   validates_presence_of :title, :body
   validates :url, root_relative_url: true, allow_nil: true
+  validates :criteria_rules, criteria_schema: true, allow_nil: true
 
   enum priority: { normal: 0, high: 1 }
 

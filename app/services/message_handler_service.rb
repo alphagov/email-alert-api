@@ -25,7 +25,8 @@ private
   def message_params
     params
       .slice(:title, :url, :body, :sender_message_id)
-      .merge(links: with_supertypes(params.fetch(:links, {})),
+      .merge(criteria_rules: params[:criteria_rules].presence,
+             links: with_supertypes(params.fetch(:links, {})),
              tags: with_supertypes(params.fetch(:tags, {})),
              document_type: params[:document_type].presence,
              email_document_supertype: params[:email_document_supertype].presence,

@@ -70,7 +70,14 @@ module FeatureHelpers
     params = {
       sender_message_id: SecureRandom.uuid,
       title: "Title",
-      body: "Body"
+      body: "Body",
+      criteria_rules: [
+        {
+          type: "tag",
+          key: "brexit_checker_criteria",
+          value: "eu-national"
+        },
+      ]
     }.merge(overrides)
 
     post "/messages", params: params.to_json, headers: JSON_HEADERS

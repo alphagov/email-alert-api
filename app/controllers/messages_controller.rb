@@ -14,16 +14,22 @@ class MessagesController < ApplicationController
 private
 
   def message_params
-    params.permit(:sender_message_id,
-                  :title,
-                  :url,
-                  :body,
-                  :document_type,
-                  :email_document_supertype,
-                  :government_document_supertype,
-                  :priority,
-                  links: {},
-                  tags: {})
+    criteria_rules = params[:criteria_rules].each(&:permit!) if params[:criteria_rules].respond_to?(:each)
+
+    params.permit(
+      :sender_message_id,
+      :title,
+      :url,
+      :body,
+      :document_type,
+      :email_document_supertype,
+      :government_document_supertype,
+      :priority,
+      links: {},
+      tags: {}
+    ).merge(
+      criteria_rules: criteria_rules
+    )
   end
 
   def render_conflict

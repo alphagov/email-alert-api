@@ -4,6 +4,13 @@ RSpec.describe "Sending a message", type: :request do
       title: "My title",
       body: "My body",
       sender_message_id: SecureRandom.uuid,
+      criteria_rules: [
+        {
+          type: "tag",
+          key: "brexit_checker_criteria",
+          value: "eu-national"
+        },
+      ]
     }
   end
 
