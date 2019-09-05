@@ -16,6 +16,7 @@ private
       :created_at,
       content_change_ids,
       digest_run_ids,
+      message_ids,
       :finished_sending_at,
       :id,
       :marked_as_spam,
@@ -37,9 +38,19 @@ private
   def content_change_ids
     query = SubscriptionContent
       .where("email_id = emails.id")
+      .where.not(content_change_id: nil)
       .distinct
       .select(:content_change_id)
     "ARRAY(#{query.to_sql}) AS content_change_ids"
+  end
+
+  def message_ids
+    query = SubscriptionContent
+      .where("email_id = emails.id")
+      .where.not(message_id: nil)
+      .distinct
+      .select(:message_id)
+    "ARRAY(#{query.to_sql}) AS message_ids"
   end
 
   def digest_run_ids

@@ -14,31 +14,31 @@ RSpec.describe CriteriaSchemaValidator do
       rules = [
         {
           type: "tag",
-          key: "brexit_checker_criteria",
+          key: "brexit_checklist_criteria",
           value: "eu-national"
         },
         {
           type: "tag",
-          key: "brexit_checker_criteria",
+          key: "brexit_checklist_criteria",
           value: "eu-resident"
         },
         {
           any_of: [
             {
               type: "tag",
-              key: "brexit_checker_criteria",
+              key: "brexit_checklist_criteria",
               value: "uk-resident"
             },
             {
               all_of: [
                 {
                   type: "tag",
-                  key: "brexit_checker_criteria",
+                  key: "brexit_checklist_criteria",
                   value: "ip"
                 },
                 {
                   type: "tag",
-                  key: "brexit_checker_criteria",
+                  key: "brexit_checklist_criteria",
                   value: "exports"
                 }
               ]
@@ -58,7 +58,7 @@ RSpec.describe CriteriaSchemaValidator do
       incorrectly_formatted_rules = [
         {
           type: "not-a-tag",
-          key: "brexit_checker_criteria",
+          key: "brexit_checklist_criteria",
           value: "eu-national"
         },
       ]
@@ -70,9 +70,7 @@ RSpec.describe CriteriaSchemaValidator do
   end
 
   context "Non json object" do
-    before do
-      model.criteria_rules = ''
-    end
+    before { model.criteria_rules = "" }
 
     it { is_expected.not_to be_valid }
   end

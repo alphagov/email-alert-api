@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_03_101929) do
+ActiveRecord::Schema.define(version: 2019_09_04_182908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,11 +119,6 @@ ActiveRecord::Schema.define(version: 2019_09_03_101929) do
     t.text "title", null: false
     t.text "url"
     t.text "body", null: false
-    t.json "links", default: {}, null: false
-    t.json "tags", default: {}, null: false
-    t.string "document_type"
-    t.string "email_document_supertype"
-    t.string "government_document_supertype"
     t.datetime "processed_at"
     t.string "signon_user_uid"
     t.string "govuk_request_id", null: false

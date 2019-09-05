@@ -191,9 +191,9 @@ RSpec.describe "creating and delivering digests", type: :request do
     Timecop.freeze "2017-01-01 09:31" do
       create_message(
         title: "Title two",
-        links: {
-          topics: [list_one_topic_id, list_two_topic_id]
-        }
+        criteria_rules: [
+          { type: "link", key: "topics", value: list_one_topic_id }
+        ]
       )
     end
 
@@ -441,9 +441,9 @@ RSpec.describe "creating and delivering digests", type: :request do
       create_message(
         title: "Title two",
         url: "/base-path",
-        links: {
-          topics: [list_one_topic_id]
-        }
+        criteria_rules: [
+          { type: "link", key: "topics", value: list_one_topic_id }
+        ]
       )
     end
 

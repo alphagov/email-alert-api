@@ -1,6 +1,9 @@
 RSpec.describe MatchedMessageGenerationService do
   let(:message) do
-    create(:message, tags: { topics: ["oil-and-gas/licensing"] })
+    create(:message,
+           criteria_rules: [
+             { type: "tag", key: "topics", value: "oil-and-gas/licensing" }
+           ])
   end
 
   before do
@@ -9,7 +12,7 @@ RSpec.describe MatchedMessageGenerationService do
 
   describe ".call" do
     it "creates a MatchedMessage" do
-      expect { described_class.call(message: message) }
+      expect { described_class.call(message) }
         .to change { MatchedMessage.count }.by(1)
     end
   end

@@ -48,7 +48,39 @@ RSpec.describe EmailArchiveQuery do
       end
     end
 
-    context "when an email is not associated with content changes" do
+    context "when an email is associated with messages" do
+      let!(:subscriber) { create(:subscriber) }
+      let!(:email) { create(:archivable_email, subscriber_id: subscriber.id) }
+      let!(:subscription_contents) do
+        [
+          create(
+            :subscription_content,
+            :with_message,
+            email: email,
+            subscription: create(:subscription, subscriber: subscriber),
+          ),
+          create(
+            :subscription_content,
+            :with_message,
+            email: email,
+            subscription: create(:subscription, subscriber: subscriber),
+          ),
+        ]
+      end
+
+      it "has subscriber_id, subscription_ids and message_ids" do
+        first = scope.first
+        subscription_ids = subscription_contents.map(&:subscription_id)
+        message_ids = subscription_contents.map(&:message_id)
+
+        expect(first.subscriber_id).to eq(subscriber.id)
+        expect(first.subscription_ids).to match_array(subscription_ids)
+        expect(first.message_ids).to match_array(message_ids)
+        expect(first.content_change_ids).to be_empty
+      end
+    end
+
+    context "when an email is not associated with content changes or messages" do
       before { create(:archivable_email) }
 
       it "has nil subscriber_id and emptpy subscription_ids and content_change_ids" do
