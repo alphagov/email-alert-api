@@ -4,7 +4,7 @@ class Message < ApplicationRecord
   has_many :matched_messages
   has_many :subscription_contents
 
-  validates_presence_of :title, :body, :criteria_rules
+  validates_presence_of :title, :body, :criteria_rules, :govuk_request_id
   validates :url, root_relative_url: true, allow_nil: true
   validates :criteria_rules, criteria_schema: true
   validates :sender_message_id,
