@@ -8,7 +8,7 @@ class ContentChangesController < ApplicationController
       govuk_request_id: GdsApi::GovukHeaders.headers[:govuk_request_id],
     )
 
-    render json: { message: "Content change queued for sending" }, status: 202
+    render json: { message: "Content change queued for sending" }, status: :accepted
   end
 
 private
@@ -36,7 +36,7 @@ private
   end
 
   def render_conflict
-    render json: { error: "Content change already received" }, status: 409
+    render json: { error: "Content change already received" }, status: :conflict
   end
 
   def content_change_exists?

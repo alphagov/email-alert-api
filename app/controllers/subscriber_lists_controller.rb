@@ -4,7 +4,7 @@ class SubscriberListsController < ApplicationController
     if subscriber_list
       render json: subscriber_list.to_json
     else
-      render json: { error: "Could not find the subscriber list" }, status: 404
+      render json: { error: "Could not find the subscriber list" }, status: :not_found
     end
   end
 
@@ -16,13 +16,13 @@ class SubscriberListsController < ApplicationController
         subscriber_list: subscriber_list.attributes,
       }, status: status
     else
-      render json: { error: "Could not find the subcsriber list" }, status: 404
+      render json: { error: "Could not find the subcsriber list" }, status: :not_found
     end
   end
 
   def create
     subscriber_list = SubscriberList.create!(subscriber_list_params)
-    render json: subscriber_list.to_json, status: 201
+    render json: subscriber_list.to_json, status: :created
   end
 
 private

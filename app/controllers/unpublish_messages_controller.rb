@@ -5,7 +5,7 @@ class UnpublishMessagesController < ApplicationController
       unpublishing_params[:content_id], ContentItem.new(redirect_path)
     )
 
-    render json: { message: "Unpublish message queued for sending" }, status: 202
+    render json: { message: "Unpublish message queued for sending" }, status: :accepted
   end
 
 private

@@ -61,7 +61,7 @@ class SubscriptionsController < ApplicationController
       end
     end
 
-    render json: { subscription: subscription }, status: :ok
+    render json: { subscription: subscription }
   end
 
   def latest_matching
