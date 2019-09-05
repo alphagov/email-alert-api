@@ -21,12 +21,8 @@ class SubscriberListsController < ApplicationController
   end
 
   def create
-    subscriber_list = SubscriberList.new(subscriber_list_params)
-    if subscriber_list.save
-      render json: subscriber_list.to_json, status: 201
-    else
-      render json: { message: subscriber_list.errors.full_messages.to_sentence }, status: 422
-    end
+    subscriber_list = SubscriberList.create!(subscriber_list_params)
+    render json: subscriber_list.to_json, status: 201
   end
 
 private

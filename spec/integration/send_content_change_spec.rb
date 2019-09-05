@@ -24,6 +24,20 @@ RSpec.describe "Sending a content change", type: :request do
     }
   end
 
+  context "with an invalid request" do
+    it "returns a 422" do
+      post "/content-changes",
+           params: valid_request_params.merge(title: nil).to_json,
+           headers: JSON_HEADERS
+      expect(response.status).to eq(422)
+      expect(JSON.parse(response.body)).to match(
+        a_hash_including(
+          "errors" => { "title" => ["can't be blank"] }
+        )
+      )
+    end
+  end
+
   context "with authentication and authorisation" do
     before do
       login_with_internal_app
