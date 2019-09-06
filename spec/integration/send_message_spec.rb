@@ -20,6 +20,10 @@ RSpec.describe "Sending a message", type: :request do
            params: valid_request_params.merge(url: "invalid").to_json,
            headers: JSON_HEADERS
       expect(response.status).to eq(422)
+      expect(JSON.parse(response.body)).to match(
+        "error" => "Unprocessable Entity",
+        "details" => { "url" => ["must be a root-relative URL"] }
+      )
     end
   end
 

@@ -54,6 +54,22 @@ RSpec.describe "Getting a subscriber list", type: :request do
           expect(subscriber_list['description']).to eq("Some description")
         end
       end
+
+      context "an invalid subscriber list" do
+        it "returns 422" do
+          post "/subscriber-lists", params: {
+            title: "",
+            description: "Some description",
+          }
+
+          expect(response.status).to eq(422)
+
+          expect(JSON.parse(response.body)).to match(
+            "error" => "Unprocessable Entity",
+            "details" => { "title" => ["can't be blank"] }
+          )
+        end
+      end
     end
 
     context "without authentication" do

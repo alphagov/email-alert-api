@@ -31,7 +31,7 @@ private
       base_path: params[:base_path],
       links: with_supertypes(params.fetch(:links, {})),
       tags: with_supertypes(params.fetch(:tags, {})),
-      public_updated_at: Time.parse(params[:public_updated_at]),
+      public_updated_at: params[:public_updated_at],
       email_document_supertype: params[:email_document_supertype],
       government_document_supertype: params[:government_document_supertype],
       govuk_request_id: govuk_request_id,

@@ -11,7 +11,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         ]
       )
 
-      expect(result).to match([list])
+      expect(result).to contain_exactly(list)
     end
 
     it "can match a link" do
@@ -26,7 +26,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         ]
       )
 
-      expect(result).to match([list])
+      expect(result).to contain_exactly(list)
     end
 
     it "can match multiple tags" do
@@ -41,7 +41,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         ]
       )
 
-      expect(result).to match([list])
+      expect(result).to contain_exactly(list)
     end
 
     it "can match tags and links" do
@@ -59,7 +59,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         ]
       )
 
-      expect(result).to match([list])
+      expect(result).to contain_exactly(list)
     end
 
     it "can match a tag with a double quote inside it" do
@@ -74,7 +74,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         ]
       )
 
-      expect(result).to match([list])
+      expect(result).to contain_exactly(list)
     end
 
     it "can match optional conditions" do
@@ -94,7 +94,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         ]
       )
 
-      expect(result).to match([list_a, list_b])
+      expect(result).to contain_exactly(list_a, list_b)
     end
 
     it "can match nested and conditions in or conditions" do
@@ -125,7 +125,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         ]
       )
 
-      expect(result).to match([list_a, list_b])
+      expect(result).to contain_exactly(list_a, list_b)
     end
 
     it "can match a complicated nested scenario" do
@@ -168,7 +168,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         ]
       )
 
-      expect(result).to match([list])
+      expect(result).to contain_exactly(list)
     end
   end
 end
