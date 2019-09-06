@@ -9,7 +9,7 @@ private
 
   def valid_url?(url)
     parsed = URI.parse(url)
-    parsed.relative? && url[0] == "/"
+    parsed.relative? && !parsed.host && url[0] == "/"
   rescue URI::InvalidURIError
     false
   end

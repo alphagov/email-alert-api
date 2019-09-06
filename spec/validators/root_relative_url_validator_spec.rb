@@ -35,6 +35,12 @@ RSpec.describe RootRelativeUrlValidator do
     it { is_expected.not_to be_valid }
   end
 
+  context "when a protocol-relative url is provided" do
+    before { model.url = "//example.com/test" }
+
+    it { is_expected.not_to be_valid }
+  end
+
   context "when a path with query string is provided" do
     before { model.url = "/test?test=this" }
 
