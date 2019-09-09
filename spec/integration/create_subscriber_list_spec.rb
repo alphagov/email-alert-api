@@ -42,6 +42,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
           url
           tags
           links
+          group_id
           email_document_supertype
           government_document_supertype
           active_subscriptions_count
@@ -236,6 +237,22 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
         subscriber_list = JSON.parse(response.body)['subscriber_list']
         expect(subscriber_list['description']).to eq("Some description")
+      end
+    end
+
+    context "creating subscriber list with a group_id" do
+      it "returns a 201" do
+        group_id = SecureRandom.uuid
+        post "/subscriber-lists", params: {
+          title: "General title",
+          description: "Some description",
+          group_id: group_id,
+        }
+
+        expect(response.status).to eq(201)
+
+        subscriber_list = JSON.parse(response.body)['subscriber_list']
+        expect(subscriber_list['group_id']).to eq(group_id)
       end
     end
 
