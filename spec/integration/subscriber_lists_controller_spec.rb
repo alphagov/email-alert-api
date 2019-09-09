@@ -55,6 +55,22 @@ RSpec.describe "Getting a subscriber list", type: :request do
         end
       end
 
+      context "creating subscriber list with a list_group_id" do
+        let!(:list_group_id) { SecureRandom.uuid }
+        it "returns a 201" do
+          post "/subscriber-lists", params: {
+            title: "General title",
+            description: "Some description",
+            list_group_id: list_group_id,
+          }
+
+          expect(response.status).to eq(201)
+
+          subscriber_list = JSON.parse(response.body)['subscriber_list']
+          expect(subscriber_list['list_group_id']).to eq(list_group_id)
+        end
+      end
+
       context "an invalid subscriber list" do
         it "returns 422" do
           post "/subscriber-lists", params: {

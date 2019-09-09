@@ -58,6 +58,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
           url
           tags
           links
+          list_group_id
           email_document_supertype
           government_document_supertype
           active_subscriptions_count
@@ -194,6 +195,68 @@ RSpec.describe "Creating a subscriber list", type: :request do
         expect(SubscriberList.last).to have_attributes(
           email_document_supertype: "publications",
           government_document_supertype: "news_stories",
+        )
+      end
+    end
+
+    context "creating subscriber list with a given slug" do
+      it "returns a 201" do
+        post "/subscriber-lists", params: {
+          title: "General title",
+          slug: "some-concatenated-slug",
+          tags: { "brexit_checklist_criteria" => { "any" => %w[some-value] } }
+        }
+
+        expect(response.status).to eq(201)
+
+        subscriber_list = JSON.parse(response.body)['subscriber_list']
+        expect(subscriber_list['slug']).to eq("some-concatenated-slug")
+        expect(subscriber_list['title']).to eq("General title")
+      end
+    end
+
+    context "creating subscriber list with a description" do
+      it "returns a 201" do
+        post "/subscriber-lists", params: {
+          title: "General title",
+          description: "Some description",
+        }
+
+        expect(response.status).to eq(201)
+
+        subscriber_list = JSON.parse(response.body)['subscriber_list']
+        expect(subscriber_list['description']).to eq("Some description")
+      end
+    end
+
+    context "creating subscriber list with a list_group_id" do
+      @list_group_id = SecureRandom.uuid
+      it "returns a 201" do
+        post "/subscriber-lists", params: {
+          title: "General title",
+          description: "Some description",
+          list_group_id: @list_group_id,
+        }
+
+        expect(response.status).to eq(201)
+
+        subscriber_list = JSON.parse(response.body)['subscriber_list']
+        expect(subscriber_list['list_group_id']).to eq(@list_group_id)
+      end
+    end
+
+    context "an invalid subscriber list" do
+      it "returns 422" do
+        post "/subscriber-lists", params: {
+          title: "",
+          description: "Some description",
+        }
+
+        expect(response.status).to eq(422)
+
+        expect(JSON.parse(response.body)).to match(
+          "error" => "Unprocessable Entity",
+          "details" => { "title" => ["can't be blank"] }
         )
       end
     end
