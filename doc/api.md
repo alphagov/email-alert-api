@@ -11,6 +11,7 @@
     "title": "Title of topic",
     "subscription_url": "https://public-url/subscribe-here?topic_id=123",
     "gov_delivery_id": "123",
+    "group_id": "f513e107-b2c6-44a6-8d8a-9e6a3ea37b9d",
     "document_type": "",
     "created_at": "20141010T12:00:00",
     "updated_at": "20141010T12:00:00",
@@ -28,6 +29,7 @@
 ```json
 {
   "title": "My title",
+  "group_id": "f513e107-b2c6-44a6-8d8a-9e6a3ea37b9d",
   "tags": {
     "any": {
       "organisations": ["my-org"],
@@ -38,6 +40,30 @@
 
 and it will respond with the JSON response for the `GET` call above.
 
+The following fields are accepted:
+
+- title: The title of this particular list, which will be shown to the user;
+- description: Markdown text that will be used as copy in the confirmation
+  email sent to a user;
+- url: A url to a page that reflects what the user signed up to and can be
+  linked to with their list;
+- group_id: A UUID that can be provided by an application to group together
+  lists for the same resource with different criteria;
+- links: An object where keys are a link type and the value is an object
+  containing a key of "any" or "all" associated with an array of link values,
+  this is used to match content changes and messages to the list;
+- tags: An object where keys are [valid tags][] and the value is an object
+  containing a key of "any" or "all" associated with an array of link values
+  this is used to match content changes and messages to the list;
+- document_type: A field that can be used to match with content changes that
+  share the corresponding field;
+- email_document_supertype: A field that can be used to match with content
+  changes that share the corresponding field;
+- government_document_supertype: A field that can be used to match with
+  content changes that share the corresponding field.
+
+[valid tags]: https://github.com/alphagov/email-alert-api/blob/b6428880aa730e316803d7129db3ec47304e933b/lib/valid_tags.rb
+
 * `POST /content-changes` with data:
 
 ```json
@@ -45,7 +71,9 @@ and it will respond with the JSON response for the `GET` call above.
   "subject": "This is the subject/title of my bulletin",
   "body": "Email body here",
   "tags": {
-    "tag": ["values"]
+    "tag": {
+      "any": ["values"]
+    }
   }
 }
 ```
