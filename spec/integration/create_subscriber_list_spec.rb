@@ -18,22 +18,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(response.status).to eq(201)
     end
 
-    context "with an existing subscriber list with the same slug" do
-      before do
-        create(:subscriber_list, slug: "oil-and-gas")
-      end
-
-      it "creates another subscriber list with a different slug" do
-        create_subscriber_list(title: "oil and gas", tags: { topics: { any: ["oil-and-gas/licensing"] } })
-
-        expect(response.status).to eq(201)
-
-        response_hash = JSON.parse(response.body)
-        subscriber_list = response_hash["subscriber_list"]
-        expect(subscriber_list["gov_delivery_id"]).to eq("oil-and-gas-2")
-      end
-    end
-
     it "returns the created subscriber list" do
       create_subscriber_list(
         title: "oil and gas licensing",
@@ -84,7 +68,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(subscriber_list["slug"]).to eq("oil-and-gas-licensing")
     end
 
-    it "creates a subscriber_list with a url" do
+    it "can create a subscriber_list with a url" do
       create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
                                      location: { all: %w[france germany] } },
                              url: "/oil-and-gas")
@@ -93,7 +77,23 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(SubscriberList.first.url).to eq("/oil-and-gas")
     end
 
-    describe 'using legacy parameters' do
+    context "with an existing subscriber list with the same slug" do
+      before do
+        create(:subscriber_list, slug: "oil-and-gas")
+      end
+
+      it "creates another subscriber list with a different slug" do
+        create_subscriber_list(title: "oil and gas", tags: { topics: { any: ["oil-and-gas/licensing"] } })
+
+        expect(response.status).to eq(201)
+
+        response_hash = JSON.parse(response.body)
+        subscriber_list = response_hash["subscriber_list"]
+        expect(subscriber_list["gov_delivery_id"]).to eq("oil-and-gas-2")
+      end
+    end
+
+    context 'when using legacy parameters' do
       it 'creates a new subscriber list' do
         expect {
           create_subscriber_list(
@@ -102,6 +102,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
           )
         }.to change { SubscriberList.count }.by(1)
       end
+
       it "returns an error if link isn't an array" do
         create_subscriber_list(
           links: { topics: "uuid-888" },
@@ -111,30 +112,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
     end
 
-    it "returns an error if tag isn't an array" do
-      create_subscriber_list(
-        tags: { topics: { any: "oil-and-gas/licensing" } },
-      )
-
-      expect(response.status).to eq(422)
-    end
-
-    it "successfully creates two SubscriberList objects with the same title" do
-      create_subscriber_list(title: "oil and gas", links: { taxons: { any: %w[oil-and-gas] } })
-      create_subscriber_list(title: "oil and gas", links: { policies: { any: ["oil-and-gas/licensing"] } })
-
-      expect(response.status).to eq(201)
-    end
-
-    it "returns an error if link isn't an array" do
-      create_subscriber_list(
-        links: { topics: { any: "uuid-888" } },
-      )
-
-      expect(response.status).to eq(422)
-    end
-
-    describe "creating a subscriber list with a document_type" do
+    context "when creating a subscriber list with a document_type" do
       it "returns a 201" do
         create_subscriber_list(document_type: "travel_advice")
 
@@ -152,7 +130,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
     end
 
-    describe "creating a subscriber list with content_purpose_subgroup" do
+    context "when creating a subscriber list with content_purpose_subgroup" do
       it "returns a 201" do
         create_subscriber_list(tags: { content_purpose_subgroup: { any: %w[news] } })
 
@@ -194,6 +172,52 @@ RSpec.describe "Creating a subscriber list", type: :request do
         expect(SubscriberList.last).to have_attributes(
           email_document_supertype: "publications",
           government_document_supertype: "news_stories",
+        )
+      end
+    end
+
+    context "creating subscriber list with a given slug" do
+      it "returns a 201" do
+        post "/subscriber-lists", params: {
+          title: "General title",
+          slug: "some-concatenated-slug",
+          tags: { "brexit_checklist_criteria" => { "any" => %w[some-value] } }
+        }
+
+        expect(response.status).to eq(201)
+
+        subscriber_list = JSON.parse(response.body)['subscriber_list']
+        expect(subscriber_list['slug']).to eq("some-concatenated-slug")
+        expect(subscriber_list['title']).to eq("General title")
+      end
+    end
+
+    context "creating subscriber list with a description" do
+      it "returns a 201" do
+        post "/subscriber-lists", params: {
+          title: "General title",
+          description: "Some description",
+        }
+
+        expect(response.status).to eq(201)
+
+        subscriber_list = JSON.parse(response.body)['subscriber_list']
+        expect(subscriber_list['description']).to eq("Some description")
+      end
+    end
+
+    context "an invalid subscriber list" do
+      it "returns 422" do
+        post "/subscriber-lists", params: {
+          title: "",
+          description: "Some description",
+        }
+
+        expect(response.status).to eq(422)
+
+        expect(JSON.parse(response.body)).to match(
+          "error" => "Unprocessable Entity",
+          "details" => { "title" => ["can't be blank"] }
         )
       end
     end
