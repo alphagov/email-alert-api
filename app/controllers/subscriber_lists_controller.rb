@@ -60,12 +60,11 @@ private
   end
 
   def slugify(title)
-    slug = title.parameterize
-    index = 1
+    slug = title.parameterize.truncate(255, omission: '', separator: '-')
 
     while SubscriberList.where(slug: slug).exists?
-      index += 1
-      slug = "#{title.parameterize}-#{index}"
+      slug = title.parameterize.truncate(242, omission: '', separator: '-')
+      slug += "-#{SecureRandom.hex(5)}"
     end
 
     slug
