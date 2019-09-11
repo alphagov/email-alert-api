@@ -14,27 +14,29 @@ subscribers to those tags via the external services.
   * A publication event that creates or changes a content item
   * The representation of that event for the purpose of sending emails
 
-- **Delivery attempt**:
-  * An attempt to send a generated email to a subscriber using the external email notification services
-  * Can be multiple attempts per email if there are errors
-
-- **Digest run**:
-  * One batch of either daily or weekly digests representing a particular subscription that has a start and end time and a set of subscribers to send emails to
-
-- **Email**:
-  * An email generated from one or more content changes with a subject line and body, to be sent to subscribers
-
-- **Matched content change**:
-  * A content change that has been matched to a set of subscribers who will receive an email about it
+- **Message**:
+  * A message, distinct from a content change, that can be sent to subscribers of a list
+  * The representation of that event for the purpose of sending emails
 
 - **Subscriber list**:
-  * A set of criteria that users can subscribe to in order to receive emails (eg. all publications by HMRC)
+  * A particular titled list that a user can sign up to
+  * Contains criteria to determine which notifications a subscriber will receive (eg. all publications by HMRC)
 
 - **Subscriber**:
   * A user who has subscribed to one or more subscriber lists
 
 - **Subscription**:
   * The relationship between a subscriber and the subscription lists they are subscribed to
+
+- **Digest run**:
+  * One batch of either daily or weekly digests representing a particular subscription that has a start and end time and a set of subscribers to send emails to
+
+- **Email**:
+  * An email generated from content changes or messages to be sent to subscribers
+
+- **Delivery attempt**:
+  * An attempt to send a generated email to a subscriber using the external email notification services
+  * Can be multiple attempts per email if there are errors
 
 ## Technical documentation
 
