@@ -62,7 +62,7 @@ private
     slug = title.parameterize.truncate(255, omission: '', separator: '-')
 
     while SubscriberList.where(slug: slug).exists?
-      slug = title.parameterize.truncate(242, omission: '', separator: '-')
+      slug = title.parameterize.truncate(244, omission: '', separator: '-')
       slug += "-#{SecureRandom.hex(5)}"
     end
 
