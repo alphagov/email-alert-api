@@ -36,6 +36,7 @@ private
       slug: slug,
       url: params[:url],
       description: (params[:description] || ""),
+      list_group_id: params[:list_group_id],
       signon_user_uid: current_user.uid,
     )
   end

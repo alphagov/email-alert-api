@@ -42,6 +42,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
           url
           tags
           links
+          list_group_id
           email_document_supertype
           government_document_supertype
           active_subscriptions_count
@@ -141,6 +142,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
         expect(subscriber_list["slug"]).to eq(slug)
       end
     end
+
     context 'when using legacy parameters' do
       it 'creates a new subscriber list' do
         expect {
@@ -251,6 +253,22 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
         subscriber_list = JSON.parse(response.body)['subscriber_list']
         expect(subscriber_list['description']).to eq("Some description")
+      end
+    end
+
+    context "creating subscriber list with a list_group_id" do
+      @list_group_id = SecureRandom.uuid
+      it "returns a 201" do
+        post "/subscriber-lists", params: {
+          title: "General title",
+          description: "Some description",
+          list_group_id: @list_group_id,
+        }
+
+        expect(response.status).to eq(201)
+
+        subscriber_list = JSON.parse(response.body)['subscriber_list']
+        expect(subscriber_list['list_group_id']).to eq(@list_group_id)
       end
     end
 
