@@ -141,6 +141,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
         expect(subscriber_list["slug"]).to eq(slug)
       end
     end
+
     context 'when using legacy parameters' do
       it 'creates a new subscriber list' do
         expect {
