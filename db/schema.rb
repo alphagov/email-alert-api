@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_04_182908) do
+ActiveRecord::Schema.define(version: 2019_09_11_115859) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -130,7 +130,7 @@ ActiveRecord::Schema.define(version: 2019_09_04_182908) do
   end
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
-    t.string "title", limit: 10000, null: false
+    t.string "title", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "document_type", default: "", null: false
@@ -139,7 +139,7 @@ ActiveRecord::Schema.define(version: 2019_09_04_182908) do
     t.string "email_document_supertype", default: "", null: false
     t.string "government_document_supertype", default: "", null: false
     t.string "signon_user_uid"
-    t.string "slug", limit: 10000, null: false
+    t.string "slug", null: false
     t.string "url"
     t.string "description", default: "", null: false
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
