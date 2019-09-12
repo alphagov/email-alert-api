@@ -109,7 +109,7 @@ module FeatureHelpers
 
   def extract_unsubscribe_id(email_data)
     body = email_data.dig(:personalisation, :body)
-    body[%r{/unsubscribe/(.*)\?}, 1]
+    body[%r{/unsubscribe/(.*)\)}, 1]
   end
 
   def clear_any_requests_that_have_been_recorded!
