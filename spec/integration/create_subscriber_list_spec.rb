@@ -141,6 +141,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
         expect(subscriber_list["slug"]).to eq(slug)
       end
     end
+
     context 'when using legacy parameters' do
       it 'creates a new subscriber list' do
         expect {
@@ -221,22 +222,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
           email_document_supertype: "publications",
           government_document_supertype: "news_stories",
         )
-      end
-    end
-
-    context "creating subscriber list with a given slug" do
-      it "returns a 201" do
-        post "/subscriber-lists", params: {
-          title: "General title",
-          slug: "some-concatenated-slug",
-          tags: { "brexit_checklist_criteria" => { "any" => %w[some-value] } }
-        }
-
-        expect(response.status).to eq(201)
-
-        subscriber_list = JSON.parse(response.body)['subscriber_list']
-        expect(subscriber_list['slug']).to eq("some-concatenated-slug")
-        expect(subscriber_list['title']).to eq("General title")
       end
     end
 
