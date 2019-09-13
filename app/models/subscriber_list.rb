@@ -10,6 +10,7 @@ class SubscriberList < ApplicationRecord
   validates :title, presence: true
   validates_uniqueness_of :slug
   validates :url, root_relative_url: true, allow_nil: true
+  validates :group_id, uuid: true, allow_nil: true
 
   has_many :subscriptions, dependent: :destroy
   has_many :subscribers, through: :subscriptions
