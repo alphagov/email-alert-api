@@ -19,8 +19,7 @@ private
   attr_reader :id, :title
 
   def url
-    escaped_title = ERB::Util.url_encode(title)
-    base_path = "/email/unsubscribe/#{id}?title=#{escaped_title}"
+    base_path = "/email/unsubscribe/#{id}"
     PublicUrlService.url_for(base_path: base_path)
   end
 end
