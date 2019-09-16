@@ -1,5 +1,85 @@
 RSpec.describe FindExactQuery do
   context "when links are in the query" do
+    it "not matched when query contains fewer keys than the subscriber_list" do
+      create_subscriber_list(links: {
+        topics: { any: %w[uuid-888] },
+        format: { any: %w[guide news_story] }
+      })
+      query = build_query(links: { topics: { any: %w[uuid-888] } })
+      expect(query.exact_match).to be_nil
+    end
+
+    it "not matched when query contains more keys than the subscriber_list" do
+      create_subscriber_list(links: {
+        topics: { any: %w[uuid-888] },
+        organisations: { any: %w[org-123 org-555] }
+      })
+      query = build_query(links: {
+        topics: { any: %w[uuid-888] },
+        organisations: { any: %w[org-123 org-555] },
+        foo: %w[bar],
+      })
+      expect(query.exact_match).to be_nil
+    end
+
+    it "not matched when matching keys, but different values for a key" do
+      create_subscriber_list(links: {
+        topics: { any: %w[uuid-888] },
+        organisations: { any: %w[org-123 org-555] }
+      })
+      query = build_query(links: {
+        topics: { any: %w[uuid-999] },
+        organisations: { any: %w[org-456 org-666] },
+      })
+      expect(query.exact_match).to be_nil
+    end
+
+    it "matched when matching keys with matching values" do
+      subscriber_list = create_subscriber_list(links: {
+        topics: { any: %w[uuid-888] },
+        organisations: { any: %w[org-123 org-555] }
+      })
+      query = build_query(links: {
+        topics: { any: %w[uuid-888] },
+        organisations: { any: %w[org-123 org-555] },
+      })
+      expect(query.exact_match).to eq(subscriber_list)
+    end
+
+    it "order of values for keys does not affect matching" do
+      subscriber_list = create_subscriber_list(links: {
+        topics: { any: %w[uuid-888] },
+        organisations: { any: %w[org-123 org-555] }
+      })
+      query = build_query(links: {
+        organisations: { any: %w[org-555 org-123] },
+        topics: { any: %w[uuid-888] },
+      })
+      expect(query.exact_match).to eq(subscriber_list)
+    end
+
+    it "requires 'and' and 'any' operators to be correctly set" do
+      subscriber_list = create_subscriber_list(links: {
+        topics: { all: %w[uuid-888 uuid-999], any: %w[uuid-777] },
+        taxon_tree: { all: %w[taxon-123 taxon-555] },
+      })
+      query = build_query(links: {
+        taxon_tree: { all: %w[taxon-123 taxon-555] },
+        topics: { all: %w[uuid-888 uuid-999], any: %w[uuid-777] },
+      })
+      expect(query.exact_match).to eq(subscriber_list)
+    end
+
+    it "does not match unless both operators are present" do
+      subscriber_list = create_subscriber_list(links: {
+        topics: { all: %w[uuid-888], any: %w[uuid-777] },
+      })
+      bad_query = build_query(links: { topics: { all: %w[uuid-888] } })
+      good_query = build_query(links: { topics: { all: %w[uuid-888], any: %w[uuid-777] } })
+      expect(bad_query.exact_match).to be_nil
+      expect(good_query.exact_match).to eq(subscriber_list)
+    end
+
     it "matched when subscriber list has the same links" do
       query = build_query(links: { policies: { any: %w[aa-11] }, taxon_tree: { all: %w[taxon] } })
       subscriber_list = create_subscriber_list(links: { policies: { any: %w[aa-11] },
@@ -49,6 +129,86 @@ RSpec.describe FindExactQuery do
   end
 
   context "when tags are in the query" do
+    it "not matched when query contains fewer keys than the subscriber_list" do
+      create_subscriber_list(tags: {
+        topics: { any: %w[uuid-888] },
+        format: { any: %w[guide news_story] }
+      })
+      query = build_query(tags: { topics: { any: %w[uuid-888] } })
+      expect(query.exact_match).to be_nil
+    end
+
+    it "not matched when query contains more keys than the subscriber_list" do
+      create_subscriber_list(tags: {
+        topics: { any: %w[uuid-888] },
+        policies: { any: %w[pol-123 pol-555] }
+      })
+      query = build_query(tags: {
+        topics: { any: %w[uuid-888] },
+        policies: { any: %w[pol-123 pol-555] },
+        foo: %w[bar],
+      })
+      expect(query.exact_match).to be_nil
+    end
+
+    it "not matched when matching keys, but different values for each key" do
+      create_subscriber_list(tags: {
+        topics: { any: %w[uuid-888] },
+        policies: { any: %w[pol-123 pol-555] }
+      })
+      query = build_query(tags: {
+        topics: { any: %w[uuid-999] },
+        policies: { any: %w[pol-456 pol-666] },
+      })
+      expect(query.exact_match).to be_nil
+    end
+
+    it "matched when matching keys with matching values" do
+      subscriber_list = create_subscriber_list(tags: {
+        topics: { any: %w[uuid-888] },
+        policies: { any: %w[pol-123 pol-555] }
+      })
+      query = build_query(tags: {
+        topics: { any: %w[uuid-888] },
+        policies: { any: %w[pol-123 pol-555] },
+      })
+      expect(query.exact_match).to eq(subscriber_list)
+    end
+
+    it "order of values for keys does not affect matching" do
+      subscriber_list = create_subscriber_list(tags: {
+        topics: { any: %w[uuid-888] },
+        policies: { any: %w[pol-123 pol-555] }
+      })
+      query = build_query(tags: {
+        policies: { any: %w[pol-555 pol-123] },
+        topics: { any: %w[uuid-888] },
+      })
+      expect(query.exact_match).to eq(subscriber_list)
+    end
+
+    it "requires and and any operators to be correctly set" do
+      subscriber_list = create_subscriber_list(tags: {
+        topics: { all: %w[uuid-888 uuid-999], any: %w[uuid-777] },
+        subject: { all: %w[subject-123 subject-555] },
+      })
+      query = build_query(tags: {
+        subject: { all: %w[subject-123 subject-555] },
+        topics: { all: %w[uuid-888 uuid-999], any: %w[uuid-777] },
+      })
+      expect(query.exact_match).to eq(subscriber_list)
+    end
+
+    it "requires both operators to be present" do
+      subscriber_list = create_subscriber_list(tags: {
+        topics: { all: %w[uuid-888], any: %w[uuid-777] },
+      })
+      bad_query = build_query(tags: { topics: { all: %w[uuid-888] } })
+      good_query = build_query(tags: { topics: { all: %w[uuid-888], any: %w[uuid-777] } })
+      expect(bad_query.exact_match).to be_nil
+      expect(good_query.exact_match).to eq(subscriber_list)
+    end
+
     it "matched when subscriber tags has the same tags" do
       query = build_query(tags: { policies: { any: %w[beer] },
                                   topics: { all: %w[taxon] } })

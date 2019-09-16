@@ -38,6 +38,16 @@ private
   end
 
   def find_exact(query_field, query)
-    FindExactMatch.new(query_field: query_field, scope: base_scope).call(query).first
+    raise ArgumentError.new("query_field must be `:tags` or `:links`") unless %i{tags links}.include?(query_field)
+
+    return unless query.present?
+
+    digest = HashDigest.new(query).generate
+
+    if query_field == :tags
+      base_scope.find_by_tags_digest(digest)
+    elsif query_field == :links
+      base_scope.find_by_links_digest(digest)
+    end
   end
 end
