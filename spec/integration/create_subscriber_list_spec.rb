@@ -46,6 +46,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
           email_document_supertype
           government_document_supertype
           active_subscriptions_count
+          tags_digest
+          links_digest
         }.to_set.sort
       )
 
@@ -66,6 +68,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
       )
 
       expect(subscriber_list["slug"]).to eq("oil-and-gas-licensing")
+      expect(subscriber_list["links_digest"]).to eq(digested(subscriber_list['links']))
+      expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list['tags']))
     end
 
     it "can create a subscriber_list with a url" do
@@ -143,7 +147,20 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
     end
 
-    context 'when using legacy parameters' do
+    it "creates a subscriber_list with a digest of the JSON content" do
+      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
+                                     location: { all: %w[france germany] } },
+                             links: { topics: { any: ["oil-and-gas/licensing"] },
+                                     location: { all: %w[france germany] } })
+      expect(SubscriberList.last.tags_digest).to eq(digested(SubscriberList.last.tags))
+      expect(SubscriberList.last.links_digest).to eq(digested(SubscriberList.last.links))
+
+      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] } })
+      expect(SubscriberList.last.tags_digest).to eq(digested(SubscriberList.last.tags))
+      expect(SubscriberList.last.links_digest).to be_nil
+    end
+
+    describe 'using legacy parameters' do
       it 'creates a new subscriber list' do
         expect {
           create_subscriber_list(
@@ -300,5 +317,9 @@ RSpec.describe "Creating a subscriber list", type: :request do
       post "/subscriber-lists", params: {}, headers: {}
       expect(response.status).to eq(403)
     end
+  end
+
+  def digested(hash)
+    HashDigest.new(hash).generate
   end
 end

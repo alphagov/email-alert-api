@@ -142,11 +142,15 @@ ActiveRecord::Schema.define(version: 2019_09_13_102634) do
     t.string "slug", null: false
     t.string "url"
     t.string "description", default: "", null: false
+    t.string "tags_digest"
+    t.string "links_digest"
     t.string "group_id"
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
     t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
     t.index ["government_document_supertype"], name: "index_subscriber_lists_on_government_document_supertype"
+    t.index ["links_digest"], name: "index_subscriber_lists_on_links_digest"
     t.index ["slug"], name: "index_subscriber_lists_on_slug", unique: true
+    t.index ["tags_digest"], name: "index_subscriber_lists_on_tags_digest"
   end
 
   create_table "subscribers", force: :cascade do |t|
