@@ -7,12 +7,21 @@ RSpec.describe "Subscriptions", type: :request do
     context "when listing subscriptions for a subscriber" do
       context "with an existing subscriber" do
         let!(:subscriber) { create(:subscriber) }
-        let!(:subscriber_list_1) { create(:subscriber_list) }
+        let!(:subscriber_list_1) { create(:subscriber_list, title: "Zebra") }
         let!(:subscriber_list_2) { create(:subscriber_list) }
-        let!(:subscriber_list_3) { create(:subscriber_list) }
-        let!(:subscription_1) { create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list_1) }
-        let!(:subscription_2) { create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list_2, ended_at: Time.now, ended_reason: :frequency_changed) }
-        let!(:subscription_3) { create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list_3, frequency: :daily) }
+        let!(:subscriber_list_3) { create(:subscriber_list, title: "Ant") }
+        let!(:subscription_1) do
+          create(:subscription, subscriber: subscriber,
+                 subscriber_list: subscriber_list_1, created_at: Time.now.days_ago(2))
+        end
+        let!(:subscription_2) do
+          create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list_2,
+                 ended_at: Time.now, ended_reason: :frequency_changed)
+        end
+        let!(:subscription_3) do
+          create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list_3,
+                 created_at: Time.now.days_ago(1), frequency: :daily)
+        end
 
         it "lists all active subscriptions" do
           get "/subscribers/#{subscriber.id}/subscriptions"
@@ -23,6 +32,21 @@ RSpec.describe "Subscriptions", type: :request do
           get "/subscribers/#{subscriber.id}/subscriptions"
           ended_subscription = data[:subscriptions].detect { |s| s[:id] == subscription_2.id }
           expect(ended_subscription).to be_nil
+        end
+
+        it "defaults to sorting subscriptions by created_at in descending order" do
+          get "/subscribers/#{subscriber.id}/subscriptions"
+          expect(data[:subscriptions].map { |s| s[:id] }).to eq([subscription_3.id, subscription_1.id])
+        end
+
+        it "orders subscriptions by parameter when valid" do
+          get "/subscribers/#{subscriber.id}/subscriptions?order=title"
+          expect(data[:subscriptions].map { |s| s[:subscriber_list][:title] }).to eq(%w[Ant Zebra])
+        end
+
+        it "returns unprocessable entity status if order param is invalid" do
+          get "/subscribers/#{subscriber.id}/subscriptions?order=blah-blah"
+          expect(response.status).to eq(422)
         end
       end
 
