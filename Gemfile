@@ -5,7 +5,7 @@ gem 'rails', '~> 5.2'
 
 gem 'activerecord-import', '~> 1.0'
 gem 'bootsnap', require: false
-gem 'with_advisory_lock', '~> 4.0'
+gem 'with_advisory_lock', '~> 4.6'
 
 gem 'aws-sdk-s3', '~> 1'
 gem 'faraday', '0.15.4'
