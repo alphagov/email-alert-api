@@ -8,9 +8,9 @@ RSpec.describe MessageHandlerService do
           {
             type: "tag",
             key: "brexit_checker_criteria",
-            value: "eu-national"
+            value: "eu-national",
           },
-        ]
+        ],
       }
     end
 

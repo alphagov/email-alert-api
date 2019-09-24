@@ -1,5 +1,5 @@
-require 'gds_api/test_helpers/content_store'
-require 'gds_api/test_helpers/worldwide'
+require "gds_api/test_helpers/content_store"
+require "gds_api/test_helpers/worldwide"
 
 RSpec.describe Clean::InvalidSubscriberLists do
   include ::GdsApi::TestHelpers::Worldwide
@@ -71,7 +71,7 @@ RSpec.describe Clean::InvalidSubscriberLists do
           people: { all: %w[harry-potter-id] },
           world_locations: {
             all: %w[content_id_for_france content_id_for_iceland content_id_for_malta],
-            any: %w[content_id_for_australia]
+            any: %w[content_id_for_australia],
           },
           content_store_document_type: { any: %w[news_and_communications] },
           taxon_tree: { any: %w[taxon], all: %w[another-taxon] },
@@ -201,32 +201,32 @@ RSpec.describe Clean::InvalidSubscriberLists do
 
   def content_store_has_organisations
     content_store_has_item(
-      '/government/organisations/ministry-of-silly-walks',
+      "/government/organisations/ministry-of-silly-walks",
       {
-        'base_path' => '/government/organisations/ministry-of-silly-walks',
-        'content_id' => 'silly-walks-id',
-      }.to_json
+        "base_path" => "/government/organisations/ministry-of-silly-walks",
+        "content_id" => "silly-walks-id",
+      }.to_json,
     )
 
     content_store_has_item(
-      '/government/organisations/ministry-of-sillier-walks',
+      "/government/organisations/ministry-of-sillier-walks",
       {
-        'base_path' => '/government/organisations/ministry-of-sillier-walks',
-        'content_id' => 'sillier-walks-walks-id',
-      }.to_json
+        "base_path" => "/government/organisations/ministry-of-sillier-walks",
+        "content_id" => "sillier-walks-walks-id",
+      }.to_json,
     )
   end
 
   def content_store_has_people
     content_store_has_item(
-      '/government/people/harry-potter',
+      "/government/people/harry-potter",
       {
-        'base_path' => '/government/people/harry-potter',
-        'content_id' => 'harry-potter-id',
-      }.to_json
+        "base_path" => "/government/people/harry-potter",
+        "content_id" => "harry-potter-id",
+      }.to_json,
     )
     stub_content_store_does_not_have_item(
-      '/government/people/non-existant-person'
+      "/government/people/non-existant-person",
     )
   end
 end

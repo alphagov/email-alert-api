@@ -41,7 +41,7 @@ FactoryBot.define do
         {
           type: "tag",
           key: "brexit_checklist_criteria",
-          value: "eu-national"
+          value: "eu-national",
         },
       ]
     end
@@ -218,7 +218,7 @@ FactoryBot.define do
     end
 
     trait :unpublished do
-      ended_reason { 'unpublished' }
+      ended_reason { "unpublished" }
     end
   end
 
@@ -276,7 +276,7 @@ FactoryBot.define do
           {
             "id" => "cb633abc-6ae6-4843-ae6f-82ca500b6de2",
             "uri" => "/v2/templates/5e427b42-4e98-46f3-a047-32c4a87d26bb",
-            "version" => 1
+            "version" => 1,
           },
         "body" => "Body of the message",
         "subject" => "Changes to this document",
@@ -298,11 +298,11 @@ FactoryBot.define do
       {
         "links" => {
           "current" => "/v2/notifications?page=3&template_type=email&status=delivered",
-          "next" => "/v2/notifications?page=3&template_type=email&status=delivered"
+          "next" => "/v2/notifications?page=3&template_type=email&status=delivered",
         },
         "notifications" => 1.times.map {
           attributes_for(:client_notification)[:body]
-        }
+        },
       }
     end
   end
@@ -315,25 +315,25 @@ FactoryBot.define do
     body do
       {
         "links" => {},
-        "notifications" => {}
+        "notifications" => {},
       }
     end
   end
 
   factory :client_request_error,
           class: Notifications::Client::RequestError do
-    code { '400' }
+    code { "400" }
     body do
       {
-        'status_code' => 400,
-        'errors' => ['error' => 'ValidationError',
-                      'message' => 'bad status is not one of [created, sending, sent, delivered, pending, failed, technical-failure, temporary-failure, permanent-failure, accepted, received]']
+        "status_code" => 400,
+        "errors" => ["error" => "ValidationError",
+                      "message" => "bad status is not one of [created, sending, sent, delivered, pending, failed, technical-failure, temporary-failure, permanent-failure, accepted, received]"],
       }
     end
 
     initialize_with do
       new(
-        OpenStruct.new(code: code, body: body.to_json)
+        OpenStruct.new(code: code, body: body.to_json),
       )
     end
   end

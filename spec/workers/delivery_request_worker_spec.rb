@@ -100,7 +100,7 @@ RSpec.describe DeliveryRequestWorker do
         expect(rate_limiter).to receive(:exceeded?).with(
           "delivery_request",
           threshold: default_threshold,
-          interval: default_interval
+          interval: default_interval,
         ).and_return(true)
 
         expect(subject.rate_limit_exceeded?).to eq(true)

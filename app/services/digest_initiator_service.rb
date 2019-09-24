@@ -17,11 +17,11 @@ class DigestInitiatorService
       subscriber_ids.each_slice(1000) do |subscriber_ids_chunk|
         digest_run_subscriber_params = build_digest_run_subscriber_params(
           digest_run.id,
-          subscriber_ids_chunk
+          subscriber_ids_chunk,
         )
 
         digest_run_subscriber_ids = import_digest_run_subscribers(
-          digest_run_subscriber_params
+          digest_run_subscriber_params,
         )
 
         enqueue_jobs(digest_run_subscriber_ids)
@@ -40,7 +40,7 @@ private
   def create_digest_run
     run_with_advisory_lock do
       digest_run = DigestRun.find_or_initialize_by(
-        date: Date.current, range: range
+        date: Date.current, range: range,
       )
       return if digest_run.persisted?
 

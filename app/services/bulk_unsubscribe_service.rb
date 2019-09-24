@@ -70,20 +70,20 @@ module BulkUnsubscribeService
         email = process_subscriber(
           subscriber,
           subscription_details,
-          send_courtesy_copy: (index % courtesy_emails_every_nth_email).zero?
+          send_courtesy_copy: (index % courtesy_emails_every_nth_email).zero?,
         )
 
         UnsubscribeService.subscriptions!(
           subscriber,
           subscriptions,
           :unpublished,
-          ended_email_id: email.id
+          ended_email_id: email.id,
         )
       end
 
       DeliveryRequestWorker.perform_async_in_queue(
         email.id,
-        queue: :delivery_immediate
+        queue: :delivery_immediate,
       )
     end
   end
@@ -93,41 +93,41 @@ module BulkUnsubscribeService
         subscription_details,
         send_courtesy_copy:
       )
-    subject = 'Changes to your email subscriptions'
+    subject = "Changes to your email subscriptions"
     template_data = {
       subscription_details: subscription_details,
       utm_parameters: {
-        'utm_source' => subject,
-        'utm_medium' => 'email',
-        'utm_campaign' => 'govuk-subscription-ended'
-      }
+        "utm_source" => subject,
+        "utm_medium" => "email",
+        "utm_campaign" => "govuk-subscription-ended",
+      },
     }
 
     email = BulkUnsubscribeEmailBuilder.call(
       EmailParameters.new(
         subject: subject,
         subscriber: subscriber,
-        template_data: template_data
+        template_data: template_data,
       ),
-      BULK_POLICY_TEMPLATE
+      BULK_POLICY_TEMPLATE,
     )
 
     if send_courtesy_copy
       Subscriber.where(
-        address: Email::COURTESY_EMAIL
+        address: Email::COURTESY_EMAIL,
       ).each do |courtesy_subscriber|
         courtesy_email = BulkUnsubscribeEmailBuilder.call(
           EmailParameters.new(
             subject: subject,
             subscriber: courtesy_subscriber,
-            template_data: template_data
+            template_data: template_data,
           ),
-          BULK_POLICY_TEMPLATE
+          BULK_POLICY_TEMPLATE,
         )
 
         DeliveryRequestWorker.perform_async_in_queue(
           courtesy_email.id,
-          queue: :delivery_immediate
+          queue: :delivery_immediate,
         )
       end
     end

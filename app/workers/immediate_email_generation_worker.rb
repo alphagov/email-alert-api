@@ -127,7 +127,7 @@ private
         UPDATE subscription_contents SET email_id = v.email_id
         FROM (VALUES #{values.join(',')}) AS v(id, email_id)
         WHERE subscription_contents.id = v.id
-      )
+      ),
     )
   end
 

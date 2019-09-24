@@ -29,13 +29,13 @@ RSpec.describe ImmediateEmailGenerationWorker do
         create(
           :subscription_content,
           subscription: subscription_one,
-          content_change: content_change
+          content_change: content_change,
         )
 
         create(
           :subscription_content,
           subscription: subscription_two,
-          content_change: content_change
+          content_change: content_change,
         )
 
         described_class.new.perform

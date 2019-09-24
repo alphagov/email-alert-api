@@ -1,6 +1,6 @@
 # rubocop:disable Lint/UnreachableCode
 
-require 'csv'
+require "csv"
 
 class AddContentIDsToTravelAdviceTopics < ActiveRecord::Migration[4.2]
   def change
@@ -16,7 +16,7 @@ class AddContentIDsToTravelAdviceTopics < ActiveRecord::Migration[4.2]
     CSV.foreach(csv_path, headers: true, return_headers: false) do |row|
       s = SubscriberList.find_by(gov_delivery_id: row["gov_delivery_id"])
       s.links = {
-        countries: [row["content_id"]]
+        countries: [row["content_id"]],
       }
       s.save
       puts "Updated #{row['gov_delivery_id']}"

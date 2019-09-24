@@ -23,7 +23,7 @@ private
       :body,
       :priority,
     ).merge(
-      criteria_rules: criteria_rules
+      criteria_rules: criteria_rules,
     )
   end
 

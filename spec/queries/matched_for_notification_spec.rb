@@ -30,7 +30,7 @@ RSpec.describe MatchedForNotification do
             {
               any_topic_paye_any_format_guides: create_subscriber_list_with_links_facets(topics: { any: %w(paye) }, format: { any: %w(policy guide) }),
               any_topic_vat_licensing: create_subscriber_list_with_links_facets(topics: { any: %w(vat licensing) }),
-            }
+            },
         }
       end
 
@@ -152,7 +152,7 @@ RSpec.describe MatchedForNotification do
       let!(:list2) { create(:subscriber_list, links: { content_store_document_type: { any: %w[other_type] } }) }
 
       it "finds subscriber lists matching content_store_document_type" do
-        lists = execute_query({ content_store_document_type: 'news_article' }, field: :links)
+        lists = execute_query({ content_store_document_type: "news_article" }, field: :links)
         expect(lists).to eq([list1])
       end
     end

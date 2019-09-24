@@ -1,16 +1,16 @@
 RSpec.describe Reports::ContentChangeEmailStatusCount do
   before do
-    3.times { create(:email, status: 'sent') }
-    2.times { create(:email, status: 'pending') }
-    1.times { create(:email, status: 'failed') }
+    3.times { create(:email, status: "sent") }
+    2.times { create(:email, status: "pending") }
+    1.times { create(:email, status: "failed") }
   end
 
-  context 'generate report' do
+  context "generate report" do
     let(:content_change) { create(:content_change) }
 
-    let(:sent)    { Email.where(status: 'sent') }
-    let(:pending) { Email.where(status: 'pending') }
-    let(:failed)  { Email.where(status: 'failed') }
+    let(:sent)    { Email.where(status: "sent") }
+    let(:pending) { Email.where(status: "pending") }
+    let(:failed)  { Email.where(status: "failed") }
 
     let(:emails) { [sent, pending, failed].flatten }
 
@@ -20,10 +20,10 @@ RSpec.describe Reports::ContentChangeEmailStatusCount do
       end
     end
 
-    it 'produces a count of emails statuses for a given content change' do
+    it "produces a count of emails statuses for a given content change" do
       described_class.call(content_change)
       expect { described_class.call(content_change) }.to output(
-        <<~TEXT
+        <<~TEXT,
           -------------------------------------------
           Email status counts for Content Change #{content_change.id}
           -------------------------------------------

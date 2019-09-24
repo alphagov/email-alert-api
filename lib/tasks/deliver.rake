@@ -23,7 +23,7 @@ namespace :deliver do
 
   desc "Re-send failed emails by email ids"
   task resend_failed_emails: [:environment] do |_, args|
-    failed_email_ids = Email.where(id: args.to_a, status: 'failed').pluck(:id)
+    failed_email_ids = Email.where(id: args.to_a, status: "failed").pluck(:id)
 
     failed_email_ids.each do |email_id|
       puts "Resending email: #{email_id}"

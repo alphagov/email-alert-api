@@ -30,7 +30,7 @@ private
     direction = order.chars.first == "-" ? "desc" : "asc"
     column = order.delete_prefix("-")
 
-    order_column = (column == 'title' ? 'subscriber_lists.title' : 'created_at')
+    order_column = (column == "title" ? "subscriber_lists.title" : "created_at")
     { "#{order_column}": direction }
   end
 

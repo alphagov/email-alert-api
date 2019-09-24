@@ -93,7 +93,7 @@ RSpec.describe UnsubscribeService do
           subject.subscriptions!(
             subscriber,
             subscriptions + [create(:subscription)],
-            :unpublished
+            :unpublished,
           )
         }.to raise_error "Can't process subscriptions for multiple subscribers"
       end
@@ -107,7 +107,7 @@ RSpec.describe UnsubscribeService do
           subscriber,
           subscriptions,
           :unpublished,
-          ended_email_id: email.id
+          ended_email_id: email.id,
         )
 
         subscriptions.each do |subscription|

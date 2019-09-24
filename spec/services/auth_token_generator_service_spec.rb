@@ -22,7 +22,7 @@ RSpec.describe AuthTokenGeneratorService do
             "exp" => expiry.to_i,
             "iat" => Time.now.to_i,
             "iss" => "https://www.gov.uk",
-          )
+          ),
         )
       end
     end

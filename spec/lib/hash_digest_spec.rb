@@ -28,10 +28,10 @@ RSpec.describe HashDigest do
     it "returns the same digest regardless of hash structure" do
       first_input = {
         a: [1, 2, 3, 4], b: %w(a b c d),
-        prior: 'one',
+        prior: "one",
         nested_tags: {
           number: 2,
-          deep_nest: { foo: 'bar' },
+          deep_nest: { foo: "bar" },
           more_tags: %w(more and more),
         }
       }
@@ -40,9 +40,9 @@ RSpec.describe HashDigest do
         nested_tags: {
           more_tags: %w(more more and),
           number: 2,
-          deep_nest: { foo: 'bar' },
+          deep_nest: { foo: "bar" },
         },
-        prior: 'one'
+        prior: "one"
       }
       first_output = described_class.new(first_input).generate
       second_output = described_class.new(second_input).generate

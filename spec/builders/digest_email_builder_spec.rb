@@ -31,7 +31,7 @@ RSpec.describe DigestEmailBuilder do
       address: address,
       subscription_content: subscription_content,
       digest_run: digest_run,
-      subscriber_id: subscriber_id
+      subscriber_id: subscriber_id,
     )
   }
 
@@ -59,7 +59,7 @@ RSpec.describe DigestEmailBuilder do
       .and_return("presented_message\n")
 
     expect(email.body).to eq(
-      <<~BODY
+      <<~BODY,
         Daily update from GOV.UK.
 
         # Test title 1 &nbsp;

@@ -1,4 +1,4 @@
-require_relative 'boot'
+require_relative "boot"
 
 require "active_model/railtie"
 require "active_record/railtie"
@@ -14,7 +14,7 @@ Bundler.require(*Rails.groups)
 
 module EmailAlertAPI
   class Application < Rails::Application
-    config.time_zone = 'London'
+    config.time_zone = "London"
     config.api_only = true
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1

@@ -15,7 +15,7 @@ RSpec.describe EmailArchivePresenter do
       "sent" => true,
       "subject" => "Test email",
       "subscriber_id" => 1,
-      "subscription_ids" => [SecureRandom.uuid]
+      "subscription_ids" => [SecureRandom.uuid],
     }
   end
 
@@ -28,7 +28,7 @@ RSpec.describe EmailArchivePresenter do
         content_change: {
           content_change_ids: record["content_change_ids"],
           digest_run_id: record["digest_run_ids"].first,
-          subscription_ids: record["subscription_ids"]
+          subscription_ids: record["subscription_ids"],
         },
         created_at_utc: time_for_s3,
         finished_sending_at_utc: time_for_s3,
@@ -56,7 +56,7 @@ RSpec.describe EmailArchivePresenter do
 
       it "only returns one of them" do
         expect(described_class.for_s3(record, archived_at)).to match(
-          hash_including(content_change: hash_including(digest_run_id: 1))
+          hash_including(content_change: hash_including(digest_run_id: 1)),
         )
       end
 

@@ -52,8 +52,8 @@ module Reports
         subscriber_list_ids.concat(
           subscriber.subscriptions
             .where(ended_at: nil)
-            .where('created_at > ?', start_date)
-            .pluck(:subscriber_list_id)
+            .where("created_at > ?", start_date)
+            .pluck(:subscriber_list_id),
         )
       end
 

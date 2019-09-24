@@ -11,7 +11,7 @@ RSpec.describe ContentChangeHandlerService do
     {
       subject: "This is a subject",
       tags: {
-        topics: ["oil-and-gas/licensing"]
+        topics: ["oil-and-gas/licensing"],
       },
       links: {
         organisations: %w[c380ea42-5d91-41cc-b3cd-0a4cfe439461],
@@ -89,7 +89,7 @@ RSpec.describe ContentChangeHandlerService do
         processed_at: nil,
         priority: "normal",
         signon_user_uid: nil,
-        footnote: ""
+        footnote: "",
       )
     end
 
@@ -115,7 +115,7 @@ RSpec.describe ContentChangeHandlerService do
 
     it "Raises errors if the ContentChange is invalid" do
       allow(ContentChange).to receive(:create!).and_raise(
-        ActiveRecord::RecordInvalid
+        ActiveRecord::RecordInvalid,
       )
 
       expect { described_class.call(params: params, govuk_request_id: govuk_request_id) }

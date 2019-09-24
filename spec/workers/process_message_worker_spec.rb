@@ -2,7 +2,7 @@ RSpec.describe ProcessMessageWorker do
   let(:message) do
     create(:message,
            criteria_rules: [
-             { type: "tag", key: "topics", value: "oil-and-gas/licensing" }
+             { type: "tag", key: "topics", value: "oil-and-gas/licensing" },
            ])
   end
 

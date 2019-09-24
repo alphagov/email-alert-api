@@ -41,8 +41,8 @@ RSpec.describe "Create an auth token", type: :request do
           "personalisation" => hash_including(
             "subject" => "Confirm your email address",
             "body" => include(sign_in_link),
-          )
-        )
+          ),
+        ),
       )
       .to_return(body: {}.to_json)
   end

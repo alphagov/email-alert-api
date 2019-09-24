@@ -43,7 +43,7 @@ private
     ContentChange.exists?(
       base_path: content_change_params[:base_path],
       content_id: content_change_params[:content_id],
-      public_updated_at: content_change_params[:public_updated_at]
+      public_updated_at: content_change_params[:public_updated_at],
     )
   end
 end

@@ -1,6 +1,6 @@
 # rubocop:disable Lint/UnreachableCode
 
-require 'csv'
+require "csv"
 
 class AddForeignTravelAdviceSubscriberLists < ActiveRecord::Migration[4.2]
   def change
@@ -12,9 +12,9 @@ class AddForeignTravelAdviceSubscriberLists < ActiveRecord::Migration[4.2]
       SubscriberList.create!(
         gov_delivery_id: gov_delivery_id,
         links: {
-          countries: [country_slug]
+          countries: [country_slug],
         },
-        document_type: 'travel_advice'
+        document_type: "travel_advice",
       )
       puts "Created subscriber list for #{gov_delivery_id} -> #{country_slug}"
     end

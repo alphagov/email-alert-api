@@ -30,11 +30,11 @@ RSpec.describe "Sending an email", type: :request do
     login_with_internal_app
 
     subscriber_list_id = create_subscriber_list(
-      tags: { brexit_checklist_criteria: { any: %w[eu-national] } }
+      tags: { brexit_checklist_criteria: { any: %w[eu-national] } },
     )
     subscribe_to_subscriber_list(subscriber_list_id)
     create_message(
-      criteria_rules: [{ type: "tag", key: "brexit_checklist_criteria", value: "eu-national" }]
+      criteria_rules: [{ type: "tag", key: "brexit_checklist_criteria", value: "eu-national" }],
     )
     email_data = expect_an_email_was_sent
 

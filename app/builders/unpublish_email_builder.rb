@@ -16,10 +16,10 @@ private
         subject: "Update from GOV.UK – #{email.subject}",
         body: ERB.new(template).result(
           EmailTemplateContext.new(
-            email.template_data
-          ).fetch_binding
+            email.template_data,
+          ).fetch_binding,
         ),
-        subscriber_id: email.subscriber.id
+        subscriber_id: email.subscriber.id,
       }
     end
   end

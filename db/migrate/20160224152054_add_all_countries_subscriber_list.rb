@@ -5,8 +5,8 @@ class AddAllCountriesSubscriberList < ActiveRecord::Migration[4.2]
     return
 
     SubscriberList.create!(
-      gov_delivery_id: 'UKGOVUK_391',
-      document_type: 'travel_advice'
+      gov_delivery_id: "UKGOVUK_391",
+      document_type: "travel_advice",
     )
   end
 end

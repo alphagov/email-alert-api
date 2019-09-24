@@ -20,11 +20,11 @@ RSpec.describe DataExporter do
       same_subscriber = create(:subscriber)
       create(
         :subscription, :ended, subscriber: same_subscriber, subscriber_list: subscriber_list,
-        created_at: "2018-01-04", ended_at: "2018-01-05", updated_at: "2018-01-05",
+        created_at: "2018-01-04", ended_at: "2018-01-05", updated_at: "2018-01-05"
       )
       create(
         :subscription, subscriber: same_subscriber, subscriber_list: subscriber_list,
-        created_at: "2018-01-06", updated_at: "2018-01-06",
+        created_at: "2018-01-06", updated_at: "2018-01-06"
       )
     end
 

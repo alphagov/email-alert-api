@@ -10,7 +10,7 @@ RSpec.describe "Anonymising email addresses" do
   end
 
   it "deletes an email older than a day old" do
-    email = create(:email, address: "foo@example.com", created_at: Time.parse('13/03/2018 16:30:17'))
+    email = create(:email, address: "foo@example.com", created_at: Time.parse("13/03/2018 16:30:17"))
     execute_sql
 
     expect { email.reload }
@@ -60,7 +60,7 @@ RSpec.describe "Anonymising email addresses" do
       :email,
       address: "foo@example.com",
       subject: "Email for foo@example.com",
-      body: <<~HDOC
+      body: <<~HDOC,
         [Thailand travel advice](https://www.gov.uk/foreign-travel-advice/thailand)
 
         10:51am, 4 April 2018: Another test that email sent ok
@@ -78,7 +78,7 @@ RSpec.describe "Anonymising email addresses" do
     expect(email.body).not_to match(/foo@example.com/)
     expect(email.subject).to eq("Email for anonymous-1@example.com")
     expect(email.body).to match(
-      /#{Regexp.escape("[View, unsubscribe or change the frequency of your subscriptions](https://www.gov.uk/email/authenticate?address=anonymous-1@example.com)")}/
+      /#{Regexp.escape("[View, unsubscribe or change the frequency of your subscriptions](https://www.gov.uk/email/authenticate?address=anonymous-1@example.com)")}/,
     )
   end
 

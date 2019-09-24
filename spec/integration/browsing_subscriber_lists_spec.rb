@@ -9,7 +9,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
         create(
           :subscriber_list,
           links: {
-            topics: { any: ["oil-and-gas/licensing", "drug-device-alert"] }
+            topics: { any: ["oil-and-gas/licensing", "drug-device-alert"] },
           },
           tags: {},
           document_type: "",
@@ -21,7 +21,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           :subscriber_list,
           links: {},
           tags: {
-            topics: { any: ["oil-and-gas/licensing", "drug-device-alert"] }
+            topics: { any: ["oil-and-gas/licensing", "drug-device-alert"] },
           },
           document_type: "",
         )
@@ -167,7 +167,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           get_subscriber_list(
             tags: { topics: { any: %w[vat-rates] } },
             document_type: "tax",
-            gov_delivery_id: "NEW-TOPIC"
+            gov_delivery_id: "NEW-TOPIC",
           )
           expect(response.status).to eq(404)
         end
@@ -179,7 +179,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
 
           get_subscriber_list(
             tags: { topics: { any: %w[vat-rates] } },
-            gov_delivery_id: "beta"
+            gov_delivery_id: "beta",
           )
           expect(response.status).to eq(200)
 
@@ -193,9 +193,9 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           get_subscriber_list(
             tags: {
               topics: { any: %w[vat-rates] },
-              content_purpose_supergroup: { any: %w[news_and_communications] }
+              content_purpose_supergroup: { any: %w[news_and_communications] },
             },
-            document_type: "tax"
+            document_type: "tax",
           )
           expect(response.status).to eq(404)
         end
@@ -204,23 +204,23 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           _alpha = create(:subscriber_list,
                           tags: {
                             topics: { any: %w[vat-rates] },
-                            content_purpose_supergroup: { any: %w[services] }
+                            content_purpose_supergroup: { any: %w[services] },
                           })
           beta = create(:subscriber_list,
                         tags: {
                           topics: { any: %w[vat-rates] },
-                          content_purpose_supergroup: { any: %w[news_and_communications] }
+                          content_purpose_supergroup: { any: %w[news_and_communications] },
                         })
           _gamma = create(:subscriber_list,
                           tags: {
-                            topics: { any: %w[vat-rates] }
+                            topics: { any: %w[vat-rates] },
                           })
 
           get_subscriber_list(
             tags: {
               topics: { any: %w[vat-rates] },
-              content_purpose_supergroup: { any: %w[news_and_communications] }
-            }
+              content_purpose_supergroup: { any: %w[news_and_communications] },
+            },
   )
           expect(response.status).to eq(200)
 
@@ -234,7 +234,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           get_subscriber_list(
             tags: {
               topics: { any: %w[vat-rates] },
-              content_purpose_subgroup: { any: %w(news) }
+              content_purpose_subgroup: { any: %w(news) },
             },
             document_type: "tax",
           )
@@ -247,7 +247,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           _gamma = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w() } })
 
           get_subscriber_list(
-            tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w(news) } }
+            tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w(news) } },
           )
           expect(response.status).to eq(200)
 

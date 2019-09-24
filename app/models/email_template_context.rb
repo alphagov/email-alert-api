@@ -14,7 +14,7 @@ class EmailTemplateContext
 
   def add_utm(url, utm_parameters)
     uri = URI.parse(url)
-    uri.query = [uri.query, *utm_parameters.map { |k| k.join('=') }].compact.join('&')
+    uri.query = [uri.query, *utm_parameters.map { |k| k.join("=") }].compact.join("&")
     uri.to_s
   end
 

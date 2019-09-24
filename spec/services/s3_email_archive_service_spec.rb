@@ -4,7 +4,7 @@ RSpec.describe S3EmailArchiveService do
   end
 
   around do |example|
-    ClimateControl.modify(EMAIL_ARCHIVE_S3_BUCKET: 'my-bucket') { example.run }
+    ClimateControl.modify(EMAIL_ARCHIVE_S3_BUCKET: "my-bucket") { example.run }
   end
 
   def create_record(time: Time.now)
@@ -22,7 +22,7 @@ RSpec.describe S3EmailArchiveService do
 
   it "Returns PutObjectOutput instances" do
     expect(described_class.call([create_record])).to match(
-      [an_instance_of(Aws::S3::Types::PutObjectOutput)]
+      [an_instance_of(Aws::S3::Types::PutObjectOutput)],
     )
   end
 
@@ -33,7 +33,7 @@ RSpec.describe S3EmailArchiveService do
       .with(%r{^email-archive/year=2018/month=06/date=28/#{time}-[a-z0-9-]*.json.gz$})
       .and_call_original
     described_class.call(
-      [create_record(time: Time.parse(time))]
+      [create_record(time: Time.parse(time))],
     )
   end
 
@@ -43,11 +43,11 @@ RSpec.describe S3EmailArchiveService do
     expect_any_instance_of(Aws::S3::Object).to receive(:put)
       .with(
         body: gzipped_match(%r/^{"archived_at_utc":"2018-06-27/),
-        content_encoding: "gzip"
+        content_encoding: "gzip",
       ) do |args|
       end
     described_class.call(
-      [create_record(time: time)]
+      [create_record(time: time)],
     )
   end
 

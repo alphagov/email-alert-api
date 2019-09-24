@@ -17,8 +17,8 @@ namespace :eu_exit_business_finder do
         EuExitFacetMigrationConfig::facet_values_to_replace[original_value] || original_value
       }.flatten
       updated_links = (updated_links - EuExitFacetMigrationConfig::facet_values_to_remove).uniq
-      list.write_attribute('links', facet_values: { any: updated_links })
-      list.write_attribute('title', title_from_facets(updated_links))
+      list.write_attribute("links", facet_values: { any: updated_links })
+      list.write_attribute("title", title_from_facets(updated_links))
       list.save
     end
   end
@@ -29,11 +29,11 @@ namespace :eu_exit_business_finder do
       if EuExitFacetMigrationConfig.facet_value_label_overrides[facet_value].present?
         "'#{EuExitFacetMigrationConfig.facet_value_label_overrides[facet_value]}'"
       else
-        content_item_title = GdsApi.publishing_api_v2.get_content(facet_value).to_h['title']
+        content_item_title = GdsApi.publishing_api_v2.get_content(facet_value).to_h["title"]
         "'#{content_item_title}'"
       end
     end
-    subscription_title_prefix + titles.join(', ')
+    subscription_title_prefix + titles.join(", ")
   end
 end
 
@@ -58,7 +58,7 @@ module EuExitFacetMigrationConfig
       ],
       # to fix a missing character issue introduced in
       # https://github.com/alphagov/search-api/commit/8fce3db218821dfc7a2b50dbd1b03984b1ec41b1
-      "7620da7a-0427-4b3c-9498-db9dc25209b" => %w[7620da7a-0427-4b3c-9498-db9dc25209b0]
+      "7620da7a-0427-4b3c-9498-db9dc25209b" => %w[7620da7a-0427-4b3c-9498-db9dc25209b0],
     }
   end
 
@@ -77,7 +77,7 @@ module EuExitFacetMigrationConfig
       "5476f0c7-d029-459b-8a17-196374ae3366" => "Employing EU citizens",
       "bbdbda71-b1ec-46b8-a5b8-931d933288e9" => "Employing non-EU citizens",
       "f165dc7c-7cef-446a-bdfd-8a1ca685d091" => "Public sector procurement - civil government contracts",
-      "33fc20d7-6a45-40c9-b31f-e4678f962ff1" => "Public sector procurement - defence contracts"
+      "33fc20d7-6a45-40c9-b31f-e4678f962ff1" => "Public sector procurement - defence contracts",
     }
   end
 end

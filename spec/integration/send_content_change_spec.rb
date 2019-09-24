@@ -4,12 +4,12 @@ RSpec.describe "Sending a content change", type: :request do
       subject: "This is a subject",
       body: "body stuff",
       tags: {
-        topics: ["oil-and-gas/licensing"]
+        topics: ["oil-and-gas/licensing"],
       },
       links: {
         organisations: %w[
           c380ea42-5d91-41cc-b3cd-0a4cfe439461
-        ]
+        ],
       },
       content_id: "afe78383-6b27-45a4-92ae-a579e416373a",
       title: "Travel advice",
@@ -32,7 +32,7 @@ RSpec.describe "Sending a content change", type: :request do
       expect(response.status).to eq(422)
       expect(JSON.parse(response.body)).to match(
         "error" => "Unprocessable Entity",
-        "details" => { "title" => ["can't be blank"] }
+        "details" => { "title" => ["can't be blank"] },
       )
     end
   end

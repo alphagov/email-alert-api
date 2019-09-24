@@ -30,7 +30,7 @@ RSpec.describe MessageEmailBuilder do
           message: message,
           subscriptions: [],
           subscriber_id: subscriber.id,
-        }
+        },
       ]
     end
 
@@ -48,7 +48,7 @@ RSpec.describe MessageEmailBuilder do
 
     it "sets the body" do
       expect(email.body).to eq(
-        <<~BODY
+        <<~BODY,
           Update on GOV.UK.
 
           ---
@@ -74,7 +74,7 @@ RSpec.describe MessageEmailBuilder do
             message: message,
             subscriptions: [subscription],
             subscriber_id: subscriber.id,
-          }
+          },
         ]
       end
 
@@ -89,7 +89,7 @@ RSpec.describe MessageEmailBuilder do
           email = Email.find(email_import.ids.first)
 
           expect(email.body).to eq(
-            <<~BODY
+            <<~BODY,
               Update on GOV.UK.
 
               ---
@@ -113,7 +113,7 @@ RSpec.describe MessageEmailBuilder do
           email = Email.find(email_import.ids.first)
 
           expect(email.body).to eq(
-            <<~BODY
+            <<~BODY,
               Update on GOV.UK.
 
               ---

@@ -23,7 +23,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
         title: "oil and gas licensing",
         tags: { topics: { any: ["oil-and-gas/licensing"] } },
         links: { topics: { any: %w[uuid-888] },
-                 taxon_tree: { all: %w[taxon1 taxon2] } }
+                 taxon_tree: { all: %w[taxon1 taxon2] } },
       )
       response_hash = JSON.parse(response.body)
       subscriber_list = response_hash["subscriber_list"]
@@ -48,28 +48,28 @@ RSpec.describe "Creating a subscriber list", type: :request do
           active_subscriptions_count
           tags_digest
           links_digest
-        }.to_set.sort
+        }.to_set.sort,
       )
 
       expect(subscriber_list).to include(
         "tags" => {
           "topics" => {
-            "any" => ["oil-and-gas/licensing"]
-          }
+            "any" => ["oil-and-gas/licensing"],
+          },
         },
         "links" => {
           "topics" => {
             "any" => %w[uuid-888],
           },
           "taxon_tree" => {
-            "all" => %w[taxon1 taxon2]
-          }
-        }
+            "all" => %w[taxon1 taxon2],
+          },
+        },
       )
 
       expect(subscriber_list["slug"]).to eq("oil-and-gas-licensing")
-      expect(subscriber_list["links_digest"]).to eq(digested(subscriber_list['links']))
-      expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list['tags']))
+      expect(subscriber_list["links_digest"]).to eq(digested(subscriber_list["links"]))
+      expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list["tags"]))
     end
 
     it "can create a subscriber_list with a url" do
@@ -87,7 +87,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
 
       it "creates another subscriber list with a different slug" do
-        allow(SecureRandom).to receive(:hex).and_return('a1a1a1a1a1')
+        allow(SecureRandom).to receive(:hex).and_return("a1a1a1a1a1")
         create_subscriber_list(title: "oil and gas", tags: { topics: { any: ["oil-and-gas/licensing"] } })
 
         expect(response.status).to eq(201)
@@ -160,12 +160,12 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(SubscriberList.last.links_digest).to be_nil
     end
 
-    describe 'using legacy parameters' do
-      it 'creates a new subscriber list' do
+    describe "using legacy parameters" do
+      it "creates a new subscriber list" do
         expect {
           create_subscriber_list(
             title: "oil and gas licensing",
-            links: { topics: %w[uuid-888] }
+            links: { topics: %w[uuid-888] },
           )
         }.to change { SubscriberList.count }.by(1)
       end
@@ -189,7 +189,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       it "sets the document_type on the subscriber list" do
         create_subscriber_list(
           tags: { location: { any: %w[andorra] } },
-          document_type: "travel_advice"
+          document_type: "travel_advice",
         )
 
         subscriber_list = SubscriberList.last
@@ -208,8 +208,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
         create_subscriber_list(
           tags: {
             location: { any: %w[andorra] },
-            content_purpose_subgroup: { any: %w[news] }
-          }
+            content_purpose_subgroup: { any: %w[news] },
+          },
         )
 
         subscriber_list = SubscriberList.last
@@ -252,8 +252,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
         expect(response.status).to eq(201)
 
-        subscriber_list = JSON.parse(response.body)['subscriber_list']
-        expect(subscriber_list['description']).to eq("Some description")
+        subscriber_list = JSON.parse(response.body)["subscriber_list"]
+        expect(subscriber_list["description"]).to eq("Some description")
       end
     end
 
@@ -268,8 +268,8 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
         expect(response.status).to eq(201)
 
-        subscriber_list = JSON.parse(response.body)['subscriber_list']
-        expect(subscriber_list['group_id']).to eq(group_id)
+        subscriber_list = JSON.parse(response.body)["subscriber_list"]
+        expect(subscriber_list["group_id"]).to eq(group_id)
       end
     end
 
@@ -284,7 +284,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
         expect(JSON.parse(response.body)).to match(
           "error" => "Unprocessable Entity",
-          "details" => { "title" => ["can't be blank"] }
+          "details" => { "title" => ["can't be blank"] },
         )
       end
     end

@@ -20,7 +20,7 @@ class SubscriptionsController < ApplicationController
         subscriber_list: subscriber_list,
         frequency: frequency,
         signon_user_uid: current_user.uid,
-        source: existing_subscription ? :frequency_changed : :user_signed_up
+        source: existing_subscription ? :frequency_changed : :user_signed_up,
       )
     end
 
@@ -41,7 +41,7 @@ class SubscriptionsController < ApplicationController
 
     Subscription.transaction do
       existing_subscription = Subscription.active.lock.find(
-        subscription_params.require(:id)
+        subscription_params.require(:id),
       )
 
       existing_subscription.end(reason: :frequency_changed)
@@ -52,7 +52,7 @@ class SubscriptionsController < ApplicationController
           subscriber_list: existing_subscription.subscriber_list,
           frequency: frequency,
           signon_user_uid: current_user.uid,
-          source: :frequency_changed
+          source: :frequency_changed,
         )
       rescue ArgumentError
         # This happens if a frequency is provided that isn't included
