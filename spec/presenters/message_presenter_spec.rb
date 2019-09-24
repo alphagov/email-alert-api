@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe MessagePresenter do
   describe ".call" do
     around do |example|
-      ClimateControl.modify(GOVUK_APP_DOMAIN: 'gov.uk') { example.run }
+      ClimateControl.modify(GOVUK_APP_DOMAIN: "gov.uk") { example.run }
     end
 
     it "returns a presenter message" do

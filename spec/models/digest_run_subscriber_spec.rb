@@ -18,7 +18,7 @@ RSpec.describe DigestRunSubscriber do
       digest_run_subscriber = create(
         :digest_run_subscriber,
         digest_run_id: 1,
-        completed_at: nil
+        completed_at: nil,
       )
 
       expect(described_class.incomplete_for_run(1).first).to eq(digest_run_subscriber)
@@ -29,7 +29,7 @@ RSpec.describe DigestRunSubscriber do
       create(
         :digest_run_subscriber,
         digest_run_id: 1,
-        completed_at: Time.now
+        completed_at: Time.now,
       )
 
       expect(described_class.incomplete_for_run(1).count).to eq(0)
@@ -40,7 +40,7 @@ RSpec.describe DigestRunSubscriber do
       create(
         :digest_run_subscriber,
         digest_run_id: 2,
-        completed_at: nil
+        completed_at: nil,
       )
 
       expect(described_class.incomplete_for_run(1).count).to eq(0)

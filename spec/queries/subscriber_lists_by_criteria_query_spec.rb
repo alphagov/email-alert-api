@@ -7,8 +7,8 @@ RSpec.describe SubscriberListsByCriteriaQuery do
       result = described_class.call(
         SubscriberList,
         [
-          { type: "tag", key: "format", value: "match" }
-        ]
+          { type: "tag", key: "format", value: "match" },
+        ],
       )
 
       expect(result).to contain_exactly(list)
@@ -22,8 +22,8 @@ RSpec.describe SubscriberListsByCriteriaQuery do
       result = described_class.call(
         SubscriberList,
         [
-          { type: "link", key: "format", value: uuid }
-        ]
+          { type: "link", key: "format", value: uuid },
+        ],
       )
 
       expect(result).to contain_exactly(list)
@@ -37,8 +37,8 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         SubscriberList,
         [
           { type: "tag", key: "format", value: "match" },
-          { type: "tag", key: "format", value: "part_of_match" }
-        ]
+          { type: "tag", key: "format", value: "part_of_match" },
+        ],
       )
 
       expect(result).to contain_exactly(list)
@@ -55,8 +55,8 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         SubscriberList,
         [
           { type: "tag", key: "format", value: "match" },
-          { type: "link", key: "format", value: uuid }
-        ]
+          { type: "link", key: "format", value: uuid },
+        ],
       )
 
       expect(result).to contain_exactly(list)
@@ -71,7 +71,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         SubscriberList,
         [
           { type: "tag", key: "format", value: unusual_tag },
-        ]
+        ],
       )
 
       expect(result).to contain_exactly(list)
@@ -88,10 +88,10 @@ RSpec.describe SubscriberListsByCriteriaQuery do
           {
             any_of: [
               { type: "tag", key: "format", value: "match_a" },
-              { type: "tag", key: "format", value: "match_b" }
-            ]
-          }
-        ]
+              { type: "tag", key: "format", value: "match_b" },
+            ],
+          },
+        ],
       )
 
       expect(result).to contain_exactly(list_a, list_b)
@@ -111,18 +111,18 @@ RSpec.describe SubscriberListsByCriteriaQuery do
               {
                 all_of: [
                   { type: "tag", key: "format", value: "match_a" },
-                  { type: "tag", key: "format", value: "another_a" }
-                ]
+                  { type: "tag", key: "format", value: "another_a" },
+                ],
               },
               {
                 all_of: [
                   { type: "tag", key: "format", value: "match_b" },
-                  { type: "tag", key: "format", value: "another_b" }
+                  { type: "tag", key: "format", value: "another_b" },
                 ],
-              }
-            ]
-          }
-        ]
+              },
+            ],
+          },
+        ],
       )
 
       expect(result).to contain_exactly(list_a, list_b)
@@ -131,7 +131,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
     it "can match a complicated nested scenario" do
       list = create(
         :subscriber_list,
-        tags: { format: { any: %w[match_a match_c match_d match_e] } }
+        tags: { format: { any: %w[match_a match_c match_d match_e] } },
       )
       create(:subscriber_list)
 
@@ -146,26 +146,26 @@ RSpec.describe SubscriberListsByCriteriaQuery do
                   {
                     any_of: [
                       { type: "tag", key: "format", value: "match_b" },
-                      { type: "tag", key: "format", value: "not_match_b" }
-                    ]
+                      { type: "tag", key: "format", value: "not_match_b" },
+                    ],
                   },
                   {
                     any_of: [
                       { type: "tag", key: "format", value: "match_c" },
-                      { type: "tag", key: "format", value: "not_match_c" }
-                    ]
+                      { type: "tag", key: "format", value: "not_match_c" },
+                    ],
                   },
-                ]
+                ],
               },
               {
                 all_of: [
                   { type: "tag", key: "format", value: "match_d" },
-                  { type: "tag", key: "format", value: "match_e" }
+                  { type: "tag", key: "format", value: "match_e" },
                 ],
-              }
-            ]
-          }
-        ]
+              },
+            ],
+          },
+        ],
       )
 
       expect(result).to contain_exactly(list)

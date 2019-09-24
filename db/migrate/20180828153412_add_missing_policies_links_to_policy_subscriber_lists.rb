@@ -9,9 +9,9 @@ class AddMissingPoliciesLinksToPolicySubscriberLists < ActiveRecord::Migration[5
                        .content_store
                        .content_item("/government/policies/#{policy_slug}")
                        .to_h
-                       .fetch('content_id')
+                       .fetch("content_id")
 
-        subscriber_list.update!(links: { 'policies' => [content_id] })
+        subscriber_list.update!(links: { "policies" => [content_id] })
 
         puts "updated: #{policy_slug} with content_id #{content_id}"
       end

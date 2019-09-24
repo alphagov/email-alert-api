@@ -52,7 +52,7 @@ namespace :clean do
   end
 
   def is_dry_run?
-    dry = ENV["DRY_RUN"] != 'no'
+    dry = ENV["DRY_RUN"] != "no"
     puts "Warning: Running in DRY_RUN mode. Use DRY_RUN=no to run live." if dry
     dry
   end

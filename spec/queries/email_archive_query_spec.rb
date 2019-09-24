@@ -100,7 +100,7 @@ RSpec.describe EmailArchiveQuery do
             :subscription_content,
             email: email,
             digest_run_subscriber: digest_run_subscriber,
-          )
+          ),
         ]
       end
 

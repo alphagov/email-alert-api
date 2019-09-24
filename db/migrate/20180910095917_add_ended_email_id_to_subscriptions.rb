@@ -4,7 +4,7 @@ class AddEndedEmailIdToSubscriptions < ActiveRecord::Migration[5.2]
     add_foreign_key(
       :subscriptions,
       :emails,
-      column: :ended_email_id
+      column: :ended_email_id,
     )
   end
 end

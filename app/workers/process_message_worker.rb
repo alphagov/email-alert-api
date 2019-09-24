@@ -43,11 +43,11 @@ private
         subscriptions: [],
         message: message,
         subscriber_id: subscriber.id,
-      }
+      },
     ]).ids.first
 
     DeliveryRequestWorker.perform_async_in_queue(
-      email_id, queue: :delivery_immediate,
+      email_id, queue: :delivery_immediate
     )
   end
 end

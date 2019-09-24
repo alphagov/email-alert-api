@@ -135,11 +135,11 @@ RSpec.describe "creating and delivering digests", type: :request do
     list_two_topic_id = "a915e039-070b-4633-813d-187af61cad7a"
 
     subscriber_list_one_id = create_subscriber_list(title: "Subscriber list one", links: {
-      topics: { any: [list_one_topic_id] }
+      topics: { any: [list_one_topic_id] },
     })
 
     subscriber_list_two_id = create_subscriber_list(title: "Subscriber list two", links: {
-      topics: { any: [list_two_topic_id] }
+      topics: { any: [list_two_topic_id] },
     })
 
     #create two daily subscribers, one subscribed to daily digests for both
@@ -153,25 +153,25 @@ RSpec.describe "creating and delivering digests", type: :request do
     subscribe_to_subscriber_list(
       subscriber_list_one_id,
       address: subscriber_one_address,
-      frequency: Frequency::DAILY
+      frequency: Frequency::DAILY,
     )
 
     subscribe_to_subscriber_list(
       subscriber_list_two_id,
       address: subscriber_one_address,
-      frequency: Frequency::DAILY
+      frequency: Frequency::DAILY,
     )
 
     subscribe_to_subscriber_list(
       subscriber_list_one_id,
       address: subscriber_two_address,
-      frequency: Frequency::DAILY
+      frequency: Frequency::DAILY,
     )
 
     subscribe_to_subscriber_list(
       subscriber_list_one_id,
       address: non_digest_subscriber_address,
-      frequency: Frequency::IMMEDIATELY
+      frequency: Frequency::IMMEDIATELY,
     )
 
     #publish two items to each list
@@ -183,8 +183,8 @@ RSpec.describe "creating and delivering digests", type: :request do
         change_note: "Change note one",
         public_updated_at: "2017-01-01 10:00:00",
         links: {
-          topics: [list_one_topic_id]
-        }
+          topics: [list_one_topic_id],
+        },
       )
     end
 
@@ -192,8 +192,8 @@ RSpec.describe "creating and delivering digests", type: :request do
       create_message(
         title: "Title two",
         criteria_rules: [
-          { type: "link", key: "topics", value: list_one_topic_id }
-        ]
+          { type: "link", key: "topics", value: list_one_topic_id },
+        ],
       )
     end
 
@@ -205,8 +205,8 @@ RSpec.describe "creating and delivering digests", type: :request do
         change_note: "Change note three",
         public_updated_at: "2017-01-01 09:00:00",
         links: {
-          topics: [list_two_topic_id]
-        }
+          topics: [list_two_topic_id],
+        },
       )
     end
 
@@ -218,8 +218,8 @@ RSpec.describe "creating and delivering digests", type: :request do
         change_note: "Change note four",
         public_updated_at: "2017-01-01 09:30:00",
         links: {
-          topics: [list_two_topic_id]
-        }
+          topics: [list_two_topic_id],
+        },
       )
     end
 
@@ -238,9 +238,9 @@ RSpec.describe "creating and delivering digests", type: :request do
                                                       content_changes[0],
                                                       content_changes[1],
                                                       content_changes[2],
-                                                      subscribers[0])
-          )
-        )
+                                                      subscribers[0]),
+          ),
+        ),
       )
       .to_return(body: {}.to_json)
 
@@ -252,9 +252,9 @@ RSpec.describe "creating and delivering digests", type: :request do
           personalisation: hash_including(
             "body" => second_expected_daily_email_body(subscriptions[2],
                                                        content_changes[0],
-                                                       subscribers[1])
-          )
-        )
+                                                       subscribers[1]),
+          ),
+        ),
       )
       .to_return(body: {}.to_json)
 
@@ -385,11 +385,11 @@ RSpec.describe "creating and delivering digests", type: :request do
     list_two_taxon_id = "6416e4e0-c0c1-457a-8337-4bf8ed9d5f80"
 
     subscriber_list_one_id = create_subscriber_list(title: "Subscriber list one", links: {
-      topics: { any: [list_one_topic_id] }
+      topics: { any: [list_one_topic_id] },
     })
 
     subscriber_list_two_id = create_subscriber_list(title: "Subscriber list two", links: {
-      taxon_tree: { all: [list_one_taxon_id, list_two_taxon_id] }
+      taxon_tree: { all: [list_one_taxon_id, list_two_taxon_id] },
     })
 
     #create two daily subscribers, one subscribed to daily digests for both
@@ -402,25 +402,25 @@ RSpec.describe "creating and delivering digests", type: :request do
     subscribe_to_subscriber_list(
       subscriber_list_one_id,
       address: subscriber_one_address,
-      frequency: Frequency::WEEKLY
+      frequency: Frequency::WEEKLY,
     )
 
     subscribe_to_subscriber_list(
       subscriber_list_two_id,
       address: subscriber_one_address,
-      frequency: Frequency::WEEKLY
+      frequency: Frequency::WEEKLY,
     )
 
     subscribe_to_subscriber_list(
       subscriber_list_one_id,
       address: subscriber_two_address,
-      frequency: Frequency::WEEKLY
+      frequency: Frequency::WEEKLY,
     )
 
     subscribe_to_subscriber_list(
       subscriber_list_two_id,
       address: non_weekly_digest_subscriber_address,
-      frequency: Frequency::DAILY
+      frequency: Frequency::DAILY,
     )
 
     #publish two items to each list
@@ -432,8 +432,8 @@ RSpec.describe "creating and delivering digests", type: :request do
         change_note: "Change note one",
         public_updated_at: "2016-12-27 10:00:00",
         links: {
-          topics: [list_one_topic_id]
-        }
+          topics: [list_one_topic_id],
+        },
       )
     end
 
@@ -442,8 +442,8 @@ RSpec.describe "creating and delivering digests", type: :request do
         title: "Title two",
         url: "/base-path",
         criteria_rules: [
-          { type: "link", key: "topics", value: list_one_topic_id }
-        ]
+          { type: "link", key: "topics", value: list_one_topic_id },
+        ],
       )
     end
 
@@ -455,8 +455,8 @@ RSpec.describe "creating and delivering digests", type: :request do
         change_note: "Change note three",
         public_updated_at: "2016-12-30 09:00:00",
         links: {
-          taxon_tree: [list_one_taxon_id, list_two_taxon_id]
-        }
+          taxon_tree: [list_one_taxon_id, list_two_taxon_id],
+        },
       )
     end
 
@@ -472,8 +472,8 @@ RSpec.describe "creating and delivering digests", type: :request do
                        list_two_taxon_id,
                        SecureRandom.uuid,
                        list_one_taxon_id,
-                       SecureRandom.uuid]
-        }
+                       SecureRandom.uuid],
+        },
       )
     end
 
@@ -494,9 +494,9 @@ RSpec.describe "creating and delivering digests", type: :request do
                                                        messages[0],
                                                        content_changes[1],
                                                        content_changes[2],
-                                                       subscribers[0])
-          )
-        )
+                                                       subscribers[0]),
+          ),
+        ),
       )
       .to_return(body: {}.to_json)
 
@@ -509,9 +509,9 @@ RSpec.describe "creating and delivering digests", type: :request do
             "body" => second_expected_weekly_email_body(subscriptions[2],
                                                         content_changes[0],
                                                         messages[0],
-                                                        subscribers[1])
-          )
-        )
+                                                        subscribers[1]),
+          ),
+        ),
       )
       .to_return(body: {}.to_json)
 

@@ -20,7 +20,7 @@ class UnpublishHandlerService
   TEMPLATES = {
     taxon_tree: TAXON_TEMPLATE,
     policy_areas: POLICY_AND_POLICY_AREA_TEMPLATE,
-    policies: POLICY_AND_POLICY_AREA_TEMPLATE
+    policies: POLICY_AND_POLICY_AREA_TEMPLATE,
   }.freeze
 
   def self.call(*args)
@@ -60,11 +60,11 @@ private
         template_data: {
           redirect: redirect,
           utm_parameters: {
-            'utm_source' => subscriber_list.title,
-            'utm_medium' => 'email',
-            'utm_campaign' => 'govuk-subscription-ended'
-          }
-        }
+            "utm_source" => subscriber_list.title,
+            "utm_medium" => "email",
+            "utm_campaign" => "govuk-subscription-ended",
+          },
+        },
       )
     end
 
@@ -75,18 +75,18 @@ private
     email_ids.zip(subscriptions) do |email_id, subscription|
       DeliveryRequestWorker.perform_async_in_queue(
         email_id,
-        queue: :delivery_immediate
+        queue: :delivery_immediate,
       )
 
       subscription.update!(
         ended_reason: :unpublished,
         ended_at: Time.now,
-        ended_email_id: email_id
+        ended_email_id: email_id,
       )
     end
 
     SubscriberDeactivationWorker.perform_async(
-      subscriptions.map(&:subscriber_id)
+      subscriptions.map(&:subscriber_id),
     )
 
     true
@@ -94,15 +94,15 @@ private
 
   def send_courtesy_emails(subscriber_list, redirect, template)
     email_parameters = Subscriber.where(
-      address: Email::COURTESY_EMAIL
+      address: Email::COURTESY_EMAIL,
     ).map do |subscriber|
       EmailParameters.new(
         subject: subscriber_list.title,
         subscriber: subscriber,
         template_data: {
           redirect: redirect,
-          utm_parameters: {}
-        }
+          utm_parameters: {},
+        },
       )
     end
 
@@ -111,7 +111,7 @@ private
     email_ids.each do |email_id|
       DeliveryRequestWorker.perform_async_in_queue(
         email_id,
-        queue: :delivery_immediate
+        queue: :delivery_immediate,
       )
     end
   end

@@ -1,4 +1,4 @@
-require 'csv'
+require "csv"
 
 namespace :manage do
   def change_email_address(old_email_address:, new_email_address:)
@@ -40,7 +40,7 @@ namespace :manage do
       Subscription.transaction do
         existing_subscription = Subscription.active.find_by(
           subscriber: subscriber,
-          subscriber_list: source_subscriber_list
+          subscriber_list: source_subscriber_list,
         )
 
         next unless existing_subscription
@@ -49,7 +49,7 @@ namespace :manage do
 
         subscribed_to_destination_subscriber_list = Subscription.find_by(
           subscriber: subscriber,
-          subscriber_list: destination_subscriber_list
+          subscriber_list: destination_subscriber_list,
         )
 
         if subscribed_to_destination_subscriber_list.nil?
@@ -57,7 +57,7 @@ namespace :manage do
             subscriber: subscriber,
             subscriber_list: destination_subscriber_list,
             frequency: existing_subscription.frequency,
-            source: :subscriber_list_changed
+            source: :subscriber_list_changed,
           )
         end
       end
@@ -123,10 +123,10 @@ namespace :manage do
     args.with_defaults(
       subscriber_limit: 1_000_000,
       courtesy_emails_every_nth_email: 500,
-      people_path: 'tmp/people.json', #[{content_id: ..., slug: ....}]
-      world_location_path: 'tmp/world_locations.json', #[{content_id: ..., slug: ....}]
-      organisations_path: 'tmp/organisations.json', #[{content_id: ..., slug: ....}]
-      policy_area_mappings_path: 'tmp/policy_area_mappings.json' #[{content_id: ..., taxon_path: ...., policy_area_path:}]
+      people_path: "tmp/people.json", #[{content_id: ..., slug: ....}]
+      world_location_path: "tmp/world_locations.json", #[{content_id: ..., slug: ....}]
+      organisations_path: "tmp/organisations.json", #[{content_id: ..., slug: ....}]
+      policy_area_mappings_path: "tmp/policy_area_mappings.json", #[{content_id: ..., taxon_path: ...., policy_area_path:}]
     )
 
     people = JSON.parse(File.read(args[:people_path]), symbolize_names: true)
@@ -143,7 +143,7 @@ namespace :manage do
       people: people,
       world_locations: world_locations,
       organisations: organisations,
-      policy_area_mappings: policy_area_mappings
+      policy_area_mappings: policy_area_mappings,
     )
   end
 

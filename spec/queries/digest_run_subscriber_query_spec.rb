@@ -117,7 +117,7 @@ RSpec.describe DigestRunSubscriberQuery do
           :subscription,
           :daily,
           subscriber: subscriber,
-          subscriber_list: subscriber_list_one
+          subscriber_list: subscriber_list_one,
         )
       end
       let!(:subscription_2) do
@@ -125,7 +125,7 @@ RSpec.describe DigestRunSubscriberQuery do
           :subscription,
           :daily,
           subscriber: subscriber,
-          subscriber_list: subscriber_list_two
+          subscriber_list: subscriber_list_two,
         )
       end
 

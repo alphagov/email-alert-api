@@ -26,8 +26,8 @@ private
   def body
     ERB.new(template).result(
       EmailTemplateContext.new(
-        email_parameters.template_data
-      ).fetch_binding
+        email_parameters.template_data,
+      ).fetch_binding,
     )
   end
 end

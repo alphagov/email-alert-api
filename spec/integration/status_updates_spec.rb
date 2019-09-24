@@ -12,7 +12,7 @@ RSpec.describe "Receiving a status update", type: :request do
         sent_at: Time.parse("2017-05-14T12:15:30.000000Z"),
         completed_at: Time.parse("2017-05-14T12:15:30.000000Z"),
         reference: reference,
-        status: "delivered"
+        status: "delivered",
       }
     end
 

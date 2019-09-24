@@ -16,7 +16,7 @@ module Clean
         return
       end
 
-      slug = invalid_list.slug + '-untagged'
+      slug = invalid_list.slug + "-untagged"
       list = SubscriberList.find_by(slug: slug)
       return list unless list.nil?
 
@@ -55,7 +55,7 @@ module Clean
           # Check if they have already subscribed
           subscribed_to_destination_subscriber_list = Subscription.find_by(
             subscriber: subscriber,
-            subscriber_list: to_list
+            subscriber_list: to_list,
           )
 
           # Subscribed them if they haven't already been subscribed
@@ -66,14 +66,14 @@ module Clean
                 subscriber: subscriber,
                 subscriber_list: to_list,
                 frequency: existing_subscription.frequency,
-                source: :subscriber_list_changed
+                source: :subscriber_list_changed,
               )
             end
           end
         end
       end
 
-      dry = dry_run ? '[DRY RUN] Would have copied' : 'copied'
+      dry = dry_run ? "[DRY RUN] Would have copied" : "copied"
       puts "#{dry} #{moved} of #{total_subscribers} subscribers from list #{from_list.slug} to #{to_list.slug}"
     end
 
@@ -140,7 +140,7 @@ module Clean
 
       path = "/government/organisations/#{slug}"
       item = Services.content_store.content_item(path).to_h
-      id = item['content_id']
+      id = item["content_id"]
 
       @organisations[slug] = id
     end
@@ -153,7 +153,7 @@ module Clean
 
       path = "/government/people/#{slug}"
       item = Services.content_store.content_item(path).to_h
-      id = item['content_id']
+      id = item["content_id"]
 
       @people[slug] = id
     end
@@ -163,7 +163,7 @@ module Clean
       @world_locations ||= begin
         locations = GdsApi.worldwide.world_locations.with_subsequent_pages.to_a
         locations.each_with_object({}) { |location, result_hash|
-          result_hash[location.dig('details', 'slug')] = location.dig('content_id')
+          result_hash[location.dig("details", "slug")] = location.dig("content_id")
         }
       end
 

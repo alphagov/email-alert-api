@@ -24,7 +24,7 @@ private
     AuthTokenGeneratorService.call(
       subscriber,
       redirect: expected_params[:redirect],
-      expiry: 1.week.from_now
+      expiry: 1.week.from_now,
     )
   end
 

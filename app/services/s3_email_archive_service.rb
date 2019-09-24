@@ -18,7 +18,7 @@ private
       # we group by date in this way to create partitions for s3/athena
       # these are grouped in case dates span more than one day
       Date.parse(
-        item.fetch(:finished_sending_at_utc)
+        item.fetch(:finished_sending_at_utc),
       ).strftime("year=%Y/month=%m/date=%d")
     end
   end
@@ -29,7 +29,7 @@ private
     obj = bucket.object(object_name(prefix, last_time))
     obj.put(
       body: object_body(records),
-      content_encoding: "gzip"
+      content_encoding: "gzip",
     )
   end
 

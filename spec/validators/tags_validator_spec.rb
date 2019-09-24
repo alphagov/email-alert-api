@@ -29,7 +29,7 @@ RSpec.describe TagsValidator do
       expect(model.valid?).to be false
       expect(model.errors[:tags]).to match([
         "All tag values must be sent as Arrays",
-        "organisations, foo, people, and world_locations are not valid tags."
+        "organisations, foo, people, and world_locations are not valid tags.",
       ])
     end
   end

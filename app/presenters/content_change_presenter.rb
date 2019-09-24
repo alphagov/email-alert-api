@@ -1,4 +1,4 @@
-require 'redcarpet/render_strip'
+require "redcarpet/render_strip"
 
 class ContentChangePresenter
   EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze

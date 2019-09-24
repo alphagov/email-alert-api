@@ -1,4 +1,4 @@
-require 'gds_api/test_helpers/content_store'
+require "gds_api/test_helpers/content_store"
 
 RSpec.describe "Sending an unpublish message", type: :request do
   include ::GdsApi::TestHelpers::ContentStore
@@ -26,18 +26,18 @@ RSpec.describe "Sending an unpublish message", type: :request do
       @subscription = create(
         :subscription,
         subscriber: subscriber,
-        subscriber_list: subscriber_list
+        subscriber_list: subscriber_list,
       )
 
       @request_params = { content_id: content_id,
-                          redirects: [{ path: '/source/path', destination: '/redirected/path' }] }.to_json
+                          redirects: [{ path: "/source/path", destination: "/redirected/path" }] }.to_json
 
       content_store_has_item(
-        '/redirected/path',
+        "/redirected/path",
         {
-          'base_path' => '/redirected/path',
-          'title' => 'redirected title'
-        }.to_json
+          "base_path" => "/redirected/path",
+          "title" => "redirected title",
+        }.to_json,
       )
     end
 
@@ -46,7 +46,7 @@ RSpec.describe "Sending an unpublish message", type: :request do
       login_with_internal_app
       post "/unpublish-messages", params: @request_params, headers: JSON_HEADERS
     end
-    it 'returns status 202' do
+    it "returns status 202" do
       expect(response.status).to eq(202)
     end
     it "creates an Email and a courtesy email" do
@@ -54,17 +54,17 @@ RSpec.describe "Sending an unpublish message", type: :request do
     end
     it "sends a message" do
       expect(DeliveryRequestService).to have_received(:call).
-        with(email: having_attributes(subject: 'Update from GOV.UK – First Subscription',
+        with(email: having_attributes(subject: "Update from GOV.UK – First Subscription",
                                       address: Email::COURTESY_EMAIL))
       expect(DeliveryRequestService).to have_received(:call).
-        with(email: having_attributes(subject: 'Update from GOV.UK – First Subscription',
+        with(email: having_attributes(subject: "Update from GOV.UK – First Subscription",
                                       address: "test@example.com"))
     end
     it "the message contains the redirect URL" do
       expect(DeliveryRequestService).to have_received(:call).
-        with(email: having_attributes(body: include('/redirected/path', 'redirected title'))).twice
+        with(email: having_attributes(body: include("/redirected/path", "redirected title"))).twice
     end
-    it 'unsubscribes all affected subscriptions' do
+    it "unsubscribes all affected subscriptions" do
       expect(@subscription.reload.ended_at).to_not be_nil
     end
   end

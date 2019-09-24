@@ -36,7 +36,7 @@ module Reports
       email_ids = SubscriptionContent
                   .where(id: subscription_contents_ids)
                   .pluck(:email_id)
-      Email.where(id: email_ids, status: 'failed')
+      Email.where(id: email_ids, status: "failed")
     end
   end
 end

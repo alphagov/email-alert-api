@@ -1,8 +1,8 @@
-require 'rake'
-require 'rails_helper'
-require 'gds_api/test_helpers/publishing_api_v2'
+require "rake"
+require "rails_helper"
+require "gds_api/test_helpers/publishing_api_v2"
 
-RSpec.describe 'eu_exit_business_finder:update_subscriber_list_titles_and_facet_values' do
+RSpec.describe "eu_exit_business_finder:update_subscriber_list_titles_and_facet_values" do
   include GdsApi::TestHelpers::PublishingApiV2
 
   before :each do
@@ -26,10 +26,10 @@ RSpec.describe 'eu_exit_business_finder:update_subscriber_list_titles_and_facet_
   let(:create_list_and_execute_rake!) {
     create(:subscriber_list, links: {
       facet_values: {
-        any: facet_values
-      }
+        any: facet_values,
+      },
     })
-    Rake::Task['eu_exit_business_finder:update_subscriber_list_titles_and_facet_values'].execute
+    Rake::Task["eu_exit_business_finder:update_subscriber_list_titles_and_facet_values"].execute
   }
 
   describe "updating the facet values" do
@@ -97,7 +97,7 @@ RSpec.describe 'eu_exit_business_finder:update_subscriber_list_titles_and_facet_
       let(:facet_values) { %w[000-old] }
       let(:mock_behaviour!) {
         mock_facet_values_to_replace(
-          "000-old" => %w[111-new 222-new]
+          "000-old" => %w[111-new 222-new],
         )
       }
 

@@ -15,36 +15,36 @@ RSpec.describe CriteriaSchemaValidator do
         {
           type: "tag",
           key: "brexit_checklist_criteria",
-          value: "eu-national"
+          value: "eu-national",
         },
         {
           type: "tag",
           key: "brexit_checklist_criteria",
-          value: "eu-resident"
+          value: "eu-resident",
         },
         {
           any_of: [
             {
               type: "tag",
               key: "brexit_checklist_criteria",
-              value: "uk-resident"
+              value: "uk-resident",
             },
             {
               all_of: [
                 {
                   type: "tag",
                   key: "brexit_checklist_criteria",
-                  value: "ip"
+                  value: "ip",
                 },
                 {
                   type: "tag",
                   key: "brexit_checklist_criteria",
-                  value: "exports"
-                }
-              ]
-            }
-          ]
-        }
+                  value: "exports",
+                },
+              ],
+            },
+          ],
+        },
       ]
 
       model.criteria_rules = rules
@@ -59,7 +59,7 @@ RSpec.describe CriteriaSchemaValidator do
         {
           type: "not-a-tag",
           key: "brexit_checklist_criteria",
-          value: "eu-national"
+          value: "eu-national",
         },
       ]
 

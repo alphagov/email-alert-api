@@ -9,9 +9,9 @@ RSpec.describe SubscriberList, type: :model do
     it "is valid when all values are blank - firehose" do
       subject.tags = {}
       subject.links = {}
-      subject.document_type = ''
-      subject.email_document_supertype = ''
-      subject.government_document_supertype = ''
+      subject.document_type = ""
+      subject.email_document_supertype = ""
+      subject.government_document_supertype = ""
 
       expect(subject).to be_valid
     end
@@ -178,7 +178,7 @@ RSpec.describe SubscriberList, type: :model do
 
     it "returns the correct subscription URL" do
       expect(subject.subscription_url).to eq(
-        "http://www.dev.gov.uk/email/subscriptions/new?topic_id=UKGOVUK_4567"
+        "http://www.dev.gov.uk/email/subscriptions/new?topic_id=UKGOVUK_4567",
       )
     end
   end
@@ -190,8 +190,8 @@ RSpec.describe SubscriberList, type: :model do
 
       result = described_class.matching_criteria_rules(
         [
-          { type: "tag", key: "format", value: "match" }
-        ]
+          { type: "tag", key: "format", value: "match" },
+        ],
       )
 
       expect(result).to match([list])

@@ -35,7 +35,7 @@ module FeatureHelpers
     params = {
       subscriber_list_id: subscriber_list_id,
       address: address,
-      frequency: frequency
+      frequency: frequency,
     }
     post "/subscriptions", params: params.to_json, headers: JSON_HEADERS
     expect(response.status).to eq(expected_status)
@@ -75,9 +75,9 @@ module FeatureHelpers
         {
           type: "tag",
           key: "brexit_checklist_criteria",
-          value: "eu-national"
+          value: "eu-national",
         },
-      ]
+      ],
     }.merge(overrides)
 
     post "/messages", params: params.to_json, headers: JSON_HEADERS

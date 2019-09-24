@@ -7,13 +7,13 @@ RSpec.describe Reports::NotificationsFromNotify do
       before do
         stub_request(
           :get,
-          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}"
+          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}",
         ).to_return(body: mocked_response.to_json)
       end
 
       let(:mocked_response) {
         attributes_for(
-          :client_notifications_collection
+          :client_notifications_collection,
         )[:body]
       }
 
@@ -28,7 +28,7 @@ RSpec.describe Reports::NotificationsFromNotify do
 
         expect { described_class.call(reference) }
         .to output(
-          <<~TEXT
+          <<~TEXT,
             Query Notify for emails with the reference #{reference}
             -------------------------------------------
             Notification ID: #{notification.id}
@@ -48,7 +48,7 @@ RSpec.describe Reports::NotificationsFromNotify do
       before do
         stub_request(
           :get,
-          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}"
+          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}",
         ).to_return(body: empty_response.to_json)
       end
 
@@ -64,7 +64,7 @@ RSpec.describe Reports::NotificationsFromNotify do
 
         expect { described_class.call(reference) }
         .to output(
-          <<~TEXT
+          <<~TEXT,
             Query Notify for emails with the reference #{reference}
             No results found, empty collection returned
           TEXT
@@ -79,10 +79,10 @@ RSpec.describe Reports::NotificationsFromNotify do
       before do
         stub_request(
           :get,
-          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}"
+          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}",
         ).to_return(
           status: 400,
-          body: error_response.to_json
+          body: error_response.to_json,
         )
       end
 
@@ -98,7 +98,7 @@ RSpec.describe Reports::NotificationsFromNotify do
 
         expect { described_class.call(reference) }
         .to output(
-          <<~TEXT
+          <<~TEXT,
             Query Notify for emails with the reference #{reference}
             Returns request error #{error.code}, message: #{error.message}
           TEXT

@@ -14,7 +14,7 @@ RSpec.describe Subscription, type: :model do
       new_subscription = build(
         :subscription,
         subscriber: subject.subscriber,
-        subscriber_list: subject.subscriber_list
+        subscriber_list: subject.subscriber_list,
       )
 
       expect(new_subscription).to be_invalid

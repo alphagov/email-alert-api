@@ -32,7 +32,7 @@ RSpec.describe Message do
   describe "criteria_rules validation" do
     it "is valid with criteria_rules are valid" do
       message = build(:message, criteria_rules: [
-        { type: "tag", key: "topic", value: "a" }
+        { type: "tag", key: "topic", value: "a" },
       ])
       expect(message).to be_valid
     end

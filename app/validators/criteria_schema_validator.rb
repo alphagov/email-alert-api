@@ -1,7 +1,7 @@
 class CriteriaSchemaValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     unless JSON::Validator.validate(schema, value)
-      record.errors.add(attribute, 'does not conform to the criteria schema')
+      record.errors.add(attribute, "does not conform to the criteria schema")
     end
   end
 
@@ -13,7 +13,7 @@ private
       "type" => "array",
       "minItems" => 1,
       "items" => {
-        "$ref" => "#/definitions/criteria"
+        "$ref" => "#/definitions/criteria",
       },
       "definitions" => {
         "criteria" => {
@@ -25,8 +25,8 @@ private
               "properties" => {
                 "type" => { "enum" => %w[tag] },
                 "key" => { "type" => "string" },
-                "value" => { "type" => "string" }
-              }
+                "value" => { "type" => "string" },
+              },
             },
             {
               "type" => "object",
@@ -37,9 +37,9 @@ private
                 "key" => { "type" => "string" },
                 "value" => {
                   "type" => "string",
-                  "pattern" => "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
-                }
-              }
+                  "pattern" => "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$",
+                },
+              },
             },
             {
               "type" => "object",
@@ -49,9 +49,9 @@ private
                 "all_of" => {
                   "type" => "array",
                   "items" => { "$ref" => "#/definitions/criteria" },
-                  "minItems" => 1
-                }
-              }
+                  "minItems" => 1,
+                },
+              },
             },
             {
               "type" => "object",
@@ -61,13 +61,13 @@ private
                 "any_of" => {
                   "type" => "array",
                   "items" => { "$ref" => "#/definitions/criteria" },
-                  "minItems" => 1
-                }
-              }
-            }
-          ]
-        }
-      }
+                  "minItems" => 1,
+                },
+              },
+            },
+          ],
+        },
+      },
     }
   end
 end

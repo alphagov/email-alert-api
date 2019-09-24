@@ -11,7 +11,7 @@ namespace :subscriber_list do
           "policy-papers-and-consultations-with-3-document-types" => "Open consultations and closed consultations",
           "policy-papers-and-consultations-with-2-document-types" => "Closed consultations",
           "policy-papers-and-consultations-with-5-document-types" => "Policy papers and closed consultations",
-          "policy-papers-and-consultations-with-1-document-type" => "Open consultations"
+          "policy-papers-and-consultations-with-1-document-type" => "Open consultations",
       }
 
       translations.each_pair do |slug, new_title|

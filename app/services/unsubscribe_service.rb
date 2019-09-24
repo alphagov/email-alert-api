@@ -17,7 +17,7 @@ module UnsubscribeService
         subscriber,
         subscriptions,
         reason,
-        ended_email_id: ended_email_id
+        ended_email_id: ended_email_id,
       )
     end
 
@@ -28,7 +28,7 @@ module UnsubscribeService
         subscriber,
         subscriber.active_subscriptions,
         :marked_as_spam,
-        email_marked_as_spam: delivery_attempt.email
+        email_marked_as_spam: delivery_attempt.email,
       )
     end
 

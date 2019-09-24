@@ -28,13 +28,13 @@ RSpec.describe SubscriberDeactivationWorker do
           :subscription,
           :ended,
           subscriber: inactive_subscriber,
-          ended_at: 1.minute.ago
+          ended_at: 1.minute.ago,
         )
 
         subject.perform([inactive_subscriber.id])
 
         expect(
-          inactive_subscriber.reload.deactivated_at
+          inactive_subscriber.reload.deactivated_at,
         ).to eq(recent_subscription.reload.ended_at)
       end
     end

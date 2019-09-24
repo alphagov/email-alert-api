@@ -8,9 +8,9 @@ RSpec.describe "Sending a message", type: :request do
         {
           type: "tag",
           key: "brexit_checklist_criteria",
-          value: "eu-national"
+          value: "eu-national",
         },
-      ]
+      ],
     }
   end
 
@@ -22,7 +22,7 @@ RSpec.describe "Sending a message", type: :request do
       expect(response.status).to eq(422)
       expect(JSON.parse(response.body)).to match(
         "error" => "Unprocessable Entity",
-        "details" => { "url" => ["must be a root-relative URL or an absolute URL"] }
+        "details" => { "url" => ["must be a root-relative URL or an absolute URL"] },
       )
     end
   end

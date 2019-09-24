@@ -1,5 +1,5 @@
 class ContentItem
-  DEFAULT = ''.freeze
+  DEFAULT = "".freeze
   attr_reader :path
 
   class RedirectDetected < StandardError
@@ -11,14 +11,14 @@ class ContentItem
 
   def title
     @title ||= begin
-      content_store_data['title'] || DEFAULT
+      content_store_data["title"] || DEFAULT
                rescue GdsApi::HTTPNotFound
                  DEFAULT
     end
   end
 
   def content_id
-    content_store_data.to_h['content_id']
+    content_store_data.to_h["content_id"]
   end
 
   def url
@@ -29,9 +29,9 @@ class ContentItem
     @content_store_data ||= begin
       response = Services.content_store.content_item(@path).to_h
 
-      unless response['base_path'] == @path
+      unless response["base_path"] == @path
         raise RedirectDetected.new(
-          "requested '#{@path}' got '#{response['base_path']}'"
+          "requested '#{@path}' got '#{response['base_path']}'",
         )
       end
 

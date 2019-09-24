@@ -48,7 +48,7 @@ RSpec.describe DeliveryRequestService do
             address: "test@example.com",
             subject: "subject",
             body: "body",
-          )
+          ),
         )
         .and_return(:sending)
 
@@ -92,7 +92,7 @@ RSpec.describe DeliveryRequestService do
     context "when the email address isn't whitelisted" do
       let(:subject) do
         described_class.new(config: config.merge(
-          email_address_override: "overridden@example.com", email_address_override_whitelist_only: true
+          email_address_override: "overridden@example.com", email_address_override_whitelist_only: true,
         ))
       end
 
@@ -112,7 +112,7 @@ RSpec.describe DeliveryRequestService do
         .with(
           hash_including(
             subject: "STAGING - subject",
-          )
+          ),
         )
         .and_return(:sending)
 

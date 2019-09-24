@@ -47,7 +47,7 @@ RSpec.describe ContentChangeEmailBuilder do
           content_change: content_change,
           subscriptions: [],
           subscriber_id: subscriber.id,
-        }
+        },
       ]
     }
 
@@ -68,7 +68,7 @@ RSpec.describe ContentChangeEmailBuilder do
         .and_return("presented_content_change\n")
 
       expect(email.body).to eq(
-        <<~BODY
+        <<~BODY,
           Update on GOV.UK.
 
           ---
@@ -92,7 +92,7 @@ RSpec.describe ContentChangeEmailBuilder do
             content_change: content_change,
             subscriptions: [subscription_content.subscription],
             subscriber_id: subscriber.id,
-          }
+          },
         ]
       }
 
@@ -112,7 +112,7 @@ RSpec.describe ContentChangeEmailBuilder do
           expect(email.status).to eq "pending"
 
           expect(email.body).to eq(
-            <<~BODY
+            <<~BODY,
               Update on GOV.UK.
 
               ---
@@ -141,7 +141,7 @@ RSpec.describe ContentChangeEmailBuilder do
           expect(email.status).to eq "pending"
 
           expect(email.body).to eq(
-            <<~BODY
+            <<~BODY,
               Update on GOV.UK.
 
               ---

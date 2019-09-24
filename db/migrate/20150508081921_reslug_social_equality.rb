@@ -8,7 +8,7 @@ class ReslugSocialEquality < ActiveRecord::Migration[4.2]
 
     if list
       list.update(tags: {
-        policies: %w[equality]
+        policies: %w[equality],
       })
       list.reload
       puts %{Reslugged "social-equality" to #{list.tags[:policies]}}
@@ -22,7 +22,7 @@ class ReslugSocialEquality < ActiveRecord::Migration[4.2]
 
     if list
       list.update(tags: {
-        policies: %w[social-equality]
+        policies: %w[social-equality],
       })
       list.reload
       puts %{Reslugged "equality" to #{list.tags[:policies]}}
