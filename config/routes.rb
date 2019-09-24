@@ -26,19 +26,6 @@ Rails.application.routes.draw do
 
     post "/unsubscribe/:id", to: "unsubscribe#unsubscribe"
 
-    get "/healthcheck", to: GovukHealthcheck.rack_response(
-      GovukHealthcheck::SidekiqRedis,
-      GovukHealthcheck::ActiveRecord,
-      Healthcheck::ContentChanges,
-      Healthcheck::Messages,
-      Healthcheck::DigestRuns,
-      Healthcheck::QueueLatency,
-      Healthcheck::QueueSize,
-      Healthcheck::RetrySize,
-      Healthcheck::StatusUpdates,
-      Healthcheck::SubscriptionContents,
-      Healthcheck::TechnicalFailures,
-      Healthcheck::InternalFailures,
-    )
+    get "/healthcheck", to: "healthcheck#index"
   end
 end
