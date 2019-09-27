@@ -176,25 +176,6 @@ FactoryBot.define do
         create_list(:subscriber, evaluator.subscriber_count, subscriber_lists: [list])
       end
     end
-
-    factory :subscriber_list_with_invalid_tags do
-      tags {
-        {
-          organisations: { any: %w[bar] },
-          people: { all: %w[bar] },
-          world_locations: { all: %w[bar] },
-        }
-      }
-
-      transient do
-        subscriber_count { 5 }
-      end
-
-      after(:create) do |list, evaluator|
-        list = build_list(:subscriber, evaluator.subscriber_count, subscriber_lists: [list])
-        list.each { |item| item.save!(validate: false) }
-      end
-    end
   end
 
   factory :subscription do
