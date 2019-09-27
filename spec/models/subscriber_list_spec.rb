@@ -112,7 +112,7 @@ RSpec.describe SubscriberList, type: :model do
   end
 
   context "when a subscriber_list is deleted" do
-    subject { create(:subscriber_list_with_invalid_tags, :skip_validation) }
+    subject { create(:subscriber_list) }
     let!(:a_sanity_check_list) { build(:subscriber_list) }
     let!(:subscriber) { create(:subscriber) }
     let!(:subscriber2) { create(:subscriber) }
