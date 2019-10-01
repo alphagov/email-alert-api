@@ -32,7 +32,7 @@ RSpec.describe Healthcheck::SubscriptionContents do
       end
     end
 
-    context "between 09:30 and 10:30" do
+    context "between 09:30 and 11:00" do
       around do |example|
         Timecop.freeze("10:00") { example.run }
       end
