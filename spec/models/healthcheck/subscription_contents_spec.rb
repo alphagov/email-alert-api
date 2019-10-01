@@ -2,17 +2,17 @@ RSpec.describe Healthcheck::SubscriptionContents do
   context "when scheduled publishing" do
     shared_examples "an ok healthcheck" do
       specify { expect(subject.status).to eq(:ok) }
-      specify { expect(subject.message).to match(/0 created over 2700 seconds ago/) }
+      specify { expect(subject.message).to match(/0 created over 3000 seconds ago/) }
     end
 
     shared_examples "a warning healthcheck" do
       specify { expect(subject.status).to eq(:warning) }
-      specify { expect(subject.message).to match(/1 created over 1800 seconds ago/) }
+      specify { expect(subject.message).to match(/1 created over 2100 seconds ago/) }
     end
 
     shared_examples "a critical healthcheck" do
       specify { expect(subject.status).to eq(:critical) }
-      specify { expect(subject.message).to match(/1 created over 2700 seconds ago/) }
+      specify { expect(subject.message).to match(/1 created over 3000 seconds ago/) }
     end
 
     shared_examples "tests all three states" do
@@ -21,18 +21,18 @@ RSpec.describe Healthcheck::SubscriptionContents do
         it_behaves_like "an ok healthcheck"
       end
 
-      context "when a subscription content was created over 30 minutes ago" do
-        before { create(:subscription_content, created_at: 31.minutes.ago) }
+      context "when a subscription content was created over 35 minutes ago" do
+        before { create(:subscription_content, created_at: 36.minutes.ago) }
         it_behaves_like "a warning healthcheck"
       end
 
-      context "when a subscription content was created over 45 minutes ago" do
-        before { create(:subscription_content, created_at: 46.minutes.ago) }
+      context "when a subscription content was created over 50 minutes ago" do
+        before { create(:subscription_content, created_at: 51.minutes.ago) }
         it_behaves_like "a critical healthcheck"
       end
     end
 
-    context "between 09:30 and 10:30" do
+    context "between 09:30 and 11:00" do
       around do |example|
         Timecop.freeze("10:00") { example.run }
       end
