@@ -7,7 +7,7 @@ class ImmediateEmailGenerationWorker
 
   def perform
     ensure_only_running_once do
-      SubscribersForImmediateEmailQuery.call.find_in_batches do |group|
+      SubscribersForImmediateEmailQuery.call.find_in_batches(batch_size: 5000) do |group|
         subscription_contents = grouped_subscription_contents(group.pluck(:id))
         update_content_change_cache(subscription_contents)
         update_message_cache(subscription_contents)
