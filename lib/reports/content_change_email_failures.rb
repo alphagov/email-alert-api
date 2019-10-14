@@ -1,8 +1,7 @@
 module Reports
   class ContentChangeEmailFailures
-    def initialize(content_change)
-      @content_change = content_change
-      @failed_emails = failed_emails
+    def initialize(content_changes)
+      @content_changes = content_changes
     end
 
     def self.call(*args)
@@ -10,33 +9,32 @@ module Reports
     end
 
     def call
-      puts <<~HEADING
-        #{@failed_emails.count} Email failures for Content Change #{@content_change.id}
-        -------------------------------------------
+      @content_changes.each do |content_change|
+        failed_emails = failed_emails(content_change)
 
-      HEADING
+        puts <<~HEADING
 
-      @failed_emails.each do |email|
-        puts <<~EMAIL
-          Email Id:       #{email.id}
-          Failure Reason: #{email.failure_reason}
+          ------------------------------------------------------------------------
+          #{failed_emails.count} Email failures for Content Change #{content_change.id}
+          ------------------------------------------------------------------------
+        HEADING
 
-          -------------------------------------------
+        failed_emails.each do |email|
+          puts <<~EMAIL
 
-        EMAIL
+            Email Id:       #{email[0]}
+            Failure Reason: #{email[1]}
+            ------------------------------------------------------------------------
+          EMAIL
+        end
       end
     end
 
   private
 
-    def failed_emails
-      subscription_contents_ids = @content_change
-                                  .subscription_contents
-                                  .pluck(:id)
-      email_ids = SubscriptionContent
-                  .where(id: subscription_contents_ids)
-                  .pluck(:email_id)
-      Email.where(id: email_ids, status: "failed")
+    def failed_emails(content_change)
+      email_ids = content_change.subscription_contents.select(:email_id)
+      Email.where(id: email_ids, status: "failed").sort_by(&:created_at).pluck(:id, :failure_reason)
     end
   end
 end
