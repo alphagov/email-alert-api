@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_11_142014) do
+ActiveRecord::Schema.define(version: 2019_10_14_131300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -176,7 +176,6 @@ ActiveRecord::Schema.define(version: 2019_10_11_142014) do
     t.index ["subscription_id", "content_change_id"], name: "index_subscription_contents_on_subscription_and_content_change", unique: true
     t.index ["subscription_id", "message_id"], name: "index_subscription_contents_on_subscription_id_and_message_id", unique: true
     t.index ["subscription_id"], name: "index_subscription_contents_on_subscription_id"
-    t.index ["subscription_id"], name: "partial_index_subscription_contents_on_subscription_id", where: "(email_id IS NULL)"
   end
 
   create_table "subscriptions", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
