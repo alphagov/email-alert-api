@@ -21,22 +21,18 @@ RSpec.describe Reports::ContentChangeEmailStatusCount do
     end
 
     it "produces a count of emails statuses for a given content change" do
-      described_class.call(content_change)
-      expect { described_class.call(content_change) }.to output(
-        <<~TEXT,
-          -------------------------------------------
-          Email status counts for Content Change #{content_change.id}
-          -------------------------------------------
+      message = <<~TEXT
 
-          Sent emails: #{sent.count}
+        ---------------------------------------------------------------------------
+        Email status counts for Content Change #{content_change.id}
+        ---------------------------------------------------------------------------
+        Sent emails: #{sent.count}
+        Pending emails: #{pending.count}
+        Failed emails: #{failed.count}
+        ---------------------------------------------------------------------------
+      TEXT
 
-          Pending emails: #{pending.count}
-
-          Failed emails: #{failed.count}
-
-          -------------------------------------------
-        TEXT
-      ).to_stdout
+      expect { described_class.call([content_change]) }.to output(message).to_stdout
     end
   end
 end
