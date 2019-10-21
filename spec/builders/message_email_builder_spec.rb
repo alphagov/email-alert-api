@@ -10,7 +10,7 @@ RSpec.describe MessageEmailBuilder do
   let(:subscription_two) do
     create(:subscription,
            subscriber: subscriber,
-           subscriber_list: build(:subscriber_list, title: "Second Subscription", url: "/subscription"))
+           subscriber_list: build(:subscriber_list, title: "Second Subscription", url: "/subscription", description: "subscriber_list_description"))
   end
 
   let(:subscriptions) do
@@ -106,7 +106,7 @@ RSpec.describe MessageEmailBuilder do
         end
       end
 
-      context "with a URL" do
+      context "with a URL and a description" do
         let(:subscription) { subscription_two }
 
         it "sets the body" do
@@ -121,6 +121,7 @@ RSpec.describe MessageEmailBuilder do
 
               Some content
 
+              subscriber_list_description
               ---
               ^You’re getting this email because you subscribed to immediate updates to ‘[#{subscription.subscriber_list.title}](#{Plek.new.website_root}#{subscription.subscriber_list.url})’ on GOV.UK.
 

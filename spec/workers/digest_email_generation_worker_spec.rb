@@ -36,12 +36,14 @@ RSpec.describe DigestEmailGenerationWorker do
           subscription_id: subscription_one.id,
           subscriber_list_title: "Test title 1",
           subscriber_list_url: nil,
+          subscriber_list_description: nil,
           content: [create(:content_change)],
         ),
         double(
           subscription_id: subscription_two.id,
           subscriber_list_title: "Test title 2",
           subscriber_list_url: "/test-title-2",
+          subscriber_list_description: "Test description",
           content: [create(:message)],
         ),
       ]

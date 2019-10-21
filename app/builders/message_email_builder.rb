@@ -45,9 +45,15 @@ private
     BODY
 
     if subscriptions.any?
+      subscriber_list = subscriptions.first.subscriber_list
+
+      if subscriber_list.description.present?
+        copy += "#{subscriber_list.description}\n"
+      end
+
       copy += <<~BODY
         ---
-        #{permission_reminder(subscriptions.first.subscriber_list)}
+        #{permission_reminder(subscriber_list)}
 
         #{ManageSubscriptionsLinkPresenter.call(address)}
       BODY

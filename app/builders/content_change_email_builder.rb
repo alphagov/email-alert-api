@@ -41,10 +41,22 @@ private
       #{I18n.t!('emails.content_change.opening_line')}
 
       ---
-      #{ContentChangePresenter.call(content_change)}
+      #{presented_content_change(content_change, subscriptions)}
       ---
       #{footer(subscriptions, address).strip}
     BODY
+  end
+
+  def presented_content_change(content_change, subscriptions)
+    copy = ContentChangePresenter.call(content_change)
+    return copy if subscriptions.empty?
+
+    subscriber_list = subscriptions.first.subscriber_list
+    if subscriber_list.description.present?
+      copy += "\n#{subscriber_list.description}\n"
+    end
+
+    copy
   end
 
   def footer(subscriptions, address)

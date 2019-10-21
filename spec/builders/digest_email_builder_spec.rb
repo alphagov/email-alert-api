@@ -9,6 +9,7 @@ RSpec.describe DigestEmailBuilder do
         subscription_id: "ABC1",
         subscriber_list_title: "Test title 1",
         subscriber_list_url: nil,
+        subscriber_list_description: "",
         content: [
           build(:content_change),
           build(:message),
@@ -18,6 +19,7 @@ RSpec.describe DigestEmailBuilder do
         subscription_id: "ABC2",
         subscriber_list_title: "Test title 2",
         subscriber_list_url: "/test-title-2",
+        subscriber_list_description: "Test description",
         content: [
           build(:message),
           build(:content_change),
@@ -77,6 +79,8 @@ RSpec.describe DigestEmailBuilder do
         &nbsp;
 
         # [Test title 2](http://www.dev.gov.uk/test-title-2) &nbsp;
+
+        Test description
 
         presented_message
 
