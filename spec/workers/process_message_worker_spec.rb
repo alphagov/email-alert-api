@@ -54,6 +54,28 @@ RSpec.describe ProcessMessageWorker do
     end
   end
 
+  context "with a normal priority message" do
+    it "enqueues a normal priority immediate email generation" do
+      expect(ImmediateMessageEmailGenerationWorker)
+          .to receive(:perform_async_in_queue)
+                  .with(message.id, queue: :email_generation_immediate)
+
+      subject.perform(message.id)
+    end
+  end
+
+  context "with a high priority message" do
+    before { message.update(priority: "high") }
+
+    it "enqueues a high priority immediate email generation" do
+      expect(ImmediateMessageEmailGenerationWorker)
+          .to receive(:perform_async_in_queue)
+                  .with(message.id, queue: :email_generation_immediate_high)
+
+      subject.perform(message.id)
+    end
+  end
+
   context "with a courtesy subscription" do
     let!(:subscriber) { create(:subscriber, address: Email::COURTESY_EMAIL) }
 

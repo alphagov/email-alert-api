@@ -5,16 +5,14 @@
 :timeout: 4
 :queues:
   - [delivery_immediate_high, 6]
-  - [delivery_immediate, 5]
-  - [email_generation_immediate, 4]
+  - [delivery_immediate, 4]
+  - [email_generation_immediate_high, 5]
+  - [email_generation_immediate, 3]
   - [default, 3]
   - [delivery_digest, 2]
   - [email_generation_digest, 1]
   - cleanup
 :schedule:
-  immediate_email_generation:
-    every: '5s'
-    class: ImmediateEmailGenerationWorker
   daily_digest_initiator:
     cron: '30 8 * * * Europe/London' # every day at 8:30am
     class: DailyDigestInitiatorWorker

@@ -20,6 +20,28 @@ RSpec.describe ProcessContentChangeWorker do
         .to(true)
     end
 
+    context "with a normal priority content change" do
+      it "enqueues a normal priority immediate email generation" do
+        expect(ImmediateContentChangeEmailGenerationWorker)
+            .to receive(:perform_async_in_queue)
+                    .with(content_change.id, queue: :email_generation_immediate)
+
+        subject.perform(content_change.id)
+      end
+    end
+
+    context "with a high priority content change" do
+      before { content_change.update(priority: "high") }
+
+      it "enqueues a high priority immediate email generation" do
+        expect(ImmediateContentChangeEmailGenerationWorker)
+            .to receive(:perform_async_in_queue)
+                    .with(content_change.id, queue: :email_generation_immediate_high)
+
+        subject.perform(content_change.id)
+      end
+    end
+
     context "when the subscription content has already been imported" do
       before { create(:subscription_content, content_change: content_change, subscription: subscription) }
 

@@ -1,27 +1,20 @@
-class ImmediateEmailGenerationWorker
-  include Sidekiq::Worker
+module ImmediateEmailGeneratorService
+private
 
-  sidekiq_options queue: :email_generation_immediate
-
-  LOCK_NAME = "immediate_email_generation_worker".freeze
-
-  def perform
-    ensure_only_running_once do
-      SubscribersForImmediateEmailQuery.call.find_in_batches(batch_size: 5000) do |group|
-        subscription_contents = grouped_subscription_contents(group.pluck(:id))
-        update_content_change_cache(subscription_contents)
-        update_message_cache(subscription_contents)
-        create_content_change_emails(group, subscription_contents)
-        create_message_emails(group, subscription_contents)
-      end
+  def ensure_only_running_once(type, id)
+    lock_name = "immediate_email_generation_worker_#{type}_#{id}".freeze
+    Subscriber.with_advisory_lock(lock_name, timeout_seconds: 0) do
+      yield
     end
   end
 
-private
-
-  def ensure_only_running_once
-    Subscriber.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
-      yield
+  def generate_emails(content_change_id: nil, message_id: nil)
+    SubscribersForImmediateEmailQuery.call(content_change_id: content_change_id, message_id: message_id).find_in_batches(batch_size: 5000) do |group|
+      subscription_contents = grouped_subscription_contents(group.pluck(:id))
+      update_content_change_cache(subscription_contents)
+      update_message_cache(subscription_contents)
+      create_content_change_emails(group, subscription_contents)
+      create_message_emails(group, subscription_contents)
     end
   end
 

@@ -6,7 +6,7 @@ class ProcessContentChangeWorker
     return if content_change.processed?
 
     import_subscription_content(content_change)
-    QueueCourtesyEmailService.call(ContentChangeEmailBuilder, content_change: content_change)
+    QueueCourtesyEmailService.call(content_change)
 
     content_change.mark_processed!
   end
@@ -21,6 +21,7 @@ private
         .map { |id| [content_change.id, id] },
     )
 
-    ImmediateEmailGenerationWorker.perform_async
+    queue = content_change.high? ? :email_generation_immediate_high : :email_generation_immediate
+    ImmediateContentChangeEmailGenerationWorker.perform_async_in_queue(content_change.id, queue: queue)
   end
 end
