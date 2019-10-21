@@ -45,13 +45,23 @@ private
 
   def presented_segment(segment)
     <<~RESULT
-      # #{presented_title(segment)} &nbsp;
+      #{presented_header(segment)}
 
       #{presented_content(segment.content)}
       ---
 
       #{UnsubscribeLinkPresenter.call(segment.subscription_id, segment.subscriber_list_title)}
     RESULT
+  end
+
+  def presented_header(segment)
+    copy = "# #{presented_title(segment)} &nbsp;"
+
+    if segment.subscriber_list_description.present?
+      copy += "\n\n#{segment.subscriber_list_description}"
+    end
+
+    copy
   end
 
   def presented_title(segment)
