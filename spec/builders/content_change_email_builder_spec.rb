@@ -14,7 +14,7 @@ RSpec.describe ContentChangeEmailBuilder do
       :subscription,
       id: "69ca6fce-34f5-4ebd-943c-83bd1b2e70fb",
       subscriber: subscriber,
-      subscriber_list: build(:subscriber_list, title: "Second Subscription", url: "/subscription"),
+      subscriber_list: build(:subscriber_list, title: "Second Subscription", url: "/subscription", description: "subscriber_list_description"),
     )
   end
   let(:subscriptions) do
@@ -129,7 +129,7 @@ RSpec.describe ContentChangeEmailBuilder do
         end
       end
 
-      context "with a URL" do
+      context "with a URL and a description" do
         let(:subscription_content) do
           double(subscription: subscription_two, content_change: content_change)
         end
@@ -146,6 +146,8 @@ RSpec.describe ContentChangeEmailBuilder do
 
               ---
               presented_content_change
+
+              subscriber_list_description
 
               ---
               ^You’re getting this email because you subscribed to immediate updates to ‘[#{subscriptions.second.subscriber_list.title}](#{Plek.new.website_root}#{subscriptions.second.subscriber_list.url})’ on GOV.UK.
