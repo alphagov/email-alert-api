@@ -32,4 +32,14 @@ namespace :report do
       puts "- report:content_change_failed_emails[id_1,id_2,id_n]"
     end
   end
+
+  desc <<~DESCRIPTION
+    For a ContentChange Id, find any unsent emails and queue
+    them for delivery on the immediate high queue
+  DESCRIPTION
+  task :force_send_emails, %i[content_change_id] => :environment do |_t, args|
+    raise ArgumentError.new("Missing content change id") unless args[:content_change_id].present?
+
+    ImmediateDelivery::QueueUnsentEmailsForContentChange.call(content_change_id: args[:content_change_id])
+  end
 end
