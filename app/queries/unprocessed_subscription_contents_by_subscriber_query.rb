@@ -14,6 +14,7 @@ class UnprocessedSubscriptionContentsBySubscriberQuery
       .joins(:subscription)
       .includes(:subscription)
       .where(email_id: nil, subscriptions: { subscriber_id: subscriber_ids })
+      .lock
       .group_by { |sc| sc.subscription.subscriber_id }
   end
 

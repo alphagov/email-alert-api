@@ -106,7 +106,7 @@ RSpec.describe ContentChangeHandlerService do
     it "enqueues the content change to be processed by the subscription content worker" do
       allow(ContentChange).to receive(:create!).and_return(content_change)
 
-      expect(ProcessContentChangeWorker)
+      expect(ProcessContentChangeAndGenerateEmailsWorker)
         .to receive(:perform_async)
         .with(content_change.id)
 

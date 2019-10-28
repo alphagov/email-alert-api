@@ -12,9 +12,6 @@
   - [email_generation_digest, 1]
   - cleanup
 :schedule:
-  immediate_email_generation:
-    every: '5s'
-    class: ImmediateEmailGenerationWorker
   daily_digest_initiator:
     cron: '30 8 * * * Europe/London' # every day at 8:30am
     class: DailyDigestInitiatorWorker

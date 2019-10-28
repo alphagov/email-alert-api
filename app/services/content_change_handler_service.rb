@@ -13,7 +13,7 @@ class ContentChangeHandlerService
     content_change = ContentChange.create!(content_change_params)
     MetricsService.content_change_created
     MatchedContentChangeGenerationService.call(content_change: content_change)
-    ProcessContentChangeWorker.perform_async(content_change.id)
+    ProcessContentChangeAndGenerateEmailsWorker.perform_async(content_change.id)
   end
 
   private_class_method :new
