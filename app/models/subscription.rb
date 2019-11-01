@@ -14,8 +14,8 @@ class Subscription < ApplicationRecord
   scope :ended, -> { where.not(ended_at: nil) }
 
   scope :active_on, ->(date) do
-    where("created_at <= ?", date)
-      .where("ended_at IS NULL OR ended_at > ?", date)
+    where("subscriptions.created_at <= ?", date)
+      .where("subscriptions.ended_at IS NULL OR subscriptions.ended_at > ?", date)
   end
 
   scope :for_content_change, ->(content_change) do
