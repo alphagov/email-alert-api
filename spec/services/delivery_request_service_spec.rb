@@ -34,6 +34,13 @@ RSpec.describe DeliveryRequestService do
     end
   end
 
+  shared_examples "records a statistic" do |status|
+    it "records a #{status} statistic" do
+      expect(GovukStatsd).to receive(:increment).with("delivery_attempt.status.#{status.underscore}")
+      subject.call(email: email)
+    end
+  end
+
   describe "#call" do
     let!(:email) { create(:email) }
 
@@ -65,6 +72,8 @@ RSpec.describe DeliveryRequestService do
         subject.call(email: email)
         expect(DeliveryAttempt.last.status).to eq("internal_failure")
       end
+
+      include_examples "records a statistic", "internal_failure"
     end
 
     context "when the email address is overridden" do
@@ -136,6 +145,8 @@ RSpec.describe DeliveryRequestService do
         subject.call(email: email)
         expect(DeliveryAttempt.last).to be_delivered
       end
+
+      include_examples "records a statistic", "delivered"
     end
 
     it "sets the delivery attempt's provider to the name of the provider" do

@@ -11,6 +11,20 @@ RSpec.describe StatusUpdateService do
 
   subject(:status_update) { described_class.call(reference: reference, status: status, completed_at: completed_at, sent_at: sent_at) }
 
+  shared_examples "records successful stats" do
+    before { allow(GovukStatsd).to receive(:increment) }
+
+    it "records a success statistic" do
+      expect(GovukStatsd).to receive(:increment).with("status_update.success")
+      status_update
+    end
+
+    it "records a statistic on the number of status updates" do
+      expect(GovukStatsd).to receive(:increment).with("delivery_attempt.status.#{status.underscore}")
+      status_update
+    end
+  end
+
   it "updates the delivery attempt's status" do
     expect { status_update }
       .to change { delivery_attempt.reload.status }
@@ -35,6 +49,8 @@ RSpec.describe StatusUpdateService do
       .from(nil)
       .to(sent_at)
   end
+
+  include_examples "records successful stats"
 
   context "with first temporary failure" do
     let(:status) { "temporary-failure" }
@@ -67,6 +83,8 @@ RSpec.describe StatusUpdateService do
           .to_not(change { delivery_attempt.reload.email.finished_sending_at })
       end
     end
+
+    include_examples "records successful stats"
   end
 
   context "with a temporary failure after previous one a day ago" do
@@ -92,6 +110,8 @@ RSpec.describe StatusUpdateService do
         .from("pending")
         .to("failed")
     end
+
+    include_examples "records successful stats"
   end
 
   context "with a permanent failure" do
@@ -105,6 +125,8 @@ RSpec.describe StatusUpdateService do
         .from(false)
         .to(true)
     end
+
+    include_examples "records successful stats"
   end
 
   context "with a missing reference" do

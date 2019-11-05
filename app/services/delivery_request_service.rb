@@ -29,7 +29,10 @@ class DeliveryRequestService
       status = call_provider(address, reference, email)
 
       ActiveRecord::Base.transaction do
-        delivery_attempt.update!(status: status) if status != :sending
+        unless status == :sending
+          delivery_attempt.update!(status: status)
+          MetricsService.delivery_attempt_status_changed(status)
+        end
         UpdateEmailStatusService.call(delivery_attempt)
       end
     end

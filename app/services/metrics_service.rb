@@ -56,6 +56,10 @@ class MetricsService
       timing(namespace, difference)
     end
 
+    def delivery_attempt_status_changed(status)
+      increment("delivery_attempt.status.#{status}")
+    end
+
   private
 
     def increment(metric)
