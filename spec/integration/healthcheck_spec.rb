@@ -43,8 +43,6 @@ RSpec.describe "Healthcheck", type: :request do
       sidekiq_retry_size:    hash_including(status: "ok", value: 0),
       status_updates:        hash_including(status: "ok", total: 0),
       subscription_contents: hash_including(status: "ok", critical: 0, warning: 0),
-      technical_failures:    hash_including(status: "ok", value: 0),
-      internal_failures:     hash_including(status: "ok", value: 0),
     )
   end
 end
