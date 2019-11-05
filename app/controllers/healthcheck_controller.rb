@@ -13,8 +13,6 @@ class HealthcheckController < ApplicationController
                     Healthcheck::RetrySize,
                     Healthcheck::StatusUpdates,
                     Healthcheck::SubscriptionContents,
-                    Healthcheck::TechnicalFailures,
-                    Healthcheck::InternalFailures,
                   ])
     render json: healthcheck
   end
