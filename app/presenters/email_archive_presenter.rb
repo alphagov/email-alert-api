@@ -11,6 +11,7 @@ class EmailArchivePresenter
     {
       archived_at_utc: archived_at.utc.strftime(S3_DATETIME_FORMAT),
       content_change: build_content_change(record),
+      message: build_message(record),
       created_at_utc: record.fetch("created_at").utc.strftime(S3_DATETIME_FORMAT),
       finished_sending_at_utc: record.fetch("finished_sending_at").utc.strftime(S3_DATETIME_FORMAT),
       id: record.fetch("id"),
@@ -36,6 +37,22 @@ private
 
     {
       content_change_ids: record.fetch("content_change_ids"),
+      digest_run_id: record.fetch("digest_run_ids").first,
+      subscription_ids: record.fetch("subscription_ids"),
+    }
+  end
+
+  def build_message(record)
+    return if record.fetch("message_ids").empty?
+
+    if record.fetch("digest_run_ids").count > 1
+      error = "Email with id: #{record['id']} is associated with "\
+        "multiple digest runs: #{record['digest_run_ids'].join(', ')}"
+      GovukError.notify(error)
+    end
+
+    {
+      message_ids: record.fetch("message_ids"),
       digest_run_id: record.fetch("digest_run_ids").first,
       subscription_ids: record.fetch("subscription_ids"),
     }
