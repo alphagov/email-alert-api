@@ -4,10 +4,11 @@ class ImmediateEmailGenerationWorker
   sidekiq_options queue: :email_generation_immediate
 
   LOCK_NAME = "immediate_email_generation_worker".freeze
+  BATCH_SIZE = 5000
 
   def perform
     ensure_only_running_once do
-      SubscribersForImmediateEmailQuery.call.find_in_batches(batch_size: 5000) do |group|
+      SubscribersForImmediateEmailQuery.call.find_in_batches(batch_size: BATCH_SIZE) do |group|
         subscription_contents = grouped_subscription_contents(group.pluck(:id))
         update_content_change_cache(subscription_contents)
         update_message_cache(subscription_contents)

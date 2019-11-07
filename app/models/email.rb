@@ -14,4 +14,10 @@ class Email < ApplicationRecord
   enum failure_reason: { permanent_failure: 0, retries_exhausted_failure: 1 }
 
   validates :address, :subject, :body, presence: true
+
+  def self.timed_bulk_insert(columns, records, batch_size)
+    return import!(columns, records) unless records.size == batch_size
+
+    MetricsService.email_bulk_insert(batch_size) { import!(columns, records) }
+  end
 end

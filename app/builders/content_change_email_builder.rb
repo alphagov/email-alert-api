@@ -8,7 +8,9 @@ class ContentChangeEmailBuilder
   end
 
   def call
-    Email.import!(columns, records)
+    Email.timed_bulk_insert(columns,
+                            records,
+                            ImmediateEmailGenerationWorker::BATCH_SIZE)
   end
 
   private_class_method :new
