@@ -7,7 +7,7 @@ class Email < ApplicationRecord
   }
 
   scope :deleteable, lambda {
-    where.not(status: :pending).where("archived_at < ?", 12.days.ago)
+    where.not(status: :pending).where("archived_at < ?", 11.days.ago)
   }
 
   enum status: { pending: 0, sent: 1, failed: 2 }
