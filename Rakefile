@@ -2,7 +2,9 @@
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
 require File.expand_path("config/application", __dir__)
+require "rubocop/rake_task"
 
+RuboCop::RakeTask.new
 Rails.application.load_tasks
 
-task default: %i[spec lint]
+task default: %i[spec rubocop]
