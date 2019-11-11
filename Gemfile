@@ -17,7 +17,7 @@ gem "govuk_document_types", "~> 0.9.2"
 gem "json-schema", "~> 2.8"
 gem "jwt", "~> 2.2"
 gem "nokogiri", "~> 1.10"
-gem "notifications-ruby-client", "~> 4.0"
+gem "notifications-ruby-client", "~> 5.1"
 gem "plek", "~> 3.0"
 gem "redcarpet", "~> 3.5"
 
