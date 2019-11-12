@@ -34,9 +34,9 @@ group :test do
 end
 
 group :development, :test do
-  gem "govuk-lint", "~> 4.3"
   gem "listen", "3.2.0"
   gem "pry-byebug"
   gem "rspec-rails", "3.9.0"
+  gem "rubocop-govuk"
   gem "ruby-prof", "~> 1.0"
 end
