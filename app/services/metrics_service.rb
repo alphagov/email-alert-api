@@ -32,6 +32,10 @@ class MetricsService
       time("digest_initiator_service.#{range}.timing", &block)
     end
 
+    def email_bulk_insert(size, &block)
+      time("email_bulk_insert.#{size}.timing", &block)
+    end
+
     def first_delivery_attempt(email, time)
       return if DeliveryAttempt.exists?(email: email)
 
