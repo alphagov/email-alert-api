@@ -1,5 +1,5 @@
 ---
-:verbose: true
+:verbose: false
 :concurrency: 30
 :logfile: ./log/sidekiq.json.log
 :timeout: 4
