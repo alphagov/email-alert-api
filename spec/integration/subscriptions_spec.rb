@@ -22,29 +22,80 @@ RSpec.describe "Subscriptions", type: :request do
     context "with an existing subscription" do
       let(:subscriber_list) { create(:subscriber_list) }
       let(:subscriber) { create(:subscriber, address: "test@example.com") }
-      let!(:subscription) { create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber) }
+      let!(:subscription) { create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber, frequency: :immediately) }
+      let(:frequency) { "daily" }
 
       def create_subscription
-        post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: subscriber.address }
+        post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: subscriber.address, frequency: frequency }
       end
 
-      it "creates a new subscription" do
-        expect { create_subscription }.to change(Subscription, :count)
+      context "with an existing subscription with different frequency" do
+        let(:frequency) { "weekly" }
+
+        it "creates a new subscription" do
+          expect { create_subscription }.to change(Subscription, :count)
+        end
+
+        it "returns status code 200" do
+          create_subscription
+          expect(response.status).to eq(200)
+        end
+
+        it "returns the ID of the new subscription" do
+          create_subscription
+          expect(data[:id]).to_not eq(subscription.id)
+        end
+
+        it "marks the existing subscription as ended" do
+          create_subscription
+          expect(subscription.reload.ended?).to be true
+        end
+
+        it "sends a confirmation email" do
+          stub_notify
+          create_subscription
+          expect(a_request(:post, /fake-notify/)).to have_been_made.at_least_once
+        end
       end
 
-      it "returns status code 200" do
-        create_subscription
-        expect(response.status).to eq(200)
-      end
+      context "with an existing subscription with identical frequency" do
+        let(:frequency) { "immediately" }
 
-      it "returns the ID of the new subscription" do
-        create_subscription
-        expect(data[:id]).to_not eq(subscription.id)
-      end
+        it "does not create a new subscription" do
+          expect { create_subscription }.to_not change(Subscription, :count)
+        end
 
-      it "marks the existing subscription as ended" do
-        create_subscription
-        expect(subscription.reload.ended?).to be true
+        it "returns status code 200" do
+          create_subscription
+          expect(response.status).to eq(200)
+        end
+
+        it "returns the ID of the existing subscription" do
+          create_subscription
+          expect(data[:id]).to eq(subscription.id)
+        end
+
+        it "does not mark the existing subscription as ended" do
+          create_subscription
+          expect(subscription.reload.ended?).to be false
+        end
+
+        it "does not send a confirmation email" do
+          stub_notify
+          create_subscription
+          expect(a_request(:post, /fake-notify/)).to_not have_been_made
+        end
+
+        context "with a deactivated subscriber" do
+          before do
+            subscriber.deactivate!
+          end
+          it "sends a confirmation email" do
+            stub_notify
+            create_subscription
+            expect(a_request(:post, /fake-notify/)).to have_been_made
+          end
+        end
       end
 
       context "with an ended subscription" do
@@ -97,6 +148,21 @@ RSpec.describe "Subscriptions", type: :request do
 
           it "does not create another subscriber" do
             expect { create_subscription }.not_to change(Subscriber, :count)
+          end
+        end
+
+        context "with a deactivated subscriber" do
+          before do
+            @subscriber = create(:subscriber, address: "test@example.com", deactivated_at: 2.days.ago)
+          end
+
+          it "does not create another subscriber" do
+            expect { create_subscription }.not_to change(Subscriber, :count)
+          end
+
+          it "activates the subscriber" do
+            create_subscription
+            expect(@subscriber.reload).to be_activated
           end
         end
 

@@ -178,13 +178,19 @@ new email address.
 ```json
 {
   "address": "email@address.com",
-  "subscriber_list_id": "The id of a subscriber list"
+  "subscriber_list_id": "The id of a subscriber list",
+  "frequency": "weekly"
 }
 ```
 
 and it will create a new subscription between the email address and the
 subscriber list. It will respond with a `201 Created` if it's a new
-subscription or a `200 OK` if the subscription already exists.
+subscription or a `200 OK` if the subscription already exists. If a 
+subscription already exists but the frequency is different, the
+current subscription is ended and a new one with the updated frequency
+is created. A confirmation email will be sent if a new subscription is 
+created or if the subscriber is reactivated and the subscription already
+exists.
 
 * `PATCH /subscriptions/xxxx` with data:
 
