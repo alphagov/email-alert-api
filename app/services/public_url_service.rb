@@ -14,7 +14,7 @@ module PublicUrlService
     end
 
     def authenticate_url(address:)
-      "#{website_root}/email/authenticate?#{param('address', address)}"
+      "#{website_root}/email/manage/authenticate?#{param('address', address)}"
     end
 
     def absolute_url(path:)
