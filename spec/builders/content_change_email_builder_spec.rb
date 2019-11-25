@@ -121,7 +121,7 @@ RSpec.describe ContentChangeEmailBuilder do
               ---
               ^You’re getting this email because you subscribed to immediate updates to ‘#{subscriptions.first.subscriber_list.title}’ on GOV.UK.
 
-              [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
+              [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/manage/authenticate?address=test%40example.com)
 
               Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
             BODY
@@ -152,7 +152,7 @@ RSpec.describe ContentChangeEmailBuilder do
               ---
               ^You’re getting this email because you subscribed to immediate updates to ‘[#{subscriptions.second.subscriber_list.title}](#{Plek.new.website_root}#{subscriptions.second.subscriber_list.url})’ on GOV.UK.
 
-              [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/authenticate?address=test%40example.com)
+              [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/manage/authenticate?address=test%40example.com)
 
               Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate).
             BODY
