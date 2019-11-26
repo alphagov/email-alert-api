@@ -22,8 +22,10 @@ private
 
   def generate_token(subscriber)
     AuthTokenGeneratorService.call(
-      subscriber,
-      redirect: expected_params[:redirect],
+      {
+        "subscriber_id" => subscriber.id,
+        "redirect" => expected_params[:redirect],
+      },
       expiry: 1.week.from_now,
     )
   end
