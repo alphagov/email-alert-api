@@ -1,4 +1,4 @@
-class AuthEmailBuilder
+class SubscriberAuthEmailBuilder
   def initialize(subscriber:, destination:, token:)
     @subscriber = subscriber
     @destination = destination

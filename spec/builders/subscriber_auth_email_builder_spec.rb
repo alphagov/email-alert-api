@@ -1,4 +1,4 @@
-RSpec.describe AuthEmailBuilder do
+RSpec.describe SubscriberAuthEmailBuilder do
   describe ".call" do
     let(:subscriber) { create(:subscriber) }
     let(:destination) { "/destination" }

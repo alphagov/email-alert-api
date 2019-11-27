@@ -31,7 +31,7 @@ private
   end
 
   def build_email(subscriber, token)
-    AuthEmailBuilder.call(
+    SubscriberAuthEmailBuilder.call(
       subscriber: subscriber,
       destination: expected_params.require(:destination),
       token: token,
