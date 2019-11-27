@@ -29,7 +29,7 @@ private
         priority: params.fetch(:priority, "normal"),
         govuk_request_id: govuk_request_id,
         signon_user_uid: user&.uid,
-        id: params[:sender_message_id]
+        id: params[:sender_message_id],
       )
   end
 end

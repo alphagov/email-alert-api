@@ -40,7 +40,7 @@ private
     email_data = subscribers.flat_map do |subscriber|
       subscribers_content_change_email_data(
         subscriber,
-        subscription_contents[subscriber.id]
+        subscription_contents[subscriber.id],
       )
     end
 
@@ -73,7 +73,7 @@ private
     email_data = subscribers.flat_map do |subscriber|
       subscribers_message_email_data(
         subscriber,
-        subscription_contents[subscriber.id]
+        subscription_contents[subscriber.id],
       )
     end
 

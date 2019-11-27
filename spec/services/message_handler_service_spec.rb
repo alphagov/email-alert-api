@@ -47,7 +47,7 @@ RSpec.describe MessageHandlerService do
       described_class.call(
         params: params,
         govuk_request_id: govuk_request_id,
-        user: user
+        user: user,
       )
 
       expect(Message.last).to have_attributes(signon_user_uid: user.uid)
@@ -58,7 +58,7 @@ RSpec.describe MessageHandlerService do
 
       described_class.call(
         params: params.merge(sender_message_id: uuid),
-        govuk_request_id: govuk_request_id
+        govuk_request_id: govuk_request_id,
       )
 
       expect(Message.last).to have_attributes(

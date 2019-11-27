@@ -4,7 +4,7 @@ RSpec.describe ProcessMessageAndGenerateEmailsWorker do
       :message,
       criteria_rules: [
         { type: "tag", key: "topics", value: "oil-and-gas/licensing" },
-      ]
+      ],
     )
   end
 
@@ -38,7 +38,7 @@ RSpec.describe ProcessMessageAndGenerateEmailsWorker do
           :subscription_content,
           :with_message,
           message: message,
-          subscription: subscription
+          subscription: subscription,
         )
       end
 
