@@ -32,18 +32,18 @@ private
       SubscriptionContent.import_ignoring_duplicates(
         %i(content_change_id subscription_id),
         subscription_ids(content_change).map { |id| [content_change.id, id] },
-        )
+      )
     end
   end
 
   def subscription_ids(content_change)
     Subscription
-        .for_content_change(content_change)
-        .active
-        .immediately
-        .subscription_ids_by_subscriber
-        .values
-        .flatten
+      .for_content_change(content_change)
+      .active
+      .immediately
+      .subscription_ids_by_subscriber
+      .values
+      .flatten
   end
 
   def queue_courtesy_email(content_change)
@@ -51,13 +51,13 @@ private
     return unless subscriber
 
     email_id = ContentChangeEmailBuilder.call([
-                                                  {
-                                                      address: subscriber.address,
-                                                      subscriptions: [],
-                                                      content_change: content_change,
-                                                      subscriber_id: subscriber.id,
-                                                  },
-                                              ]).ids.first
+      {
+        address: subscriber.address,
+        subscriptions: [],
+        content_change: content_change,
+        subscriber_id: subscriber.id,
+      },
+    ]).ids.first
 
     DeliveryRequestWorker.perform_async_in_queue(
       email_id, queue: :delivery_immediate

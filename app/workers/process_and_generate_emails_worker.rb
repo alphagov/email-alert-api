@@ -17,18 +17,20 @@ private
   end
 
   def update_content_change_cache(subscription_contents)
-    content_change_ids = subscription_contents.flat_map { |_, sc| sc.map(&:content_change_id) }
-                             .compact
-                             .uniq
+    content_change_ids = subscription_contents
+      .flat_map { |_, sc| sc.map(&:content_change_id) }
+      .compact
+      .uniq
     ids = content_change_ids - content_changes.keys
 
     content_changes.merge!(ContentChange.where(id: ids).index_by(&:id))
   end
 
   def update_message_cache(subscription_contents)
-    message_ids = subscription_contents.flat_map { |_, sc| sc.map(&:message_id) }
-                    .compact
-                    .uniq
+    message_ids = subscription_contents
+      .flat_map { |_, sc| sc.map(&:message_id) }
+      .compact
+      .uniq
     ids = message_ids - messages.keys
 
     messages.merge!(Message.where(id: ids).index_by(&:id))
@@ -36,8 +38,10 @@ private
 
   def create_content_change_emails(subscribers, subscription_contents)
     email_data = subscribers.flat_map do |subscriber|
-      subscribers_content_change_email_data(subscriber,
-                                            subscription_contents[subscriber.id])
+      subscribers_content_change_email_data(
+        subscriber,
+        subscription_contents[subscriber.id]
+      )
     end
 
     email_ids = ContentChangeEmailBuilder.call(email_data.map { |e| e[:params] }).ids
@@ -46,27 +50,31 @@ private
   end
 
   def subscribers_content_change_email_data(subscriber, subscription_contents)
-    by_content_change_id = subscription_contents.to_a.select(&:content_change_id)
-                               .group_by(&:content_change_id)
+    by_content_change_id = subscription_contents
+      .to_a
+      .select(&:content_change_id)
+      .group_by(&:content_change_id)
 
     by_content_change_id.map do |content_change_id, matching_subscription_contents|
       {
-          params: {
-              address: subscriber.address,
-              content_change: content_changes[content_change_id],
-              subscriptions: matching_subscription_contents.map(&:subscription),
-              subscriber_id: subscriber.id,
-          },
-          subscription_contents: matching_subscription_contents,
-          priority: content_changes[content_change_id].priority.to_sym,
+        params: {
+          address: subscriber.address,
+          content_change: content_changes[content_change_id],
+          subscriptions: matching_subscription_contents.map(&:subscription),
+          subscriber_id: subscriber.id,
+        },
+        subscription_contents: matching_subscription_contents,
+        priority: content_changes[content_change_id].priority.to_sym,
       }
     end
   end
 
   def create_message_emails(subscribers, subscription_contents)
     email_data = subscribers.flat_map do |subscriber|
-      subscribers_message_email_data(subscriber,
-                                     subscription_contents[subscriber.id])
+      subscribers_message_email_data(
+        subscriber,
+        subscription_contents[subscriber.id]
+      )
     end
 
     email_ids = MessageEmailBuilder.call(email_data.map { |e| e[:params] }).ids
@@ -75,19 +83,20 @@ private
   end
 
   def subscribers_message_email_data(subscriber, subscription_contents)
-    by_message_id = subscription_contents.select(&:message_id)
-                        .group_by(&:message_id)
+    by_message_id = subscription_contents
+      .select(&:message_id)
+      .group_by(&:message_id)
 
     by_message_id.map do |message_id, matching_subscription_contents|
       {
-          params: {
-              address: subscriber.address,
-              message: messages[message_id],
-              subscriptions: matching_subscription_contents.map(&:subscription),
-              subscriber_id: subscriber.id,
-          },
-          subscription_contents: matching_subscription_contents,
-          priority: messages[message_id].priority.to_sym,
+        params: {
+          address: subscriber.address,
+          message: messages[message_id],
+          subscriptions: matching_subscription_contents.map(&:subscription),
+          subscriber_id: subscriber.id,
+        },
+        subscription_contents: matching_subscription_contents,
+        priority: messages[message_id].priority.to_sym,
       }
     end
   end
@@ -107,7 +116,7 @@ private
         FROM (VALUES #{values.join(',')}) AS v(id, email_id)
         WHERE subscription_contents.id = v.id
       ),
-        )
+    )
   end
 
   def queue_for_delivery(email_data_to_deliver, email_ids_to_deliver)

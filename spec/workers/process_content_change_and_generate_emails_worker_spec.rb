@@ -71,13 +71,13 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
         :subscription_content,
         subscription: subscription_one,
         content_change: content_change,
-          )
+      )
 
       create(
         :subscription_content,
         subscription: subscription_two,
         content_change: content_change,
-          )
+      )
 
       subject.perform(content_change.id)
 
@@ -97,7 +97,7 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
 
       SubscriptionContent.includes(:email, subscription: :subscriber).find_each do |subscription_content|
         expect(subscription_content.email.address)
-            .to eq(subscription_content.subscription.subscriber.address)
+          .to eq(subscription_content.subscription.subscriber.address)
       end
     end
   end
@@ -112,8 +112,8 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
 
     it "should create an email" do
       expect { subject.perform(content_change.id) }
-          .to change { Email.count }
-                  .by(1)
+        .to change { Email.count }
+        .by(1)
     end
 
     it "should associate the subscription content with the email" do
@@ -124,7 +124,7 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
     context "with a normal priority content change" do
       it "should queue a delivery email job with a normal priority" do
         expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
-                                             .with(an_instance_of(String), queue: :delivery_immediate)
+          .with(an_instance_of(String), queue: :delivery_immediate)
 
         subject.perform(content_change.id)
       end
@@ -137,7 +137,7 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
 
       it "should queue a delivery email job with a high priority" do
         expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
-                                             .with(an_instance_of(String), queue: :delivery_immediate_high)
+          .with(an_instance_of(String), queue: :delivery_immediate_high)
 
         subject.perform(content_change.id)
       end
@@ -157,13 +157,13 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
         :subscription_content,
         subscription: subscription_one,
         content_change: content_change_one,
-          )
+      )
 
       subscription_content_two = create(
         :subscription_content,
         subscription: subscription_two,
         content_change: content_change_two,
-          )
+      )
 
       subject.perform(content_change_one.id)
 
