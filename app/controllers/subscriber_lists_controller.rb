@@ -47,14 +47,13 @@ private
   end
 
   def find_exact_query_params
-    permitted_params = params.permit!.to_h
     {
-      tags: convert_legacy_params(permitted_params.fetch(:tags, {})),
-      links: convert_legacy_params(permitted_params.fetch(:links, {})),
-      document_type: permitted_params.fetch(:document_type, ""),
-      email_document_supertype: permitted_params.fetch(:email_document_supertype, ""),
-      government_document_supertype: permitted_params.fetch(:government_document_supertype, ""),
-      slug: params[:gov_delivery_id],
+      tags: convert_legacy_params(params.permit(tags: {}).to_h.fetch(:tags, {})),
+      links: convert_legacy_params(params.permit(links: {}).to_h.fetch(:links, {})),
+      document_type: params.fetch(:document_type, ""),
+      email_document_supertype: params.fetch(:email_document_supertype, ""),
+      government_document_supertype: params.fetch(:government_document_supertype, ""),
+      slug: params.fetch(:gov_delivery_id, nil),
     }
   end
 
