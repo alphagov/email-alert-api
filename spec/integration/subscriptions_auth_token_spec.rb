@@ -5,7 +5,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
     let(:path) { "/subscriptions/auth-token" }
     let(:address) { "test@example.com" }
     let(:topic_id) { "business-tax-corporation-tax" }
-    let(:frequency) { "weekly" }
+    let(:frequency) { "daily" }
     let(:params) do
       {
         address: address,
@@ -57,6 +57,29 @@ RSpec.describe "Subscriptions auth token", type: :request do
       it "returns a 422" do
         post path, params: params
         expect(response.status).to eq(422)
+      end
+    end
+
+    it "creates an email" do
+      expect { post path, params: params }.to change { Email.count }.by(1)
+    end
+
+    it "sends the email" do
+      expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
+      post path, params: params
+    end
+
+    it "sends an email with the correct token" do
+      Timecop.freeze do
+        post path, params: params
+        expect(Email.count).to be 1
+        expected_token_data = {
+          "address" => address,
+          "topic_id" => topic_id,
+          "frequency" => frequency,
+        }
+        expected_token = AuthTokenGeneratorService.call(expected_token_data)
+        expect(Email.last.body).to include(expected_token)
       end
     end
   end

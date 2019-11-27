@@ -4,7 +4,7 @@ class SubscribersController < ApplicationController
 
   def subscriptions
     if !valid_ordering_param?
-      return render json: { error: "Order paramater not valid" }, status: :unprocessable_entity
+      return render json: { error: "Order parameter not valid" }, status: :unprocessable_entity
     end
 
     render json: { subscriber: subscriber.as_json, subscriptions: ordered_subscriptions }
