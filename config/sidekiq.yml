@@ -16,7 +16,7 @@
     every: '5s'
     class: ImmediateEmailGenerationWorker
   daily_digest_initiator:
-    cron: '0 9 * * * Europe/London' # every day at 9:00am
+    cron: '30 9 * * * Europe/London' # every day at 9:30am
     class: DailyDigestInitiatorWorker
   weekly_digest_initiator:
     cron: '30 8 * * 6 Europe/London' # every Saturday at 8:30am
