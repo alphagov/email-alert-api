@@ -44,7 +44,7 @@ class Subscriber < ApplicationRecord
   def deactivate!(datetime: nil)
     raise "Already deactivated." if deactivated?
 
-    update!(deactivated_at: datetime || Time.now)
+    update!(deactivated_at: datetime || Time.zone.now)
   end
 
   def nullified?

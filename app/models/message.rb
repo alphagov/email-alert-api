@@ -22,7 +22,7 @@ class Message < ApplicationRecord
   enum priority: { normal: 0, high: 1 }
 
   def mark_processed!
-    update!(processed_at: Time.now)
+    update!(processed_at: Time.zone.now)
   end
 
   def processed?

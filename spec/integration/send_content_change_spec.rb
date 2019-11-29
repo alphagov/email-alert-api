@@ -16,7 +16,7 @@ RSpec.describe "Sending a content change", type: :request do
       change_note: "This is a change note",
       description: "This is a description",
       base_path: "/government/things",
-      public_updated_at: Time.now.to_s,
+      public_updated_at: Time.zone.now.to_s,
       email_document_supertype: "email document supertype",
       government_document_supertype: "government document supertype",
       document_type: "document type",

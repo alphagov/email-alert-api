@@ -12,7 +12,7 @@ RSpec.describe Healthcheck::DigestRuns do
   end
 
   context "when a content change was created 5 minute ago" do
-    before { create(:digest_run, created_at: 5.minute.ago) }
+    before { create(:digest_run, created_at: 5.minutes.ago) }
     it_behaves_like "an ok healthcheck"
   end
 

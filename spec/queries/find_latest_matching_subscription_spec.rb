@@ -21,17 +21,17 @@ RSpec.describe FindLatestMatchingSubscription do
 
   context "when a newer subscription exists" do
     it "should return the newer subscription" do
-      newer_subscription = create_subscription(:daily, created_at: Time.now)
+      newer_subscription = create_subscription(:daily, created_at: Time.zone.now)
       expect(subject).to eq(newer_subscription)
     end
 
     it "should return the newer subscription, even if the frequency is different" do
-      newer_subscription = create_subscription(:weekly, created_at: Time.now)
+      newer_subscription = create_subscription(:weekly, created_at: Time.zone.now)
       expect(subject).to eq(newer_subscription)
     end
 
     it "should return the newer subscription, even if that one has also ended" do
-      newer_subscription = create_subscription(:daily, :ended, created_at: Time.now)
+      newer_subscription = create_subscription(:daily, :ended, created_at: Time.zone.now)
       expect(subject).to eq(newer_subscription)
     end
   end

@@ -80,7 +80,7 @@ private
 
       subscription.update!(
         ended_reason: :unpublished,
-        ended_at: Time.now,
+        ended_at: Time.zone.now,
         ended_email_id: email_id,
       )
     end

@@ -31,12 +31,13 @@ RSpec.describe Reports::EmailDeliveryAttempts do
     end
 
     it "outputs the average time between created_at and updated_at" do
+      report_path = Rails.root.join("tmp/delivery_attempt_time_2019-03-2100:00:00+0000_to_2019-03-2300:00:00+0000.csv")
       expect { described_class.new(start_date, end_date).report }.to output(
         <<~TEXT,
           Searching for all sucessful delivery attempts between 2019-03-21 00:00:00 +0000 and 2019-03-23 00:00:00 +0000
           Calculating delivery attempt times...
           Finished! Average delivery attempt time between 2019-03-21 00:00:00 +0000 and 2019-03-23 00:00:00 +0000 is 71338.0s
-          Report available at #{Rails.root}/tmp/delivery_attempt_time_2019-03-2100:00:00+0000_to_2019-03-2300:00:00+0000.csv
+          Report available at #{report_path}
         TEXT
       ).to_stdout
     end

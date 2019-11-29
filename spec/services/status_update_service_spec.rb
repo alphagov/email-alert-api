@@ -6,8 +6,8 @@ RSpec.describe StatusUpdateService do
   end
 
   let(:status) { "delivered" }
-  let(:completed_at) { Time.parse("2017-05-14T12:15:30.000000Z") }
-  let(:sent_at) { Time.parse("2017-05-14T12:15:30.000000Z") }
+  let(:completed_at) { Time.zone.parse("2017-05-14T12:15:30.000000Z") }
+  let(:sent_at) { Time.zone.parse("2017-05-14T12:15:30.000000Z") }
 
   subject(:status_update) { described_class.call(reference: reference, status: status, completed_at: completed_at, sent_at: sent_at) }
 

@@ -34,7 +34,7 @@ RSpec.describe Healthcheck::QueueLatency do
   end
 
   context "when the delivery_immediate_high queue latency is ok" do
-    let(:delivery_immediate_high_latency) { 1.minutes.to_i }
+    let(:delivery_immediate_high_latency) { 1.minute.to_i }
     it_behaves_like "an ok healthcheck"
   end
 
@@ -49,7 +49,7 @@ RSpec.describe Healthcheck::QueueLatency do
   end
 
   context "when the delivery_immediate queue latency is ok" do
-    let(:delivery_immediate_latency) { 1.minutes.to_i }
+    let(:delivery_immediate_latency) { 1.minute.to_i }
     it_behaves_like "an ok healthcheck"
   end
 

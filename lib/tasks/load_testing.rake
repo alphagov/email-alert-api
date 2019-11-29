@@ -9,7 +9,7 @@ namespace :load_testing do
 
     DeliveryAttempt.import(records)
 
-    path = "/tmp/delivery_attempt_ids_#{Time.now.strftime('%Y%m%d_%H%M%S')}"
+    path = "/tmp/delivery_attempt_ids_#{Time.zone.now.strftime('%Y%m%d_%H%M%S')}"
 
     File.open(path, "w") do |file|
       file.write(ids.join("\n"))

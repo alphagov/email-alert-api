@@ -1,6 +1,7 @@
 inherit_gem:
   rubocop-govuk:
     - config/default.yml
+    - config/rails.yml
     
 AllCops:
   Exclude:
@@ -11,3 +12,12 @@ Metrics/BlockLength:
   Exclude:
     - config/routes.rb
     - spec/**/**
+
+Rails/DynamicFindBy:
+  Enabled: false
+Rails/OutputSafety:
+  Enabled: false
+Rails/InverseOf:
+  Enabled: false
+Rails/HasManyOrHasOneDependent:
+  Enabled: false

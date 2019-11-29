@@ -10,7 +10,7 @@ RSpec.describe "Anonymising email addresses" do
   end
 
   it "deletes an email older than a day old" do
-    email = create(:email, address: "foo@example.com", created_at: Time.parse("13/03/2018 16:30:17"))
+    email = create(:email, address: "foo@example.com", created_at: Time.zone.parse("13/03/2018 16:30:17"))
     execute_sql
 
     expect { email.reload }

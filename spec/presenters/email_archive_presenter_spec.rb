@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe EmailArchivePresenter do
-  let(:time_bst) { Time.parse("2018-07-01 10:00 +0100") }
+  let(:time_bst) { Time.zone.parse("2018-07-01 10:00 +0100") }
   let(:time_for_s3) { "2018-07-01 09:00:00.000" }
 
   let(:record) do

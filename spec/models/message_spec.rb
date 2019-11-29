@@ -79,7 +79,7 @@ RSpec.describe Message do
         expect { message.mark_processed! }
           .to change(message, :processed_at)
           .from(nil)
-          .to(Time.now)
+          .to(Time.zone.now)
       end
     end
   end

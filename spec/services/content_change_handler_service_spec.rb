@@ -1,6 +1,6 @@
 RSpec.describe ContentChangeHandlerService do
   around(:example) do |example|
-    Timecop.freeze(Time.local(2017, 1, 1, 9)) do
+    Timecop.freeze(Time.zone.local(2017, 1, 1, 9)) do
       Sidekiq::Testing.fake! do
         example.run
       end
@@ -22,7 +22,7 @@ RSpec.describe ContentChangeHandlerService do
       change_note: "This is a change note",
       description: "This is a description",
       base_path: "/government/things",
-      public_updated_at: Time.now.to_s,
+      public_updated_at: Time.zone.now.to_s,
       email_document_supertype: "email document supertype",
       government_document_supertype: "government document supertype",
       document_type: "news_article",
