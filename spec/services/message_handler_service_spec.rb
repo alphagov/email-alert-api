@@ -31,7 +31,7 @@ RSpec.describe MessageHandlerService do
     end
 
     it "queues a job" do
-      expect(ProcessMessageWorker).to receive(:perform_async)
+      expect(ProcessMessageAndGenerateEmailsWorker).to receive(:perform_async)
 
       described_class.call(params: params, govuk_request_id: govuk_request_id)
     end
@@ -44,9 +44,11 @@ RSpec.describe MessageHandlerService do
     it "can store the user that created the item" do
       user = create(:user)
 
-      described_class.call(params: params,
-                           govuk_request_id: govuk_request_id,
-                           user: user)
+      described_class.call(
+        params: params,
+        govuk_request_id: govuk_request_id,
+        user: user,
+      )
 
       expect(Message.last).to have_attributes(signon_user_uid: user.uid)
     end
@@ -54,8 +56,10 @@ RSpec.describe MessageHandlerService do
     it "can use the sender_message_id as the Message id" do
       uuid = SecureRandom.uuid
 
-      described_class.call(params: params.merge(sender_message_id: uuid),
-                           govuk_request_id: govuk_request_id)
+      described_class.call(
+        params: params.merge(sender_message_id: uuid),
+        govuk_request_id: govuk_request_id,
+      )
 
       expect(Message.last).to have_attributes(
         id: uuid,

@@ -38,15 +38,15 @@ RSpec.describe ContentChangeHandlerService do
 
   let(:document_type_hash) do
     {
-        navigation_document_supertype: "other",
-        content_purpose_document_supertype: "news",
-        user_journey_document_supertype: "thing",
-        search_user_need_document_supertype: "government",
-        email_document_supertype: "other",
-        government_document_supertype: "other",
-        content_purpose_subgroup: "news",
-        content_purpose_supergroup: "news_and_communications",
-        content_store_document_type: "news_article",
+      navigation_document_supertype: "other",
+      content_purpose_document_supertype: "news",
+      user_journey_document_supertype: "thing",
+      search_user_need_document_supertype: "government",
+      email_document_supertype: "other",
+      government_document_supertype: "other",
+      content_purpose_subgroup: "news",
+      content_purpose_supergroup: "news_and_communications",
+      content_store_document_type: "news_article",
     }
   end
 
@@ -71,12 +71,11 @@ RSpec.describe ContentChangeHandlerService do
         base_path: "/government/things",
         change_note: "This is a change note",
         description: "This is a description",
-        links:
-          hash_including(
-            organisations: %w[c380ea42-5d91-41cc-b3cd-0a4cfe439461],
-            content_store_document_type: "news_article",
-            taxon_tree: %w[6416e4e0-c0c1-457a-8337-4bf8ed9d5f80],
-),
+        links: hash_including(
+          organisations: %w[c380ea42-5d91-41cc-b3cd-0a4cfe439461],
+          content_store_document_type: "news_article",
+          taxon_tree: %w[6416e4e0-c0c1-457a-8337-4bf8ed9d5f80],
+        ),
         tags: hash_including(
           topics: ["oil-and-gas/licensing"],
           content_store_document_type: "news_article",
@@ -106,7 +105,7 @@ RSpec.describe ContentChangeHandlerService do
     it "enqueues the content change to be processed by the subscription content worker" do
       allow(ContentChange).to receive(:create!).and_return(content_change)
 
-      expect(ProcessContentChangeWorker)
+      expect(ProcessContentChangeAndGenerateEmailsWorker)
         .to receive(:perform_async)
         .with(content_change.id)
 

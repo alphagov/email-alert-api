@@ -12,7 +12,7 @@ class MessageHandlerService
   def call
     message = Message.create!(message_params)
     MetricsService.message_created
-    ProcessMessageWorker.perform_async(message.id)
+    ProcessMessageAndGenerateEmailsWorker.perform_async(message.id)
   end
 
   private_class_method :new
@@ -24,10 +24,12 @@ private
   def message_params
     params
       .slice(:title, :url, :body, :sender_message_id)
-      .merge(criteria_rules: params[:criteria_rules].presence,
-             priority: params.fetch(:priority, "normal"),
-             govuk_request_id: govuk_request_id,
-             signon_user_uid: user&.uid,
-             id: params[:sender_message_id])
+      .merge(
+        criteria_rules: params[:criteria_rules].presence,
+        priority: params.fetch(:priority, "normal"),
+        govuk_request_id: govuk_request_id,
+        signon_user_uid: user&.uid,
+        id: params[:sender_message_id],
+      )
   end
 end

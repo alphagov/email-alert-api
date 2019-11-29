@@ -1,19 +1,28 @@
-class ImmediateEmailGenerationWorker
+class ImmediateEmailGenerationWorker < ProcessAndGenerateEmailsWorker
   include Sidekiq::Worker
 
   sidekiq_options queue: :email_generation_immediate
 
   LOCK_NAME = "immediate_email_generation_worker".freeze
-  BATCH_SIZE = 5000
 
   def perform
     ensure_only_running_once do
       SubscribersForImmediateEmailQuery.call.find_in_batches(batch_size: BATCH_SIZE) do |group|
-        subscription_contents = grouped_subscription_contents(group.pluck(:id))
-        update_content_change_cache(subscription_contents)
-        update_message_cache(subscription_contents)
-        create_content_change_emails(group, subscription_contents)
-        create_message_emails(group, subscription_contents)
+        content_change_email_data = []
+        content_change_email_ids = {}
+        message_email_data = []
+        message_email_ids = {}
+        ActiveRecord::Base.transaction do
+          subscription_contents = UnprocessedSubscriptionContentsBySubscriberQuery.call(group.pluck(:id))
+          if subscription_contents.any?
+            update_content_change_cache(subscription_contents)
+            update_message_cache(subscription_contents)
+            content_change_email_data, content_change_email_ids = create_content_change_emails(group, subscription_contents)
+            message_email_data, message_email_ids = create_message_emails(group, subscription_contents)
+          end
+        end
+        queue_for_delivery(content_change_email_data, content_change_email_ids)
+        queue_for_delivery(message_email_data, message_email_ids)
       end
     end
   end
@@ -23,119 +32,6 @@ private
   def ensure_only_running_once
     Subscriber.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
       yield
-    end
-  end
-
-  def grouped_subscription_contents(subscriber_ids)
-    UnprocessedSubscriptionContentsBySubscriberQuery.call(subscriber_ids)
-  end
-
-  def content_changes
-    @content_changes ||= {}
-  end
-
-  def update_content_change_cache(subscription_contents)
-    content_change_ids = subscription_contents.flat_map { |_, sc| sc.map(&:content_change_id) }
-                                              .compact
-                                              .uniq
-    ids = content_change_ids - content_changes.keys
-
-    content_changes.merge!(ContentChange.where(id: ids).index_by(&:id))
-  end
-
-  def messages
-    @messages ||= {}
-  end
-
-  def update_message_cache(subscription_contents)
-    message_ids = subscription_contents.flat_map { |_, sc| sc.map(&:message_id) }
-                                       .compact
-                                       .uniq
-    ids = message_ids - messages.keys
-
-    messages.merge!(Message.where(id: ids).index_by(&:id))
-  end
-
-  def create_content_change_emails(subscribers, subscription_contents)
-    email_data = subscribers.flat_map do |subscriber|
-      subscribers_content_change_email_data(subscriber,
-                                            subscription_contents[subscriber.id])
-    end
-
-    email_ids = ContentChangeEmailBuilder.call(email_data.map { |e| e[:params] }).ids
-    update_subscription_contents(email_data, email_ids)
-    queue_for_delivery(email_data, email_ids)
-  end
-
-  def subscribers_content_change_email_data(subscriber, subscription_contents)
-    by_content_change_id = subscription_contents.select(&:content_change_id)
-                                                .group_by(&:content_change_id)
-
-    by_content_change_id.map do |content_change_id, matching_subscription_contents|
-      {
-        params: {
-          address: subscriber.address,
-          content_change: content_changes[content_change_id],
-          subscriptions: matching_subscription_contents.map(&:subscription),
-          subscriber_id: subscriber.id,
-        },
-        subscription_contents: matching_subscription_contents,
-        priority: content_changes[content_change_id].priority.to_sym,
-      }
-    end
-  end
-
-  def create_message_emails(subscribers, subscription_contents)
-    email_data = subscribers.flat_map do |subscriber|
-      subscribers_message_email_data(subscriber,
-                                     subscription_contents[subscriber.id])
-    end
-
-    email_ids = MessageEmailBuilder.call(email_data.map { |e| e[:params] }).ids
-    update_subscription_contents(email_data, email_ids)
-    queue_for_delivery(email_data, email_ids)
-  end
-
-  def subscribers_message_email_data(subscriber, subscription_contents)
-    by_message_id = subscription_contents.select(&:message_id)
-                                         .group_by(&:message_id)
-
-    by_message_id.map do |message_id, matching_subscription_contents|
-      {
-        params: {
-          address: subscriber.address,
-          message: messages[message_id],
-          subscriptions: matching_subscription_contents.map(&:subscription),
-          subscriber_id: subscriber.id,
-        },
-        subscription_contents: matching_subscription_contents,
-        priority: messages[message_id].priority.to_sym,
-      }
-    end
-  end
-
-  def update_subscription_contents(email_data, email_ids)
-    return if email_data.empty?
-
-    values = email_data.flat_map.with_index do |data, index|
-      data[:subscription_contents].map do |subscription_content|
-        "(#{subscription_content.id}, '#{email_ids[index]}'::UUID)"
-      end
-    end
-
-    ActiveRecord::Base.connection.execute(
-      %(
-        UPDATE subscription_contents SET email_id = v.email_id
-        FROM (VALUES #{values.join(',')}) AS v(id, email_id)
-        WHERE subscription_contents.id = v.id
-      ),
-    )
-  end
-
-  def queue_for_delivery(email_data, email_ids)
-    email_data.each.with_index do |data, index|
-      queue = data[:priority] == :high ? :delivery_immediate_high : :delivery_immediate
-      DeliveryRequestWorker.perform_async_in_queue(email_ids[index], queue: queue)
     end
   end
 end

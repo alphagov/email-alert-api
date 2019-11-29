@@ -7,14 +7,12 @@
   - [delivery_immediate_high, 6]
   - [delivery_immediate, 5]
   - [email_generation_immediate, 4]
+  - [process_and_generate_emails, 3]
   - [default, 3]
   - [delivery_digest, 2]
   - [email_generation_digest, 1]
   - cleanup
 :schedule:
-  immediate_email_generation:
-    every: '5s'
-    class: ImmediateEmailGenerationWorker
   daily_digest_initiator:
     cron: '0 9 * * * Europe/London' # every day at 9:00am
     class: DailyDigestInitiatorWorker
