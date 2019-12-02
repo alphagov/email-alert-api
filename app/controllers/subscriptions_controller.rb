@@ -2,31 +2,37 @@ class SubscriptionsController < ApplicationController
   def create
     return render json: { id: 0 }, status: :created if smoke_test_address?
 
-    existing_subscription = nil
-    subscription = nil
+    subscription = send_email = status = nil
 
     Subscription.transaction do
+      if (subscriber_was_deactivated = subscriber.deactivated?)
+        subscriber.activate!
+      end
+
       existing_subscription = Subscription.active.lock.find_by(
         subscriber: subscriber,
         subscriber_list: subscriber_list,
       )
 
-      existing_subscription.end(reason: :frequency_changed) if existing_subscription
+      create_new_subscription = existing_subscription.nil? ||
+        (frequency.to_s != existing_subscription.frequency.to_s)
 
-      subscriber.activate! if subscriber.deactivated?
+      if create_new_subscription
+        existing_subscription&.end(reason: :frequency_changed)
+        new_subscription = Subscription.create!(
+          subscriber: subscriber,
+          subscriber_list: subscriber_list,
+          frequency: frequency,
+          signon_user_uid: current_user.uid,
+          source: existing_subscription ? :frequency_changed : :user_signed_up,
+          )
+      end
 
-      subscription = Subscription.create!(
-        subscriber: subscriber,
-        subscriber_list: subscriber_list,
-        frequency: frequency,
-        signon_user_uid: current_user.uid,
-        source: existing_subscription ? :frequency_changed : :user_signed_up,
-      )
+      subscription = new_subscription || existing_subscription
+      send_email = create_new_subscription || subscriber_was_deactivated
+      status = existing_subscription.nil? ? :created : :ok
     end
-
-    send_subscription_confirmation_email(subscription)
-
-    status = existing_subscription ? :ok : :created
+    send_subscription_confirmation_email(subscription) if send_email
     render json: { id: subscription.id }, status: status
   end
 
@@ -36,7 +42,6 @@ class SubscriptionsController < ApplicationController
   end
 
   def update
-    existing_subscription = nil
     subscription = nil
 
     Subscription.transaction do
