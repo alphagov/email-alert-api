@@ -32,11 +32,11 @@ private
     <<~BODY
       # Click the link to confirm your subscription
 
-      ^[Confirm your subscription](#{link})^
+      ^ [Confirm your subscription](#{link})
 
       This link will stop working in 7 days.
 
-      **Didn’t request this email?**
+      # Didn’t request this email?
 
       Ignore or delete this email if you didn’t request it.
 
