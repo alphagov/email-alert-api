@@ -22,14 +22,16 @@ private
 
   def generate_token(subscriber)
     AuthTokenGeneratorService.call(
-      subscriber,
-      redirect: expected_params[:redirect],
+      {
+        "subscriber_id" => subscriber.id,
+        "redirect" => expected_params[:redirect],
+      },
       expiry: 1.week.from_now,
     )
   end
 
   def build_email(subscriber, token)
-    AuthEmailBuilder.call(
+    SubscriberAuthEmailBuilder.call(
       subscriber: subscriber,
       destination: expected_params.require(:destination),
       token: token,

@@ -22,7 +22,9 @@ Rails.application.routes.draw do
     patch "/subscribers/:id", to: "subscribers#change_address"
     delete "/subscribers/:id", to: "unsubscribe#unsubscribe_all"
     get "/subscribers/:id/subscriptions", to: "subscribers#subscriptions"
+
     post "/subscribers/auth-token", to: "subscribers_auth_token#auth_token"
+    post "/subscriptions/auth-token", to: "subscriptions_auth_token#auth_token"
 
     post "/unsubscribe/:id", to: "unsubscribe#unsubscribe"
 

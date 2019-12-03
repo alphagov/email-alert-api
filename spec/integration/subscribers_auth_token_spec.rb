@@ -30,6 +30,19 @@ RSpec.describe "Subscribers auth token", type: :request do
       post path, params: params
     end
 
+    it "sends an email with the correct token" do
+      Timecop.freeze do
+        post path, params: params
+        expect(Email.count).to be 1
+        expected_token_data = {
+          "subscriber_id" => subscriber.id,
+          "redirect" => redirect,
+        }
+        expected_token = AuthTokenGeneratorService.call(expected_token_data)
+        expect(Email.last.body).to include(expected_token)
+      end
+    end
+
     context "when it's a user we didn't previously know" do
       before { subscriber.delete }
 
