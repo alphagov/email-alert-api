@@ -3,11 +3,12 @@
 -- It tries to preserve structure so that multiple occurences of the same address
 -- are mapped to the same anonymous address.
 --
--- It runs when we copy data to integration:
--- https://deploy.publishing.service.gov.uk/job/Copy_Data_to_Integration/
+-- It runs when we copy data to Integration via govuk_env_sync:
+-- https://docs.publishing.service.gov.uk/manual/govuk-env-sync.html
 --
--- Please make changes to this script in email-alert-api where it is tested.
--- Then copy it to the env-sync-and-backup repository.
+-- Please make changes to this script in
+-- https://github.com/alphagov/email-alert-api/blob/master/lib/data_hygiene/anonymise_email_addresses.sql
+-- where it is tested. Then copy it to the govuk-puppet repository.
 
 -- Deletes all emails that are older than 1 day old.
 DELETE FROM emails
