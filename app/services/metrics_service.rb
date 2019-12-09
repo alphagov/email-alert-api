@@ -77,5 +77,17 @@ class MetricsService
     def timing(namespace, difference)
       GovukStatsd.timing(namespace, difference)
     end
+
+    def gauge(stat, metric)
+      statsd.gauge(stat, metric)
+    end
+
+    def statsd
+      @statsd ||= begin
+        statsd = Statsd.new
+        statsd.namespace = "govuk.email-alert-api"
+        statsd
+      end
+    end
   end
 end
