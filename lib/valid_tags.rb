@@ -27,6 +27,7 @@ class ValidTags
     dfid_document_type
     dfid_review_status
     dfid_theme
+    document_type
     eligible_entities
     employ_eu_citizens
     eu_uk_government_funding

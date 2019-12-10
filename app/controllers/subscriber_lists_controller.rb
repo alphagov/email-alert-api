@@ -16,7 +16,7 @@ class SubscriberListsController < ApplicationController
         subscriber_list: subscriber_list.attributes,
       }, status: status
     else
-      render json: { error: "Could not find the subcsriber list" }, status: :not_found
+      render json: { error: "Could not find the subscriber list" }, status: :not_found
     end
   end
 
