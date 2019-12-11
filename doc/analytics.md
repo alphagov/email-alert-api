@@ -45,6 +45,11 @@ includes a breakdown of subscriptions that are Immediate, Daily or Weekly:
 Subscription.active_on("2018-06-01").where(subscriber_list_id: 4194).count
 ```
 
+There is a [rake task][rake-count-subscribers-on] that does this for you, and
+includes a breakdown of subscriptions that are Immediate, Daily or Weekly:
+
+`query:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']`
+
 ### Lists with most new subscriptions in a time frame
 
 ```ruby
@@ -195,4 +200,5 @@ LIMIT 10;
 [aws]: https://aws.amazon.com
 [console-instructions]: https://docs.publishing.service.gov.uk/manual/seeing-things-in-the-aws-console.html
 [rake-count-subscribers]: https://deploy.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=query:count_subscribers['subscriber-list-slug']
+[rake-count-subscribers-on]: https://deploy.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=query:count_subscribers-on[yyyy-mm-dd,'subscriber-list-slug']
 [schema.rb]: https://github.com/alphagov/email-alert-api/tree/master/db/schema.rb
