@@ -7,7 +7,7 @@ RSpec.describe S3EmailArchiveService do
     ClimateControl.modify(EMAIL_ARCHIVE_S3_BUCKET: "my-bucket") { example.run }
   end
 
-  def create_record(time: Time.now)
+  def create_record(time: Time.zone.now)
     {
       archived_at_utc: time.utc.to_s(:db),
       content_change: nil,
@@ -33,7 +33,7 @@ RSpec.describe S3EmailArchiveService do
       .with(%r{^email-archive/year=2018/month=06/date=28/#{time}-[a-z0-9-]*.json.gz$})
       .and_call_original
     described_class.call(
-      [create_record(time: Time.parse(time))],
+      [create_record(time: Time.zone.parse(time))],
     )
   end
 

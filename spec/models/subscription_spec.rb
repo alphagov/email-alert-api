@@ -136,7 +136,7 @@ RSpec.describe Subscription, type: :model do
     it "sets ended_at to Time.now" do
       Timecop.freeze do
         subject.end(reason: :unsubscribed)
-        expect(subject.ended_at).to eq(Time.now)
+        expect(subject.ended_at).to eq(Time.zone.now)
       end
     end
   end

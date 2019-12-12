@@ -7,7 +7,7 @@ RSpec.describe ContentChange do
         expect { subject.mark_processed! }
           .to change(subject, :processed_at)
           .from(nil)
-          .to(Time.now)
+          .to(Time.zone.now)
       end
     end
   end

@@ -6,7 +6,7 @@ class DigestRunSubscriber < ApplicationRecord
   scope :incomplete_for_run, ->(digest_run_id) { where(digest_run_id: digest_run_id).where(completed_at: nil) }
 
   def mark_complete!
-    update_attributes!(completed_at: Time.now)
+    update!(completed_at: Time.zone.now)
   end
 
   def completed?

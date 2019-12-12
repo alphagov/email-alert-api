@@ -1,5 +1,5 @@
 class PseudoProvider
-  LOG_PATH = "#{Rails.root}/log/pseudo_email.log".freeze
+  LOG_PATH = Rails.root.join("log/pseudo_email.log").freeze
 
   def self.call(*args)
     new.call(*args)

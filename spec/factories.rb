@@ -11,7 +11,7 @@ FactoryBot.define do
     description { "description" }
     links { Hash.new }
     tags { Hash.new }
-    public_updated_at { Time.now.to_s }
+    public_updated_at { Time.zone.now.to_s }
     email_document_supertype { "email document supertype" }
     government_document_supertype { "government document supertype" }
     sequence(:govuk_request_id) { |i| "request-id-#{i}" }
@@ -144,12 +144,12 @@ FactoryBot.define do
     trait :activated
 
     trait :deactivated do
-      deactivated_at { Time.now }
+      deactivated_at { Time.zone.now }
     end
 
     trait :nullified do
       address { nil }
-      deactivated_at { Time.now }
+      deactivated_at { Time.zone.now }
     end
   end
 
@@ -194,7 +194,7 @@ FactoryBot.define do
     end
 
     trait :ended do
-      ended_at { Time.now }
+      ended_at { Time.zone.now }
       ended_reason { :unsubscribed }
     end
 

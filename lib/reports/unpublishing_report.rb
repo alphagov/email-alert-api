@@ -1,8 +1,8 @@
 module Reports
   class UnpublishingReport
     def initialize(start_date, end_date)
-      @start_date = Time.parse(start_date)
-      @end_date = Time.parse(end_date)
+      @start_date = Time.zone.parse(start_date)
+      @end_date = Time.zone.parse(end_date)
     end
 
     def self.call(*args)

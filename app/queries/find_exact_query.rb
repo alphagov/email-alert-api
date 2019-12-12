@@ -40,7 +40,7 @@ private
   def find_exact(query_field, query)
     raise ArgumentError.new("query_field must be `:tags` or `:links`") unless %i{tags links}.include?(query_field)
 
-    return unless query.present?
+    return if query.blank?
 
     digest = HashDigest.new(query).generate
 

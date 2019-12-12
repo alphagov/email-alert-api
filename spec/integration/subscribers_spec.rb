@@ -12,15 +12,15 @@ RSpec.describe "Subscriptions", type: :request do
         let!(:subscriber_list_3) { create(:subscriber_list, title: "Ant") }
         let!(:subscription_1) do
           create(:subscription, subscriber: subscriber,
-                 subscriber_list: subscriber_list_1, created_at: Time.now.days_ago(2))
+                 subscriber_list: subscriber_list_1, created_at: Time.zone.now.days_ago(2))
         end
         let!(:subscription_2) do
           create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list_2,
-                 ended_at: Time.now, ended_reason: :frequency_changed)
+                 ended_at: Time.zone.now, ended_reason: :frequency_changed)
         end
         let!(:subscription_3) do
           create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list_3,
-                 created_at: Time.now.days_ago(1), frequency: :daily)
+                 created_at: Time.zone.now.days_ago(1), frequency: :daily)
         end
 
         it "lists all active subscriptions" do

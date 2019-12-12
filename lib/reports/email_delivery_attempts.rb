@@ -16,7 +16,7 @@ module Reports
 
       raise RuntimeError.new("No data for dates provided") if delivery_attempts.empty?
 
-      path = "#{Rails.root}/tmp/delivery_attempt_time_#{@start_date}_to_#{@end_date}.csv".delete(" ")
+      path = Rails.root.join("tmp/delivery_attempt_time_#{@start_date}_to_#{@end_date}.csv".delete(" "))
       csv_headers = ["created_at", "updated_at", "time delay(s)"]
       times = []
 

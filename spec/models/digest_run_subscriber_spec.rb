@@ -7,7 +7,7 @@ RSpec.describe DigestRunSubscriber do
     it "sets completed_at to Time.now" do
       Timecop.freeze do
         subject.mark_complete!
-        expect(subject.completed_at).to eq(Time.now)
+        expect(subject.completed_at).to eq(Time.zone.now)
       end
     end
   end
@@ -29,7 +29,7 @@ RSpec.describe DigestRunSubscriber do
       create(
         :digest_run_subscriber,
         digest_run_id: 1,
-        completed_at: Time.now,
+        completed_at: Time.zone.now,
       )
 
       expect(described_class.incomplete_for_run(1).count).to eq(0)

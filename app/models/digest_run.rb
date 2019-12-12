@@ -12,7 +12,7 @@ class DigestRun < ApplicationRecord
 
   def mark_complete!
     completed_at = digest_run_subscribers.maximum(:completed_at) || Time.zone.now
-    update_attributes!(completed_at: completed_at)
+    update!(completed_at: completed_at)
   end
 
   def check_and_mark_complete!
@@ -47,11 +47,11 @@ private
   end
 
   def configured_ends_at
-    Time.zone.parse("#{digest_range_hour}:00", date.to_time)
+    Time.zone.parse("#{digest_range_hour}:00", date)
   end
 
   def starts_at_time
-    (daily? ? date - 1.day : date - 1.week).to_time
+    (daily? ? date - 1.day : date - 1.week)
   end
 
   def digest_range_hour

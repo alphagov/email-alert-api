@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe DigestInitiatorService do
   describe ".call" do
     around do |example|
-      Timecop.freeze(Time.parse("08:30")) { example.run }
+      Timecop.freeze(Time.zone.parse("08:30")) { example.run }
     end
 
     context "daily" do

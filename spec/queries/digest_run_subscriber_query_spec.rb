@@ -1,5 +1,5 @@
 RSpec.describe DigestRunSubscriberQuery do
-  let(:ends_at) { Time.parse("2017-01-02 08:00") }
+  let(:ends_at) { Time.zone.parse("2017-01-02 08:00") }
   let(:digest_run) { create(:digest_run, :daily, date: ends_at) }
   let(:starts_at) { digest_run.starts_at }
 

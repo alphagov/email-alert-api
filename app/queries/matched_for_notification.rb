@@ -13,7 +13,7 @@ class MatchedForNotification
   # - If the operator is 'all'
   #   all key values in the subscriber list have corresponding matches in the supplied hash.
   def call(content_item_tags_or_links)
-    return [] unless content_item_tags_or_links.present?
+    return [] if content_item_tags_or_links.blank?
 
     content_item_tags_or_links = content_item_tags_or_links.deep_symbolize_keys
 

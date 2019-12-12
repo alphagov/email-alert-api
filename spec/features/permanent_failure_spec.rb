@@ -12,7 +12,7 @@ RSpec.describe "Failing to deliver an email via Notify (permanent failure)", typ
     email_data = expect_an_email_was_sent
 
     reference = email_data.fetch(:reference)
-    completed_at = Time.parse("2017-05-14T12:15:30.000000Z")
+    completed_at = Time.zone.parse("2017-05-14T12:15:30.000000Z")
     sent_at = completed_at
 
     send_status_update(reference, "permanent-failure", completed_at, sent_at, expected_status: 204)

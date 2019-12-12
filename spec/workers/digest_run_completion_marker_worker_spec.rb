@@ -7,7 +7,7 @@ RSpec.describe DigestRunCompletionMarkerWorker, type: :worker do
     context "when a digest_run has incomplete subscribers" do
       before do
         create(:digest_run_subscriber, digest_run: digest_run)
-        create(:digest_run_subscriber, digest_run: digest_run, completed_at: Time.now)
+        create(:digest_run_subscriber, digest_run: digest_run, completed_at: Time.zone.now)
       end
 
       it "doesn't mark the digest run complete" do
