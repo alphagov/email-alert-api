@@ -31,3 +31,6 @@
   digest_run_completion_marker:
     every: '1m'
     class: DigestRunCompletionMarkerWorker
+  status_updates:
+    every: '1m'
+    class: StatusUpdateWorker
