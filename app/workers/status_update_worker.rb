@@ -4,8 +4,8 @@ class StatusUpdateWorker
   sidekiq_options queue: :cleanup
 
   def perform
-    MetricsService.delivery_attempt_pending_status_total(total_pending)
-    MetricsService.delivery_attempt_total(total)
+    GlobalMetricsService.delivery_attempt_pending_status_total(total_pending)
+    GlobalMetricsService.delivery_attempt_total(total)
   end
 
 private
