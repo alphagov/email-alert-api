@@ -118,35 +118,6 @@ namespace :manage do
     move_all_subscribers(from_slug: args[:from_slug], to_slug: args[:to_slug])
   end
 
-  desc "Unsubscribe subscribers using a list policy areas to taxons"
-  task :unsubscribe_bulk_policy_areas, %i[subscriber_limit courtesy_emails_every_nth_email people_path world_location_path organisations_path policy_area_mappings_path] => :environment do |_t, args|
-    args.with_defaults(
-      subscriber_limit: 1_000_000,
-      courtesy_emails_every_nth_email: 500,
-      people_path: "tmp/people.json", #[{content_id: ..., slug: ....}]
-      world_location_path: "tmp/world_locations.json", #[{content_id: ..., slug: ....}]
-      organisations_path: "tmp/organisations.json", #[{content_id: ..., slug: ....}]
-      policy_area_mappings_path: "tmp/policy_area_mappings.json", #[{content_id: ..., taxon_path: ...., policy_area_path:}]
-    )
-
-    people = JSON.parse(File.read(args[:people_path]), symbolize_names: true)
-    world_locations = JSON.parse(File.read(args[:world_location_path]), symbolize_names: true)
-    organisations = JSON.parse(File.read(args[:organisations_path]), symbolize_names: true)
-    policy_area_mappings = JSON.parse(File.read(args[:policy_area_mappings_path]), symbolize_names: true)
-
-    puts "Processing #{args[:subscriber_limit].to_i} subscribers"
-    puts "Sending a courtesy copy every #{args[:courtesy_emails_every_nth_email].to_i} emails"
-
-    BulkUnsubscribeService.call(
-      subscriber_limit: args[:subscriber_limit].to_i,
-      courtesy_emails_every_nth_email: args[:courtesy_emails_every_nth_email].to_i,
-      people: people,
-      world_locations: world_locations,
-      organisations: organisations,
-      policy_area_mappings: policy_area_mappings,
-    )
-  end
-
   desc "Find subscriber lists by title match"
   task :find_subscriber_list_by_title, %i[title] => :environment do |_t, args|
     find_subscriber_list_by_title(title: args[:title])
