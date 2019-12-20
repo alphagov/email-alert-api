@@ -10,7 +10,7 @@ RSpec.describe "Sending an email", type: :request do
       address: "test@test.com",
     }
 
-    post "/emails", params: params.to_json, headers: JSON_HEADERS
+    post "/emails", params: params.to_json, headers: json_headers
 
     email_data = expect_an_email_was_sent
 

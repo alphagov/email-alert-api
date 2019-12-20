@@ -28,7 +28,7 @@ RSpec.describe "Sending a content change", type: :request do
     it "returns a 422" do
       post "/content-changes",
            params: valid_request_params.merge(title: nil).to_json,
-           headers: JSON_HEADERS
+           headers: json_headers
       expect(response.status).to eq(422)
       expect(JSON.parse(response.body)).to match(
         "error" => "Unprocessable Entity",
@@ -42,7 +42,7 @@ RSpec.describe "Sending a content change", type: :request do
       login_with_internal_app
       post "/content-changes",
            params: valid_request_params.to_json,
-           headers: JSON_HEADERS
+           headers: json_headers
     end
 
     it "creates a ContentChange" do
@@ -61,7 +61,7 @@ RSpec.describe "Sending a content change", type: :request do
     it "returns a 409" do
       post "/content-changes",
            params: valid_request_params.to_json,
-           headers: JSON_HEADERS
+           headers: json_headers
       expect(response.status).to eq(409)
     end
   end
@@ -87,7 +87,7 @@ RSpec.describe "Sending a content change", type: :request do
   context "with legacy endpoint" do
     it "creates a ContentChange" do
       login_with_internal_app
-      expect { post "/notifications", params: valid_request_params.to_json, headers: JSON_HEADERS }
+      expect { post "/notifications", params: valid_request_params.to_json, headers: json_headers }
         .to change { ContentChange.count }
         .by(1)
     end

@@ -14,7 +14,7 @@ module RequestHelpers
 
   def create_subscriber_list(overrides = {})
     params = { title: "Example", tags: {}, links: {} }.merge(overrides)
-    post "/subscriber-lists", params: params.to_json, headers: JSON_HEADERS
+    post "/subscriber-lists", params: params.to_json, headers: json_headers
     expect(response.status).to eq(201)
     data.dig(:subscriber_list, :id)
   end
@@ -26,7 +26,7 @@ module RequestHelpers
   end
 
   def lookup_subscriber_list(params, expected_status: 200)
-    get "/subscriber-lists", params: params, headers: JSON_HEADERS
+    get "/subscriber-lists", params: params, headers: json_headers
     expect(response.status).to eq(expected_status)
   end
 
@@ -37,7 +37,7 @@ module RequestHelpers
       address: address,
       frequency: frequency,
     }
-    post "/subscriptions", params: params.to_json, headers: JSON_HEADERS
+    post "/subscriptions", params: params.to_json, headers: json_headers
     expect(response.status).to eq(expected_status)
     expect_a_subscription_confirmation_email_was_sent
   end
@@ -62,7 +62,7 @@ module RequestHelpers
       links: {},
     }.merge(overrides)
 
-    post "/content-changes", params: params.to_json, headers: JSON_HEADERS
+    post "/content-changes", params: params.to_json, headers: json_headers
     expect(response.status).to eq(202)
   end
 
@@ -80,13 +80,13 @@ module RequestHelpers
       ],
     }.merge(overrides)
 
-    post "/messages", params: params.to_json, headers: JSON_HEADERS
+    post "/messages", params: params.to_json, headers: json_headers
     expect(response.status).to eq(202)
   end
 
   def send_status_update(reference, status, completed_at, sent_at, expected_status: 204)
     params = { reference: reference, status: status, completed_at: completed_at, sent_at: sent_at }
-    post "/status-updates", params: params.to_json, headers: JSON_HEADERS
+    post "/status-updates", params: params.to_json, headers: json_headers
     expect(response.status).to eq(expected_status)
   end
 
@@ -118,5 +118,13 @@ module RequestHelpers
 
   def clear_any_requests_that_have_been_recorded!
     WebMock::RequestRegistry.instance.reset!
+  end
+
+  def json_headers
+    {
+      "CONTENT_TYPE" => "application/json",
+      "ACCEPT" => "application/json",
+      "HTTP_GOVUK_REQUEST_ID" => "request-id",
+    }
   end
 end
