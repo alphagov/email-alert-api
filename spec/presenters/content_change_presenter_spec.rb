@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe ContentChangePresenter do
+  include UTMHelpers
+
   let(:content_change) {
     build(
       :content_change, title: "Change title",
