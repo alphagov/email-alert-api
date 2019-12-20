@@ -1,4 +1,4 @@
-module FeatureHelpers
+module RequestHelpers
   def stub_notify
     allow_any_instance_of(DeliveryRequestService)
       .to receive(:provider_name).and_return("notify")
@@ -112,11 +112,11 @@ module FeatureHelpers
     body[%r{/unsubscribe/(.*)\)}, 1]
   end
 
+  def data(body = response.body)
+    JSON.parse(body).deep_symbolize_keys
+  end
+
   def clear_any_requests_that_have_been_recorded!
     WebMock::RequestRegistry.instance.reset!
   end
-end
-
-RSpec.configure do |config|
-  config.include FeatureHelpers
 end

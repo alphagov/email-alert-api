@@ -16,6 +16,7 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.use_transactional_fixtures = true
   config.include AuthenticationHelpers, type: :request
+  config.include RequestHelpers, type: :request
   config.include FactoryBot::Syntax::Methods
 
   config.before do
@@ -38,7 +39,3 @@ JSON_HEADERS = {
   "ACCEPT" => "application/json",
   "HTTP_GOVUK_REQUEST_ID" => "request-id",
 }.freeze
-
-def data(body = response.body)
-  JSON.parse(body).deep_symbolize_keys
-end
