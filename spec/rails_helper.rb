@@ -17,6 +17,10 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.include FactoryBot::Syntax::Methods
 
+  config.before do
+    allow($stdout).to receive(:puts)
+  end
+
   config.after do
     logout
   end
