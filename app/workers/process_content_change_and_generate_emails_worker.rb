@@ -9,11 +9,11 @@ class ProcessContentChangeAndGenerateEmailsWorker < ProcessAndGenerateEmailsWork
 
     import_subscription_content(content_change)
 
-    SubscribersForImmediateEmailQuery.call(content_change_id: content_change_id, message_id: nil).find_in_batches(batch_size: BATCH_SIZE) do |group|
+    SubscribersForImmediateEmailQuery.call_in_batches(content_change_id: content_change_id, message_id: nil) do |group|
       email_data = []
       email_ids = {}
       ActiveRecord::Base.transaction do
-        subscription_contents = UnprocessedSubscriptionContentsBySubscriberQuery.call(group.pluck(:id))
+        subscription_contents = UnprocessedSubscriptionContentsBySubscriberQuery.call(group.map { |subscriber| subscriber[:id] })
         if subscription_contents.any?
           update_content_change_cache(subscription_contents)
           email_data, email_ids = create_content_change_emails(group, subscription_contents)

@@ -40,7 +40,7 @@ private
     email_data = subscribers.flat_map do |subscriber|
       subscribers_content_change_email_data(
         subscriber,
-        subscription_contents[subscriber.id],
+        subscription_contents[subscriber[:id]],
       )
     end
 
@@ -58,10 +58,10 @@ private
     by_content_change_id.map do |content_change_id, matching_subscription_contents|
       {
         params: {
-          address: subscriber.address,
+          address: subscriber[:address],
           content_change: content_changes[content_change_id],
           subscriptions: matching_subscription_contents.map(&:subscription),
-          subscriber_id: subscriber.id,
+          subscriber_id: subscriber[:id],
         },
         subscription_contents: matching_subscription_contents,
         priority: content_changes[content_change_id].priority.to_sym,
@@ -73,7 +73,7 @@ private
     email_data = subscribers.flat_map do |subscriber|
       subscribers_message_email_data(
         subscriber,
-        subscription_contents[subscriber.id],
+        subscription_contents[subscriber[:id]],
       )
     end
 
@@ -90,10 +90,10 @@ private
     by_message_id.map do |message_id, matching_subscription_contents|
       {
         params: {
-          address: subscriber.address,
+          address: subscriber[:address],
           message: messages[message_id],
           subscriptions: matching_subscription_contents.map(&:subscription),
-          subscriber_id: subscriber.id,
+          subscriber_id: subscriber[:id],
         },
         subscription_contents: matching_subscription_contents,
         priority: messages[message_id].priority.to_sym,

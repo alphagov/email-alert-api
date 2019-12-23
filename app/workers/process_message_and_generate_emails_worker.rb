@@ -10,11 +10,11 @@ class ProcessMessageAndGenerateEmailsWorker < ProcessAndGenerateEmailsWorker
     MatchedMessageGenerationService.call(message)
     import_subscription_content(message)
 
-    SubscribersForImmediateEmailQuery.call(content_change_id: nil, message_id: message_id).find_in_batches(batch_size: BATCH_SIZE) do |group|
+    SubscribersForImmediateEmailQuery.call_in_batches(content_change_id: nil, message_id: message_id) do |group|
       email_data = []
       email_ids = {}
       ActiveRecord::Base.transaction do
-        subscription_contents = UnprocessedSubscriptionContentsBySubscriberQuery.call(group.pluck(:id))
+        subscription_contents = UnprocessedSubscriptionContentsBySubscriberQuery.call(group.map { |subscriber| subscriber[:id] })
         if subscription_contents.any?
           update_message_cache(subscription_contents)
           email_data, email_ids = create_message_emails(group, subscription_contents)
