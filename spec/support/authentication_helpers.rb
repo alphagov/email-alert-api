@@ -27,7 +27,3 @@ module AuthenticationHelpers
     GDS::SSO.test_user = nil
   end
 end
-
-RSpec.configure do |config|
-  config.include AuthenticationHelpers
-end

@@ -9,14 +9,14 @@ RSpec.describe "Creating a subscription", type: :request do
 
       it "returns a 201" do
         params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id)
-        post "/subscriptions", params: params, headers: JSON_HEADERS
+        post "/subscriptions", params: params, headers: json_headers
 
         expect(response.status).to eq(201)
       end
 
       it "sets the source to a user signup" do
         params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id)
-        post "/subscriptions", params: params, headers: JSON_HEADERS
+        post "/subscriptions", params: params, headers: json_headers
 
         expect(Subscription.first.source_user_signed_up?).to be true
       end
@@ -24,7 +24,7 @@ RSpec.describe "Creating a subscription", type: :request do
       context "with a frequency setting" do
         it "returns a 201 and sets the frequency" do
           params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "daily")
-          post "/subscriptions", params: params, headers: JSON_HEADERS
+          post "/subscriptions", params: params, headers: json_headers
 
           expect(response.status).to eq(201)
 
@@ -35,12 +35,12 @@ RSpec.describe "Creating a subscription", type: :request do
         context "with an existing subscription" do
           it "updates the frequency" do
             params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "daily")
-            post "/subscriptions", params: params, headers: JSON_HEADERS
+            post "/subscriptions", params: params, headers: json_headers
 
             expect(response.status).to eq(201)
 
             params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "weekly")
-            post "/subscriptions", params: params, headers: JSON_HEADERS
+            post "/subscriptions", params: params, headers: json_headers
 
             expect(response.status).to eq(200)
 
@@ -60,12 +60,12 @@ RSpec.describe "Creating a subscription", type: :request do
         context "with an existing subscription but a different case" do
           it "returns a successful response" do
             params = JSON.dump(address: "Test@example.com", subscriber_list_id: subscriber_list.id, frequency: "daily")
-            post "/subscriptions", params: params, headers: JSON_HEADERS
+            post "/subscriptions", params: params, headers: json_headers
 
             expect(response.status).to eq(201)
 
             params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "weekly")
-            post "/subscriptions", params: params, headers: JSON_HEADERS
+            post "/subscriptions", params: params, headers: json_headers
 
             expect(response.status).to eq(200)
           end
@@ -74,7 +74,7 @@ RSpec.describe "Creating a subscription", type: :request do
         context "with a notify email address" do
           it "returns a 201 but doesn't create a subscriber or subscription" do
             params = JSON.dump(address: "simulate-delivered@notifications.service.gov.uk", subscriber_list_id: subscriber_list.id, frequency: "daily")
-            expect { post "/subscriptions", params: params, headers: JSON_HEADERS }.to_not change(Subscriber, :count)
+            expect { post "/subscriptions", params: params, headers: json_headers }.to_not change(Subscriber, :count)
 
             expect(response.status).to eq(201)
           end
@@ -87,7 +87,7 @@ RSpec.describe "Creating a subscription", type: :request do
 
           it "activates the subscriber" do
             params = JSON.dump(address: "deactivated@example.com", subscriber_list_id: subscriber_list.id)
-            post "/subscriptions", params: params, headers: JSON_HEADERS
+            post "/subscriptions", params: params, headers: json_headers
 
             expect(Subscriber.first.deactivated?).to be false
             expect(Subscriber.first.activated?).to be true

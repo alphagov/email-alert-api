@@ -298,7 +298,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
       request_body = JSON.dump(defaults.merge(payload))
 
-      post "/subscriber-lists", params: request_body, headers: JSON_HEADERS
+      post "/subscriber-lists", params: request_body, headers: json_headers
     end
   end
 

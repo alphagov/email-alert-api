@@ -44,7 +44,7 @@ RSpec.describe "Sending an unpublish message", type: :request do
     before do
       allow(DeliveryRequestService).to receive(:call)
       login_with_internal_app
-      post "/unpublish-messages", params: @request_params, headers: JSON_HEADERS
+      post "/unpublish-messages", params: @request_params, headers: json_headers
     end
     it "returns status 202" do
       expect(response.status).to eq(202)

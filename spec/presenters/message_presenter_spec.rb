@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe MessagePresenter do
+  include UTMHelpers
+
   describe ".call" do
     around do |example|
       ClimateControl.modify(GOVUK_APP_DOMAIN: "gov.uk") { example.run }
