@@ -1,29 +1,21 @@
 RSpec.describe AuthTokenGeneratorService do
+  include TokenHelpers
+
   describe ".call" do
-    let(:secret) { Rails.application.secrets.email_alert_auth_token }
-    let(:algorithim) { "HS256" }
-    let(:expiry) { 1.day.from_now }
-    let(:data) do
-      {
-        token: "token_data_string",
-        id: "id",
-      }
+    it "can be decoded" do
+      token = described_class.call("token")
+      expect(decrypt_and_verify_token(token)).to eq("token")
     end
 
-    subject(:token) { described_class.call(data, expiry: expiry) }
+    it "expires in one week" do
+      token = described_class.call("token")
 
-    it { is_expected.to be_a(String) }
+      Timecop.freeze(6.days.from_now) do
+        expect(decrypt_and_verify_token(token)).to_not be_nil
+      end
 
-    it "can be decoded" do
-      Timecop.freeze do
-        decoded = JWT.decode(token, secret, true, algorithim: algorithim)
-
-        expect(decoded).to include(
-          "data" => data.stringify_keys,
-          "exp" => expiry.to_i,
-          "iat" => Time.now.to_i,
-          "iss" => "https://www.gov.uk",
-          )
+      Timecop.freeze(1.week.from_now) do
+        expect(decrypt_and_verify_token(token)).to be_nil
       end
     end
   end

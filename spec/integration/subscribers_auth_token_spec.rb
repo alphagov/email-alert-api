@@ -1,4 +1,6 @@
 RSpec.describe "Subscribers auth token", type: :request do
+  include TokenHelpers
+
   before { login_with_internal_app }
 
   describe "creating an auth token" do
@@ -31,16 +33,13 @@ RSpec.describe "Subscribers auth token", type: :request do
     end
 
     it "sends an email with the correct token" do
-      Timecop.freeze do
-        post path, params: params
-        expect(Email.count).to be 1
-        expected_token_data = {
-          "subscriber_id" => subscriber.id,
-          "redirect" => redirect,
-        }
-        expected_token = AuthTokenGeneratorService.call(expected_token_data)
-        expect(Email.last.body).to include(expected_token)
-      end
+      post path, params: params
+      expect(Email.count).to be 1
+      token = Email.last.body.match(/token=([^&)]+)/)[1]
+      expect(decrypt_and_verify_token(token)).to eq(
+        "subscriber_id" => subscriber.id,
+        "redirect" => redirect,
+      )
     end
 
     context "when it's a user we didn't previously know" do

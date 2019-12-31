@@ -1,4 +1,6 @@
 RSpec.describe "Create an auth token", type: :request do
+  include TokenHelpers
+
   before do
     allow_any_instance_of(DeliveryRequestService)
       .to receive(:provider_name).and_return("notify")
@@ -32,37 +34,23 @@ RSpec.describe "Create an auth token", type: :request do
   end
 
   def notify_email(subscriber, destination, redirect)
-    sign_in_link = generate_sign_in_link(subscriber, destination, redirect)
-
     stub_request(:post, "http://fake-notify.com/v2/notifications/email")
       .with(
         "body" => hash_including(
           "email_address" => subscriber.address,
           "personalisation" => hash_including(
             "subject" => "Confirm your email address",
-            "body" => include(sign_in_link),
+            "body" => include("http://www.dev.gov.uk#{destination}?token="),
           ),
         ),
       )
-      .to_return(body: {}.to_json)
-  end
+      .with { |request|
+        token = request.body.match(/token=([^&)]+)/)[1]
 
-  def generate_sign_in_link(subscriber, destination, redirect)
-    token = generate_token(subscriber, redirect)
-    "http://www.dev.gov.uk#{destination}?token=#{token}"
-  end
-
-  def generate_token(subscriber, redirect)
-    data = {
-      "data" => {
-        "subscriber_id" => subscriber.id,
-        "redirect" => redirect,
-      },
-      "exp" => 1.week.from_now.to_i,
-      "iat" => Time.now.to_i,
-      "iss" => "https://www.gov.uk",
-    }
-    secret = Rails.application.secrets.email_alert_auth_token
-    JWT.encode(data, secret, "HS256")
+        expect(decrypt_and_verify_token(token)).to eq(
+          "subscriber_id" => subscriber.id,
+          "redirect" => redirect,
+        )
+      }
   end
 end
