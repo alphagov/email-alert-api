@@ -1,9 +1,9 @@
 require "rake"
 require "rails_helper"
-require "gds_api/test_helpers/publishing_api_v2"
+require "gds_api/test_helpers/publishing_api"
 
 RSpec.describe "eu_exit_business_finder:update_subscriber_list_titles_and_facet_values" do
-  include GdsApi::TestHelpers::PublishingApiV2
+  include GdsApi::TestHelpers::PublishingApi
 
   before :each do
     Rails.application.load_tasks

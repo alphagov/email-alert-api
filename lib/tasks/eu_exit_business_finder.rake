@@ -29,7 +29,7 @@ namespace :eu_exit_business_finder do
       if EuExitFacetMigrationConfig.facet_value_label_overrides[facet_value].present?
         "'#{EuExitFacetMigrationConfig.facet_value_label_overrides[facet_value]}'"
       else
-        content_item_title = GdsApi.publishing_api_v2.get_content(facet_value).to_h["title"]
+        content_item_title = GdsApi.publishing_api.get_content(facet_value).to_h["title"]
         "'#{content_item_title}'"
       end
     end
