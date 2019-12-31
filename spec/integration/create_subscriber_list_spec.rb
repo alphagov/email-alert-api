@@ -150,7 +150,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
     it "creates a subscriber_list with a digest of the JSON content" do
       create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
                                      location: { all: %w[france germany] } },
-                             links: { topics: { any: ["oil-and-gas/licensing"] },
+                             links: { topics: { any: %w[oil-and-gas-licensing] },
                                      location: { all: %w[france germany] } })
       expect(SubscriberList.last.tags_digest).to eq(digested(SubscriberList.last.tags))
       expect(SubscriberList.last.links_digest).to eq(digested(SubscriberList.last.links))
