@@ -11,7 +11,6 @@ class HealthcheckController < ApplicationController
                     Healthcheck::QueueLatency,
                     Healthcheck::QueueSize,
                     Healthcheck::RetrySize,
-                    Healthcheck::SubscriptionContents,
                   ])
     render json: healthcheck
   end
