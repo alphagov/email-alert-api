@@ -8,6 +8,14 @@ class GlobalMetricsService
       gauge("delivery_attempt.total", total)
     end
 
+    def critical_subscription_contents_total(total)
+      gauge("subscription_contents.critical_total", total)
+    end
+
+    def warning_subscription_contents_total(total)
+      gauge("subscription_contents.warning_total", total)
+    end
+
   private
 
     def statsd
