@@ -34,6 +34,6 @@
   status_updates:
     every: '1m'
     class: StatusUpdateWorker
-  status_updates:
+  subscription_contents:
     every: '1m'
     class: SubscriptionContentsWorker
