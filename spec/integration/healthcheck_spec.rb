@@ -41,7 +41,6 @@ RSpec.describe "Healthcheck", type: :request do
       sidekiq_queue_latency: hash_including(status: "ok", queues: a_kind_of(Hash)),
       sidekiq_queue_size:    hash_including(status: "ok", queues: a_kind_of(Hash)),
       sidekiq_retry_size:    hash_including(status: "ok", value: 0),
-      subscription_contents: hash_including(status: "ok", critical: 0, warning: 0),
     )
   end
 end
