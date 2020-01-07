@@ -5,6 +5,7 @@ class SubscriberList < ApplicationRecord
   self.include_root_in_json = true
 
   validates :tags, tags: true
+  validates :links, links: true
   validate :link_values_are_valid
 
   validates :title, presence: true

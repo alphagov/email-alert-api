@@ -2,7 +2,7 @@ RSpec.describe SubscriberListQuery do
   subject do
     described_class.new(
       tags: { policies: %w[eggs] },
-      links: { policies: %w[11aa], taxon_tree: %w[taxon1 taxon2] },
+      links: { policies: %w[f05dc04b-ca95-4cca-9875-a7591d055467], taxon_tree: %w[f05dc04b-ca95-4cca-9875-a7591d055448] },
       document_type: "travel_advice",
       email_document_supertype: "publications",
       government_document_supertype: "news_stories",
@@ -64,13 +64,13 @@ RSpec.describe SubscriberListQuery do
   end
 
   context "when matching has links fields" do
-    it_behaves_like "#links matching", links: { policies: { any: %w[11aa] },
-                                                taxon_tree: { all: %w[taxon2] } },
+    it_behaves_like "#links matching", links: { policies: { any: %w[f05dc04b-ca95-4cca-9875-a7591d055467] },
+                                                taxon_tree: { all: %w[f05dc04b-ca95-4cca-9875-a7591d055448] } },
                                        tags: {}
 
     it "excluded when non-matching links" do
-      subscriber_list = create_subscriber_list(links: { policies: { any: %w[aa11] },
-                                                        taxon_tree: { all: %w[taxon1 taxon2] } })
+      subscriber_list = create_subscriber_list(links: { policies: { any: %w[f05dc04b-ca95-4cca-9875-a7591d055467] },
+                                                        taxon_tree: { all: %w[f05dc04b-ca95-4cca-9875-a7591d055448 f05dc04b-ca95-4cca-9875-a7591d055446] } })
       expect(subject.lists).not_to include(subscriber_list)
     end
   end

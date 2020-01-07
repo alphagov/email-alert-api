@@ -5,11 +5,13 @@ RSpec.describe "Browsing subscriber lists", type: :request do
         login_with_internal_app
       end
 
+      let(:uuid) { SecureRandom.uuid }
+
       let!(:subscriber_list_links_only) do
         create(
           :subscriber_list,
           links: {
-            topics: { any: ["oil-and-gas/licensing", "drug-device-alert"] },
+            topics: { any: [uuid, "drug-device-alert"] },
           },
           tags: {},
           document_type: "",
@@ -59,7 +61,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
       end
 
       it "responds with the matching subscriber list" do
-        get_subscriber_list(links: { topics: { any: ["drug-device-alert", "oil-and-gas/licensing"] } })
+        get_subscriber_list(links: { topics: { any: [uuid, "drug-device-alert"] } })
 
         database_subscriber_list = subscriber_list_links_only
         response_subscriber_list = JSON.parse(response.body).fetch("subscriber_list").deep_symbolize_keys
@@ -77,7 +79,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
       end
 
       it "finds subscriber lists that match all of the links" do
-        get_subscriber_list(links: { topics: { any: ["drug-device-alert", "oil-and-gas/licensing"] } })
+        get_subscriber_list(links: { topics: { any: [uuid, "drug-device-alert"] } })
         expect(response.status).to eq(200)
 
         subscriber_list = JSON.parse(response.body).fetch("subscriber_list")

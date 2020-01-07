@@ -17,7 +17,7 @@ RSpec.describe SubscriberListsByCriteriaQuery do
     it "can match a link" do
       uuid = SecureRandom.uuid
       list = create(:subscriber_list, links: { format: { any: [uuid] } })
-      create(:subscriber_list, links: { format: { any: [SecureRandom] } })
+      create(:subscriber_list, links: { format: { any: [SecureRandom.uuid] } })
 
       result = described_class.call(
         SubscriberList,
@@ -56,21 +56,6 @@ RSpec.describe SubscriberListsByCriteriaQuery do
         [
           { type: "tag", key: "format", value: "match" },
           { type: "link", key: "format", value: uuid },
-        ],
-      )
-
-      expect(result).to contain_exactly(list)
-    end
-
-    it "can match a tag with a double quote inside it" do
-      unusual_tag = %{unusual string 'with things' that "might be escaped" like {} and []}
-      list = create(:subscriber_list, tags: { format: { any: [unusual_tag] } })
-      create(:subscriber_list)
-
-      result = described_class.call(
-        SubscriberList,
-        [
-          { type: "tag", key: "format", value: unusual_tag },
         ],
       )
 
