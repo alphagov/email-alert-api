@@ -94,7 +94,7 @@ RSpec.describe SubscriptionContentsWorker do
     end
 
     it "gets put on the low priority 'cleanup' queue" do
-      expect(Sidekiq::Queues["cleanup"].size).to eq(3)
+      expect(Sidekiq::Queues["cleanup"].size).to eq(1)
     end
   end
 end

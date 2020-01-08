@@ -38,7 +38,7 @@ RSpec.describe StatusUpdateWorker do
     end
 
     it "gets put on the low priority 'cleanup' queue" do
-      expect(Sidekiq::Queues["cleanup"].size).to eq(2)
+      expect(Sidekiq::Queues["cleanup"].size).to eq(1)
     end
   end
 end
