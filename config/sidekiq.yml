@@ -37,3 +37,6 @@
   subscription_contents:
     every: '1m'
     class: SubscriptionContentsWorker
+   content_changes:
+    every: '1m'
+    class: ContentChangesWorker
