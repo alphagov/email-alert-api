@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "pg", "~> 1.2"
-gem "rails", "~> 5.2"
+gem "rails", "~> 6.0"
 
 gem "activerecord-import", "~> 1.0"
 gem "bootsnap", require: false
