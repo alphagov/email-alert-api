@@ -5,7 +5,6 @@ class HealthcheckController < ApplicationController
     healthcheck = GovukHealthcheck.healthcheck([
                     GovukHealthcheck::SidekiqRedis,
                     GovukHealthcheck::ActiveRecord,
-                    Healthcheck::DigestRuns,
                     Healthcheck::QueueLatency,
                     Healthcheck::QueueSize,
                     Healthcheck::RetrySize,

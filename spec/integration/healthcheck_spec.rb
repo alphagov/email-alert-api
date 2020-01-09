@@ -19,23 +19,11 @@ RSpec.describe "Healthcheck", type: :request do
     end
   end
 
-  context "when one of the healthchecks is critical" do
-    before do
-      allow(ActiveRecord::Base).to receive(:connection).and_return(true)
-    end
-
-    it "returns a status of 'critical'" do
-      get "/healthcheck"
-      expect(data.fetch(:status)).to eq("critical")
-    end
-  end
-
   it "includes useful information about each check" do
     get "/healthcheck"
 
     expect(data.fetch(:checks)).to include(
       database_connectivity: { status: "ok" },
-      digest_runs:           { status: "ok", critical: 0, warning: 0 },
       redis_connectivity:    { status: "ok" },
       sidekiq_queue_latency: hash_including(status: "ok", queues: a_kind_of(Hash)),
       sidekiq_queue_size:    hash_including(status: "ok", queues: a_kind_of(Hash)),
