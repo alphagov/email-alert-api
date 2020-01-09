@@ -40,3 +40,6 @@
   content_changes:
     every: '1m'
     class: ContentChangesWorker
+  digest_runs:
+    every: '1m'
+    class: DigestRunWorker

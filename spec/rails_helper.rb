@@ -23,6 +23,10 @@ RSpec.configure do |config|
     allow($stdout).to receive(:puts)
   end
 
+  config.before(:each) do
+    Sidekiq::Worker.clear_all
+  end
+
   config.after type: :request do
     logout
   end
