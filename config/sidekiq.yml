@@ -43,3 +43,6 @@
   digest_runs:
     every: '1m'
     class: DigestRunWorker
+  messages:
+    every: '1m'
+    class: MessagesWorker
