@@ -14,7 +14,7 @@ class EmailArchiveWorker
       archived_count = 0
 
       loop do
-        batch = EmailArchiveQuery.call.limit(BATCH_SIZE).as_json
+        batch = EmailArchiveQuery.call.limit(BATCH_SIZE).map(&:serializable_hash)
         break if batch.empty?
 
         archived_count += archive_batch(batch)
