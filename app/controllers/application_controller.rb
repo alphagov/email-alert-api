@@ -5,7 +5,7 @@ class ApplicationController < ActionController::API
 
   rescue_from ActiveRecord::RecordInvalid do |exception|
     render json: { error: "Unprocessable Entity",
-                   details: exception.record.errors.messages },
+                   details: exception.record&.errors&.messages },
            status: :unprocessable_entity
   end
 
