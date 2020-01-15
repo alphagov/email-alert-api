@@ -185,7 +185,7 @@ RSpec.describe "Subscriptions", type: :request do
 
         it "returns JSON" do
           create_subscription
-          expect(response.content_type).to eq("application/json")
+          expect(response.media_type).to eq("application/json")
         end
 
         it "returns the ID of the new subscription" do
