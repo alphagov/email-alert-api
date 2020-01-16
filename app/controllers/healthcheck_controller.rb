@@ -6,7 +6,6 @@ class HealthcheckController < ApplicationController
                     GovukHealthcheck::SidekiqRedis,
                     GovukHealthcheck::ActiveRecord,
                     Healthcheck::QueueLatency,
-                    Healthcheck::QueueSize,
                     Healthcheck::RetrySize,
                   ])
     render json: healthcheck
