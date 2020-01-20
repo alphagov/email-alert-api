@@ -173,7 +173,7 @@ FactoryBot.define do
       end
 
       after(:create) do |list, evaluator|
-        create_list(:subscriber, evaluator.subscriber_count, subscriber_lists: [list])
+        create_list(:subscriber, evaluator.subscriber_count, :activated, subscriber_lists: [list])
       end
     end
 

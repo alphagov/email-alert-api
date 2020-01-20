@@ -13,6 +13,13 @@ namespace :clean do
     cleaner.destroy_invalid_subscriber_lists(dry_run: dry_run)
   end
 
+  desc "Migrate subscribers to working specialist finder lists"
+  task migrate_specialist_subscribers: :environment do
+    dry_run = is_dry_run?
+    cleaner = Clean::MigrateSpecialistSubscriberLists.new
+    cleaner.migrate_subscribers_to_working_lists(dry_run: dry_run)
+  end
+
   def is_dry_run?
     dry = ENV["DRY_RUN"] != "no"
     puts "Warning: Running in DRY_RUN mode. Use DRY_RUN=no to run live." if dry
