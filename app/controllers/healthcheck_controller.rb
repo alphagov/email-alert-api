@@ -5,7 +5,6 @@ class HealthcheckController < ApplicationController
     healthcheck = GovukHealthcheck.healthcheck([
                     GovukHealthcheck::SidekiqRedis,
                     GovukHealthcheck::ActiveRecord,
-                    Healthcheck::RetrySize,
                   ])
     render json: healthcheck
   end
