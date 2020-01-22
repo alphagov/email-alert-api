@@ -12,7 +12,6 @@ RSpec.describe "Healthcheck", type: :request do
     expect(data.fetch(:checks)).to include(
       database_connectivity: { status: "ok" },
       redis_connectivity:    { status: "ok" },
-      sidekiq_retry_size:    hash_including(status: "ok", value: 0),
     )
   end
 end
