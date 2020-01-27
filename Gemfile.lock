@@ -285,7 +285,7 @@ GEM
       rubocop (>= 0.72.0)
     rubocop-rspec (1.37.0)
       rubocop (>= 0.68.1)
-    ruby-prof (1.1.0)
+    ruby-prof (1.2.0)
     ruby-progressbar (1.10.1)
     rufus-scheduler (3.5.0)
       fugit (~> 1.1, >= 1.1.1)
@@ -372,7 +372,7 @@ DEPENDENCIES
   redcarpet (~> 3.5)
   rspec-rails (= 3.9.0)
   rubocop-govuk
-  ruby-prof (~> 1.1)
+  ruby-prof (~> 1.2)
   sidekiq-scheduler (~> 3.0)
   timecop
   webmock
