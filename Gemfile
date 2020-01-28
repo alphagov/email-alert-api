@@ -38,5 +38,5 @@ group :development, :test do
   gem "pry-byebug"
   gem "rspec-rails", "3.9.0"
   gem "rubocop-govuk"
-  gem "ruby-prof", "~> 1.1"
+  gem "ruby-prof", "~> 1.2"
 end
