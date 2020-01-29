@@ -10,9 +10,12 @@ class ContentChangeHandlerService
   end
 
   def call
-    content_change = ContentChange.create!(content_change_params)
-    MetricsService.content_change_created
-    MatchedContentChangeGenerationService.call(content_change: content_change)
+    content_change = nil
+    ActiveRecord::Base.transaction do
+      content_change = ContentChange.create!(content_change_params)
+      MetricsService.content_change_created
+      MatchedContentChangeGenerationService.call(content_change: content_change)
+    end
     ProcessContentChangeAndGenerateEmailsWorker.perform_async(content_change.id)
   end
 
