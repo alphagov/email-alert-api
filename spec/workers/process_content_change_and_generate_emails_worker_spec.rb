@@ -211,39 +211,4 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
       expect(Email.all.pluck(:address).uniq.count).to eq(100)
     end
   end
-
-  context "with a job running at the same time as ImmediateEmailGenerationWorker" do
-    let(:subscriber_list) { create(:subscriber_list) }
-    let(:subscriptions) { create_list(:subscription, 100, subscriber_list: subscriber_list) }
-    let(:matched_content_change) { create(:matched_content_change, subscriber_list: subscriber_list) }
-    let!(:content_change) { matched_content_change.content_change }
-
-    it "will only process each subscription_content once" do
-      allow_any_instance_of(ProcessContentChangeAndGenerateEmailsWorker).to receive(:BATCH_SIZE).and_return(50)
-      allow_any_instance_of(ProcessContentChangeAndGenerateEmailsWorker).to receive(:perform_in).and_return(true)
-
-      subscriptions.each do |subscription|
-        create(:subscription_content, content_change: content_change, subscription: subscription)
-      end
-
-      wait_for_it = true
-      threads = []
-
-      threads << Thread.new do
-        true while wait_for_it
-        ProcessContentChangeAndGenerateEmailsWorker.new.perform(content_change.id)
-      end
-
-      threads << Thread.new do
-        true while wait_for_it
-        ImmediateEmailGenerationWorker.new.perform
-      end
-
-      wait_for_it = false
-      threads.each(&:join)
-
-      expect(Email.count).to eq(100)
-      expect(Email.all.pluck(:address).uniq.count).to eq(100)
-    end
-  end
 end
