@@ -23,7 +23,9 @@ class NotifyProvider
     :sending
   rescue Notifications::Client::RequestError => e
     MetricsService.failed_to_send_to_notify
-    GovukError.notify(e, tags: { provider: "notify" })
+    unless e.message.end_with?("Not a valid email address")
+      GovukError.notify(e, tags: { provider: "notify" })
+    end
     :technical_failure
   end
 
