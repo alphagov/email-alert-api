@@ -10,7 +10,7 @@ class ContentChangeEmailBuilder
   def call
     Email.timed_bulk_insert(columns,
                             records,
-                            ImmediateEmailGenerationWorker::BATCH_SIZE)
+                            ProcessAndGenerateEmailsWorker::BATCH_SIZE)
   end
 
   private_class_method :new

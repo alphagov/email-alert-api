@@ -38,6 +38,12 @@ RSpec.describe MessageEmailBuilder do
 
     let(:email) { Email.find(email_import.ids.first) }
 
+    describe "BATCH_SIZE" do
+      it "returns batch size of 5000" do
+        expect(ProcessAndGenerateEmailsWorker::BATCH_SIZE).to eq(5000)
+      end
+    end
+
     it "returns an email import" do
       expect(email_import.ids.count).to eq(1)
     end
