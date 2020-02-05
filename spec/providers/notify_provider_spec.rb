@@ -39,7 +39,7 @@ RSpec.describe NotifyProvider do
 
     context "when an error occurs" do
       before do
-        error_response = double(code: 404, body: '{"errors": "an error"}')
+        error_response = double(code: 404, body: "an error")
         allow_any_instance_of(Notifications::Client).to receive(:send_email)
           .and_raise(Notifications::Client::RequestError.new(error_response))
       end
