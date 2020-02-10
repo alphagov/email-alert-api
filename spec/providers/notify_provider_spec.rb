@@ -53,6 +53,19 @@ RSpec.describe NotifyProvider do
         expect(GovukError).to receive(:notify)
         described_class.call(arguments)
       end
+
+      context "and it's an invalid email address error" do
+        before do
+          error_response = double(code: 404, body: '{"errors": [{"error": "ValidationError", "message": "email_address Not a valid email address"}]}')
+          allow_any_instance_of(Notifications::Client).to receive(:send_email)
+            .and_raise(Notifications::Client::BadRequestError.new(error_response))
+        end
+
+        it "does not notify GovukError" do
+          expect(GovukError).not_to receive(:notify)
+          described_class.call(arguments)
+        end
+      end
     end
   end
 end
