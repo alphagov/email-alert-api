@@ -7,20 +7,8 @@ class UnpublishHandlerService
     <%=presented_manage_subscriptions_links(address)%>
   BODY
 
-  POLICY_AND_POLICY_AREA_TEMPLATE = <<~BODY.freeze
-    We're changing the way content is organised on GOV.UK.
-
-    Because of this, you will not get email updates about '<%= subject %>' anymore.
-
-    If you want to continue receiving updates relating to this topic, you can [subscribe to the new '<%= redirect.title %>' page](<%= add_utm(redirect.url, utm_parameters) %>).
-
-    <%=presented_manage_subscriptions_links(address)%>
-  BODY
-
   TEMPLATES = {
     taxon_tree: TAXON_TEMPLATE,
-    policy_areas: POLICY_AND_POLICY_AREA_TEMPLATE,
-    policies: POLICY_AND_POLICY_AREA_TEMPLATE,
   }.freeze
 
   def self.call(*args)

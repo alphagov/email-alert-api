@@ -115,24 +115,6 @@ RSpec.describe UnpublishHandlerService do
       it_behaves_like "it_unsubscribes_all_subscribers"
     end
 
-    context "there is a policy area subscriber list" do
-      before :each do
-        @subscriber_list = create_subscriber_list(links: { policy_areas: { any: [@content_id] } })
-      end
-      it_behaves_like "it_sends_an_email_with_body_including",
-                      "email updates about 'First Subscription"
-      it_behaves_like "it_unsubscribes_all_subscribers"
-    end
-
-    context "there is a policy subscriber list" do
-      before :each do
-        @subscriber_list = create_subscriber_list(links: { policies: { any: [@content_id] } })
-      end
-      it_behaves_like "it_sends_an_email_with_body_including",
-                      "email updates about 'First Subscription"
-      it_behaves_like "it_unsubscribes_all_subscribers"
-    end
-
     context "there is a non-taxon subscriber list" do
       before :each do
         create_subscriber_list(links: {
