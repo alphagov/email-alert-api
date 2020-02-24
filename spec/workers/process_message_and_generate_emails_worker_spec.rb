@@ -80,7 +80,7 @@ RSpec.describe ProcessMessageAndGenerateEmailsWorker do
   end
 
   context "with subscribers that have duplicate subscription contents" do
-    it "deduplicates when creating the emails" do
+    it "deduplicates when creating the emails", :testing_transactions => true do
       subscriber_one = create(:subscriber)
       subscription_one = create(:subscription, subscriber: subscriber_one)
       subscription_two = create(:subscription, subscriber: subscriber_one)
@@ -166,7 +166,7 @@ RSpec.describe ProcessMessageAndGenerateEmailsWorker do
   end
 
   context "with multiple messages" do
-    it "will only process subscription contents for the message it is passed" do
+    it "will only process subscription contents for the message it is passed", :testing_transactions => true do
       subscriber_one = create(:subscriber)
       subscriber_two = create(:subscriber)
       subscription_one = create(:subscription, subscriber: subscriber_one)
@@ -204,7 +204,7 @@ RSpec.describe ProcessMessageAndGenerateEmailsWorker do
     let(:matched_message) { create(:matched_message, subscriber_list: subscriber_list) }
     let!(:content_change) { matched_message.message }
 
-    it "will only process each subscription_content once" do
+    it "will only process each subscription_content once", :testing_transactions => true do
       allow_any_instance_of(ProcessMessageAndGenerateEmailsWorker).to receive(:BATCH_SIZE).and_return(50)
       allow_any_instance_of(ProcessContentChangeAndGenerateEmailsWorker).to receive(:perform_in).and_return(true)
 
@@ -220,6 +220,7 @@ RSpec.describe ProcessMessageAndGenerateEmailsWorker do
           begin
             ProcessMessageAndGenerateEmailsWorker.new.perform(message.id)
           rescue ActiveRecord::ActiveRecordError
+            ActiveRecord::Base.connection.execute 'ROLLBACK'
             # The thread has hit a database contention error.
             # Sidekiq will retry this for us so we don't need to handle it in the worker
             # But if we don't rescue it here it the test will occasionally fail

@@ -20,6 +20,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 
   config.before do
+    DatabaseCleaner.strategy = :transaction
     allow($stdout).to receive(:puts)
   end
 
@@ -30,7 +31,19 @@ RSpec.configure do |config|
   config.after type: :request do
     logout
   end
+
+  config.around(:each, :testing_transactions => true) do |example|
+    self.use_transactional_tests = false
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean
+    example.run
+    DatabaseCleaner.clean
+    DatabaseCleaner.strategy = :transaction
+    self.use_transactional_tests = true
+  end
 end
+
+
 
 WebMock.disable_net_connect!(allow_localhost: true)
 

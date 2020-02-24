@@ -31,6 +31,7 @@ group :test do
   gem "factory_bot_rails"
   gem "timecop"
   gem "webmock"
+  gem 'database_cleaner-active_record'
 end
 
 group :development, :test do
