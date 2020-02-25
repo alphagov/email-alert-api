@@ -181,7 +181,7 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
     let(:matched_content_change) { create(:matched_content_change, subscriber_list: subscriber_list) }
     let!(:content_change) { matched_content_change.content_change }
 
-    it "will only process each subscription_content once", :testing_transactions => true do
+    it "will only process each subscription_content once", testing_transactions: true do
       allow_any_instance_of(ProcessContentChangeAndGenerateEmailsWorker).to receive(:BATCH_SIZE).and_return(50)
       allow_any_instance_of(ProcessContentChangeAndGenerateEmailsWorker).to receive(:perform_in).and_return(true)
 
@@ -193,16 +193,14 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
       threads = 10.times.map do
         Thread.new do
           true while wait_for_it
-          # rubocop:disable Lint/SuppressedException
           begin
             ProcessContentChangeAndGenerateEmailsWorker.new.perform(content_change.id)
           rescue ActiveRecord::ActiveRecordError
-            ActiveRecord::Base.connection.execute 'ROLLBACK'
+            ActiveRecord::Base.connection.execute "ROLLBACK"
             # The thread has hit a database contention error.
             # Sidekiq will retry this for us so we don't need to handle it in the worker
             # But if we don't rescue it here it the test will occasionally fail
           end
-          # rubocop:enable Lint/SuppressedException
         end
       end
       wait_for_it = false
