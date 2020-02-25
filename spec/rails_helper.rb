@@ -18,6 +18,7 @@ RSpec.configure do |config|
   config.include AuthenticationHelpers, type: :request
   config.include RequestHelpers, type: :request
   config.include FactoryBot::Syntax::Methods
+  DatabaseCleaner.allow_remote_database_url = true
 
   config.before do
     DatabaseCleaner.strategy = :transaction
@@ -32,7 +33,7 @@ RSpec.configure do |config|
     logout
   end
 
-  config.around(:each, :testing_transactions => true) do |example|
+  config.around(:each, testing_transactions: true) do |example|
     self.use_transactional_tests = false
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean
