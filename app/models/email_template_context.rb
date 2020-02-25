@@ -19,6 +19,6 @@ class EmailTemplateContext
   end
 
   def presented_manage_subscriptions_links(address)
-    ManageSubscriptionsLinkPresenter.call(address: address)
+    ManageSubscriptionsLinkPresenter.call(address)
   end
 end

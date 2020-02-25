@@ -41,6 +41,13 @@ RSpec.describe UnpublishHandlerService do
           with(email: having_attributes(body: include(@redirect.url, @redirect.title))).twice
       described_class.call(@content_id, @redirect)
     end
+    it "contains a link to manage emails" do
+      expect(DeliveryRequestService).to receive(:call).
+        with(email: having_attributes(body: include("address=test%40example.com"))).once
+      expect(DeliveryRequestService).to receive(:call).
+        with(email: having_attributes(body: include("address=govuk-email-courtesy-copies%40digital.cabinet-office.gov.uk"))).once
+      described_class.call(@content_id, @redirect)
+    end
     it "sends the email and a courtesy email to the DeliverRequestWorker" do
       expect(DeliveryRequestService).to receive(:call).
           with(email: having_attributes(subject: "Update from GOV.UK – First Subscription",
