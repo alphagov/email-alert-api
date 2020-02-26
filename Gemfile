@@ -27,6 +27,7 @@ gem "sidekiq-scheduler", "~> 3.0"
 
 group :test do
   gem "climate_control"
+  gem "database_cleaner"
   gem "equivalent-xml"
   gem "factory_bot_rails"
   gem "timecop"
