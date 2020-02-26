@@ -32,7 +32,7 @@ RSpec.describe "Sending an unpublish message", type: :request do
       @request_params = { content_id: content_id,
                           redirects: [{ path: "/source/path", destination: "/redirected/path" }] }.to_json
 
-      content_store_has_item(
+      stub_content_store_has_item(
         "/redirected/path",
         {
           "base_path" => "/redirected/path",
