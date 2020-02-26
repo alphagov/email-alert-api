@@ -6,7 +6,7 @@ RSpec.describe ContentItem do
 
   describe "title" do
     it "gets the title from the content store" do
-      content_store_has_item(
+      stub_content_store_has_item(
         "/redirected/path",
         {
           "base_path" => "/redirected/path",
@@ -20,7 +20,7 @@ RSpec.describe ContentItem do
       expect(ContentItem.new("/redirected/path").title).to eq(ContentItem::DEFAULT)
     end
     it "returns  a default value as the title if the title does not exist" do
-      content_store_has_item(
+      stub_content_store_has_item(
         "/redirected/path",
         {
           "base_path" => "/redirected/path",
@@ -38,7 +38,7 @@ RSpec.describe ContentItem do
 
   describe "content_store_data" do
     it "raises and exception if the response base_path differs from the requested item" do
-      content_store_has_item(
+      stub_content_store_has_item(
         "/requested/path",
         {
           "base_path" => "/different/path",
