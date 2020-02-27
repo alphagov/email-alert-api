@@ -176,13 +176,12 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
   end
 
   context "with multiple jobs for the same content_id running at the same time" do
-    self.use_transactional_tests = false
     let(:subscriber_list) { create(:subscriber_list) }
     let(:subscriptions) { create_list(:subscription, 100, subscriber_list: subscriber_list) }
     let(:matched_content_change) { create(:matched_content_change, subscriber_list: subscriber_list) }
     let!(:content_change) { matched_content_change.content_change }
 
-    it "will only process each subscription_content once" do
+    it "will only process each subscription_content once", testing_transactions: true do
       allow_any_instance_of(ProcessContentChangeAndGenerateEmailsWorker).to receive(:BATCH_SIZE).and_return(50)
       allow_any_instance_of(ProcessContentChangeAndGenerateEmailsWorker).to receive(:perform_in).and_return(true)
 
@@ -210,9 +209,6 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
 
       expect(Email.count).to eq(100)
       expect(Email.all.pluck(:address).uniq.count).to eq(100)
-      DatabaseCleaner.allow_remote_database_url = true
-      DatabaseCleaner.strategy = :truncation
-      DatabaseCleaner.clean
     end
   end
 end

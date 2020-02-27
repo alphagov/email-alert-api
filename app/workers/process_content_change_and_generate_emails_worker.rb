@@ -5,9 +5,7 @@ class ProcessContentChangeAndGenerateEmailsWorker < ProcessAndGenerateEmailsWork
 
   def perform(content_change_id)
     content_change = ContentChange.find(content_change_id)
-
     return if content_change.processed?
-
 
     import_subscription_content(content_change)
 

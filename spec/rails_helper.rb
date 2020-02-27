@@ -30,6 +30,15 @@ RSpec.configure do |config|
   config.after type: :request do
     logout
   end
+
+  config.around(:each, testing_transactions: true) do |example|
+    DatabaseCleaner.allow_remote_database_url = true
+    self.use_transactional_tests = false
+    DatabaseCleaner.strategy = :truncation
+    example.run
+    DatabaseCleaner.clean
+    self.use_transactional_tests = true
+  end
 end
 
 WebMock.disable_net_connect!(allow_localhost: true)
