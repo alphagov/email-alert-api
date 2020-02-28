@@ -2,8 +2,11 @@ RSpec.describe "Anonymising email addresses" do
   let(:sql) { File.read("lib/data_hygiene/anonymise_email_addresses.sql") }
 
   let(:connection) { ActiveRecord::Base.connection }
-  let(:columns) { connection.tables.flat_map { |t| connection.columns(t) } }
-  let(:column_names) { columns.map { |c| "#{c.table_name}.#{c.name}" } }
+  let(:column_names) do
+    connection.tables.flat_map do |table|
+      connection.columns(table).map { |column| "#{table}.#{column.name}" }
+    end
+  end
 
   def execute_sql
     ActiveRecord::Base.connection.execute(sql.gsub(/#.*$/, ""))

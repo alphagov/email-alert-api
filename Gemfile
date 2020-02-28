@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "pg", "~> 1.2"
-gem "rails", "~> 5.2"
+gem "rails", "~> 6.0"
 
 gem "activerecord-import", "~> 1.0"
 gem "bootsnap", require: false
@@ -27,6 +27,7 @@ gem "sidekiq-scheduler", "~> 3.0"
 
 group :test do
   gem "climate_control"
+  gem "database_cleaner"
   gem "equivalent-xml"
   gem "factory_bot_rails"
   gem "timecop"
