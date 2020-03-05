@@ -10,7 +10,7 @@ require "govuk_sidekiq/testing"
 require "gds-sso/lint/user_spec"
 require "db/seeds"
 
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |file| require file }
+Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |file| require file }
 
 RSpec.configure do |config|
   config.disable_monkey_patching!
