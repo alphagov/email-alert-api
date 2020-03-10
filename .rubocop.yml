@@ -11,6 +11,7 @@ AllCops:
   Exclude:
     - tmp/**/**
     - db/schema.rb
+    - db/migrate/201*.rb
 
 Metrics/BlockLength:
   Exclude:
