@@ -37,7 +37,7 @@ end
 group :development, :test do
   gem "listen", "3.2.1"
   gem "pry-byebug"
-  gem "rspec-rails", "3.9.0"
+  gem "rspec-rails", "3.9.1"
   gem "rubocop-govuk"
   gem "ruby-prof", "~> 1.3"
 end
