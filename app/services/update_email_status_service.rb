@@ -35,7 +35,7 @@ private
                        .where(email: email, status: :temporary_failure)
                        .minimum(:completed_at)
 
-    first_completed && first_completed < 1.day.ago
+    first_completed && first_completed < StatusUpdateService::TEMPORARY_FAILURE_RETRY_TIMEOUT.ago
   end
 
   def handle_permanent_failure
