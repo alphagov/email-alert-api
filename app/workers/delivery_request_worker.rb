@@ -3,10 +3,6 @@ class DeliveryRequestWorker
 
   sidekiq_options retry: 3
 
-  sidekiq_retry_in do |count|
-    10 * (count + 1) # 10, 20, 30, 40 ish
-  end
-
   sidekiq_retries_exhausted do |msg, _e|
     if msg["error_class"] == "RatelimitExceededError"
       email_id = msg["args"].first
