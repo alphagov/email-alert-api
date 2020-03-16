@@ -1,7 +1,7 @@
 class DeliveryRequestWorker
   include Sidekiq::Worker
 
-  sidekiq_options retry: 3
+  sidekiq_options retry: 9
 
   sidekiq_retries_exhausted do |msg, _e|
     if msg["error_class"] == "RatelimitExceededError"
