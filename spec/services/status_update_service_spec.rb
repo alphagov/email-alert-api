@@ -65,7 +65,7 @@ RSpec.describe StatusUpdateService do
 
     it "retries sending the email" do
       expect(DeliveryRequestWorker).to receive(:perform_in)
-        .with(3.hours, delivery_attempt.email.id, :default)
+        .with(6.hours, delivery_attempt.email.id, :default)
 
       status_update
     end
