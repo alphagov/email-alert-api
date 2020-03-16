@@ -18,14 +18,14 @@ private
   # We sort the hash because the order of keys and values shouldn't matter.
   # You should get the same digest for a hash regardless of structure.
   def sort_hash(hash)
-    value_sorted_hash = hash.each_with_object({}) do |(key, value), hsh|
-      hsh[key] = if value.is_a?(Hash)
-                   sort_hash(value)
-                 elsif value.is_a?(Array)
-                   value.compact.sort
-                 else
-                   value
-                 end
+    value_sorted_hash = hash.transform_values do |value|
+      if value.is_a?(Hash)
+        sort_hash(value)
+      elsif value.is_a?(Array)
+        value.compact.sort
+      else
+        value
+      end
     end
 
     value_sorted_hash.sort
