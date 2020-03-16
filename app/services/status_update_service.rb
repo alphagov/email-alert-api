@@ -1,4 +1,7 @@
 class StatusUpdateService
+  TEMPORARY_FAILURE_RETRY_DELAY = 3.hours
+  TEMPORARY_FAILURE_RETRY_TIMEOUT = 24.hours
+
   def initialize(reference:, status:, completed_at:, sent_at:, user: nil)
     @reference = reference
     @status = status
@@ -34,7 +37,7 @@ class StatusUpdateService
       UnsubscribeService.subscriber!(subscriber, :non_existant_email)
     # We check for a status of nil here too in case email hasn't had a status set
     elsif delivery_attempt.temporary_failure? && ["pending", nil].include?(email.status)
-      DeliveryRequestWorker.perform_in(3.hours, email.id, :default)
+      DeliveryRequestWorker.perform_in(TEMPORARY_FAILURE_RETRY_DELAY, email.id, :default)
     end
 
     MetricsService.delivery_attempt_status_changed(status.underscore)
