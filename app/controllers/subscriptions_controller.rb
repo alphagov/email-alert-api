@@ -112,6 +112,6 @@ private
 
   def send_subscription_confirmation_email(subscription)
     email = SubscriptionConfirmationEmailBuilder.call(subscription: subscription)
-    DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_immediate)
+    DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_transactional)
   end
 end
