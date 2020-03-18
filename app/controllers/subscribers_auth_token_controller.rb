@@ -7,7 +7,7 @@ class SubscribersAuthTokenController < ApplicationController
     email = build_email(subscriber, token)
 
     DeliveryRequestWorker
-      .perform_async_in_queue(email.id, queue: :delivery_immediate_high)
+      .perform_async_in_queue(email.id, queue: :delivery_transactional)
 
     render json: { subscriber: subscriber }, status: :created
   end

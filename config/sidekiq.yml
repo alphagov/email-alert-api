@@ -4,6 +4,7 @@
 :logfile: ./log/sidekiq.json.log
 :timeout: 4
 :queues:
+  - [delivery_transactional, 7]
   - [delivery_immediate_high, 6]
   - [delivery_immediate, 5]
   - [email_generation_immediate, 4]
