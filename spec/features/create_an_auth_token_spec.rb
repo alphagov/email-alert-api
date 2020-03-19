@@ -39,7 +39,7 @@ RSpec.describe "Create an auth token", type: :request do
         "body" => hash_including(
           "email_address" => subscriber.address,
           "personalisation" => hash_including(
-            "subject" => "Confirm your email address",
+            "subject" => "Manage your subscriptions",
             "body" => include("http://www.dev.gov.uk#{destination}?token="),
           ),
         ),

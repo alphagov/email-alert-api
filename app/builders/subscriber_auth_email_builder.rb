@@ -25,16 +25,16 @@ private
   attr_reader :subscriber, :destination, :token
 
   def subject
-    "Confirm your email address"
+    "Manage your subscriptions"
   end
 
   def body
     <<~BODY
-      # Click the link to confirm your email address
+      # Click the link to manage your subscriptions
 
-      ^ [Confirm your email address](#{link})
+      ^ [Manage your subscriptions](#{link})
 
-      You need to do this to manage your GOV.UK email subscriptions. The link will stop working in 7 days.
+      You need to confirm your email address to manage your GOV.UK email subscriptions. The link will stop working in 7 days.
 
       # Didn’t request this email?
 
