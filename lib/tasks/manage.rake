@@ -14,7 +14,7 @@ namespace :manage do
   end
 
   def unsubscribe(email_address:)
-    subscriber = Subscriber.find_by(address: email_address)
+    subscriber = Subscriber.find_by_address(email_address)
     if subscriber.nil?
       puts "Subscriber #{email_address} not found"
     else
