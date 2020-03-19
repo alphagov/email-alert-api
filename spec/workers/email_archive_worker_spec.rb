@@ -4,6 +4,47 @@ RSpec.describe EmailArchiveWorker do
       described_class.new.perform
     end
 
+    describe "#update_counts" do
+      before { Aws.config[:s3] = { stub_responses: true } }
+
+      around do |example|
+        env_vars = {
+            EMAIL_ARCHIVE_S3_BUCKET: "my-bucket",
+            EMAIL_ARCHIVE_S3_ENABLED: "yes",
+        }
+        ClimateControl.modify(env_vars) { example.run }
+      end
+
+      describe "failures" do
+        context "A subscriber has 10 failures already" do
+          before :each do
+            @subscriber = FactoryBot.create(:subscriber, failures: 10)
+          end
+          it "does not increase the number of failures" do
+            expect { perform }.not_to(change { @subscriber.reload.failures })
+          end
+          it "adds the number of failures to the subscriber" do
+            FactoryBot.create_list(:email, 5, subscriber_id: @subscriber.id, status: :failed, finished_sending_at: 1.day.ago)
+            expect { perform }.to change { @subscriber.reload.failures }.from(10).to(15)
+          end
+        end
+      end
+      describe "successes" do
+        context "A subscriber has 10 successes already" do
+          before :each do
+            @subscriber = FactoryBot.create(:subscriber, successes: 10)
+          end
+          it "does not increase the number of failures" do
+            expect { perform }.not_to(change { @subscriber.reload.successes })
+          end
+          it "adds the number of failures to the subscriber" do
+            FactoryBot.create_list(:email, 5, subscriber_id: @subscriber.id, status: :sent, finished_sending_at: 1.day.ago)
+            expect { perform }.to change { @subscriber.reload.successes }.from(10).to(15)
+          end
+        end
+      end
+    end
+
     context "when there are no emails to archive" do
       before do
         create(:unarchivable_email)

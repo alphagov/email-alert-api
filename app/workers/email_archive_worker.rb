@@ -9,6 +9,9 @@ class EmailArchiveWorker
   def perform
     return unless ENV.include?("EMAIL_ARCHIVE_S3_ENABLED")
 
+    update_counts(type: :successes)
+    update_counts(type: :failures)
+
     Email.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
       start_time = Time.zone.now
       archived_count = 0
@@ -47,5 +50,28 @@ private
     seconds = (end_time - start_time).round(2)
     message = "Archived #{archived} emails in #{seconds} seconds"
     logger.info(message)
+  end
+
+  def update_counts(type: :successes)
+    status = type == :successes ? :sent : :failed
+    status_hashes = Email.where(status: status).where.not(subscriber_id: nil).group(:subscriber_id).count
+
+    status_hashes.each_slice(BATCH_SIZE) do |list|
+      ActiveRecord::Base.connection.execute(bulk_update_sql(list, type: type))
+    end
+  end
+
+  def bulk_update_sql(value_list, type: :failures)
+    values_string = value_list.map { |k, v| "(#{k},#{v})" }.join(",")
+    <<-SQL
+    UPDATE subscribers
+      SET
+        #{type} = subscribers.#{type} + values.#{type}
+      FROM (
+        VALUES
+          #{values_string}
+      ) AS values (id, #{type})
+      WHERE subscribers.id = values.id
+    SQL
   end
 end
