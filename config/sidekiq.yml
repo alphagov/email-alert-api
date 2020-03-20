@@ -5,7 +5,7 @@
 :timeout: 4
 :queues:
   - delivery_transactional
-  - [delivery_immediate_high, 6]
+  - [delivery_immediate_high, 10]
   - [delivery_immediate, 5]
   - [process_and_generate_emails, 4]
   - [default, 3]
