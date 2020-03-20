@@ -7,7 +7,6 @@
   - [delivery_transactional, 7]
   - [delivery_immediate_high, 6]
   - [delivery_immediate, 5]
-  - [email_generation_immediate, 4]
   - [process_and_generate_emails, 3]
   - [default, 3]
   - [delivery_digest, 2]
