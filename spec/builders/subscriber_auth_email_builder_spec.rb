@@ -18,7 +18,13 @@ RSpec.describe SubscriberAuthEmailBuilder do
       expect { call }.to change(Email, :count).by(1)
     end
 
-    it "has a link to authenticate" do
+    it "has a subject line prompting the user to manage their subscriptions" do
+      subject = "Manage your GOV.UK email subscriptions"
+      email = call
+      expect(email.subject).to include(subject)
+    end
+
+    it "has body content has a link allowing users to authenticate and manage their subscriptions" do
       link = "http://www.dev.gov.uk/destination?token=secret"
       email = call
       expect(email.body).to include(link)

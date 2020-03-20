@@ -39,13 +39,13 @@ RSpec.describe "Create an auth token", type: :request do
         "body" => hash_including(
           "email_address" => subscriber.address,
           "personalisation" => hash_including(
-            "subject" => "Confirm your email address",
+            "subject" => "Manage your GOV.UK email subscriptions",
             "body" => include("http://www.dev.gov.uk#{destination}?token="),
           ),
         ),
       )
       .with { |request|
-        token = request.body.match(/token=([^&)]+)/)[1]
+        token = request.body.match(/token=([^&\\]+)/)[1]
 
         expect(decrypt_and_verify_token(token)).to eq(
           "subscriber_id" => subscriber.id,
