@@ -59,8 +59,10 @@ private
       },
     ]).ids.first
 
+    queue = content_change.priority == "high" ? :delivery_immediate_high : :delivery_immediate
+
     DeliveryRequestWorker.perform_async_in_queue(
-      email_id, queue: :delivery_immediate
+      email_id, queue: queue
     )
   end
 end
