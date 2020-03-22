@@ -14,7 +14,7 @@ RSpec.describe AuthTokenGeneratorService do
         expect(decrypt_and_verify_token(token)).to_not be_nil
       end
 
-      Timecop.freeze(1.week.from_now) do
+      Timecop.freeze(8.days.from_now) do
         expect(decrypt_and_verify_token(token)).to be_nil
       end
     end
