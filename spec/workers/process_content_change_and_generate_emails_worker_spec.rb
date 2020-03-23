@@ -32,6 +32,7 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
 
   context "with a courtesy subscription" do
     let!(:subscriber) { create(:subscriber, address: Email::COURTESY_EMAIL) }
+    let(:content_change_high_priority) { create(:content_change, priority: "high") }
 
     it "creates an email for the courtesy email group" do
       expect(ContentChangeEmailBuilder)
@@ -48,6 +49,14 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
         .with(kind_of(String), queue: :delivery_immediate)
 
       subject.perform(content_change.id)
+    end
+
+    it "enqueues the email on the delivery_immediate_high queue when the content change is high priority" do
+      expect(DeliveryRequestWorker)
+        .to receive(:perform_async_in_queue)
+        .with(kind_of(String), queue: :delivery_immediate_high)
+
+      subject.perform(content_change_high_priority.id)
     end
   end
 
