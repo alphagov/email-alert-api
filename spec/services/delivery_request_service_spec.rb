@@ -176,6 +176,7 @@ RSpec.describe DeliveryRequestService do
     it "records a metric for the request to the provdier" do
       expect(MetricsService).to receive(:email_send_request)
         .with("pseudo")
+        .and_return(:sending)
 
       subject.call(email: email)
     end
