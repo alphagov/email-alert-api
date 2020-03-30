@@ -32,17 +32,15 @@ private
     <<~BODY
       # Manage your GOV.UK email subscriptions
 
-      You can unsubscribe from emails or change your subscription at:
+      Use this link to unsubscribe or change your email subscriptions:
 
       #{link}
-
-      You’ll need to confirm your email address before you can make any changes.
 
       The link will stop working in 7 days.
 
       # Didn’t request this email?
 
-      Ignore or delete this email if you didn’t request it. Your subscriptions won’t be changed.
+      Ignore or delete this email if you didn’t request it. Your subscriptions will not be changed.
 
       [Contact GOV.UK](https://www.gov.uk/contact/govuk) if you have any problems with your email subscriptions.
     BODY
