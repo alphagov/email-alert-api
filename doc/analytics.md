@@ -37,7 +37,9 @@ SubscriberList.find(4194).active_subscriptions_count
 There is a [rake task][rake-count-subscribers] that does this for you, and
 includes a breakdown of subscriptions that are Immediate, Daily or Weekly:
 
-`query:count_subscribers['subscriber-list-slug']`
+```bash
+rake query:count_subscribers['subscriber-list-slug']
+```
 
 ### How many subscribers did a list have at a particular point in time
 
@@ -48,7 +50,9 @@ Subscription.active_on("2018-06-01").where(subscriber_list_id: 4194).count
 There is a [rake task][rake-count-subscribers-on] that does this for you, and
 includes a breakdown of subscriptions that are Immediate, Daily or Weekly:
 
-`query:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']`
+```bash
+rake query:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
+```
 
 ### Lists with most new subscriptions in a time frame
 
