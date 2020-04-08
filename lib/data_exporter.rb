@@ -21,6 +21,10 @@ class DataExporter
     export_csv(living_in_europe_subscriber_lists)
   end
 
+  def export_csv_from_travel_advice_at(date)
+    travel_advice_csv(travel_advice_subscriber_lists, at: date)
+  end
+
 private
 
   CSV_HEADERS = %i(id title count).freeze
@@ -60,5 +64,34 @@ private
         csv << present_subscriber_list(subscriber_list, at: at)
       end
     end
+  end
+
+  def travel_advice_csv(subscriber_lists, at: nil)
+    CSV($stdout, headers: %i(title immediately daily weekly), write_headers: true) do |csv|
+      subscriber_lists.find_each do |subscriber_list|
+        csv << present_travel_advice_report(subscriber_list, at: at)
+      end
+    end
+  end
+
+  def present_travel_advice_report(subscriber_list, at: nil)
+    { "title" => subscriber_list.title.delete(",") }.merge(subscriber_list_frequency_count(subscriber_list, at)).symbolize_keys
+  end
+
+  def subscriber_list_frequency_count(subscriber_list, at)
+    Subscription
+      .where(subscriber_list: subscriber_list)
+      .where("created_at < ?", at)
+      .where("ended_at IS NULL OR ended_at >= ?", at)
+      .group(:frequency)
+      .count
+  end
+
+  def travel_advice_subscriber_lists
+    SubscriberList.where(slug: travel_advice_slugs)
+  end
+
+  def travel_advice_slugs
+    YAML.safe_load(File.open("lib/countries.yml")).map { |country| "#{country}-travel-advice" }
   end
 end
