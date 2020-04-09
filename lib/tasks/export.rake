@@ -23,4 +23,9 @@ namespace :export do
   task csv_from_living_in_europe: :environment do
     DataExporter.new.export_csv_from_living_in_europe
   end
+
+  desc "Export the number of subscriptions to travel advice lists as of a given date (format: 'yyyy-mm-dd')"
+  task :csv_from_travel_advice_at, [:date] => :environment do |_, args|
+    DataExporter.new.export_csv_from_travel_advice_at(args.date)
+  end
 end
