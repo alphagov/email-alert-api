@@ -75,7 +75,11 @@ private
   end
 
   def present_travel_advice_report(subscriber_list, at: nil)
-    { "title" => subscriber_list.title.delete(",") }.merge(subscriber_list_frequency_count(subscriber_list, at)).symbolize_keys
+    {
+      "title" => cleanup(subscriber_list.title),
+    }
+      .merge(subscriber_list_frequency_count(subscriber_list, at))
+      .symbolize_keys
   end
 
   def subscriber_list_frequency_count(subscriber_list, at)
@@ -88,10 +92,13 @@ private
   end
 
   def travel_advice_subscriber_lists
-    SubscriberList.where(slug: travel_advice_slugs)
+    SubscriberList.where("links->'countries' IS NOT NULL").or(SubscriberList.where(slug: "travel-advice-for-all-countries-travel-advice"))
   end
 
-  def travel_advice_slugs
-    YAML.safe_load(File.open("lib/countries.yml")).map { |country| "#{country}-travel-advice" }
+  def cleanup(title)
+    title
+      .gsub(",", "")
+      .gsub("- travel advice", "")
+      .strip
   end
 end
