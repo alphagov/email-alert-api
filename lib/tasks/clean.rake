@@ -50,38 +50,6 @@ namespace :clean do
     cleaner.deactivate_subscribers(dry_run: dry_run)
   end
 
-  desc "End subscriptions for subscribers who have been improperly deactivated"
-  task ended_but_not_deactivated_subscriptions: :environment do
-    # there are a lot of subscriptioncontents, so do this iteratively
-    # to avoid loading a huge number of subscriptions into memory and
-    # then doing 'uniq' on it
-    [8.days.ago, 7.days.ago, 6.days.ago, 5.days.ago, 4.days.ago, 3.days.ago, 2.days.ago, 1.day.ago, 10.minutes.ago].each do |timestamp|
-      affected = SubscriptionContent.
-        where("subscription_contents.created_at < ?", timestamp).
-        where(email: nil).
-        joins(:subscription).
-        merge(Subscription.active).
-        map(&:subscription).
-        map(&:subscriber_id).
-        uniq
-
-      puts "Found #{affected.count} affected subscribers at #{timestamp}"
-
-      affected.each do |subscriber_id|
-        subscriber = Subscriber.find(subscriber_id)
-        next unless subscriber.deactivated?
-
-        active_subscription_ids = subscriber.active_subscriptions.map(&:id)
-
-        puts "Cleaning up #{subscriber.address}"
-        UnsubscribeService.subscriber!(subscriber, :unsubscribed)
-        active_subscription_ids.each do |subscription_id|
-          SubscriptionContent.where(email_id: nil, subscription_id: subscription_id).each(&:destroy)
-        end
-      end
-    end
-  end
-
   def is_dry_run?
     dry = ENV["DRY_RUN"] != "no"
     puts "Warning: Running in DRY_RUN mode. Use DRY_RUN=no to run live." if dry
