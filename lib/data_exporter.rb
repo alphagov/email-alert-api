@@ -67,7 +67,7 @@ private
   end
 
   def travel_advice_csv(subscriber_lists, at: nil)
-    CSV($stdout, headers: %i(title immediately daily weekly), write_headers: true) do |csv|
+    CSV($stdout, headers: %i(title subscribed unsubscribed immediately daily weekly), write_headers: true) do |csv|
       subscriber_lists.find_each do |subscriber_list|
         csv << present_travel_advice_report(subscriber_list, at: at)
       end
@@ -76,10 +76,25 @@ private
 
   def present_travel_advice_report(subscriber_list, at: nil)
     {
-      "title" => cleanup(subscriber_list.title),
+      title: cleanup(subscriber_list.title),
+      subscribed: subscribed_during_week_ending_on(subscriber_list, at).count,
+      unsubscribed: unsubscribed_during_week_ending_on(subscriber_list, at).count,
     }
       .merge(subscriber_list_frequency_count(subscriber_list, at))
-      .symbolize_keys
+  end
+
+  def subscribed_during_week_ending_on(subscriber_list, date)
+    subscriber_list.subscriptions.where(created_at: week_ending_on(date), source: :user_signed_up)
+  end
+
+  def unsubscribed_during_week_ending_on(subscriber_list, date)
+    subscriber_list.subscriptions.where(ended_at: week_ending_on(date), ended_reason: :unsubscribed)
+  end
+
+  def week_ending_on(date)
+    end_date   = Date.parse(date)
+    start_date = end_date - 1.week
+    start_date..end_date
   end
 
   def subscriber_list_frequency_count(subscriber_list, at)
@@ -89,6 +104,7 @@ private
       .where("ended_at IS NULL OR ended_at >= ?", at)
       .group(:frequency)
       .count
+      .symbolize_keys
   end
 
   def travel_advice_subscriber_lists
