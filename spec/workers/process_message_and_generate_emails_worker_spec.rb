@@ -216,7 +216,6 @@ RSpec.describe ProcessMessageAndGenerateEmailsWorker do
       threads = 5.times.map do
         Thread.new do
           true while wait_for_it
-          # rubocop:disable Lint/SuppressedException
           begin
             ProcessMessageAndGenerateEmailsWorker.new.perform(message.id)
           rescue ActiveRecord::ActiveRecordError
@@ -224,7 +223,6 @@ RSpec.describe ProcessMessageAndGenerateEmailsWorker do
             # Sidekiq will retry this for us so we don't need to handle it in the worker
             # But if we don't rescue it here it the test will occasionally fail
           end
-          # rubocop:enable Lint/SuppressedException
         end
       end
       wait_for_it = false
