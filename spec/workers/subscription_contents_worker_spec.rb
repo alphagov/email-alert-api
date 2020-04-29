@@ -49,7 +49,6 @@ RSpec.describe SubscriptionContentsWorker do
       include_examples "tests for critical and warning states"
     end
 
-
     context "when not scheduled publishing time" do
       let(:statsd) { double }
 

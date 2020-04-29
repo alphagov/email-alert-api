@@ -196,8 +196,6 @@ FactoryBot.define do
     end
   end
 
-
-
   factory :subscription do
     subscriber
     subscriber_list
