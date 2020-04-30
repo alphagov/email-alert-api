@@ -39,6 +39,10 @@ namespace :manage do
 
   desc "Move all subscribers from one subscriber list to another"
   task :move_all_subscribers, %i[from_slug to_slug] => :environment do |_t, args|
+    if ENV["SEND_EMAIL"]
+      args = args.to_hash.merge!(send_email: ENV["SEND_EMAIL"])
+    end
+
     SubscriberListMover.new(**args).call
   end
 
