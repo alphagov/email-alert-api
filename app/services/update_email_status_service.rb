@@ -8,6 +8,7 @@ class UpdateEmailStatusService
   end
 
   def call
+    handle_technical_failure if delivery_attempt.technical_failure?
     handle_temporary_failure if delivery_attempt.temporary_failure?
     handle_permanent_failure if delivery_attempt.permanent_failure?
     handle_delivered if delivery_attempt.delivered?
@@ -19,6 +20,14 @@ private
 
   attr_reader :delivery_attempt
   delegate :email, to: :delivery_attempt
+
+  def handle_technical_failure
+    email.update!(
+      status: :failed,
+      failure_reason: :technical_failure,
+      finished_sending_at: delivery_attempt.finished_sending_at,
+    )
+  end
 
   def handle_temporary_failure
     return unless retries_exhausted?

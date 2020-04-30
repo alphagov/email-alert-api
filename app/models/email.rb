@@ -11,7 +11,7 @@ class Email < ApplicationRecord
   }
 
   enum status: { pending: 0, sent: 1, failed: 2 }
-  enum failure_reason: { permanent_failure: 0, retries_exhausted_failure: 1 }
+  enum failure_reason: { permanent_failure: 0, retries_exhausted_failure: 1, technical_failure: 2 }
 
   validates :address, :subject, :body, presence: true
 
