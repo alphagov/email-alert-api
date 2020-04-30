@@ -10,8 +10,8 @@ RSpec.describe HashDigest do
     context "when a hash is provided" do
       let(:input) do
         {
-          a: 1, b: 2, aircraft_type: %w(plane helicopter),
-          c: 3, d: 4, boat_type: %w(boat ship)
+          a: 1, b: 2, aircraft_type: %w[plane helicopter],
+          c: 3, d: 4, boat_type: %w[boat ship]
         }
       end
 
@@ -27,18 +27,18 @@ RSpec.describe HashDigest do
 
     it "returns the same digest regardless of hash structure" do
       first_input = {
-        a: [1, 2, 3, 4], b: %w(a b c d),
+        a: [1, 2, 3, 4], b: %w[a b c d],
         prior: "one",
         nested_tags: {
           number: 2,
           deep_nest: { foo: "bar" },
-          more_tags: %w(more and more),
+          more_tags: %w[more and more],
         }
       }
       second_input = {
-        b: %w(a c b d), a: [1, 4, 3, 2],
+        b: %w[a c b d], a: [1, 4, 3, 2],
         nested_tags: {
-          more_tags: %w(more more and),
+          more_tags: %w[more more and],
           number: 2,
           deep_nest: { foo: "bar" },
         },

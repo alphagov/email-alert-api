@@ -25,7 +25,7 @@ class SubscriptionsController < ApplicationController
           frequency: frequency,
           signon_user_uid: current_user.uid,
           source: existing_subscription ? :frequency_changed : :user_signed_up,
-          )
+        )
       end
 
       subscription = new_subscription || existing_subscription

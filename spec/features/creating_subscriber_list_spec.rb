@@ -1,6 +1,6 @@
 RSpec.describe "Creating subscriber lists", type: :request do
   scenario "creating and looking up subscriber lists" do
-    login_with(%w(internal_app status_updates))
+    login_with(%w[internal_app status_updates])
 
     params = { title: "Example", tags: {}, links: { person: { any: %w[test-123] } } }
 
@@ -20,7 +20,7 @@ RSpec.describe "Creating subscriber lists", type: :request do
   end
 
   scenario "creating and looking up legacy subscriber lists" do
-    login_with(%w(internal_app status_updates))
+    login_with(%w[internal_app status_updates])
 
     legacy_params = { title: "example", tags: {}, links: { person: %w[test-123] } }
     new_params = { title: "example", tags: {}, links: { person: { any: %w[test-123] } } }

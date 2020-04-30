@@ -12,7 +12,7 @@ RSpec.describe LinksValidator do
   context "when valid links are provided" do
     before {
       model.links = {
-        commodity_type: { any: %w(f3bbdec2-0e62-4520-a7fd-6ffd5d36e03a) },
+        commodity_type: { any: %w[f3bbdec2-0e62-4520-a7fd-6ffd5d36e03a] },
       }
     }
 
@@ -22,10 +22,10 @@ RSpec.describe LinksValidator do
   context "when invalid links are provided" do
     before {
       model.links = {
-        organisations: { any: %w(dogs cats) },
-        topics: { any: %w(dogs cats) },
+        organisations: { any: %w[dogs cats] },
+        topics: { any: %w[dogs cats] },
         foo: { any: %w([dogs] !cats) },
-        people: { any: %w(\u0000) },
+        people: { any: %w[\u0000] },
         policies: { any: "><script>alert(1);</script>" },
       }
     }

@@ -35,7 +35,7 @@ private
   end
 
   def columns
-    %i(address subject body subscriber_id)
+    %i[address subject body subscriber_id]
   end
 
   def body(content_change, subscriptions, address)

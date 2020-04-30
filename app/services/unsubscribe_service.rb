@@ -36,11 +36,11 @@ module UnsubscribeService
 
     def unsubscribe!(
       subscriber,
-          subscriptions,
-          reason,
-          email_marked_as_spam: nil,
-          ended_email_id: nil
-        )
+      subscriptions,
+      reason,
+      email_marked_as_spam: nil,
+      ended_email_id: nil
+    )
       ActiveRecord::Base.transaction do
         subscriptions.each do |subscription|
           subscription.end(reason: reason, ended_email_id: ended_email_id)

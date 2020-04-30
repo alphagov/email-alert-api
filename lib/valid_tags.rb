@@ -1,5 +1,5 @@
 class ValidTags
-  ALLOWED_TAGS = %i(
+  ALLOWED_TAGS = %i[
     aircraft_category
     aircraft_type
     alert_type
@@ -77,5 +77,5 @@ class ValidTags
     vessel_type
     will_continue_on
     withdrawn_date
-  ).freeze
+  ].freeze
 end

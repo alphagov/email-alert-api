@@ -31,7 +31,7 @@ module RequestHelpers
   end
 
   def subscribe_to_subscriber_list(subscriber_list_id, expected_status: 201,
-    address: "test@test.com", frequency: "immediately")
+                                   address: "test@test.com", frequency: "immediately")
     params = {
       subscriber_list_id: subscriber_list_id,
       address: address,

@@ -254,7 +254,7 @@ end
 
 def check_json_is_valid
   expect(response.status).to eq(200)
-  expect(data[:subscription].keys).to match_array(%i(
+  expect(data[:subscription].keys).to match_array(%i[
     id
     subscriber_list
     subscriber
@@ -265,5 +265,5 @@ def check_json_is_valid
     ended_email_id
     frequency
     source
-  ))
+  ])
 end

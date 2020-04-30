@@ -132,7 +132,7 @@ RSpec.describe "creating and delivering digests", type: :request do
   scenario "daily digest run" do
     login_with_internal_app
 
-    #create two subscriber lists with different links
+    # create two subscriber lists with different links
     list_one_topic_id = "0eb5d0f0-d384-4f27-9da8-3f9e9b22a820"
     list_two_topic_id = "a915e039-070b-4633-813d-187af61cad7a"
 
@@ -144,12 +144,12 @@ RSpec.describe "creating and delivering digests", type: :request do
       topics: { any: [list_two_topic_id] },
     })
 
-    #create two daily subscribers, one subscribed to daily digests for both
-    #subscriber_lists and the other for daily for subscriber_list_one only
+    # create two daily subscribers, one subscribed to daily digests for both
+    # subscriber_lists and the other for daily for subscriber_list_one only
     subscriber_one_address = "test-one@example.com"
     subscriber_two_address = "test-two@example.com"
 
-    #subscriber that shouldn't receive a digest
+    # subscriber that shouldn't receive a digest
     non_digest_subscriber_address = "test-three@example.com"
 
     subscribe_to_subscriber_list(
@@ -176,7 +176,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       frequency: Frequency::IMMEDIATELY,
     )
 
-    #publish two items to each list
+    # publish two items to each list
     Timecop.freeze "2017-01-01 09:30" do
       create_content_change(
         title: "Title one",
@@ -381,7 +381,7 @@ RSpec.describe "creating and delivering digests", type: :request do
   scenario "weekly digest run" do
     login_with_internal_app
 
-    #create two subscriber lists with different links
+    # create two subscriber lists with different links
     list_one_topic_id = "0eb5d0f0-d384-4f27-9da8-3f9e9b22a820"
     list_one_taxon_id = "86db0cbd-a1f9-4218-b571-ca0550265e33"
     list_two_taxon_id = "6416e4e0-c0c1-457a-8337-4bf8ed9d5f80"
@@ -394,8 +394,8 @@ RSpec.describe "creating and delivering digests", type: :request do
       taxon_tree: { all: [list_one_taxon_id, list_two_taxon_id] },
     })
 
-    #create two daily subscribers, one subscribed to daily digests for both
-    #subscriber_lists and the other for daily for subscriber_list_one only
+    # create two daily subscribers, one subscribed to daily digests for both
+    # subscriber_lists and the other for daily for subscriber_list_one only
     subscriber_one_address = "test-one@example.com"
     subscriber_two_address = "test-two@example.com"
 
@@ -425,7 +425,7 @@ RSpec.describe "creating and delivering digests", type: :request do
       frequency: Frequency::DAILY,
     )
 
-    #publish two items to each list
+    # publish two items to each list
     Timecop.freeze "2016-12-27 09:30" do
       create_content_change(
         title: "Title one",

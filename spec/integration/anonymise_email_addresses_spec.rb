@@ -86,7 +86,7 @@ RSpec.describe "Anonymising email addresses" do
   end
 
   it "covers all cases where email/address appears in the database" do
-    cases_covered = %w(subscribers.address emails.address users.email)
+    cases_covered = %w[subscribers.address emails.address users.email]
     other_columns = column_names - cases_covered
 
     cases_not_covered = other_columns.select do |name|

@@ -18,7 +18,7 @@ private
   attr_reader :message
 
   def columns
-    %i(message_id subscriber_list_id)
+    %i[message_id subscriber_list_id]
   end
 
   def records

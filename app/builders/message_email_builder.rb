@@ -31,7 +31,7 @@ private
   end
 
   def columns
-    %i(address subject body subscriber_id)
+    %i[address subject body subscriber_id]
   end
 
   def subject(message)

@@ -9,8 +9,8 @@ FactoryBot.define do
     base_path { "government/base_path" }
     change_note { "change note" }
     description { "description" }
-    links { Hash.new }
-    tags { Hash.new }
+    links { {} }
+    tags { {} }
     public_updated_at { Time.zone.now.to_s }
     email_document_supertype { "email document supertype" }
     government_document_supertype { "government document supertype" }
@@ -164,7 +164,7 @@ FactoryBot.define do
     end
 
     trait :medical_safety_alert do
-      tags { { format: %w[medical_safety_alert], alert_type: %w(devices drugs field-safety-notices company-led-drugs) } }
+      tags { { format: %w[medical_safety_alert], alert_type: %w[devices drugs field-safety-notices company-led-drugs] } }
     end
 
     factory :subscriber_list_with_subscribers do
@@ -326,7 +326,7 @@ FactoryBot.define do
       {
         "status_code" => 400,
         "errors" => ["error" => "ValidationError",
-                      "message" => "bad status is not one of [created, sending, sent, delivered, pending, failed, technical-failure, temporary-failure, permanent-failure, accepted, received]"],
+                     "message" => "bad status is not one of [created, sending, sent, delivered, pending, failed, technical-failure, temporary-failure, permanent-failure, accepted, received]"],
       }
     end
 

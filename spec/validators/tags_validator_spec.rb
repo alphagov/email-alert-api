@@ -12,9 +12,9 @@ RSpec.describe TagsValidator do
   context "when valid tags are provided" do
     before {
       model.tags = {
-        topics: { any: %w(dogs cats), all: %w(horses) },
-        policies: { any: %w(wWelcome1098-_/), all: %w(news_story) },
-        commodity_type: { any: %w(f3bbdec2-0e62-4520-a7fd-6ffd5d36e03a), all: %w(123-Abc) },
+        topics: { any: %w[dogs cats], all: %w[horses] },
+        policies: { any: %w[wWelcome1098-_/], all: %w[news_story] },
+        commodity_type: { any: %w[f3bbdec2-0e62-4520-a7fd-6ffd5d36e03a], all: %w[123-Abc] },
       }
     }
 
@@ -24,10 +24,10 @@ RSpec.describe TagsValidator do
   context "when invalid tags are provided" do
     before {
       model.tags = {
-        organisations: { any: %w(dogs cats) },
-        topics: { any: %w(dogs cats) },
+        organisations: { any: %w[dogs cats] },
+        topics: { any: %w[dogs cats] },
         foo: { any: %w([dogs] !cats) },
-        people: { any: %w(\u0000) },
+        people: { any: %w[\u0000] },
         world_locations: { any: "dogs" },
         policies: { any: "><script>alert(1);</script>" },
       }

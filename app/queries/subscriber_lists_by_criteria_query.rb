@@ -55,7 +55,7 @@ private
       key: key,
       # Postgres returns a string in double quotes where other double quote
       # characters are escaped
-      value: %{"#{value.gsub('"', '\\"')}"},
+      value: %("#{value.gsub('"', '\\"')}"),
     )
   end
 end

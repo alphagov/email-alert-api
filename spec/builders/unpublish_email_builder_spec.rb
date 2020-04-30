@@ -15,7 +15,7 @@ RSpec.describe UnpublishEmailBuilder do
           :subscriber,
           address: "address@test.com",
           id: 123,
-)
+        )
       }
       let(:emails) {
         [

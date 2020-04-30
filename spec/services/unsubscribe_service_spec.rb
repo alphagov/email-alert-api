@@ -22,8 +22,8 @@ RSpec.describe UnsubscribeService do
       end
 
       it "does not remove them if the email address update fails" do
-        allow_any_instance_of(Subscriber).
-          to receive(:valid?).and_raise("failed")
+        allow_any_instance_of(Subscriber)
+          .to receive(:valid?).and_raise("failed")
 
         expect { subject.subscriber!(subscriber, :unsubscribed) }
           .to raise_error("failed")
@@ -43,8 +43,8 @@ RSpec.describe UnsubscribeService do
     end
 
     it "does not remove the subscription if the email address update fails" do
-      allow_any_instance_of(Subscriber).
-        to receive(:valid?).and_raise("failed")
+      allow_any_instance_of(Subscriber)
+        .to receive(:valid?).and_raise("failed")
 
       expect { subject.subscriber!(subscriber, :unsubscribed) }
         .to raise_error("failed")

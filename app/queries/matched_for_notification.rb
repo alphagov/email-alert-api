@@ -1,6 +1,6 @@
 class MatchedForNotification
   def initialize(query_field: :tags, scope: SubscriberList)
-    raise ArgumentError.new("query_field must be `:tags` or `:links`") unless %i{tags links}.include?(query_field)
+    raise ArgumentError.new("query_field must be `:tags` or `:links`") unless %i[tags links].include?(query_field)
 
     @query_field = query_field.to_sym
     @scope = scope
