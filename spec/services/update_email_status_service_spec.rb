@@ -53,6 +53,19 @@ RSpec.describe UpdateEmailStatusService do
       include_examples "email finished_sending_at timestamp"
     end
 
+    context "when a delivery attempt is a technical failure" do
+      let(:delivery_attempt) do
+        create(:technical_failure_delivery_attempt, email: email)
+      end
+
+      it "marks an email as failed" do
+        expect { described_class.call(delivery_attempt) }
+          .to change { email.reload.status }
+          .to("failed")
+      end
+      include_examples "email finished_sending_at timestamp"
+    end
+
     context "when a delivery attempt is delivered" do
       let(:delivery_attempt) do
         create(:delivered_delivery_attempt, email: email)
