@@ -15,7 +15,7 @@ class SubscriptionAuthEmailBuilder
       subject: subject,
       body: body,
       address: address,
-      )
+    )
   end
 
   private_class_method :new

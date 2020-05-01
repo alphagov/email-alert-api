@@ -20,11 +20,11 @@ RSpec.describe DataExporter do
       same_subscriber = create(:subscriber)
       create(
         :subscription, :ended, subscriber: same_subscriber, subscriber_list: subscriber_list,
-        created_at: "2018-01-04", ended_at: "2018-01-05", updated_at: "2018-01-05"
+                               created_at: "2018-01-04", ended_at: "2018-01-05", updated_at: "2018-01-05"
       )
       create(
         :subscription, subscriber: same_subscriber, subscriber_list: subscriber_list,
-        created_at: "2018-01-06", updated_at: "2018-01-06"
+                       created_at: "2018-01-06", updated_at: "2018-01-06"
       )
     end
 
@@ -46,7 +46,7 @@ RSpec.describe DataExporter do
       create(:subscription, subscriber_list: subscriber_list_baz)
     end
 
-    subject { DataExporter.new.export_csv_from_slugs(%w(foo bar)) }
+    subject { DataExporter.new.export_csv_from_slugs(%w[foo bar]) }
 
     it "exports subscriber lists by slug" do
       expect { subject }.to output("id,title,count\n1,Foo,1\n2,Bar,1\n").to_stdout

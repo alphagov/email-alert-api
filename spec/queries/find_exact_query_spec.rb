@@ -222,7 +222,7 @@ RSpec.describe FindExactQuery do
                                   topics: { all: %w[taxon] } },
                           document_type: "document_type")
       subscriber_list = create_subscriber_list(tags: { policies: { any: %w[beer] },
-                                                      topics: { all: %w[taxon] } },
+                                                       topics: { all: %w[taxon] } },
                                                document_type: "document_type")
       expect(query.exact_match).to eq(subscriber_list)
     end

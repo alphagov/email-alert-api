@@ -20,7 +20,7 @@ private
 
   def count_subscription_contents
     @count_subscription_contents ||= begin
-      group_sql = ActiveRecord::Base::sanitize_sql([
+      group_sql = ActiveRecord::Base.sanitize_sql([
         "CASE WHEN subscription_contents.created_at < ? THEN 'critical' ELSE 'warning' END",
         critical_latency.ago,
       ])

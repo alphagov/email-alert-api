@@ -31,7 +31,7 @@ private
   def import_subscription_content(message)
     ensure_subscription_content_import_running_only_once(message) do
       SubscriptionContent.import_ignoring_duplicates(
-        %i(message_id subscription_id),
+        %i[message_id subscription_id],
         subscription_ids(message).map { |id| [message.id, id] },
       )
     end

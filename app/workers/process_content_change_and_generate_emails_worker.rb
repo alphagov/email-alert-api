@@ -30,7 +30,7 @@ private
   def import_subscription_content(content_change)
     ensure_subscription_content_import_running_only_once(content_change) do
       SubscriptionContent.import_ignoring_duplicates(
-        %i(content_change_id subscription_id),
+        %i[content_change_id subscription_id],
         subscription_ids(content_change).map { |id| [content_change.id, id] },
       )
     end

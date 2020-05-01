@@ -10,10 +10,10 @@ RSpec.describe UnpublishHandlerService do
 
   def create_subscriber_list(
     links: {},
-        tags: {},
-        title: "First Subscription",
-        address: "test@example.com"
-      )
+    tags: {},
+    title: "First Subscription",
+    address: "test@example.com"
+  )
     subscriber = create(
       :subscriber,
       address: address,
@@ -37,29 +37,29 @@ RSpec.describe UnpublishHandlerService do
       expect { described_class.call(@content_id, @redirect) }.to change { Email.count }.by(2)
     end
     it "uses the redirection in the body of the email" do
-      expect(DeliveryRequestService).to receive(:call).
-          with(email: having_attributes(body: include(@redirect.url, @redirect.title))).twice
+      expect(DeliveryRequestService).to receive(:call)
+          .with(email: having_attributes(body: include(@redirect.url, @redirect.title))).twice
       described_class.call(@content_id, @redirect)
     end
     it "contains a link to manage emails" do
-      expect(DeliveryRequestService).to receive(:call).
-        with(email: having_attributes(body: include("address=test%40example.com"))).once
-      expect(DeliveryRequestService).to receive(:call).
-        with(email: having_attributes(body: include("address=govuk-email-courtesy-copies%40digital.cabinet-office.gov.uk"))).once
+      expect(DeliveryRequestService).to receive(:call)
+        .with(email: having_attributes(body: include("address=test%40example.com"))).once
+      expect(DeliveryRequestService).to receive(:call)
+        .with(email: having_attributes(body: include("address=govuk-email-courtesy-copies%40digital.cabinet-office.gov.uk"))).once
       described_class.call(@content_id, @redirect)
     end
     it "sends the email and a courtesy email to the DeliverRequestWorker" do
-      expect(DeliveryRequestService).to receive(:call).
-          with(email: having_attributes(subject: "Update from GOV.UK – First Subscription",
-                                        address: "test@example.com"))
-      expect(DeliveryRequestService).to receive(:call).
-          with(email: having_attributes(subject: "Update from GOV.UK – First Subscription",
-                                        address: Email::COURTESY_EMAIL))
+      expect(DeliveryRequestService).to receive(:call)
+          .with(email: having_attributes(subject: "Update from GOV.UK – First Subscription",
+                                         address: "test@example.com"))
+      expect(DeliveryRequestService).to receive(:call)
+          .with(email: having_attributes(subject: "Update from GOV.UK – First Subscription",
+                                         address: Email::COURTESY_EMAIL))
       described_class.call(@content_id, @redirect)
     end
     it "sends an email with some specified text" do
-      expect(DeliveryRequestService).to receive(:call).
-          with(email: having_attributes(body: include(body))).twice
+      expect(DeliveryRequestService).to receive(:call)
+          .with(email: having_attributes(body: include(body))).twice
       described_class.call(@content_id, @redirect)
     end
   end
@@ -99,8 +99,8 @@ RSpec.describe UnpublishHandlerService do
       before :each do
         @subscriber_list = create_subscriber_list(links: { taxon_tree: { any: [@content_id] } })
         create_subscriber_list(links: { taxon_tree: { all: [SecureRandom.uuid] } },
-                                title: "Second Subscriber List",
-                                address: "test2@example.com")
+                               title: "Second Subscriber List",
+                               address: "test2@example.com")
       end
       it_behaves_like "it_sends_an_email_with_body_including", "has ended because this topic no longer exists on GOV.UK"
       it_behaves_like "it_unsubscribes_all_subscribers"

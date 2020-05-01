@@ -27,13 +27,13 @@ class DataExporter
 
 private
 
-  CSV_HEADERS = %i(id title count).freeze
+  CSV_HEADERS = %i[id title count].freeze
 
-  EUROPEAN_COUNTRIES = %w(
+  EUROPEAN_COUNTRIES = %w[
     austria belgium bulgaria croatia cyprus czech-republic denmark estonia finland france germany greece hungary
     ireland italy latvia lithuania luxembourg malta netherlands poland portugal slovakia slovenia spain sweden
     switzerland iceland norway liechtenstein
-  ).freeze
+  ].freeze
 
   def living_in_europe_subscriber_lists
     slugs = EUROPEAN_COUNTRIES.map { |country| "living-in-#{country}" }
@@ -67,7 +67,7 @@ private
   end
 
   def travel_advice_csv(subscriber_lists, at: nil)
-    CSV($stdout, headers: %i(title subscribed unsubscribed immediately daily weekly), write_headers: true) do |csv|
+    CSV($stdout, headers: %i[title subscribed unsubscribed immediately daily weekly], write_headers: true) do |csv|
       subscriber_lists.find_each do |subscriber_list|
         csv << present_travel_advice_report(subscriber_list, at: at)
       end

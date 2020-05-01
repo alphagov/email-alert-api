@@ -18,7 +18,7 @@ private
   attr_reader :content_change
 
   def columns
-    %i(content_change_id subscriber_list_id)
+    %i[content_change_id subscriber_list_id]
   end
 
   def records

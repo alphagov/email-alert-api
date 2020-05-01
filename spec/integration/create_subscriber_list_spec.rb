@@ -29,7 +29,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       subscriber_list = response_hash["subscriber_list"]
 
       expect(subscriber_list.keys.to_set.sort).to eq(
-        %w{
+        %w[
           id
           title
           slug
@@ -48,7 +48,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
           active_subscriptions_count
           tags_digest
           links_digest
-        }.to_set.sort,
+        ].to_set.sort,
       )
 
       expect(subscriber_list).to include(
@@ -151,7 +151,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
                                      location: { all: %w[france germany] } },
                              links: { topics: { any: %w[oil-and-gas-licensing] },
-                                     location: { all: %w[france germany] } })
+                                      location: { all: %w[france germany] } })
       expect(SubscriberList.last.tags_digest).to eq(digested(SubscriberList.last.tags))
       expect(SubscriberList.last.links_digest).to eq(digested(SubscriberList.last.links))
 
@@ -173,7 +173,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       it "returns an error if link isn't an array" do
         create_subscriber_list(
           links: { topics: "uuid-888" },
-          )
+        )
 
         expect(response.status).to eq(422)
       end

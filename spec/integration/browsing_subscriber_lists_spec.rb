@@ -223,7 +223,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
               topics: { any: %w[vat-rates] },
               content_purpose_supergroup: { any: %w[news_and_communications] },
             },
-  )
+          )
           expect(response.status).to eq(200)
 
           subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
@@ -236,7 +236,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           get_subscriber_list(
             tags: {
               topics: { any: %w[vat-rates] },
-              content_purpose_subgroup: { any: %w(news) },
+              content_purpose_subgroup: { any: %w[news] },
             },
             document_type: "tax",
           )
@@ -244,12 +244,12 @@ RSpec.describe "Browsing subscriber lists", type: :request do
         end
 
         it "finds the subscriber list if the content_purpose_subgroup matches" do
-          _alpha = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w(updates_and_alerts) } })
-          beta = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w(news) } })
-          _gamma = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w() } })
+          _alpha = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w[updates_and_alerts] } })
+          beta = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w[news] } })
+          _gamma = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w[] } })
 
           get_subscriber_list(
-            tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w(news) } },
+            tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w[news] } },
           )
           expect(response.status).to eq(200)
 

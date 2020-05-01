@@ -9,7 +9,7 @@ class SubscriberList < ApplicationRecord
   validate :link_values_are_valid
 
   validates :title, presence: true
-  validates_uniqueness_of :slug
+  validates :slug, uniqueness: true
   validates :url, root_relative_url: true, allow_nil: true
   validates :group_id, uuid: true, allow_nil: true
 
@@ -24,8 +24,8 @@ class SubscriberList < ApplicationRecord
   end
 
   scope :find_by_links_value, ->(content_id) do
-      # For this query to return the content id has to be wrapped in a
-      # double quote blame psql 9.
+    # For this query to return the content id has to be wrapped in a
+    # double quote blame psql 9.
     sql = <<~SQLSTRING
       :id IN (
            SELECT json_array_elements(
@@ -56,8 +56,8 @@ class SubscriberList < ApplicationRecord
   end
 
   def to_json(options = {})
-    options[:except] ||= %i{signon_user_uid}
-    options[:methods] ||= %i{subscription_url gov_delivery_id active_subscriptions_count}
+    options[:except] ||= %i[signon_user_uid]
+    options[:methods] ||= %i[subscription_url gov_delivery_id active_subscriptions_count]
     super(options)
   end
 
@@ -73,12 +73,12 @@ private
 
   def link_values_are_valid
     unless valid_subscriber_criteria(:links)
-      self.errors.add(:links, "All link values must be sent as Arrays")
+      errors.add(:links, "All link values must be sent as Arrays")
     end
   end
 
   def valid_subscriber_criteria(link_or_tags)
-    self.send(link_or_tags).values.all? do |hash|
+    send(link_or_tags).values.all? do |hash|
       hash.all? do |operator, values|
         %i[all any].include?(operator) && values.is_a?(Array)
       end

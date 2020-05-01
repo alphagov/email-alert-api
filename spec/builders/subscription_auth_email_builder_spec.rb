@@ -11,7 +11,7 @@ RSpec.describe SubscriptionAuthEmailBuilder do
         token: token,
         topic_id: topic_id,
         frequency: frequency,
-        )
+      )
     end
 
     it { is_expected.to be_instance_of(Email) }

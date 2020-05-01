@@ -72,7 +72,7 @@ private
   end
 
   def import_digest_run_subscribers(params)
-    columns = %i(subscriber_id digest_run_id)
+    columns = %i[subscriber_id digest_run_id]
     DigestRunSubscriber.import!(columns, params).ids
   end
 end

@@ -1,7 +1,7 @@
 class Subscriber < ApplicationRecord
   with_options allow_nil: true do
     validates :address, email_address: true
-    validates_uniqueness_of :address, case_sensitive: false
+    validates :address, uniqueness: { case_sensitive: false }
   end
 
   validate :not_nullified_and_activated
@@ -59,7 +59,7 @@ class Subscriber < ApplicationRecord
   end
 
   def as_json(options = {})
-    options[:except] ||= %i(signon_user_uid)
+    options[:except] ||= %i[signon_user_uid]
     super(options)
   end
 

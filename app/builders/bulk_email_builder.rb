@@ -20,7 +20,7 @@ private
   attr_reader :subject, :body, :subscriber_lists
 
   def columns
-    %i(address subject body subscriber_id)
+    %i[address subject body subscriber_id]
   end
 
   def records
