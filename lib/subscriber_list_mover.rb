@@ -1,7 +1,7 @@
 class SubscriberListMover
   attr_reader :from_slug, :to_slug
 
-  def new(from_slug:, to_slug:)
+  def initialize(from_slug:, to_slug:)
     @from_slug = from_slug
     @to_slug = to_slug
   end
