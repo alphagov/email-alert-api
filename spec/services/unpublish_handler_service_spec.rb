@@ -125,8 +125,8 @@ RSpec.describe UnpublishHandlerService do
     context "there is a non-taxon subscriber list" do
       before :each do
         create_subscriber_list(links: {
-            "world_locations" => { any: [SecureRandom.uuid, SecureRandom.uuid] },
-            "another" => { any: [@content_id] },
+          "world_locations" => { any: [SecureRandom.uuid, SecureRandom.uuid] },
+          "another" => { any: [@content_id] },
         })
       end
       it_behaves_like "it_does_not_send_an_email"
