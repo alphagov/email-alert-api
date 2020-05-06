@@ -79,5 +79,18 @@ RSpec.describe EmailArchivePresenter do
           .to raise_error(KeyError)
       end
     end
+
+    context "when the email was never sent" do
+      it "still presents the data" do
+        record["finished_sending_at"] = nil
+
+        expect(described_class.for_s3(record, archived_at)).to match(
+          a_hash_including(
+            finished_sending_at_utc: nil,
+            id: record["id"],
+          ),
+        )
+      end
+    end
   end
 end
