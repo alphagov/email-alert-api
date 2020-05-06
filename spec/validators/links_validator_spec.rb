@@ -33,7 +33,7 @@ RSpec.describe LinksValidator do
     it "has an error" do
       expect(model.valid?).to be false
       expect(model.errors[:links]).to match([
-       "foo, people, and policies has a value with an invalid format.",
+        "foo, people, and policies has a value with an invalid format.",
       ])
     end
   end
