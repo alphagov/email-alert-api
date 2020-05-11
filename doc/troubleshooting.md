@@ -8,6 +8,14 @@ A change to a content item creates a `ContentChange` record, which has a `Subscr
 
 ![domain](https://github.com/alphagov/email-alert-api/blob/master/doc/domain.png?raw=true)
 
+## The digest run workflow
+
+A daily task (for the daily digest) or a Monday task (for the weekly digest) runs as a scheduled task in the `DigestInitiatorService`. This creates a `DigestRun`, then fetches the IDs of the subscribers and creates a `DigestRunSubscriber` record for each one, before enqueuing the digest run subscribers in the `DigestGenerationWorker`.
+
+This worker uses a `SubscriptionContentChangeQuery` to fetch subscriptions with content changes, and creates an `Email` using the `DigestEmailBuilder` and composed of `SubscriptionContent`.
+
+![digests](https://github.com/alphagov/email-alert-api/blob/master/doc/digests.png?raw=true)
+
 ## Fixing "PG::InsufficientPrivilege" error in the development VM
 
 email-alert-api relies on PostgreSQL's `uuid-ossp` module. This is not
