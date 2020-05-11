@@ -1,5 +1,13 @@
 # Troubleshooting
 
+## How email sending is triggered by content changes
+
+We attempt to send emails to subscribers when content changes if they have a subscription for a subscribable that matches.
+
+A change to a content item creates a `ContentChange` record, which has a `SubscriptionContent` that belongs to an `Email`. The `SubscriptionContent` is linked to a `Subscription`, which has a `Subscriber`, and belongs to a `Subscribable`. A `DeliveryAttempt` is made on the `Email`.
+
+![domain](https://github.com/alphagov/email-alert-api/blob/master/doc/domain.png?raw=true)
+
 ## Fixing "PG::InsufficientPrivilege" error in the development VM
 
 email-alert-api relies on PostgreSQL's `uuid-ossp` module. This is not
