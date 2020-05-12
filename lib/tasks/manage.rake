@@ -1,6 +1,33 @@
 require "csv"
 
 namespace :manage do
+  desc "View all subscriptions for a subscriber"
+  task :view_subscriptions, [:email_address] => :environment do |_t, args|
+    email_address = args[:email_address]
+    subscriber = Subscriber.find_by_address(email_address)
+    abort("Cannot find any subscriber with email address #{email_address}.") if subscriber.nil?
+
+    results = subscriber.subscriptions.map do |subscription|
+      subscriber_list = SubscriberList.find(subscription.subscriber_list_id)
+      {
+        status: subscription.ended_at.present? ? "Inactive (#{subscription.ended_reason})" : "Active",
+        subscriber_list: "#{subscriber_list.title} (slug: #{subscriber_list.slug})",
+        frequency: subscription.frequency.to_s,
+        timeline: "Subscribed #{subscription.created_at}#{subscription.ended_at.present? ? ", Ended #{subscription.ended_at}" : ''}",
+      }
+    end
+    columns = results.first.each_with_object({}) do |(col, _), h|
+      heading = col.to_s.humanize
+      h[col] = { label: heading, width: [results.map { |g| g[col].size }.max, label.size].max }
+    end
+
+    puts "| #{columns.map { |_, g| g[:label].ljust(g[:width]) }.join(' | ')} |"
+    results.each do |h|
+      str = h.keys.map { |k| h[k].ljust(columns[k][:width]) }.join(" | ")
+      puts "| #{str} |"
+    end
+  end
+
   desc "Change the email address of a subscriber"
   task :change_email_address, %i[old_email_address new_email_address] => :environment do |_t, args|
     old_email_address = args[:old_email_address]
