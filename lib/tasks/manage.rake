@@ -51,6 +51,7 @@ namespace :manage do
   desc "Unsubscribe a subscriber from a single subscription"
   task :unsubscribe_single_subscription, %i[email_address subscriber_list_slug] => :environment do |_t, args|
     email_address = args[:email_address]
+    subscriber_list_slug = args[:subscriber_list_slug]
     subscriber = Subscriber.find_by_address(email_address)
     subscriber_list = SubscriberList.find_by(slug: subscriber_list_slug)
     if subscriber.nil?
