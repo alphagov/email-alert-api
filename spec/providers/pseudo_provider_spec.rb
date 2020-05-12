@@ -3,7 +3,7 @@ RSpec.describe PseudoProvider do
     it "logs to a file" do
       allow(Logger).to receive(:new).and_return(logger = double)
 
-      expect(logger).to receive(:info).with(->(string) {
+      expect(logger).to receive(:info).with(lambda { |string|
         expect(string).to include("Sending email to email@address.com")
         expect(string).to include("Subject: subject")
         expect(string).to include("Body: body")

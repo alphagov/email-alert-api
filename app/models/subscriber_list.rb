@@ -23,7 +23,7 @@ class SubscriberList < ApplicationRecord
     self.links_digest = HashDigest.new(links).generate
   end
 
-  scope :find_by_links_value, ->(content_id) do
+  scope :find_by_links_value, lambda { |content_id|
     # For this query to return the content id has to be wrapped in a
     # double quote blame psql 9.
     sql = <<~SQLSTRING
@@ -37,11 +37,11 @@ class SubscriberList < ApplicationRecord
       )
     SQLSTRING
     where(sql, id: "\"#{content_id}\"")
-  end
+  }
 
-  scope :matching_criteria_rules, ->(criteria_rules) do
+  scope :matching_criteria_rules, lambda { |criteria_rules|
     SubscriberListsByCriteriaQuery.call(self, criteria_rules)
-  end
+  }
 
   def subscription_url
     PublicUrlService.subscription_url(slug: slug)

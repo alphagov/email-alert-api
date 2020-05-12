@@ -44,13 +44,13 @@ RSpec.describe "Create an auth token", type: :request do
           ),
         ),
       )
-      .with { |request|
+      .with do |request|
         token = request.body.match(/token=([^&\\]+)/)[1]
 
         expect(decrypt_and_verify_token(token)).to eq(
           "subscriber_id" => subscriber.id,
           "redirect" => redirect,
         )
-      }
+      end
   end
 end

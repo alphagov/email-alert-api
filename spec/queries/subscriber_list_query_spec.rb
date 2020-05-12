@@ -80,12 +80,12 @@ RSpec.describe SubscriberListQuery do
   end
 
   context "when a content_purpose_supergroup is provided" do
-    let(:query_params) {
+    let(:query_params) do
       {
         document_type: "travel_advice",
         tags: { content_purpose_supergroup: "guidance_and_regulation" },
       }
-    }
+    end
 
     it "includes subscriber lists where the content_purpose_supergroup is set to the desired value" do
       list_params = { document_type: "travel_advice", tags: { content_purpose_supergroup: { any: %w[guidance_and_regulation] } } }

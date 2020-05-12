@@ -11,11 +11,11 @@ RSpec.describe Reports::NotificationsFromNotify do
         ).to_return(body: mocked_response.to_json)
       end
 
-      let(:mocked_response) {
+      let(:mocked_response) do
         attributes_for(
           :client_notifications_collection,
         )[:body]
-      }
+      end
 
       it "prints details about one notification" do
         # We generate a unique reference for each email sent so we should only
@@ -52,9 +52,9 @@ RSpec.describe Reports::NotificationsFromNotify do
         ).to_return(body: empty_response.to_json)
       end
 
-      let(:empty_response) {
+      let(:empty_response) do
         attributes_for(:empty_client_notifications_collection)[:body]
-      }
+      end
 
       it "does not return any notifications" do
         client = instance_double("Notifications::Client")
@@ -86,9 +86,9 @@ RSpec.describe Reports::NotificationsFromNotify do
         )
       end
 
-      let(:error_response) {
+      let(:error_response) do
         attributes_for(:client_request_error)[:body]
-      }
+      end
 
       it "returns a request error" do
         client = instance_double("Notifications::Client")

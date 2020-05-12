@@ -13,26 +13,26 @@ class Subscription < ApplicationRecord
   scope :active, -> { where(ended_at: nil) }
   scope :ended, -> { where.not(ended_at: nil) }
 
-  scope :active_on, ->(date) do
+  scope :active_on, lambda { |date|
     where("subscriptions.created_at <= ?", date)
       .where("subscriptions.ended_at IS NULL OR subscriptions.ended_at > ?", date)
-  end
+  }
 
-  scope :for_content_change, ->(content_change) do
+  scope :for_content_change, lambda { |content_change|
     joins(subscriber_list: :matched_content_changes)
       .where(matched_content_changes: { content_change_id: content_change.id })
-  end
+  }
 
-  scope :for_message, ->(message) do
+  scope :for_message, lambda { |message|
     joins(subscriber_list: :matched_messages)
       .where(matched_messages: { message_id: message.id })
-  end
+  }
 
-  scope :subscription_ids_by_subscriber, -> do
+  scope :subscription_ids_by_subscriber, lambda {
     group(:subscriber_id)
       .pluck(:subscriber_id, Arel.sql("ARRAY_AGG(subscriptions.id)"))
       .to_h
-  end
+  }
 
   def as_json(options = {})
     options[:except] ||= %i[signon_user_uid subscriber_list_id subscriber_id]

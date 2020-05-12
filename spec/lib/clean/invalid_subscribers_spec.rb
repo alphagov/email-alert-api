@@ -8,7 +8,7 @@ RSpec.describe Clean::InvalidSubscribers do
       @subscriber5 = FactoryBot.create(:subscriber, id: 5)
     end
 
-    let(:sent_csv) {
+    let(:sent_csv) do
       <<~CSV
         subscriber_id,count
         1,10
@@ -16,9 +16,9 @@ RSpec.describe Clean::InvalidSubscribers do
         6,3
         7,4
       CSV
-    }
+    end
 
-    let(:failed_csv) {
+    let(:failed_csv) do
       <<~CSV
         subscriber_id,count
         2,#{Clean::InvalidSubscribers::MIN_FAILURES}
@@ -26,7 +26,7 @@ RSpec.describe Clean::InvalidSubscribers do
         4,1
         5,#{Clean::InvalidSubscribers::MIN_FAILURES}
       CSV
-    }
+    end
 
     before :each do
       Clean::InvalidSubscribers.new(sent_csv: StringIO.new(sent_csv),
@@ -48,20 +48,20 @@ RSpec.describe Clean::InvalidSubscribers do
   end
 
   context "the failed csv is bigger than the successes csv" do
-    let(:sent_csv) {
+    let(:sent_csv) do
       <<~CSV
         subscriber_id,count
         1,10
       CSV
-    }
+    end
 
-    let(:failed_csv) {
+    let(:failed_csv) do
       <<~CSV
         subscriber_id,count
         2,5
         3,5
       CSV
-    }
+    end
     it "reports there has been a mistake" do
       expect {
         Clean::InvalidSubscribers.new(sent_csv: StringIO.new(sent_csv),
