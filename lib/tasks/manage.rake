@@ -21,6 +21,10 @@ namespace :manage do
       h[col] = { label: heading, width: [results.map { |g| g[col].size }.max, label.size].max }
     end
 
+    # Example output:
+    # | Status                  | SubscriberList            | Frequency | Timeline                                                       |
+    # | Inactive (unsubscribed) | Test foo (slug: test-foo) | daily     | Subscribed 2020-04-18 15:21:20 +0100, Ended 2020-05-12 11:41:04 +0100 |
+    # | Active                  | Bar bar (slug: bar-bar)   | weekly    | Subscribed 2019-06-10 13:48:43 +0100                           |
     puts "| #{columns.map { |_, g| g[:label].ljust(g[:width]) }.join(' | ')} |"
     results.each do |h|
       str = h.keys.map { |k| h[k].ljust(columns[k][:width]) }.join(" | ")
