@@ -29,6 +29,31 @@ $ bundle exec rake manage:change_email_address[<old_email_address>, <new_email_a
 
 [change]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:change_email_address[from@example.org,to@example.org]
 
+## View subscriber's subscriptions
+
+This task shows you all of the active and inactive subscriptions for a given user.
+
+```bash
+$ bundle exec rake manage:view_subscriptions[<email_address>]
+```
+
+[⚙ Run rake task on production][view]
+
+[view]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:view_subscriptions[email@example.org]
+
+## Unsubscribe a subscriber from a specific subscription
+
+This task unsubscribes one subscriber from a subscription, given an email address and a subscriber list slug.
+You can find out the slug of the subscriber list by running the `view_subscriptions` rake task. above
+
+```bash
+$ bundle exec rake manage:unsubscribe_single_subscription[<email_address>,<subscriber_list_slug>]
+```
+
+[⚙ Run rake task on production][unsub_specific]
+
+[unsub_specific]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:unsubscribe_single_subscription[email@example.org,subscriber-list-slug]
+
 ## Unsubscribe a subscriber from all emails
 
 This task unsubscribes one subscriber from everything they have subscribed to.
