@@ -71,7 +71,7 @@ namespace :manage do
   end
 
   desc "Unsubscribe a subscriber from all subscriptions"
-  task :unsubscribe_single, [:email_address] => :environment do |_t, args|
+  task :unsubscribe_all_subscriptions, [:email_address] => :environment do |_t, args|
     email_address = args[:email_address]
     subscriber = Subscriber.find_by_address(email_address)
     if subscriber.nil?
@@ -82,7 +82,7 @@ namespace :manage do
     end
   end
 
-  desc "Unsubscribe a list of subscribers from a CSV file"
+  desc "Unsubscribe a list of subscribers (from a CSV file) from all subscriptions"
   task :unsubscribe_bulk_from_csv, [:csv_file_path] => :environment do |_t, args|
     email_addresses = CSV.read(args[:csv_file_path])
     email_addresses.each do |email_address|

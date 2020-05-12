@@ -34,12 +34,12 @@ $ bundle exec rake manage:change_email_address[<old_email_address>, <new_email_a
 This task unsubscribes one subscriber from everything they have subscribed to.
 
 ```bash
-$ bundle exec rake manage:unsubscribe_single[<email_address>]
+$ bundle exec rake manage:unsubscribe_all_subscriptions[<email_address>]
 ```
 
 [⚙ Run rake task on production][unsub]
 
-[unsub]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:unsubscribe_single[email@example.org]
+[unsub]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:unsubscribe_all_subscriptions[email@example.org]
 
 ## Unsubscribe a list of subscribers from all emails in bulk
 
