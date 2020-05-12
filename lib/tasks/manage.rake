@@ -18,7 +18,7 @@ namespace :manage do
     end
     columns = results.first.each_with_object({}) do |(col, _), h|
       heading = col.to_s.humanize
-      h[col] = { label: heading, width: [results.map { |g| g[col].size }.max, label.size].max }
+      h[col] = { label: heading, width: [results.map { |g| g[col].size }.max, heading.size].max }
     end
 
     # Example output:
