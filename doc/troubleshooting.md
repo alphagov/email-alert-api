@@ -4,9 +4,14 @@
 
 We attempt to send emails to subscribers when content changes if they have a subscription for a subscribable that matches.
 
-A change to a content item creates a `ContentChange` record, which has a `SubscriptionContent` that belongs to an `Email`. The `SubscriptionContent` is linked to a `Subscription`, which has a `Subscriber`, and belongs to a `Subscribable`. A `DeliveryAttempt` is made on the `Email`.
+The [email-alert-service] makes a POST request which is handled by the email-alert-api `ContentChangeController`
+to create a `ContentChange` record, which has a `SubscriptionContent` that belongs to an `Email`.
+The `SubscriptionContent` is linked to a `Subscription`, which has a `Subscriber`, and belongs to a `Subscribable`.
+A `DeliveryAttempt` is made on the `Email`.
 
 ![domain](https://github.com/alphagov/email-alert-api/blob/master/doc/domain.png?raw=true)
+
+[email-alert-service]: https://github.com/alphagov/email-alert-service
 
 ## The digest run workflow
 
@@ -18,18 +23,21 @@ This worker uses a `SubscriptionContentChangeQuery` to fetch subscriptions with 
 
 ## How Email Alert API interacts with Notify
 
-email-alert-service makes a POST request which is handled by the email-alert-api `ContentChangeController`
-to create a `ContentChange` and enqueue a `ProcessContentChangeWorker`.
-
-This Sidekiq worker uses `SubscriptionMatcher` to find the affected `SubscriptionContent` and enqueues an `EmailGenerationWorker`.
+The `ContentChangeController` enqueues a `ProcessContentChangeWorker` Sidekiq worker, which
+uses `SubscriptionMatcher` to find the affected `SubscriptionContent` and enqueues an `EmailGenerationWorker`.
 
 The [digest run workflow](#the-digest-run-workflow) is followed in another Sidekiq worker to enqueue the email.
 
-This last Sidekiq worker creates a `DeliveryAttempt` and sends the email to GOV.UK Notify. It changes its status to `sent_to_notify`.
+This last Sidekiq worker creates a `DeliveryAttempt` and sends the email to GOV.UK Notify. It changes its status to `sending`.
 
-A continuous process searches all delivery attempts for the `sent_to_notify` status and queries for a status update from Notify. If Notify reports a success, the `DeliveryAttempt` is set to `success`, otherwise it is given a fail state and an error message is logged on the record. At this point, logic plays out to, for example, retry in an hour, or blacklist the subscriber.
+[Notify uses a callback][notify-callback] to tell `StatusUpdatesController` the status of the message.
+This calls the `StatusUpdateService`. If a success was reported, then the `DeliveryAttempt` is set to `success`,
+otherwise it is given a fail state and an error message is logged on the record.
+At this point, logic plays out to, for example, retry in an hour, or blacklist the subscriber.
 
 ![sequence diagram](https://github.com/alphagov/email-alert-api/blob/master/doc/sequence_diagram.png?raw=true)
+
+[notify-callback]: https://docs.notifications.service.gov.uk/ruby.html#delivery-receipts
 
 ## Fixing "PG::InsufficientPrivilege" error in the development VM
 

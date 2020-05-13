@@ -1,6 +1,7 @@
 @startuml
 
-skinparam dpi 300
+' You can paste this content into https://plantuml-editor.kkeisuke.com/ to generate the PNG
+skinparam dpi 150
 
 actor email_alert_service as "email-alert-service"
 participant controller as "ContentChangeController"
@@ -14,7 +15,8 @@ database email as "Email"
 participant email_renderer as "EmailRenderer"
 participant delivery_request_worker as "DeliveryRequestWorker"
 database delivery_attempt as "DeliveryAttempt"
-control delivery_monitor as "DeliveryMonitor"
+participant status_update_service as "StatusUpdateService"
+participant status_updates_controller as "StatusUpdatesController"
 participant govuk_notify as "GOV.UK Notify" #orange
 
 email_alert_service -> controller : POST /create
@@ -64,30 +66,27 @@ group sidekiq
   delivery_request_worker -> delivery_attempt : create with email, state=ready_to_send
   delivery_attempt -> delivery_request_worker : instance
   delivery_request_worker -> govuk_notify : request to deliver email
-  delivery_request_worker -> delivery_attempt : set state=sent_to_notify and save
+  delivery_request_worker -> delivery_attempt : set state=sending and save
   delivery_request_worker -> email : set processed_at and save
 end group
 
-group run continuously
-  delivery_monitor -> delivery_attempt : find by state=sent_to_notify
-  delivery_attempt -> delivery_monitor : instance
-  delivery_monitor -> govuk_notify : get status
-  govuk_notify -> delivery_monitor : status
+group callback
+  delivery_attempt -> status_update_service : instance
+  govuk_notify -> status_updates_controller : status
+  status_updates_controller -> status_update_service : status
 
   group if success
-    delivery_monitor -> delivery_attempt : set success
-    delivery_monitor -> delivery_attempt : save
+    status_update_service -> delivery_attempt : set success
+    status_update_service -> delivery_attempt : save
   end group
 
   group if failed
-    delivery_monitor -> delivery_attempt : set failed, error message
-    delivery_monitor -> delivery_attempt : save
-    delivery_monitor -> delivery_attempt : find others for email
-    delivery_attempt -> delivery_monitor : instances
-    delivery_monitor -> delivery_monitor : ... decide what to do\ne.g. retry in an hour\ne.g. blacklist subscriber
+    status_update_service -> delivery_attempt : set failed, error message
+    status_update_service -> delivery_attempt : save
+    status_update_service -> delivery_attempt : find others for email
+    delivery_attempt -> status_update_service : instances
+    status_update_service -> status_update_service : ... decide what to do\ne.g. retry in an hour\ne.g. blacklist subscriber
   end group
-
-  delivery_monitor -> delivery_monitor : sleep 1
 end group
 
 @enduml
