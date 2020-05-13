@@ -3,10 +3,10 @@ module Clean
   # via a change to specialist publisher.
   class MigrateSpecialistSubscriberLists
     def migrate_subscribers_to_working_lists(dry_run: true)
-      lists.each { |from_list|
+      lists.each do |from_list|
         to_list = find_to_list(from_list)
         migrate_list(from_list, to_list, dry_run: dry_run)
-      }
+      end
 
       puts "Found #{dry_run ? '' : 'and migrated '}#{lists.count} #{'lists'.pluralize(lists.count)}"
     end
@@ -14,11 +14,11 @@ module Clean
     def lists
       @lists ||= begin
         lists = SubscriberList.where(created_at: Date.new(2019, 12, 13)..Date.new(2020, 1, 22))
-        lists.select { |l|
+        lists.select do |l|
           l.tags != {} && l.title.exclude?("Brexit") &&
             l.matched_content_changes.count.zero? &&
             l.subscribers.activated.count.positive? && l.tags.key?(:document_type)
-        }
+        end
       end
     end
 

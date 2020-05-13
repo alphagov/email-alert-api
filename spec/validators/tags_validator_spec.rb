@@ -10,19 +10,19 @@ RSpec.describe TagsValidator do
   subject(:model) { TagsValidatable.new }
 
   context "when valid tags are provided" do
-    before {
+    before do
       model.tags = {
         topics: { any: %w[dogs cats], all: %w[horses] },
         policies: { any: %w[wWelcome1098-_/], all: %w[news_story] },
         commodity_type: { any: %w[f3bbdec2-0e62-4520-a7fd-6ffd5d36e03a], all: %w[123-Abc] },
       }
-    }
+    end
 
     it { is_expected.to be_valid }
   end
 
   context "when invalid tags are provided" do
-    before {
+    before do
       model.tags = {
         organisations: { any: %w[dogs cats] },
         topics: { any: %w[dogs cats] },
@@ -31,7 +31,7 @@ RSpec.describe TagsValidator do
         world_locations: { any: "dogs" },
         policies: { any: "><script>alert(1);</script>" },
       }
-    }
+    end
 
     it "has an error" do
       expect(model.valid?).to be false

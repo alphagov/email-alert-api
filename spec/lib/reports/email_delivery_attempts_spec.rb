@@ -1,6 +1,6 @@
 RSpec.describe Reports::EmailDeliveryAttempts do
   before do
-    2.times {
+    2.times do
       create(
         :delivery_attempt,
         status: "delivered",
@@ -8,7 +8,7 @@ RSpec.describe Reports::EmailDeliveryAttempts do
         updated_at: Time.zone.parse("2019-03-22T06:10:44.000000Z"),
         sent_at: Time.zone.parse("2019-03-21T15:04:22.000000Z"),
       )
-    }
+    end
 
     create(
       :delivery_attempt,

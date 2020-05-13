@@ -10,14 +10,14 @@ RSpec.describe UnpublishEmailBuilder do
     end
 
     describe "One email sent" do
-      let!(:subscriber) {
+      let!(:subscriber) do
         create(
           :subscriber,
           address: "address@test.com",
           id: 123,
         )
-      }
-      let(:emails) {
+      end
+      let(:emails) do
         [
           EmailParameters.new(
             subscriber: subscriber,
@@ -31,10 +31,10 @@ RSpec.describe UnpublishEmailBuilder do
             },
           ),
         ]
-      }
-      let(:redirect) {
+      end
+      let(:redirect) do
         double(:redirect, path: "/somewhere", title: "redirect_title", url: "https://redirect.to/somewhere")
-      }
+      end
       it "Saves an email object" do
         expect { described_class.call(emails, "body") }.to change { Email.count }.by(1)
       end

@@ -178,12 +178,12 @@ FactoryBot.define do
     end
 
     factory :subscriber_list_with_invalid_tags do
-      tags {
+      tags do
         {
           organisations: { any: %w[bar] },
           case_type: { any: %w[*!123] },
         }
-      }
+      end
 
       transient do
         subscriber_count { 5 }
@@ -299,9 +299,9 @@ FactoryBot.define do
           "current" => "/v2/notifications?page=3&template_type=email&status=delivered",
           "next" => "/v2/notifications?page=3&template_type=email&status=delivered",
         },
-        "notifications" => 1.times.map {
+        "notifications" => 1.times.map do
           attributes_for(:client_notification)[:body]
-        },
+        end,
       }
     end
   end

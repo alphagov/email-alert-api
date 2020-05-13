@@ -46,7 +46,7 @@ RSpec.describe ContentChangeEmailBuilder do
       double(subscription: subscription_one, content_change: content_change)
     end
 
-    let(:params) {
+    let(:params) do
       [
         {
           address: subscriber.address,
@@ -55,7 +55,7 @@ RSpec.describe ContentChangeEmailBuilder do
           subscriber_id: subscriber.id,
         },
       ]
-    }
+    end
 
     subject(:email_import) { described_class.call(params) }
 
@@ -91,7 +91,7 @@ RSpec.describe ContentChangeEmailBuilder do
     end
 
     context "with a subscription" do
-      let(:params) {
+      let(:params) do
         [
           {
             address: subscriber.address,
@@ -100,7 +100,7 @@ RSpec.describe ContentChangeEmailBuilder do
             subscriber_id: subscriber.id,
           },
         ]
-      }
+      end
 
       subject(:email_import) { described_class.call(params) }
 

@@ -7,7 +7,7 @@ RSpec.describe ContentChangeHandlerService do
     end
   end
 
-  let(:params) {
+  let(:params) do
     {
       subject: "This is a subject",
       tags: {
@@ -28,7 +28,7 @@ RSpec.describe ContentChangeHandlerService do
       document_type: "news_article",
       publishing_app: "publishing app",
     }
-  }
+  end
 
   let(:govuk_request_id) { SecureRandom.uuid }
 
