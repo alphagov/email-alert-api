@@ -29,8 +29,10 @@ RSpec.describe Clean::InvalidSubscribers do
     end
 
     before :each do
-      Clean::InvalidSubscribers.new(sent_csv: StringIO.new(sent_csv),
-                                    failed_csv: StringIO.new(failed_csv)).deactivate_subscribers(dry_run: false)
+      Clean::InvalidSubscribers.new(
+        sent_csv: StringIO.new(sent_csv),
+        failed_csv: StringIO.new(failed_csv),
+      ).deactivate_subscribers(dry_run: false)
     end
     it "does not deactivate subscriber 1 - no failures" do
       expect(Subscriber.find(1)).to_not be_deactivated
@@ -64,8 +66,10 @@ RSpec.describe Clean::InvalidSubscribers do
     end
     it "reports there has been a mistake" do
       expect {
-        Clean::InvalidSubscribers.new(sent_csv: StringIO.new(sent_csv),
-                                      failed_csv: StringIO.new(failed_csv)).deactivate_subscribers
+        Clean::InvalidSubscribers.new(
+          sent_csv: StringIO.new(sent_csv),
+          failed_csv: StringIO.new(failed_csv),
+        ).deactivate_subscribers
       }.to raise_error(RuntimeError, "Are the sent and failed csv files swapped?")
     end
   end

@@ -5,11 +5,12 @@ RSpec.describe ContentChangePresenter do
 
   let(:content_change) do
     build(
-      :content_change, title: "Change title",
-                       base_path: "/government/test-slug",
-                       change_note: "Test change note",
-                       description: "Test description",
-                       public_updated_at: Time.zone.parse("2018-03-28 10:00:00 UTC")
+      :content_change,
+      title: "Change title",
+      base_path: "/government/test-slug",
+      change_note: "Test change note",
+      description: "Test description",
+      public_updated_at: Time.zone.parse("2018-03-28 10:00:00 UTC"),
     )
   end
 
@@ -34,11 +35,12 @@ RSpec.describe ContentChangePresenter do
     context "when content change contains markdown" do
       let(:content_change) do
         build(
-          :content_change, title: "Change title",
-                           base_path: "/government/test-slug",
-                           change_note: "#Test change note **markdown** [test](https://gov.uk)",
-                           description: "more _markdown_",
-                           public_updated_at: Time.zone.parse("2018-03-28 09:30:00 UTC")
+          :content_change,
+          title: "Change title",
+          base_path: "/government/test-slug",
+          change_note: "#Test change note **markdown** [test](https://gov.uk)",
+          description: "more _markdown_",
+          public_updated_at: Time.zone.parse("2018-03-28 09:30:00 UTC"),
         )
       end
 
@@ -63,8 +65,9 @@ RSpec.describe ContentChangePresenter do
     context "when the content change has no description" do
       let(:content_change) do
         build(
-          :content_change, description: "",
-                           public_updated_at: Time.zone.parse("10:00 1/1/2018")
+          :content_change,
+          description: "",
+          public_updated_at: Time.zone.parse("10:00 1/1/2018"),
         )
       end
 
@@ -86,8 +89,9 @@ RSpec.describe ContentChangePresenter do
     context "when the content change has a footnote" do
       let(:content_change) do
         build(
-          :content_change, footnote: "footnote",
-                           public_updated_at: Time.zone.parse("10:00 1/1/2018")
+          :content_change,
+          footnote: "footnote",
+          public_updated_at: Time.zone.parse("10:00 1/1/2018"),
         )
       end
 

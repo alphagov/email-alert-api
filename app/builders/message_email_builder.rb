@@ -8,9 +8,11 @@ class MessageEmailBuilder
   end
 
   def call
-    Email.timed_bulk_insert(columns,
-                            records,
-                            ProcessAndGenerateEmailsWorker::BATCH_SIZE)
+    Email.timed_bulk_insert(
+      columns,
+      records,
+      ProcessAndGenerateEmailsWorker::BATCH_SIZE,
+    )
   end
 
   private_class_method :new

@@ -14,25 +14,27 @@ class ContentChangesController < ApplicationController
 private
 
   def content_change_params
-    params.permit(:subject,
-                  :from_address_id,
-                  :urgent,
-                  :header,
-                  :footer,
-                  :document_type,
-                  :content_id,
-                  :public_updated_at,
-                  :publishing_app,
-                  :email_document_supertype,
-                  :government_document_supertype,
-                  :title,
-                  :description,
-                  :change_note,
-                  :base_path,
-                  :priority,
-                  :footnote,
-                  tags: {},
-                  links: {})
+    params.permit(
+      :subject,
+      :from_address_id,
+      :urgent,
+      :header,
+      :footer,
+      :document_type,
+      :content_id,
+      :public_updated_at,
+      :publishing_app,
+      :email_document_supertype,
+      :government_document_supertype,
+      :title,
+      :description,
+      :change_note,
+      :base_path,
+      :priority,
+      :footnote,
+      tags: {},
+      links: {},
+    )
   end
 
   def render_conflict

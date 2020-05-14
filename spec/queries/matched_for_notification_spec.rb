@@ -1,9 +1,12 @@
 RSpec.describe MatchedForNotification do
   describe "#call" do
     before do
-      @subscriber_list_that_should_never_match = create(:subscriber_list, tags: {
-        topics: { any: %w[Badical-Turbo-Radness] }, format: { any: %w[news_story] }
-      })
+      @subscriber_list_that_should_never_match = create(
+        :subscriber_list,
+        tags: {
+          topics: { any: %w[Badical-Turbo-Radness] }, format: { any: %w[news_story] }
+        },
+      )
     end
 
     def create_subscriber_list_with_tags_facets(facets)

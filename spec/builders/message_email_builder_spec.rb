@@ -2,15 +2,19 @@ RSpec.describe MessageEmailBuilder do
   let(:subscriber) { create(:subscriber, address: "test@example.com") }
 
   let(:subscription_one) do
-    create(:subscription,
-           subscriber: subscriber,
-           subscriber_list: build(:subscriber_list, title: "First Subscription"))
+    create(
+      :subscription,
+      subscriber: subscriber,
+      subscriber_list: build(:subscriber_list, title: "First Subscription"),
+    )
   end
 
   let(:subscription_two) do
-    create(:subscription,
-           subscriber: subscriber,
-           subscriber_list: build(:subscriber_list, title: "Second Subscription", url: "/subscription", description: "subscriber_list_description"))
+    create(
+      :subscription,
+      subscriber: subscriber,
+      subscriber_list: build(:subscriber_list, title: "Second Subscription", url: "/subscription", description: "subscriber_list_description"),
+    )
   end
 
   let(:subscriptions) do

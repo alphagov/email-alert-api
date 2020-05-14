@@ -3,7 +3,7 @@ class SubscribersController < ApplicationController
   ORDER_FIELDS = %w[title created_at].freeze
 
   def subscriptions
-    if !valid_ordering_param?
+    unless valid_ordering_param?
       return render json: { error: "Order parameter not valid" }, status: :unprocessable_entity
     end
 

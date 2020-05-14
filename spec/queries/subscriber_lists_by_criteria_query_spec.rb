@@ -46,9 +46,11 @@ RSpec.describe SubscriberListsByCriteriaQuery do
 
     it "can match tags and links" do
       uuid = SecureRandom.uuid
-      list = create(:subscriber_list,
-                    tags: { format: { any: %w[match] } },
-                    links: { format: { any: [uuid] } })
+      list = create(
+        :subscriber_list,
+        tags: { format: { any: %w[match] } },
+        links: { format: { any: [uuid] } },
+      )
       create(:subscriber_list)
 
       result = described_class.call(

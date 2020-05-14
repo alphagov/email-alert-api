@@ -30,9 +30,7 @@ class ContentItem
       response = Services.content_store.content_item(@path).to_h
 
       unless response["base_path"] == @path
-        raise RedirectDetected.new(
-          "requested '#{@path}' got '#{response['base_path']}'",
-        )
+        raise RedirectDetected, "requested '#{@path}' got '#{response['base_path']}'"
       end
 
       response

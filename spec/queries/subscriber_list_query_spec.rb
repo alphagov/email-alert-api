@@ -64,9 +64,10 @@ RSpec.describe SubscriberListQuery do
   end
 
   context "when matching has links fields" do
-    it_behaves_like "#links matching", links: { policies: { any: %w[f05dc04b-ca95-4cca-9875-a7591d055467] },
-                                                taxon_tree: { all: %w[f05dc04b-ca95-4cca-9875-a7591d055448] } },
-                                       tags: {}
+    it_behaves_like "#links matching",
+                    links: { policies: { any: %w[f05dc04b-ca95-4cca-9875-a7591d055467] },
+                             taxon_tree: { all: %w[f05dc04b-ca95-4cca-9875-a7591d055448] } },
+                    tags: {}
 
     it "excluded when non-matching links" do
       subscriber_list = create_subscriber_list(links: { policies: { any: %w[f05dc04b-ca95-4cca-9875-a7591d055467] },

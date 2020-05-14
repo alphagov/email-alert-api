@@ -88,12 +88,16 @@ RSpec.describe FindExactQuery do
     end
 
     it "matched when subscriber list has the same links and matching document_type" do
-      query = build_query(links: { policies: { any: %w[aa-11] },
-                                   taxon_tree: { all: %w[taxon] } },
-                          document_type: "travel_advice")
-      subscriber_list = create_subscriber_list(links: { policies: { any: %w[aa-11] },
-                                                        taxon_tree: { all: %w[taxon] } },
-                                               document_type: "travel_advice")
+      query = build_query(
+        links: { policies: { any: %w[aa-11] },
+                 taxon_tree: { all: %w[taxon] } },
+        document_type: "travel_advice",
+      )
+      subscriber_list = create_subscriber_list(
+        links: { policies: { any: %w[aa-11] },
+                 taxon_tree: { all: %w[taxon] } },
+        document_type: "travel_advice",
+      )
       expect(query.exact_match).to eq(subscriber_list)
     end
 
@@ -218,12 +222,16 @@ RSpec.describe FindExactQuery do
     end
 
     it "matched when subscriber list has the same tags and matching document_type" do
-      query = build_query(tags: { policies: { any: %w[beer] },
-                                  topics: { all: %w[taxon] } },
-                          document_type: "document_type")
-      subscriber_list = create_subscriber_list(tags: { policies: { any: %w[beer] },
-                                                       topics: { all: %w[taxon] } },
-                                               document_type: "document_type")
+      query = build_query(
+        tags: { policies: { any: %w[beer] },
+                topics: { all: %w[taxon] } },
+        document_type: "document_type",
+      )
+      subscriber_list = create_subscriber_list(
+        tags: { policies: { any: %w[beer] },
+                topics: { all: %w[taxon] } },
+        document_type: "document_type",
+      )
       expect(query.exact_match).to eq(subscriber_list)
     end
 

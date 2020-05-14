@@ -9,16 +9,20 @@ RSpec.describe SubscriptionContent do
     end
 
     it "is invalid with a message and a content_change" do
-      subscription_content = build(:subscription_content,
-                                   message: build(:message),
-                                   content_change: build(:content_change))
+      subscription_content = build(
+        :subscription_content,
+        message: build(:message),
+        content_change: build(:content_change),
+      )
       expect(subscription_content).to be_invalid
     end
 
     it "is invalid without a message or a content_change" do
-      subscription_content = build(:subscription_content,
-                                   message: nil,
-                                   content_change: nil)
+      subscription_content = build(
+        :subscription_content,
+        message: nil,
+        content_change: nil,
+      )
       expect(subscription_content).to be_invalid
     end
   end
@@ -37,9 +41,11 @@ RSpec.describe SubscriptionContent do
 
     it "can recover when there are duplicates" do
       rows.shuffle.take(5).each do |(content_change_id, subscription_id)|
-        create(:subscription_content,
-               content_change_id: content_change_id,
-               subscription_id: subscription_id)
+        create(
+          :subscription_content,
+          content_change_id: content_change_id,
+          subscription_id: subscription_id,
+        )
       end
 
       expect { described_class.import_ignoring_duplicates(columns, rows) }

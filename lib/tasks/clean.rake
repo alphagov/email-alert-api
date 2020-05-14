@@ -45,8 +45,10 @@ namespace :clean do
   DESC
   task :invalid_subscribers, %i[sent_csv failed_csv] => :environment do |_t, args|
     dry_run = ENV["DRY_RUN"] != "no"
-    cleaner = Clean::InvalidSubscribers.new(sent_csv: File.open(args[:sent_csv]),
-                                            failed_csv: File.open(args[:failed_csv]))
+    cleaner = Clean::InvalidSubscribers.new(
+      sent_csv: File.open(args[:sent_csv]),
+      failed_csv: File.open(args[:failed_csv]),
+    )
     cleaner.deactivate_subscribers(dry_run: dry_run)
   end
 end

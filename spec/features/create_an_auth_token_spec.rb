@@ -22,11 +22,12 @@ RSpec.describe "Create an auth token", type: :request do
   scenario "successful auth token" do
     login_with_internal_app
 
-    post "/subscribers/auth-token", params: {
-      address: address,
-      destination: destination,
-      redirect: redirect,
-    }
+    post "/subscribers/auth-token",
+         params: {
+           address: address,
+           destination: destination,
+           redirect: redirect,
+         }
 
     notify_email_stub = notify_email(subscriber, destination, redirect)
     expect(response.status).to be 201

@@ -14,7 +14,8 @@ class SubscriberListsController < ApplicationController
       render json: {
         subscribable: subscriber_list.attributes, # for backwards compatiblity
         subscriber_list: subscriber_list.attributes,
-      }, status: status
+      },
+             status: status
     else
       render json: { error: "Could not find the subscriber list" }, status: :not_found
     end

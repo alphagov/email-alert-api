@@ -28,10 +28,12 @@ private
       email = nil
       Email.transaction do
         digest_run_subscriber.mark_complete!
-        email = DigestEmailBuilder.call(address: subscriber.address,
-                                        subscription_content: subscription_content,
-                                        digest_run: digest_run,
-                                        subscriber_id: subscriber.id)
+        email = DigestEmailBuilder.call(
+          address: subscriber.address,
+          subscription_content: subscription_content,
+          digest_run: digest_run,
+          subscriber_id: subscriber.id,
+        )
         fill_subscription_content(email, subscription_content, digest_run_subscriber)
       end
 
