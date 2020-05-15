@@ -31,7 +31,7 @@ class DeliveryRequestService
 
     ActiveRecord::Base.transaction do
       unless status == :sending
-        delivery_attempt.update!(status: status)
+        delivery_attempt.update!(status: status, completed_at: Time.zone.now)
         MetricsService.delivery_attempt_status_changed(status)
       end
       UpdateEmailStatusService.call(delivery_attempt)
