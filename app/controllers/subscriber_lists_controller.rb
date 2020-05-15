@@ -11,10 +11,13 @@ class SubscriberListsController < ApplicationController
   def show
     subscriber_list = SubscriberList.find_by(slug: params[:slug])
     if subscriber_list
-      render json: {
-        subscribable: subscriber_list.attributes, # for backwards compatiblity
-        subscriber_list: subscriber_list.attributes,
-      }, status: status
+      render(
+        json: {
+          subscribable: subscriber_list.attributes, # for backwards compatiblity
+          subscriber_list: subscriber_list.attributes,
+        },
+        status: status,
+      )
     else
       render json: { error: "Could not find the subscriber list" }, status: :not_found
     end

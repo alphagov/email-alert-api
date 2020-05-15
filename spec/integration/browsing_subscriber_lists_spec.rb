@@ -203,20 +203,26 @@ RSpec.describe "Browsing subscriber lists", type: :request do
         end
 
         it "finds the subscriber list if the content_purpose_supergroup matches" do
-          _alpha = create(:subscriber_list,
-                          tags: {
-                            topics: { any: %w[vat-rates] },
-                            content_purpose_supergroup: { any: %w[services] },
-                          })
-          beta = create(:subscriber_list,
-                        tags: {
-                          topics: { any: %w[vat-rates] },
-                          content_purpose_supergroup: { any: %w[news_and_communications] },
-                        })
-          _gamma = create(:subscriber_list,
-                          tags: {
-                            topics: { any: %w[vat-rates] },
-                          })
+          _alpha = create(
+            :subscriber_list,
+            tags: {
+              topics: { any: %w[vat-rates] },
+              content_purpose_supergroup: { any: %w[services] },
+            },
+          )
+          beta = create(
+            :subscriber_list,
+            tags: {
+              topics: { any: %w[vat-rates] },
+              content_purpose_supergroup: { any: %w[news_and_communications] },
+            },
+          )
+          _gamma = create(
+            :subscriber_list,
+            tags: {
+              topics: { any: %w[vat-rates] },
+            },
+          )
 
           get_subscriber_list(
             tags: {

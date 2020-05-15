@@ -88,8 +88,10 @@ private
   end
 
   def feedback_link
-    I18n.t!("emails.feedback_link",
-            survey_link: I18n.t!("emails.digests.#{digest_run.range}.survey_link"),
-            feedback_link: "#{Plek.new.website_root}/contact")
+    I18n.t!(
+      "emails.feedback_link",
+      survey_link: I18n.t!("emails.digests.#{digest_run.range}.survey_link"),
+      feedback_link: "#{Plek.new.website_root}/contact",
+    )
   end
 end

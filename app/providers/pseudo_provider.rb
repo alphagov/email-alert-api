@@ -22,6 +22,6 @@ class PseudoProvider
 private
 
   def logger
-    @logger ||= Logger.new(LOG_PATH, 5, 4194304)
+    @logger ||= Logger.new(LOG_PATH, 5, 4_194_304)
   end
 end

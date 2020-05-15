@@ -78,14 +78,18 @@ RSpec.describe Subscription, type: :model do
     it "returns subscriptions associated with a content change" do
       associated_subscription = create(:subscription)
       associated_content_change = create(:content_change)
-      create(:matched_content_change,
-             subscriber_list: associated_subscription.subscriber_list,
-             content_change: associated_content_change)
+      create(
+        :matched_content_change,
+        subscriber_list: associated_subscription.subscriber_list,
+        content_change: associated_content_change,
+      )
       unassociated_subscription = create(:subscription)
       unassociated_content_change = create(:content_change)
-      create(:matched_content_change,
-             subscriber_list: unassociated_subscription.subscriber_list,
-             content_change: unassociated_content_change)
+      create(
+        :matched_content_change,
+        subscriber_list: unassociated_subscription.subscriber_list,
+        content_change: unassociated_content_change,
+      )
 
       expect(Subscription.for_content_change(associated_content_change))
         .to include(associated_subscription)
@@ -98,14 +102,18 @@ RSpec.describe Subscription, type: :model do
     it "returns subscriptions associated with a message" do
       associated_subscription = create(:subscription)
       associated_message = create(:message)
-      create(:matched_message,
-             subscriber_list: associated_subscription.subscriber_list,
-             message: associated_message)
+      create(
+        :matched_message,
+        subscriber_list: associated_subscription.subscriber_list,
+        message: associated_message,
+      )
       unassociated_subscription = create(:subscription)
       unassociated_message = create(:message)
-      create(:matched_message,
-             subscriber_list: unassociated_subscription.subscriber_list,
-             message: unassociated_message)
+      create(
+        :matched_message,
+        subscriber_list: unassociated_subscription.subscriber_list,
+        message: unassociated_message,
+      )
 
       expect(Subscription.for_message(associated_message))
         .to include(associated_subscription)

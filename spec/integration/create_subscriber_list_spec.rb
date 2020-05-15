@@ -73,9 +73,11 @@ RSpec.describe "Creating a subscriber list", type: :request do
     end
 
     it "can create a subscriber_list with a url" do
-      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
-                                     location: { all: %w[france germany] } },
-                             url: "/oil-and-gas")
+      create_subscriber_list(
+        tags: { topics: { any: ["oil-and-gas/licensing"] },
+                location: { all: %w[france germany] } },
+        url: "/oil-and-gas",
+      )
 
       expect(SubscriberList.count).to eq(1)
       expect(SubscriberList.first.url).to eq("/oil-and-gas")
@@ -131,8 +133,10 @@ RSpec.describe "Creating a subscriber list", type: :request do
                      "government funding of EU funding and UK government "\
                      "funding, and Public sector procurement of Civil "\
                      "government contracts and Defence contracts"
-        create_subscriber_list(title: long_title,
-                               tags: { topics: { any: ["oil-and-gas/licensing"] } })
+        create_subscriber_list(
+          title: long_title,
+          tags: { topics: { any: ["oil-and-gas/licensing"] } },
+        )
 
         expect(response.status).to eq(201)
 
@@ -148,10 +152,12 @@ RSpec.describe "Creating a subscriber list", type: :request do
     end
 
     it "creates a subscriber_list with a digest of the JSON content" do
-      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
-                                     location: { all: %w[france germany] } },
-                             links: { topics: { any: %w[oil-and-gas-licensing] },
-                                      location: { all: %w[france germany] } })
+      create_subscriber_list(
+        tags: { topics: { any: ["oil-and-gas/licensing"] },
+                location: { all: %w[france germany] } },
+        links: { topics: { any: %w[oil-and-gas-licensing] },
+                 location: { all: %w[france germany] } },
+      )
       expect(SubscriberList.last.tags_digest).to eq(digested(SubscriberList.last.tags))
       expect(SubscriberList.last.links_digest).to eq(digested(SubscriberList.last.links))
 
@@ -245,10 +251,11 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
     context "creating subscriber list with a description" do
       it "returns a 201" do
-        post "/subscriber-lists", params: {
-          title: "General title",
-          description: "Some description",
-        }
+        post "/subscriber-lists",
+             params: {
+               title: "General title",
+               description: "Some description",
+             }
 
         expect(response.status).to eq(201)
 
@@ -260,11 +267,12 @@ RSpec.describe "Creating a subscriber list", type: :request do
     context "creating subscriber list with a group_id" do
       it "returns a 201" do
         group_id = SecureRandom.uuid
-        post "/subscriber-lists", params: {
-          title: "General title",
-          description: "Some description",
-          group_id: group_id,
-        }
+        post "/subscriber-lists",
+             params: {
+               title: "General title",
+               description: "Some description",
+               group_id: group_id,
+             }
 
         expect(response.status).to eq(201)
 
@@ -275,10 +283,11 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
     context "an invalid subscriber list" do
       it "returns 422" do
-        post "/subscriber-lists", params: {
-          title: "",
-          description: "Some description",
-        }
+        post "/subscriber-lists",
+             params: {
+               title: "",
+               description: "Some description",
+             }
 
         expect(response.status).to eq(422)
 

@@ -30,9 +30,36 @@ private
   CSV_HEADERS = %i[id title count].freeze
 
   EUROPEAN_COUNTRIES = %w[
-    austria belgium bulgaria croatia cyprus czech-republic denmark estonia finland france germany greece hungary
-    ireland italy latvia lithuania luxembourg malta netherlands poland portugal slovakia slovenia spain sweden
-    switzerland iceland norway liechtenstein
+    austria
+    belgium
+    bulgaria
+    croatia
+    cyprus
+    czech-republic
+    denmark
+    estonia
+    finland
+    france
+    germany
+    greece
+    hungary
+    ireland
+    italy
+    latvia
+    lithuania
+    luxembourg
+    malta
+    netherlands
+    poland
+    portugal
+    slovakia
+    slovenia
+    spain
+    sweden
+    switzerland
+    iceland
+    norway
+    liechtenstein
   ].freeze
 
   def living_in_europe_subscriber_lists

@@ -6,19 +6,25 @@ RSpec.describe UnprocessedSubscriptionContentsBySubscriberQuery do
   let!(:subscriber_three) { create(:subscriber) }
 
   let!(:subscription_content_one) do
-    create(:subscription_content,
-           subscription: create(:subscription, subscriber: subscriber_one))
+    create(
+      :subscription_content,
+      subscription: create(:subscription, subscriber: subscriber_one),
+    )
   end
 
   let!(:subscription_content_two) do
-    create(:subscription_content,
-           :with_message,
-           subscription: create(:subscription, subscriber: subscriber_one))
+    create(
+      :subscription_content,
+      :with_message,
+      subscription: create(:subscription, subscriber: subscriber_one),
+    )
   end
 
   let!(:subscription_content_three) do
-    create(:subscription_content,
-           subscription: create(:subscription, subscriber: subscriber_two))
+    create(
+      :subscription_content,
+      subscription: create(:subscription, subscriber: subscriber_two),
+    )
   end
 
   subject(:result) { described_class.call([subscriber_one.id, subscriber_two.id]) }

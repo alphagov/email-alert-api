@@ -15,10 +15,12 @@ RSpec.describe DigestRunSubscriberQuery do
 
       context "with a matched content change" do
         before do
-          create(:content_change,
-                 :matched,
-                 created_at: starts_at,
-                 subscriber_list: subscriber_list_one)
+          create(
+            :content_change,
+            :matched,
+            created_at: starts_at,
+            subscriber_list: subscriber_list_one,
+          )
         end
 
         it "returns the subscriber" do
@@ -28,10 +30,12 @@ RSpec.describe DigestRunSubscriberQuery do
 
       context "with a matched content change that's out of date" do
         before do
-          create(:content_change,
-                 :matched,
-                 created_at: ends_at,
-                 subscriber_list: subscriber_list_one)
+          create(
+            :content_change,
+            :matched,
+            created_at: ends_at,
+            subscriber_list: subscriber_list_one,
+          )
         end
 
         it "returns no subscribers" do
@@ -57,10 +61,12 @@ RSpec.describe DigestRunSubscriberQuery do
 
       context "with a matched content change" do
         before do
-          create(:content_change,
-                 :matched,
-                 created_at: starts_at,
-                 subscriber_list: subscriber_list_one)
+          create(
+            :content_change,
+            :matched,
+            created_at: starts_at,
+            subscriber_list: subscriber_list_one,
+          )
         end
 
         it "returns no subscribers" do
@@ -76,10 +82,12 @@ RSpec.describe DigestRunSubscriberQuery do
 
       context "with a matched content change" do
         before do
-          create(:content_change,
-                 :matched,
-                 created_at: starts_at,
-                 subscriber_list: subscriber_list_one)
+          create(
+            :content_change,
+            :matched,
+            created_at: starts_at,
+            subscriber_list: subscriber_list_one,
+          )
         end
 
         it "returns no subscribers" do
@@ -98,10 +106,12 @@ RSpec.describe DigestRunSubscriberQuery do
       end
 
       before do
-        create(:content_change,
-               :matched,
-               created_at: starts_at,
-               subscriber_list: subscriber_list_one)
+        create(
+          :content_change,
+          :matched,
+          created_at: starts_at,
+          subscriber_list: subscriber_list_one,
+        )
       end
 
       it "returns the subscribers" do
@@ -130,14 +140,18 @@ RSpec.describe DigestRunSubscriberQuery do
       end
 
       before do
-        create(:content_change,
-               :matched,
-               created_at: starts_at,
-               subscriber_list: subscriber_list_one)
-        create(:content_change,
-               :matched,
-               created_at: starts_at,
-               subscriber_list: subscriber_list_two)
+        create(
+          :content_change,
+          :matched,
+          created_at: starts_at,
+          subscriber_list: subscriber_list_one,
+        )
+        create(
+          :content_change,
+          :matched,
+          created_at: starts_at,
+          subscriber_list: subscriber_list_two,
+        )
       end
 
       it "only returns the subscriber once" do
@@ -147,14 +161,18 @@ RSpec.describe DigestRunSubscriberQuery do
 
     context "with a message" do
       before do
-        create(:subscription,
-               subscriber_list: subscriber_list_one,
-               frequency: :daily)
+        create(
+          :subscription,
+          subscriber_list: subscriber_list_one,
+          frequency: :daily,
+        )
 
-        create(:message,
-               :matched,
-               created_at: starts_at,
-               subscriber_list: subscriber_list_one)
+        create(
+          :message,
+          :matched,
+          created_at: starts_at,
+          subscriber_list: subscriber_list_one,
+        )
       end
 
       it "returns a subscribers" do

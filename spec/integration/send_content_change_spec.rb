@@ -52,10 +52,12 @@ RSpec.describe "Sending a content change", type: :request do
 
   context "when a duplicate content change exists" do
     before do
-      create(:content_change,
-             base_path: valid_request_params[:base_path],
-             content_id: valid_request_params[:content_id],
-             public_updated_at: valid_request_params[:public_updated_at])
+      create(
+        :content_change,
+        base_path: valid_request_params[:base_path],
+        content_id: valid_request_params[:content_id],
+        public_updated_at: valid_request_params[:public_updated_at],
+      )
     end
 
     it "returns a 409" do

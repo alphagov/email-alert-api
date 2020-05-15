@@ -8,9 +8,11 @@ class ContentChangeEmailBuilder
   end
 
   def call
-    Email.timed_bulk_insert(columns,
-                            records,
-                            ProcessAndGenerateEmailsWorker::BATCH_SIZE)
+    Email.timed_bulk_insert(
+      columns,
+      records,
+      ProcessAndGenerateEmailsWorker::BATCH_SIZE,
+    )
   end
 
   private_class_method :new
@@ -84,8 +86,10 @@ private
   end
 
   def feedback_link
-    I18n.t!("emails.feedback_link",
-            survey_link: I18n.t!("emails.content_change.survey_link"),
-            feedback_link: "#{Plek.new.website_root}/contact")
+    I18n.t!(
+      "emails.feedback_link",
+      survey_link: I18n.t!("emails.content_change.survey_link"),
+      feedback_link: "#{Plek.new.website_root}/contact",
+    )
   end
 end

@@ -50,11 +50,15 @@ RSpec.describe UnpublishHandlerService do
     end
     it "sends the email and a courtesy email to the DeliverRequestWorker" do
       expect(DeliveryRequestService).to receive(:call)
-          .with(email: having_attributes(subject: "Update from GOV.UK – First Subscription",
-                                         address: "test@example.com"))
+          .with(email: having_attributes(
+            subject: "Update from GOV.UK – First Subscription",
+            address: "test@example.com",
+          ))
       expect(DeliveryRequestService).to receive(:call)
-          .with(email: having_attributes(subject: "Update from GOV.UK – First Subscription",
-                                         address: Email::COURTESY_EMAIL))
+          .with(email: having_attributes(
+            subject: "Update from GOV.UK – First Subscription",
+            address: Email::COURTESY_EMAIL,
+          ))
       described_class.call(@content_id, @redirect)
     end
     it "sends an email with some specified text" do
@@ -98,9 +102,11 @@ RSpec.describe UnpublishHandlerService do
     context "there are subscriber lists with different taxons" do
       before :each do
         @subscriber_list = create_subscriber_list(links: { taxon_tree: { any: [@content_id] } })
-        create_subscriber_list(links: { taxon_tree: { all: [SecureRandom.uuid] } },
-                               title: "Second Subscriber List",
-                               address: "test2@example.com")
+        create_subscriber_list(
+          links: { taxon_tree: { all: [SecureRandom.uuid] } },
+          title: "Second Subscriber List",
+          address: "test2@example.com",
+        )
       end
       it_behaves_like "it_sends_an_email_with_body_including", "has ended because this topic no longer exists on GOV.UK"
       it_behaves_like "it_unsubscribes_all_subscribers"

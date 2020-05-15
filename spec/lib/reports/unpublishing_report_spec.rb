@@ -4,36 +4,46 @@ RSpec.describe Reports::UnpublishingReport do
     subscriber_two = create(:subscriber)
 
     unpublished_subscription = create(:subscriber_list, title: "Unpublished subscription")
-    create(:subscription,
-           :unpublished,
-           subscriber_list: unpublished_subscription,
-           subscriber: subscriber_one,
-           ended_at: "2018-08-29 13:04:03")
+    create(
+      :subscription,
+      :unpublished,
+      subscriber_list: unpublished_subscription,
+      subscriber: subscriber_one,
+      ended_at: "2018-08-29 13:04:03",
+    )
 
-    create(:subscription,
-           :unpublished,
-           subscriber_list: unpublished_subscription,
-           subscriber: subscriber_two,
-           ended_at: "2018-08-29 13:04:03")
+    create(
+      :subscription,
+      :unpublished,
+      subscriber_list: unpublished_subscription,
+      subscriber: subscriber_two,
+      ended_at: "2018-08-29 13:04:03",
+    )
 
     new_subscription = create(:subscriber_list, title: "Newly subscribed title")
-    create(:subscription,
-           subscriber: subscriber_one,
-           subscriber_list: new_subscription,
-           created_at: "2018-09-21 15:00:03")
+    create(
+      :subscription,
+      subscriber: subscriber_one,
+      subscriber_list: new_subscription,
+      created_at: "2018-09-21 15:00:03",
+    )
 
-    create(:subscription,
-           subscriber: subscriber_two,
-           subscriber_list: new_subscription,
-           created_at: "2018-09-18 9:20:08")
+    create(
+      :subscription,
+      subscriber: subscriber_two,
+      subscriber_list: new_subscription,
+      created_at: "2018-09-18 9:20:08",
+    )
 
     subscriber_three = create(:subscriber)
     unpublished_subscription_two = create(:subscriber_list, title: "Unpublished subscription two")
-    create(:subscription,
-           :unpublished,
-           subscriber_list: unpublished_subscription_two,
-           subscriber: subscriber_three,
-           ended_at: "2018-08-31 20:40:03")
+    create(
+      :subscription,
+      :unpublished,
+      subscriber_list: unpublished_subscription_two,
+      subscriber: subscriber_three,
+      ended_at: "2018-08-31 20:40:03",
+    )
   end
 
   context "generates report" do

@@ -19,12 +19,20 @@ RSpec.describe DataExporter do
       # resubscribed within the time period, only one is active
       same_subscriber = create(:subscriber)
       create(
-        :subscription, :ended, subscriber: same_subscriber, subscriber_list: subscriber_list,
-                               created_at: "2018-01-04", ended_at: "2018-01-05", updated_at: "2018-01-05"
+        :subscription,
+        :ended,
+        subscriber: same_subscriber,
+        subscriber_list: subscriber_list,
+        created_at: "2018-01-04",
+        ended_at: "2018-01-05",
+        updated_at: "2018-01-05",
       )
       create(
-        :subscription, subscriber: same_subscriber, subscriber_list: subscriber_list,
-                       created_at: "2018-01-06", updated_at: "2018-01-06"
+        :subscription,
+        subscriber: same_subscriber,
+        subscriber_list: subscriber_list,
+        created_at: "2018-01-06",
+        updated_at: "2018-01-06",
       )
     end
 
