@@ -70,11 +70,13 @@ class SubscriberListMover
     bulk_move_template = <<~BODY.freeze
       Hello,
 
-      You've subscribed to get email alerts about #{list_title} information.
+      You've subscribed to get emails about #{list_title}.
+      
+      GOV.UK is changing the way we send emails, so you may notice a difference in the number and type of updates you get.
+      
+      ## If you're getting too many emails
 
-      GOV.UK is changing the type of email alerts you get to make sure you find out when any #{list_title} guidance is added or updated.
-      You can [change how often you get updates or unsubscribe](#{email_redirect}) from GOV.UK email alerts.
-
+      You can [manage your subscription](#{email_redirect}) to choose how often you want to receive emails.
       Thanks,
       GOV.UK
     BODY
