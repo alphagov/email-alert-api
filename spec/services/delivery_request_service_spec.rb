@@ -76,6 +76,24 @@ RSpec.describe DeliveryRequestService do
       include_examples "records a statistic", "internal_failure"
     end
 
+    context "when the provider raises a technical failure exception" do
+      before do
+        expect(subject.provider).to receive(:call).and_return(:technical_failure)
+      end
+
+      it "sets the status to technical_failure" do
+        subject.call(email: email)
+        expect(DeliveryAttempt.last.status).to eq("technical_failure")
+      end
+
+      it "adds a completed_at time" do
+        subject.call(email: email)
+        expect(DeliveryAttempt.last.completed_at).not_to be(nil)
+      end
+
+      include_examples "records a statistic", "technical_failure"
+    end
+
     context "when the email address is overridden" do
       let(:subject) do
         described_class.new(config: config.merge(email_address_override: address))
