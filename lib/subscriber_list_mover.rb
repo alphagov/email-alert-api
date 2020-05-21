@@ -74,9 +74,10 @@ class SubscriberListMover
       
       GOV.UK is changing the way we send emails, so you may notice a difference in the number and type of updates you get.
       
-      ## If you're getting too many emails
+      # If you're getting too many emails
 
       You can [manage your subscription](#{email_redirect}) to choose how often you want to receive emails.
+      
       Thanks,
       GOV.UK
     BODY
