@@ -58,7 +58,7 @@ class SubscriberListMover
   end
 
   def email_change_to_subscribers(source_subscriber_list)
-    email_subject = "Changes to GOV.UK email alerts"
+    email_subject = "Changes to GOV.UK emails"
     email_utm_parameters = {
       utm_source: from_slug,
       utm_medium: "email",
@@ -74,9 +74,10 @@ class SubscriberListMover
       
       GOV.UK is changing the way we send emails, so you may notice a difference in the number and type of updates you get.
       
-      ## If you're getting too many emails
+      # If you’re getting too many emails
 
       You can [manage your subscription](#{email_redirect}) to choose how often you want to receive emails.
+      
       Thanks,
       GOV.UK
     BODY
