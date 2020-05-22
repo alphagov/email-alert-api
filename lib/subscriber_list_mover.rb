@@ -58,7 +58,7 @@ class SubscriberListMover
   end
 
   def email_change_to_subscribers(source_subscriber_list)
-    email_subject = "Changes to GOV.UK email alerts"
+    email_subject = "Changes to GOV.UK emails"
     email_utm_parameters = {
       utm_source: from_slug,
       utm_medium: "email",
