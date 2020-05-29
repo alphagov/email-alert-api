@@ -11,8 +11,17 @@
 -- where it is tested. Then copy it to the govuk-puppet repository.
 
 -- Deletes all emails that are older than 1 day old.
+
+-- Deletion of emails is slow since email volumes have increased. We attempt to speed up the process
+-- as discussed https://dba.stackexchange.com/questions/37034/very-slow-delete-in-postgresql-workaround
+-- there are some disadvantages with doing that but we think it is fine to do for integration
+
+ALTER TABLE emails DISABLE TRIGGER ALL;
+
 DELETE FROM emails
 WHERE created_at < current_timestamp - interval '1 day';
+
+ALTER TABLE emails ENABLE TRIGGER ALL;
 
 -- Create a table to store all email addresses.
 CREATE TABLE addresses (id SERIAL, address VARCHAR NOT NULL);
