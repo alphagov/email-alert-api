@@ -22,7 +22,7 @@ class SubscriberListMover
     puts "#{sub_count} active subscribers moving from #{from_slug} to #{to_slug}"
 
     if send_email
-      email_change_to_subscribers(source_subscriber_list)
+      emails_for_subscribed = build_emails(source_subscriber_list)
     end
 
     subscribers.each do |subscriber|
@@ -54,10 +54,15 @@ class SubscriberListMover
       end
     end
 
-    puts "#{sub_count} active subscribers moved from #{from_slug} to #{to_slug}"
+    puts "#{sub_count} active subscribers moved from #{from_slug} to #{to_slug}."
+
+    if send_email
+      puts "Sending emails to subscribers about change"
+      email_change_to_subscribers(emails_for_subscribed)
+    end
   end
 
-  def email_change_to_subscribers(source_subscriber_list)
+  def build_emails(source_subscriber_list)
     email_subject = "Changes to GOV.UK emails"
     email_utm_parameters = {
       utm_source: from_slug,
@@ -71,19 +76,23 @@ class SubscriberListMover
       Hello,
 
       You’ve subscribed to get emails about #{list_title}.
-      
+
       GOV.UK is changing the way we send emails, so you may notice a difference in the number and type of updates you get.
-      
+
       You can [manage your subscription](#{email_redirect}) to choose how often you want to receive emails.
-      
+
       Thanks,
       GOV.UK
     BODY
 
-    BulkEmailSenderService.call(
+    BulkEmailBuilder.call(
       subject: email_subject,
       body: bulk_move_template,
       subscriber_lists: source_subscriber_list,
     )
+  end
+
+  def email_change_to_subscribers(emails_for_subscribed)
+    BulkEmailSenderService.call(emails_for_subscribed)
   end
 end
