@@ -18,7 +18,10 @@ class DeliveryRequestWorker
 
     check_rate_limit!
 
-    email = Email.find(email_id)
+    email = MetricsService.delivery_request_worker_find_email do
+      Email.find(email_id)
+    end
+
     attempted = DeliveryRequestService.call(email: email)
     increment_rate_limiter if attempted
   end
