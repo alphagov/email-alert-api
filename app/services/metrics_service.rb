@@ -36,6 +36,10 @@ class MetricsService
       time("email_bulk_insert.#{size}.timing", &block)
     end
 
+    def delivery_request_worker_find_email(&block)
+      time("delivery_request_worker_find_email.timing", &block)
+    end
+
     def first_delivery_attempt(email, time)
       return if DeliveryAttempt.exists?(email: email)
 
