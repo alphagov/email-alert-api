@@ -29,11 +29,11 @@ class DeliveryRequestService
       call_provider(address, reference, email)
     end
 
+    return true if status == :sending
+
     ActiveRecord::Base.transaction do
-      unless status == :sending
-        delivery_attempt.update!(status: status, completed_at: Time.zone.now)
-        MetricsService.delivery_attempt_status_changed(status)
-      end
+      delivery_attempt.update!(status: status, completed_at: Time.zone.now)
+      MetricsService.delivery_attempt_status_changed(status)
       UpdateEmailStatusService.call(delivery_attempt)
     end
 
