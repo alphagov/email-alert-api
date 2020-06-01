@@ -18,15 +18,11 @@
 
 ALTER TABLE emails DISABLE TRIGGER ALL;
 
--- Create a table to store all email addresses.
+-- Create a table to store old email addresses.
 CREATE TABLE oldaddresses (uuid uuid PRIMARY KEY);
 
 INSERT INTO oldaddresses(uuid) SELECT id FROM emails
-WHERE created_at > current_timestamp - interval '1 day';
-
-DELETE FROM emails
-USING oldaddresses
-WHERE emails.id = oldaddresses.uuid;
+WHERE created_at >= current_timestamp - interval '1 day';
 
 DELETE FROM emails
 USING oldaddresses
