@@ -11,7 +11,7 @@ default: &default
     <% whitelist.each do |email| %>
       - <%= email %>
     <% end %>
-  email_address_override_whitelist_only: <%= ENV.include?("EMAIL_ADDRESS_OVERRIDE_WHITELIST_ONLY") %>
+  email_address_override_whitelist_only: false
   expect_status_update_callbacks: true
 
 development:

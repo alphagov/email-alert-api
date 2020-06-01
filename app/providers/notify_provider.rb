@@ -9,15 +9,17 @@ class NotifyProvider
   end
 
   def call(address:, subject:, body:, reference:)
-    client.send_email(
-      email_address: address,
-      template_id: template_id,
-      reference: reference,
-      personalisation: {
-        subject: subject,
-        body: body,
-      },
-    )
+    #client.send_email(
+      #email_address: address,
+      #template_id: template_id,
+      #reference: reference,
+      #personalisation: {
+        #subject: subject,
+        #body: body,
+      #},
+    #)
+
+    sleep 1
 
     MetricsService.sent_to_notify_successfully
     :sending
