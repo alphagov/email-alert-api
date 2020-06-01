@@ -1,6 +1,6 @@
 ---
 :verbose: false
-:concurrency: 45
+:concurrency: 90
 :logfile: ./log/sidekiq.json.log
 :timeout: 4
 :queues:
