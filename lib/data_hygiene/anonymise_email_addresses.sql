@@ -18,8 +18,29 @@
 
 ALTER TABLE emails DISABLE TRIGGER ALL;
 
+-- Create a table to store all email addresses.
+CREATE TABLE oldaddresses (uuid uuid PRIMARY KEY);
+
+INSERT INTO oldaddresses(uuid) SELECT id FROM emails
+WHERE created_at > current_timestamp - interval '1 day';
+
 DELETE FROM emails
-WHERE created_at < current_timestamp - interval '1 day';
+USING oldaddresses
+WHERE emails.id = oldaddresses.uuid;
+
+DELETE FROM emails
+USING oldaddresses
+WHERE emails.id = oldaddresses.uuid;
+
+DELETE FROM subscription_contents
+USING oldaddresses
+WHERE subscription_contents.email_id = oldaddresses.uuid;
+
+DELETE FROM delivery_attempts
+USING oldaddresses
+WHERE delivery_attempts.email_id = oldaddresses.uuid;
+
+DROP TABLE oldaddresses;
 
 ALTER TABLE emails ENABLE TRIGGER ALL;
 
