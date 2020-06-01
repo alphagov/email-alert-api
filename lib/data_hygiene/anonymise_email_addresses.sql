@@ -22,7 +22,7 @@ ALTER TABLE emails DISABLE TRIGGER ALL;
 CREATE TABLE oldaddresses (uuid uuid PRIMARY KEY);
 
 INSERT INTO oldaddresses(uuid)
-(SELECT id FROM emails WHERE created_at >= current_timestamp - interval '1 day');
+(SELECT id FROM emails WHERE created_at < current_timestamp - interval '1 day');
 
 DELETE FROM emails
 USING oldaddresses
