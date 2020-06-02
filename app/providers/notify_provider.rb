@@ -19,7 +19,7 @@ class NotifyProvider
       #},
     #)
 
-    sleep 1
+    sleep 0.1
 
     MetricsService.sent_to_notify_successfully
     :sending
