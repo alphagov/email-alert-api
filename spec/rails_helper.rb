@@ -12,6 +12,8 @@ require "db/seeds"
 
 Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |file| require file }
 
+Rails.application.load_tasks
+
 RSpec.configure do |config|
   config.disable_monkey_patching!
   config.use_transactional_fixtures = true
