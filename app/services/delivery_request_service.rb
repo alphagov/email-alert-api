@@ -2,6 +2,7 @@ class DeliveryRequestService
   PROVIDERS = {
     "notify" => NotifyProvider,
     "pseudo" => PseudoProvider,
+    "delay" => DelayProvider,
   }.freeze
 
   attr_reader :provider_name, :provider, :subject_prefix, :overrider
