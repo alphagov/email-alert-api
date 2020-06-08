@@ -6,12 +6,3 @@ inherit_gem:
 inherit_mode:
   merge:
     - Exclude
-
-Rails/DynamicFindBy:
-  Enabled: false
-Rails/OutputSafety:
-  Enabled: false
-Rails/InverseOf:
-  Enabled: false
-Rails/HasManyOrHasOneDependent:
-  Enabled: false
