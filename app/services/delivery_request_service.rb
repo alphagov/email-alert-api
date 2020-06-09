@@ -69,7 +69,7 @@ private
   def create_delivery_attempt(email, reference)
     MetricsService.first_delivery_attempt(email, Time.now.utc)
 
-    MetricsService.delivery_request_service_create_deliver_attempt do
+    MetricsService.delivery_request_service_create_delivery_attempt do
       DeliveryAttempt.create!(
         id: reference,
         email: email,
