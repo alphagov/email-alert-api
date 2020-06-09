@@ -5,6 +5,7 @@ class DelayProvider
 
   def call(**_args)
     Kernel.sleep 0.1
+    MetricsService.sent_to_notify_successfully
     :delivered
   end
 
