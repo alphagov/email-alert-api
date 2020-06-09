@@ -40,6 +40,10 @@ class MetricsService
       time("delivery_request_worker_find_email.timing", &block)
     end
 
+    def delivery_request_service_first_delivery_attempt(&block)
+      time("delivery_request_service_first_delivery_attempt.timing", &block)
+    end
+
     def delivery_request_service_create_delivery_attempt(&block)
       time("delivery_request_service_create_delivery_attempt.timing", &block)
     end
