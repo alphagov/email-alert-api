@@ -9,7 +9,7 @@ to create a `ContentChange` record, which has a `SubscriptionContent` that belon
 The `SubscriptionContent` is linked to a `Subscription`, which has a `Subscriber`, and belongs to a `Subscribable`.
 A `DeliveryAttempt` is made on the `Email`.
 
-![domain](https://github.com/alphagov/email-alert-api/blob/master/doc/domain.png?raw=true)
+![domain](https://github.com/alphagov/email-alert-api/blob/master/docs/domain.png?raw=true)
 
 [email-alert-service]: https://github.com/alphagov/email-alert-service
 
@@ -19,7 +19,7 @@ A daily task (for the daily digest) or a Monday task (for the weekly digest) run
 
 This worker uses a `SubscriptionContentChangeQuery` to fetch subscriptions with content changes, and creates an `Email` using the `DigestEmailBuilder` and composed of `SubscriptionContent`.
 
-![digests](https://github.com/alphagov/email-alert-api/blob/master/doc/digests.png?raw=true)
+![digests](https://github.com/alphagov/email-alert-api/blob/master/docs/digests.png?raw=true)
 
 ## How Email Alert API interacts with Notify
 
@@ -35,7 +35,7 @@ This calls the `StatusUpdateService`. If a success was reported, then the `Deliv
 otherwise it is given a fail state and an error message is logged on the record.
 At this point, logic plays out to, for example, retry in an hour, or blacklist the subscriber.
 
-![sequence diagram](https://github.com/alphagov/email-alert-api/blob/master/doc/sequence_diagram.png?raw=true)
+![sequence diagram](https://github.com/alphagov/email-alert-api/blob/master/docs/sequence_diagram.png?raw=true)
 
 [notify-callback]: https://docs.notifications.service.gov.uk/ruby.html#delivery-receipts
 

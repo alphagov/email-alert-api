@@ -73,10 +73,10 @@ will not create a subscriber or a subscription, however will return a `201 Creat
 
 ## Documentation
 
-- [API Endpoints](doc/api.md)
-- [Extracting analytics](doc/analytics.md)
-- [Admin tasks available](doc/tasks.md)
-- [Troubleshooting common problems](doc/troubleshooting.md)
+- [API Endpoints](docs/api.md)
+- [Extracting analytics](docs/analytics.md)
+- [Admin tasks available](docs/tasks.md)
+- [Troubleshooting common problems](docs/troubleshooting.md)
 
 ## Licence
 
