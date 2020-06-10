@@ -64,7 +64,7 @@ class MetricsService
     def store_time_to_send_content_change(email, time)
       return if SubscriptionContent.where(email: email).digest.exists?
 
-      content_change = ContentChangesForEmailQuery.call(email).first
+      content_change = ContentChangesForEmailQuery.call(email).take
       return unless content_change
 
       difference = (time - content_change.created_at) * 1000
