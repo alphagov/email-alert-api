@@ -38,6 +38,6 @@ namespace :load_testing do
 
   desc "Clear any remaining load"
   task clear_emails: :environment do
-    Sidekiq::Queue.new("delivery_immediate").clear
+    Sidekiq::Queue.all.each(&:clear)
   end
 end
