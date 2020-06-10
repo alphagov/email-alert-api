@@ -185,8 +185,8 @@ RSpec.describe DeliveryRequestService do
     end
 
     it "records a metric for the delivery attempt" do
-      expect(MetricsService).to receive(:first_delivery_attempt)
-        .with(email, Time.now.utc)
+      expect(MetricsService).to receive(:email_created_to_first_delivery_attempt)
+        .with(email.created_at, Time.now.utc)
 
       subject.call(email: email)
     end
@@ -197,6 +197,19 @@ RSpec.describe DeliveryRequestService do
         .and_return(:sending)
 
       subject.call(email: email)
+    end
+
+    context "when the email is the first attempt of a content change" do
+      let(:subscription_content) { create(:subscription_content, email: email) }
+
+      it "records a metric for the time between content change creation time and delivery attempt" do
+        content_change = subscription_content.content_change
+
+        expect(MetricsService).to receive(:content_change_created_to_first_delivery_attempt)
+          .with(content_change.created_at, Time.now.utc)
+
+        subject.call(email: email)
+      end
     end
   end
 

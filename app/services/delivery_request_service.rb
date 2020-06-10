@@ -68,7 +68,7 @@ private
 
   def create_delivery_attempt(email, reference)
     MetricsService.delivery_request_service_first_delivery_attempt do
-      MetricsService.first_delivery_attempt(email, Time.now.utc)
+      record_first_attempt_metrics(email) unless DeliveryAttempt.exists?(email: email)
     end
 
     MetricsService.delivery_request_service_create_delivery_attempt do
@@ -79,6 +79,18 @@ private
         provider: provider_name,
       )
     end
+  end
+
+  def record_first_attempt_metrics(email)
+    now = Time.now.utc
+    MetricsService.email_created_to_first_delivery_attempt(email.created_at, now)
+
+    return if SubscriptionContent.where(email: email).digest.exists?
+
+    content_change = ContentChangesForEmailQuery.call(email).take
+    return unless content_change
+
+    MetricsService.content_change_created_to_first_delivery_attempt(content_change.created_at, now)
   end
 
   class EmailAddressOverrider
