@@ -85,12 +85,16 @@ private
     now = Time.now.utc
     MetricsService.email_created_to_first_delivery_attempt(email.created_at, now)
 
-    return if SubscriptionContent.where(email: email).digest.exists?
+    content_change_id = SubscriptionContent.where(email: email)
+                                           .immediate
+                                           .pick(:content_change_id)
+    return unless content_change_id
 
-    content_change = ContentChangesForEmailQuery.call(email).take
-    return unless content_change
+    content_change_created_at = ContentChange.where(id: content_change_id)
+                                             .pick(:created_at)
+    return unless content_change_created_at
 
-    MetricsService.content_change_created_to_first_delivery_attempt(content_change.created_at, now)
+    MetricsService.content_change_created_to_first_delivery_attempt(content_change_created_at, now)
   end
 
   class EmailAddressOverrider
