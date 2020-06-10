@@ -18,13 +18,17 @@ class DeliveryRequestService
     new.call(*args)
   end
 
-  def call(email:)
+  def call(email:, content_change_created_at: nil)
     reference = SecureRandom.uuid
 
     address = determine_address(email, reference)
     return false if address.nil?
 
-    delivery_attempt = create_delivery_attempt(email, reference)
+    delivery_attempt = create_delivery_attempt(
+      email,
+      reference,
+      content_change_created_at,
+    )
 
     status = MetricsService.email_send_request(provider_name) do
       call_provider(address, reference, email)
@@ -66,9 +70,13 @@ private
     end
   end
 
-  def create_delivery_attempt(email, reference)
+  def create_delivery_attempt(email, reference, content_change_created_at)
     MetricsService.delivery_request_service_first_delivery_attempt do
-      MetricsService.first_delivery_attempt(email, Time.now.utc)
+      MetricsService.first_delivery_attempt(
+        email,
+        content_change_created_at,
+        Time.now.utc,
+      )
     end
 
     MetricsService.delivery_request_service_create_delivery_attempt do

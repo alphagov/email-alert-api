@@ -48,11 +48,14 @@ class MetricsService
       time("delivery_request_service_create_delivery_attempt.timing", &block)
     end
 
-    def first_delivery_attempt(email, time)
+    def first_delivery_attempt(email, content_change_created_at, time)
       return if DeliveryAttempt.exists?(email: email)
 
       store_time_to_send_email(email, time)
-      store_time_to_send_content_change(email, time)
+      if content_change_created_at
+        duration = (time.to_i - content_change_created_at) * 1000
+        store_time_to_send_content_change(duration)
+      end
     end
 
     def store_time_to_send_email(email, time)
@@ -61,15 +64,9 @@ class MetricsService
       timing(namespace, difference)
     end
 
-    def store_time_to_send_content_change(email, time)
-      return if SubscriptionContent.where(email: email).digest.exists?
-
-      content_change = ContentChangesForEmailQuery.call(email).first
-      return unless content_change
-
-      difference = (time - content_change.created_at) * 1000
+    def store_time_to_send_content_change(duration)
       namespace = "content_change_created_to_first_delivery_attempt"
-      timing(namespace, difference)
+      timing(namespace, duration)
     end
 
     def delivery_attempt_status_changed(status)

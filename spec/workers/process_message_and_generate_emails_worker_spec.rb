@@ -145,7 +145,7 @@ RSpec.describe ProcessMessageAndGenerateEmailsWorker do
     context "with a normal priority message" do
       it "should queue a delivery email job" do
         expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
-          .with(an_instance_of(String), queue: :delivery_immediate)
+          .with(an_instance_of(String), nil, queue: :delivery_immediate)
 
         subject.perform(message.id)
       end
@@ -158,7 +158,7 @@ RSpec.describe ProcessMessageAndGenerateEmailsWorker do
 
       it "should queue a delivery email job with a high priority" do
         expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
-          .with(an_instance_of(String), queue: :delivery_immediate_high)
+          .with(an_instance_of(String), nil, queue: :delivery_immediate_high)
 
         subject.perform(message.id)
       end

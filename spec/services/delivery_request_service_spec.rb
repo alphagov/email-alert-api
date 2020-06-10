@@ -186,7 +186,7 @@ RSpec.describe DeliveryRequestService do
 
     it "records a metric for the delivery attempt" do
       expect(MetricsService).to receive(:first_delivery_attempt)
-        .with(email, Time.now.utc)
+        .with(email, nil, Time.now.utc)
 
       subject.call(email: email)
     end

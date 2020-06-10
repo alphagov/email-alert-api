@@ -119,10 +119,18 @@ private
     )
   end
 
-  def queue_for_delivery(email_data_to_deliver, email_ids_to_deliver)
+  def queue_for_delivery(
+    email_data_to_deliver,
+    email_ids_to_deliver,
+    content_change_created_at: nil
+  )
     email_data_to_deliver.each.with_index do |data, index|
       queue = data[:priority] == :high ? :delivery_immediate_high : :delivery_immediate
-      DeliveryRequestWorker.perform_async_in_queue(email_ids_to_deliver[index], queue: queue)
+      DeliveryRequestWorker.perform_async_in_queue(
+        email_ids_to_deliver[index],
+        content_change_created_at,
+        queue: queue,
+      )
     end
   end
 end

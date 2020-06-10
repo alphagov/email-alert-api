@@ -19,7 +19,11 @@ class ProcessContentChangeAndGenerateEmailsWorker < ProcessAndGenerateEmailsWork
           email_data, email_ids = create_content_change_emails(group, subscription_contents)
         end
       end
-      queue_for_delivery(email_data, email_ids)
+      queue_for_delivery(
+        email_data,
+        email_ids,
+        content_change_created_at: content_change.created_at.to_time.to_i,
+      )
     end
     content_change.mark_processed!
     queue_courtesy_email(content_change)
@@ -62,7 +66,9 @@ private
     queue = content_change.priority == "high" ? :delivery_immediate_high : :delivery_immediate
 
     DeliveryRequestWorker.perform_async_in_queue(
-      email_id, queue: queue
+      email_id,
+      content_change.created_at.to_time.to_i,
+      queue: queue,
     )
   end
 end

@@ -12,9 +12,14 @@ class DeliveryRequestWorker
     end
   end
 
-  def perform(email_id, queue)
-    @email_id = email_id
-    @queue = queue
+  def perform(*args)
+    # TODO: Once deployed and all jobs have been processed, this code
+    # can be changed to always expect three arguments
+    if args.length == 2
+      @email_id, @queue = args
+    else
+      @email_id, content_change_created_at, @queue = args
+    end
 
     check_rate_limit!
 
@@ -22,7 +27,10 @@ class DeliveryRequestWorker
       Email.find(email_id)
     end
 
-    attempted = DeliveryRequestService.call(email: email)
+    attempted = DeliveryRequestService.call(
+      email: email,
+      content_change_created_at: content_change_created_at,
+    )
     increment_rate_limiter if attempted
   end
 

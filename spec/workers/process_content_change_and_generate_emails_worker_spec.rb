@@ -46,7 +46,7 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
     it "enqueues the email to send to the courtesy subscription group" do
       expect(DeliveryRequestWorker)
         .to receive(:perform_async_in_queue)
-        .with(kind_of(String), queue: :delivery_immediate)
+        .with(kind_of(String), kind_of(Integer), queue: :delivery_immediate)
 
       subject.perform(content_change.id)
     end
@@ -54,7 +54,7 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
     it "enqueues the email on the delivery_immediate_high queue when the content change is high priority" do
       expect(DeliveryRequestWorker)
         .to receive(:perform_async_in_queue)
-        .with(kind_of(String), queue: :delivery_immediate_high)
+        .with(kind_of(String), kind_of(Integer), queue: :delivery_immediate_high)
 
       subject.perform(content_change_high_priority.id)
     end
@@ -133,7 +133,7 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
     context "with a normal priority content change" do
       it "should queue a delivery email job with a normal priority" do
         expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
-          .with(an_instance_of(String), queue: :delivery_immediate)
+          .with(an_instance_of(String), kind_of(Integer), queue: :delivery_immediate)
 
         subject.perform(content_change.id)
       end
@@ -146,7 +146,7 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
 
       it "should queue a delivery email job with a high priority" do
         expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
-          .with(an_instance_of(String), queue: :delivery_immediate_high)
+          .with(an_instance_of(String), kind_of(Integer), queue: :delivery_immediate_high)
 
         subject.perform(content_change.id)
       end
