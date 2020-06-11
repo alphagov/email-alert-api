@@ -24,4 +24,15 @@ namespace :report do
   task content_change_failed_emails: :environment do |_t, args|
     Reports::ContentChangeEmailFailures.call(ids: args.extras)
   end
+
+  desc "Query how many active subscribers there are to the given subscription slug"
+  task :count_subscribers, %i[subscription_list_slug] => :environment do |_t, args|
+    Reports::CountSubscribersReport.new.call(slug: args[:subscription_list_slug])
+  end
+
+  desc "Query how many active subscribers there are to the given subscription slug at the given point in time"
+  task :count_subscribers_on, %i[date subscription_list_slug] => :environment do |_t, args|
+    Reports::CountSubscribersOnReport.new.call(slug: args[:subscription_list_slug],
+                                               date: args[:date])
+  end
 end

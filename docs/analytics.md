@@ -38,7 +38,7 @@ There is a [rake task][rake-count-subscribers] that does this for you, and
 includes a breakdown of subscriptions that are Immediate, Daily or Weekly:
 
 ```bash
-rake query:count_subscribers['subscriber-list-slug']
+rake report:count_subscribers['subscriber-list-slug']
 ```
 
 ### How many subscribers did a list have at a particular point in time
@@ -51,7 +51,7 @@ There is a [rake task][rake-count-subscribers-on] that does this for you, and
 includes a breakdown of subscriptions that are Immediate, Daily or Weekly:
 
 ```bash
-rake query:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
+rake report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
 ```
 
 ### Lists with most new subscriptions in a time frame
@@ -203,6 +203,6 @@ LIMIT 10;
 [athena-queries]: https://docs.aws.amazon.com/athena/latest/ug/functions-operators-reference-section.html
 [aws]: https://aws.amazon.com
 [console-instructions]: https://docs.publishing.service.gov.uk/manual/seeing-things-in-the-aws-console.html
-[rake-count-subscribers]: https://deploy.blue.production.govuk.digital//job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=query:count_subscribers['subscriber-list-slug']
-[rake-count-subscribers-on]: https://deploy.blue.production.govuk.digital//job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=query:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
+[rake-count-subscribers]: https://deploy.blue.production.govuk.digital//job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers['subscriber-list-slug']
+[rake-count-subscribers-on]: https://deploy.blue.production.govuk.digital//job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
 [schema.rb]: https://github.com/alphagov/email-alert-api/tree/master/db/schema.rb
