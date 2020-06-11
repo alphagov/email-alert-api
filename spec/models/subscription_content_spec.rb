@@ -27,14 +27,19 @@ RSpec.describe SubscriptionContent do
     end
   end
 
-  describe ".import_ignoring_duplicates" do
+  describe ".import!" do
     let(:content_changes) { create_list(:content_change, 15) }
     let(:subscription) { create(:subscription) }
     let(:columns) { %i[content_change_id subscription_id] }
     let(:rows) { content_changes.map { |c| [c.id, subscription.id] } }
 
     it "can import a lot of items" do
-      expect { described_class.import_ignoring_duplicates(columns, rows, batch_size: 5) }
+      expect {
+        described_class.import!(columns,
+                                rows,
+                                on_duplicate_key_ignore: true,
+                                batch_size: 5)
+      }
         .to change { SubscriptionContent.count }
         .by(15)
     end
@@ -48,7 +53,11 @@ RSpec.describe SubscriptionContent do
         )
       end
 
-      expect { described_class.import_ignoring_duplicates(columns, rows) }
+      expect {
+        described_class.import!(columns,
+                                rows,
+                                on_duplicate_key_ignore: true)
+      }
         .to change { SubscriptionContent.count }
         .by(10)
     end
