@@ -1,7 +1,7 @@
 module Reports
   class ContentChangeEmailFailures
-    def initialize(content_changes)
-      @content_changes = content_changes
+    def initialize(ids:)
+      @content_changes = ContentChange.where(id: ids)
     end
 
     def self.call(*args)

@@ -7,4 +7,22 @@ RSpec.describe "report" do
         .to output.to_stdout
     end
   end
+
+  describe "content_change_email_status_count" do
+    it "outputs a report of content change email statuses" do
+      content_change = create :content_change
+
+      expect { Rake::Task["report:content_change_email_status_count"].invoke(content_change.id.to_s) }
+        .to output.to_stdout
+    end
+  end
+
+  describe "content_change_failed_emails" do
+    it "outputs a report of failed content change emails" do
+      content_change = create :content_change
+
+      expect { Rake::Task["report:content_change_failed_emails"].invoke(content_change.id.to_s) }
+        .to output.to_stdout
+    end
+  end
 end
