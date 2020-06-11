@@ -35,4 +35,9 @@ namespace :report do
     Reports::CountSubscribersOnReport.new.call(slug: args[:subscription_list_slug],
                                                date: args[:date])
   end
+
+  desc "Find successful delivery attempts between two dates/times and calculate average (seconds)"
+  task :find_delivery_attempts, %i[start_date end_date] => :environment do |_t, args|
+    Reports::FindDeliveryAttemptsReport.new(args[:start_date], args[:end_date]).report
+  end
 end

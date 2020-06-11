@@ -43,4 +43,13 @@ RSpec.describe "report" do
         .to output.to_stdout
     end
   end
+
+  describe "find_delivery_attempts" do
+    it "outputs a report of delivery attempts over a date range" do
+      create :delivered_delivery_attempt, created_at: "2019-08-03"
+
+      expect { Rake::Task["report:find_delivery_attempts"].invoke("2019-08-01", "2019-08-07") }
+        .to output.to_stdout
+    end
+  end
 end
