@@ -52,4 +52,46 @@ RSpec.describe "report" do
         .to output.to_stdout
     end
   end
+
+  describe "csv_from_ids" do
+    it "outputs a report of subscriptions to specified lists" do
+      expect { Rake::Task["report:csv_from_ids"].invoke("1") }
+        .to output.to_stdout
+    end
+  end
+
+  describe "csv_from_ids_at" do
+    it "outputs a report of subscriptions to specified lists on a date" do
+      expect { Rake::Task["report:csv_from_ids_at"].invoke("2018-08-08", "1") }
+        .to output.to_stdout
+    end
+  end
+
+  describe "csv_from_slugs" do
+    it "outputs a report of subscriptions to specified lists" do
+      expect { Rake::Task["report:csv_from_slugs"].invoke("a-slug") }
+        .to output.to_stdout
+    end
+  end
+
+  describe "csv_from_slugs_at" do
+    it "outputs a report of subscriptions to specified lists on a date" do
+      expect { Rake::Task["report:csv_from_slugs_at"].invoke("2018-08-08", "a-slug") }
+        .to output.to_stdout
+    end
+  end
+
+  describe "csv_from_living_in_europe" do
+    it "outputs a report of subscriptions to living in Europe lists" do
+      expect { Rake::Task["report:csv_from_living_in_europe"].invoke }
+        .to output.to_stdout
+    end
+  end
+
+  describe "csv_from_travel_advice_at" do
+    it "outputs a report of subscriptions to travel advice lists on a date" do
+      expect { Rake::Task["report:csv_from_travel_advice_at"].invoke("2018-08-08") }
+        .to output.to_stdout
+    end
+  end
 end
