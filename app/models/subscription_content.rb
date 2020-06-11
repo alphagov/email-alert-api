@@ -22,18 +22,4 @@ class SubscriptionContent < ApplicationRecord
       errors.add(:base, "must be associated with a content_change or a message")
     end
   end
-
-  # This method is needed whilst we continue using Postgres 9.4, from 9.5
-  # Postgres can suppoort a ON CONFLICT DO NOTHING and this can be called
-  # directly through activerecord-import: https://github.com/zdennis/activerecord-import#duplicate-key-ignore
-  def self.import_ignoring_duplicates(columns, rows, batch_size: 500)
-    rows.each_slice(batch_size).to_a.each do |batch|
-      transaction { import!(columns, batch) }
-    rescue ActiveRecord::RecordNotUnique
-      batch.each do |data|
-        attributes = columns.zip(data).to_h
-        create!(attributes) unless exists?(attributes)
-      end
-    end
-  end
 end
