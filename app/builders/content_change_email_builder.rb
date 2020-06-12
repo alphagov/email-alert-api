@@ -8,9 +8,7 @@ class ContentChangeEmailBuilder
   end
 
   def call
-    return [] if records.empty?
-
-    Email.timed_bulk_insert(records, ProcessAndGenerateEmailsWorker::BATCH_SIZE)
+    Email.timed_bulk_insert(records, ImmediateEmailGenerationService::BATCH_SIZE)
          .pluck("id")
   end
 

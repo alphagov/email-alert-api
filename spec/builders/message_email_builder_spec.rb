@@ -74,6 +74,10 @@ RSpec.describe MessageEmailBuilder do
       expect(email.subscriber_id).to eq(subscriber.id)
     end
 
+    it "raises an ArgumentError when given an empty collection of parameters" do
+      expect { described_class.call([]) }.to raise_error(ArgumentError)
+    end
+
     context "with a subscription" do
       let(:subscription) { nil }
 
