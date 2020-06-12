@@ -48,7 +48,6 @@ RSpec.describe Reports::UnpublishingReport do
 
   context "generates report" do
     it "generates a report showing unpublishing activity and new subscriptions being made" do
-      described_class.call("2018/08/28", "2018/08/30")
       expect { described_class.call("2018/08/28", "2018/08/30") }.to output(
         <<~TEXT,
           Unpublishing activity between 2018-08-28 00:00:00 and 2018-08-30 00:00:00
@@ -62,7 +61,6 @@ RSpec.describe Reports::UnpublishingReport do
     end
 
     it "generates a report showing unpublishing activity but no new subscriptions being created" do
-      described_class.call("2018/08/31", "2018/09/01")
       expect { described_class.call("2018/08/31", "2018/09/01") }.to output(
         <<~TEXT,
           Unpublishing activity between 2018-08-31 00:00:00 and 2018-09-01 00:00:00

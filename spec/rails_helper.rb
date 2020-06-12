@@ -21,10 +21,6 @@ RSpec.configure do |config|
   config.include RequestHelpers, type: :request
   config.include FactoryBot::Syntax::Methods
 
-  config.before do
-    allow($stdout).to receive(:puts)
-  end
-
   config.before(:each) do
     Sidekiq::Worker.clear_all
   end
