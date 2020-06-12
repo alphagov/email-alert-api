@@ -1,7 +1,7 @@
-namespace :report do
+namespace :troubleshoot do
   desc "Query the Notify API for email(s) by reference"
   task :get_notifications_from_notify, [:reference] => :environment do |_t, args|
-    Reports::NotificationsFromNotify.call(args[:reference])
+    NotificationsFromNotify.call(args[:reference])
   end
 
   desc "Query the Notify API for email(s) by email ID"
@@ -12,7 +12,7 @@ namespace :report do
       puts "No results returned"
     else
       delivery_attempts.each do |delivery_attempt|
-        Reports::NotificationsFromNotify.call(delivery_attempt.id)
+        NotificationsFromNotify.call(delivery_attempt.id)
       end
     end
   end
