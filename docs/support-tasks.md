@@ -1,4 +1,4 @@
-# Tasks
+# Support tasks
 
 Users can manage email subscribers via the [administration interface on GOV.UK][email-manage].
 Support tickets coming through to 2ndline where the user is unaware of this,
@@ -103,26 +103,18 @@ You need to supply the `slug` for the source and destination subscriber lists.
 
 [move]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:move_all_subscribers[<slug-of-old-list>,<slug-of-new-list>]
 
-## Remove empty subscriber lists.
-
-[⚙ Run rake task on production][clean]
-
-Sometimes subscriber lists are created without any subscribers. This task can be run to get rid of these.
-
-[clean]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=clean:remove_empty_subscriberlists%20DRY_RUN=no
-
 ## Send a test email
 
 To send a test email to an existing subscriber:
 
 ```bash
-$ bundle exec rake deliver:to_subscriber[<subscriber_id>]
+$ bundle exec rake troubleshoot:deliver_to_subscriber[<subscriber_id>]
 ```
 
 To send a test email to an email address (doesn't have to be subscribed to anything):
 
 ```bash
-$ bundle exec rake deliver:to_test_email[<email_address>]
+$ bundle exec rake deliver:deliver_to_test_email[<email_address>]
 ```
 
 ## Resend emails
@@ -157,56 +149,3 @@ $ bundle exec rake manage:update_subscriber_list[<slug>,<new_title>,<new_slug>]
 
 If successful it will confirm the change by returning the updated `title` and `slug`
 in the output.
-
-## Export data
-
-There are a number of tasks available which export subscriber list data into CSV files on standard output. In
-particular this includes the active subscription count.
-
-```bash
-$ bundle exec rake report:csv_from_ids[<subscriber_list_id>, ...]
-```
-
-```bash
-$ bundle exec rake report:csv_from_ids_at[<date>, <subscriber_list_id>, ...]
-```
-
-This is the same as above, but exports the active subscription count of the subscriber list as it was on a particular
-date.
-
-```bash
-$ bundle exec rake report:csv_from_living_in_europe
-```
-
-This is a convenience export which does the same as above but with all the "Living in Europe" taxon subscriber lists
-without needing to know their IDs.
-
-## Reports
-
-There are a number of tasks to produce informational reports
-
-### Content Change
-
-```bash
-$ bundle exec rake report:content_change_email_status_count[<content_change_id>]
-```
-
-This will output to the terminal a count for the given content change's
-sent, pending and failed emails.
-
-```bash
-$ bundle exec rake report::content_change_failed_emails[<content_change_id>]
-```
-
-This will output to the terminal the ID and reason for failure for each of the content change's
-failed emails.
-
-### Unpublishing
-
-```bash
-$ bundle exec rake report::unpublishing[<start_date>, <end_date>]
-
-```
-
-This will output to the terminal a brief summary of unpublishing activity and related
-ending subscriptions between the two dates. It also reports new subscriptions.
