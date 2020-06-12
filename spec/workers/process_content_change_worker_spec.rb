@@ -1,4 +1,4 @@
-RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
+RSpec.describe ProcessContentChangeWorker do
   let(:content_change) do
     create(:content_change, tags: { topics: ["oil-and-gas/licensing"] })
   end

@@ -1,4 +1,4 @@
-RSpec.describe ProcessMessageAndGenerateEmailsWorker do
+RSpec.describe ProcessMessageWorker do
   let(:message) do
     create(
       :message,

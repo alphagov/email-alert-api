@@ -1,4 +1,4 @@
-class ProcessContentChangeAndGenerateEmailsWorker
+class ProcessContentChangeWorker
   include Sidekiq::Worker
 
   sidekiq_options queue: :process_and_generate_emails
@@ -32,3 +32,6 @@ private
     DeliveryRequestWorker.perform_async_in_queue(id, queue: content_change.queue)
   end
 end
+
+# This can be deleted once there are no Sidekiq jobs queued to use this class
+ProcessContentChangeAndGenerateEmailsWorker = ProcessContentChangeWorker
