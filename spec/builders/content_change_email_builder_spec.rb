@@ -35,12 +35,6 @@ RSpec.describe ContentChangeEmailBuilder do
     )
   end
 
-  describe "BATCH_SIZE" do
-    it "returns batch size of 5000" do
-      expect(ProcessAndGenerateEmailsWorker::BATCH_SIZE).to eq(5000)
-    end
-  end
-
   describe ".call" do
     let(:subscription_content) do
       double(subscription: subscription_one, content_change: content_change)
