@@ -1,6 +1,6 @@
 require "csv"
 
-class DataExporter
+class Reports::DataExporter
   def export_csv_from_ids(ids)
     export_csv(SubscriberList.where(id: ids))
   end

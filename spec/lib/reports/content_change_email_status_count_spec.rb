@@ -32,7 +32,7 @@ RSpec.describe Reports::ContentChangeEmailStatusCount do
         ---------------------------------------------------------------------------
       TEXT
 
-      expect { described_class.call([content_change]) }.to output(message).to_stdout
+      expect { described_class.call(ids: [content_change.id]) }.to output(message).to_stdout
     end
   end
 end

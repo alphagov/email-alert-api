@@ -1,4 +1,4 @@
-RSpec.describe DataExporter do
+RSpec.describe Reports::DataExporter do
   describe "#export_csv_from_ids_at" do
     let(:date) { "2018-02-01" }
     let(:subscriber_list) { create(:subscriber_list, id: 1, title: "title") }
@@ -36,7 +36,7 @@ RSpec.describe DataExporter do
       )
     end
 
-    subject { DataExporter.new.export_csv_from_ids_at(date, [subscriber_list.id]) }
+    subject { Reports::DataExporter.new.export_csv_from_ids_at(date, [subscriber_list.id]) }
 
     it "returns the correct number of subscriptions" do
       expect { subject }.to output("id,title,count\n1,title,2\n").to_stdout
@@ -54,7 +54,7 @@ RSpec.describe DataExporter do
       create(:subscription, subscriber_list: subscriber_list_baz)
     end
 
-    subject { DataExporter.new.export_csv_from_slugs(%w[foo bar]) }
+    subject { Reports::DataExporter.new.export_csv_from_slugs(%w[foo bar]) }
 
     it "exports subscriber lists by slug" do
       expect { subject }.to output("id,title,count\n1,Foo,1\n2,Bar,1\n").to_stdout

@@ -1,4 +1,4 @@
-RSpec.describe Reports::EmailDeliveryAttempts do
+RSpec.describe Reports::FindDeliveryAttemptsReport do
   before do
     2.times do
       create(

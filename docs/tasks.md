@@ -164,18 +164,18 @@ There are a number of tasks available which export subscriber list data into CSV
 particular this includes the active subscription count.
 
 ```bash
-$ bundle exec rake export:csv_from_ids[<subscriber_list_id>, ...]
+$ bundle exec rake report:csv_from_ids[<subscriber_list_id>, ...]
 ```
 
 ```bash
-$ bundle exec rake export:csv_from_ids_at[<date>, <subscriber_list_id>, ...]
+$ bundle exec rake report:csv_from_ids_at[<date>, <subscriber_list_id>, ...]
 ```
 
 This is the same as above, but exports the active subscription count of the subscriber list as it was on a particular
 date.
 
 ```bash
-$ bundle exec rake export:csv_from_living_in_europe
+$ bundle exec rake report:csv_from_living_in_europe
 ```
 
 This is a convenience export which does the same as above but with all the "Living in Europe" taxon subscriber lists

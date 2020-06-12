@@ -1,8 +1,10 @@
 require "csv"
 
 module Reports
-  class EmailDeliveryAttempts
+  class FindDeliveryAttemptsReport
     def initialize(start_date, end_date)
+      raise ArgumentError, "Missing start_date or end_date" unless start_date.present? && end_date.present?
+
       @start_date = parse_date(start_date)
       @end_date = parse_date(end_date)
     end

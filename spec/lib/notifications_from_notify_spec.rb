@@ -1,4 +1,4 @@
-RSpec.describe Reports::NotificationsFromNotify do
+RSpec.describe NotificationsFromNotify do
   describe "notifications report" do
     context "when passing a reference which is found" do
       let!(:notifications_collection) { build :client_notifications_collection }
