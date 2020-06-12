@@ -108,13 +108,13 @@ You need to supply the `slug` for the source and destination subscriber lists.
 To send a test email to an existing subscriber:
 
 ```bash
-$ bundle exec rake deliver:to_subscriber[<subscriber_id>]
+$ bundle exec rake troubleshoot:deliver_to_subscriber[<subscriber_id>]
 ```
 
 To send a test email to an email address (doesn't have to be subscribed to anything):
 
 ```bash
-$ bundle exec rake deliver:to_test_email[<email_address>]
+$ bundle exec rake deliver:deliver_to_test_email[<email_address>]
 ```
 
 ## Resend emails
