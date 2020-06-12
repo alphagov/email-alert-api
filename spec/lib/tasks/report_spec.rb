@@ -94,4 +94,11 @@ RSpec.describe "report" do
         .to output.to_stdout
     end
   end
+
+  describe "csv_from_travel_advice_at" do
+    it "outputs a report of unpublishing between the specified dates" do
+      expect { Rake::Task["report:unpublishing"].invoke("2018-08-08", "2018-08-09") }
+        .to output.to_stdout
+    end
+  end
 end
