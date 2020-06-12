@@ -27,6 +27,7 @@ RSpec.describe Reports::FindDeliveryAttemptsReport do
     let(:end_date) { "2019-03-23" }
 
     it "throws an error if invalid date is used" do
+      allow($stdout).to receive(:puts)
       expect { described_class.new("xyz", end_date).report }.to raise_error(ArgumentError, "Date(s) entered need to be of date/time format")
     end
 
@@ -43,6 +44,7 @@ RSpec.describe Reports::FindDeliveryAttemptsReport do
     end
 
     it "does not output the average time if there are no delivery attempts within date range" do
+      allow($stdout).to receive(:puts)
       expect { described_class.new("2019-02-02", "2019-02-01").report }.to raise_error(RuntimeError, "No data for dates provided")
     end
   end

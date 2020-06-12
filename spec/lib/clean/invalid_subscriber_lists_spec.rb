@@ -29,6 +29,10 @@ RSpec.describe Clean::InvalidSubscriberLists do
     let!(:subscriber) { create(:subscriber) }
     let!(:subscription) { create(:subscription, :ended, subscriber: subscriber, subscriber_list: invalid_list1) }
 
+    before do
+      allow($stdout).to receive(:puts)
+    end
+
     it "deletes invalid subscriber lists which don't have active subscriptions" do
       expect {
         subject.destroy_invalid_subscriber_lists(dry_run: false)

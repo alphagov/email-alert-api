@@ -1,4 +1,8 @@
 RSpec.describe Clean::InvalidSubscribers do
+  before do
+    allow($stdout).to receive(:puts)
+  end
+
   context "There are four subscribers" do
     before :each do
       @subscriber1 = FactoryBot.create(:subscriber, id: 1)

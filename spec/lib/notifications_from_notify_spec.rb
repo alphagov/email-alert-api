@@ -24,8 +24,6 @@ RSpec.describe NotificationsFromNotify do
         notification = notifications_collection.collection.first
         allow(client).to receive(:get_notifications).and_return(notifications_collection)
 
-        described_class.call(reference)
-
         expect { described_class.call(reference) }
         .to output(
           <<~TEXT,
@@ -60,8 +58,6 @@ RSpec.describe NotificationsFromNotify do
         client = instance_double("Notifications::Client")
         allow(client).to receive(:get_notifications).and_return(empty_client_notifications_collection)
 
-        described_class.call(reference)
-
         expect { described_class.call(reference) }
         .to output(
           <<~TEXT,
@@ -94,7 +90,6 @@ RSpec.describe NotificationsFromNotify do
         client = instance_double("Notifications::Client")
         error = client_request_error
         allow(client).to receive(:get_notifications).and_raise(client_request_error)
-        described_class.call(reference)
 
         expect { described_class.call(reference) }
         .to output(

@@ -11,14 +11,20 @@ RSpec.describe Clean::EmptySubscriberLists do
       end
     end
 
-    context "during a dry run" do
-      it "wont remove the list" do
-        expect { subject.remove_empty_subscriberlists }.not_to(change { SubscriberList.count })
+    describe "#remove_empty_subscriber_lists" do
+      before do
+        allow($stdout).to receive(:puts)
       end
-    end
 
-    it "removes the list" do
-      expect { subject.remove_empty_subscriberlists(dry_run: false) }.to(change { SubscriberList.count })
+      context "during a dry run" do
+        it "wont remove the list" do
+          expect { subject.remove_empty_subscriberlists }.not_to(change { SubscriberList.count })
+        end
+      end
+
+      it "removes the list" do
+        expect { subject.remove_empty_subscriberlists(dry_run: false) }.to(change { SubscriberList.count })
+      end
     end
   end
 

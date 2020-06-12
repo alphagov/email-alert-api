@@ -5,6 +5,7 @@ RSpec.describe Overloader do
   before do
     list_1.subscriptions << create_list(:subscription, 2)
     list_2.subscriptions << create_list(:subscription, 1)
+    allow($stdout).to receive(:puts)
   end
 
   describe "#with_big_lists" do

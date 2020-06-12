@@ -27,6 +27,10 @@ RSpec.describe Clean::MigrateSpecialistSubscriberLists do
       subject(:migration) { cleaner.migrate_subscribers_to_working_lists(dry_run: dry_run) }
       let(:dry_run) { false }
 
+      before do
+        allow($stdout).to receive(:puts)
+      end
+
       context "during a dry run" do
         let(:dry_run) { true }
         it "wont migrate subscribers" do
