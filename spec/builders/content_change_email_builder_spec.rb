@@ -59,10 +59,10 @@ RSpec.describe ContentChangeEmailBuilder do
 
     subject(:email_import) { described_class.call(params) }
 
-    let(:email) { Email.find(email_import.ids.first) }
+    let(:email) { Email.find(email_import.first) }
 
     it "returns an email import" do
-      expect(email_import.ids.count).to eq(1)
+      expect(email_import.count).to eq(1)
     end
 
     it "sets the subject" do
@@ -104,7 +104,7 @@ RSpec.describe ContentChangeEmailBuilder do
 
       subject(:email_import) { described_class.call(params) }
 
-      let(:email) { Email.find(email_import.ids.first) }
+      let(:email) { Email.find(email_import.first) }
 
       context "without a URL" do
         let(:subscription_content) do

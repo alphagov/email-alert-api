@@ -44,7 +44,7 @@ private
       )
     end
 
-    email_ids = ContentChangeEmailBuilder.call(email_data.map { |e| e[:params] }).ids
+    email_ids = ContentChangeEmailBuilder.call(email_data.map { |e| e[:params] })
     update_subscription_contents(email_data, email_ids)
     [email_data, email_ids]
   end
@@ -77,7 +77,7 @@ private
       )
     end
 
-    email_ids = MessageEmailBuilder.call(email_data.map { |e| e[:params] }).ids
+    email_ids = MessageEmailBuilder.call(email_data.map { |e| e[:params] })
     update_subscription_contents(email_data, email_ids)
     [email_data, email_ids]
   end

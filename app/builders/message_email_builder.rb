@@ -8,11 +8,10 @@ class MessageEmailBuilder
   end
 
   def call
-    Email.timed_bulk_insert(
-      columns,
-      records,
-      ProcessAndGenerateEmailsWorker::BATCH_SIZE,
-    )
+    return [] if records.empty?
+
+    Email.timed_bulk_insert(records, ProcessAndGenerateEmailsWorker::BATCH_SIZE)
+         .pluck("id")
   end
 
   private_class_method :new
@@ -22,18 +21,20 @@ private
   attr_reader :recipients_and_messages
 
   def records
-    recipients_and_messages.map do |address:, message:, subscriptions:, subscriber_id:|
-      [
-        address,
-        subject(message),
-        body(message, subscriptions, address),
-        subscriber_id,
-      ]
-    end
-  end
+    @records ||= begin
+      now = Time.zone.now
 
-  def columns
-    %i[address subject body subscriber_id]
+      recipients_and_messages.map do |address:, message:, subscriptions:, subscriber_id:|
+        {
+          address: address,
+          subject: subject(message),
+          body: body(message, subscriptions, address),
+          subscriber_id: subscriber_id,
+          created_at: now,
+          updated_at: now,
+        }
+      end
+    end
   end
 
   def subject(message)

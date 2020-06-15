@@ -17,9 +17,9 @@ class Email < ApplicationRecord
 
   validates :address, :subject, :body, presence: true
 
-  def self.timed_bulk_insert(columns, records, batch_size)
-    return import!(columns, records) unless records.size == batch_size
+  def self.timed_bulk_insert(records, batch_size)
+    return insert_all!(records) unless records.size == batch_size
 
-    MetricsService.email_bulk_insert(batch_size) { import!(columns, records) }
+    MetricsService.email_bulk_insert(batch_size) { insert_all!(records) }
   end
 end

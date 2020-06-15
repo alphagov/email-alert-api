@@ -40,7 +40,7 @@ RSpec.describe MessageEmailBuilder do
 
     subject(:email_import) { described_class.call(params) }
 
-    let(:email) { Email.find(email_import.ids.first) }
+    let(:email) { Email.find(email_import.first) }
 
     describe "BATCH_SIZE" do
       it "returns batch size of 5000" do
@@ -49,7 +49,7 @@ RSpec.describe MessageEmailBuilder do
     end
 
     it "returns an email import" do
-      expect(email_import.ids.count).to eq(1)
+      expect(email_import.count).to eq(1)
     end
 
     it "sets the subject" do
@@ -90,13 +90,13 @@ RSpec.describe MessageEmailBuilder do
 
       subject(:email_import) { described_class.call(params) }
 
-      let(:email) { Email.find(email_import.ids.first) }
+      let(:email) { Email.find(email_import.first) }
 
       context "without a URL" do
         let(:subscription) { subscription_one }
 
         it "sets the body" do
-          email = Email.find(email_import.ids.first)
+          email = Email.find(email_import.first)
 
           expect(email.body).to eq(
             <<~BODY,
@@ -120,7 +120,7 @@ RSpec.describe MessageEmailBuilder do
         let(:subscription) { subscription_two }
 
         it "sets the body" do
-          email = Email.find(email_import.ids.first)
+          email = Email.find(email_import.first)
 
           expect(email.body).to eq(
             <<~BODY,

@@ -61,7 +61,7 @@ private
         content_change: content_change,
         subscriber_id: subscriber.id,
       },
-    ]).ids.first
+    ]).first
 
     queue = content_change.priority == "high" ? :delivery_immediate_high : :delivery_immediate
 

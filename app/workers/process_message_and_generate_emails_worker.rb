@@ -60,7 +60,7 @@ private
         message: message,
         subscriber_id: subscriber.id,
       },
-    ]).ids.first
+    ]).first
 
     DeliveryRequestWorker.perform_async_in_queue(
       email_id, queue: :delivery_immediate
