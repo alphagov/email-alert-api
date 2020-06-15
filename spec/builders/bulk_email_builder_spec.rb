@@ -11,10 +11,10 @@ RSpec.describe BulkEmailBuilder do
       let(:subscriber_lists) { [create(:subscription).subscriber_list] }
 
       it "returns an email import" do
-        expect(email_import.ids.count).to eq(1)
+        expect(email_import.count).to eq(1)
       end
 
-      let(:email) { Email.find(email_import.ids.first) }
+      let(:email) { Email.find(email_import.first) }
 
       it "sets the subject" do
         expect(email.subject).to eq("email subject")
@@ -29,7 +29,7 @@ RSpec.describe BulkEmailBuilder do
       let(:subscriber_lists) { [create(:subscription, :ended).subscriber_list] }
 
       it "imports no emails" do
-        expect(email_import.ids.count).to eq(0)
+        expect(email_import.count).to eq(0)
       end
     end
 
@@ -38,7 +38,7 @@ RSpec.describe BulkEmailBuilder do
       let(:subscriber_lists) { [create(:subscription, subscriber: subscriber).subscriber_list] }
 
       it "imports no emails" do
-        expect(email_import.ids.count).to eq(0)
+        expect(email_import.count).to eq(0)
       end
     end
 
@@ -58,7 +58,7 @@ RSpec.describe BulkEmailBuilder do
       end
 
       it "should only create one email per subscriber" do
-        expect(email_import.ids.count).to eq(3)
+        expect(email_import.count).to eq(3)
       end
     end
   end
