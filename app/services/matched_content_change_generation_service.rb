@@ -10,9 +10,19 @@ class MatchedContentChangeGenerationService
   def call
     # if we have records already, then we expect the process completed
     # successfully previously since the insert is an atomic operation
-    return if MatchedContentChange.exists?(content_change: content_change)
+    return if MatchedContentChange.exists?(content_change: content_change) || subscriber_lists.empty?
 
-    MatchedContentChange.import!(columns, records)
+    now = Time.zone.now
+    records = subscriber_lists.map do |list|
+      {
+        content_change_id: content_change.id,
+        subscriber_list_id: list.id,
+        created_at: now,
+        updated_at: now,
+      }
+    end
+
+    MatchedContentChange.insert_all!(records)
   end
 
   private_class_method :new
@@ -21,19 +31,8 @@ private
 
   attr_reader :content_change
 
-  def columns
-    %i[content_change_id subscriber_list_id]
-  end
-
-  def records
-    content_change_id = content_change.id
-    subscriber_lists.map do |subscriber_list|
-      [content_change_id, subscriber_list.id]
-    end
-  end
-
   def subscriber_lists
-    SubscriberListQuery.new(
+    @subscriber_lists ||= SubscriberListQuery.new(
       tags: content_change.tags,
       links: content_change.links,
       document_type: content_change.document_type,
