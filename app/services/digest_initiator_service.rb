@@ -15,14 +15,7 @@ class DigestInitiatorService
       subscriber_ids = DigestRunSubscriberQuery.call(digest_run: digest_run).pluck(:id)
 
       subscriber_ids.each_slice(1000) do |subscriber_ids_chunk|
-        digest_run_subscriber_params = build_digest_run_subscriber_params(
-          digest_run.id,
-          subscriber_ids_chunk,
-        )
-
-        digest_run_subscriber_ids = import_digest_run_subscribers(
-          digest_run_subscriber_params,
-        )
+        digest_run_subscriber_ids = DigestRunSubscriber.populate(digest_run, subscriber_ids_chunk)
 
         enqueue_jobs(digest_run_subscriber_ids)
       end
@@ -63,16 +56,5 @@ private
 
   def lock_name
     "#{range}_digest_initiator"
-  end
-
-  def build_digest_run_subscriber_params(digest_run_id, subscriber_ids)
-    subscriber_ids.map do |subscriber_id|
-      [subscriber_id, digest_run_id]
-    end
-  end
-
-  def import_digest_run_subscribers(params)
-    columns = %i[subscriber_id digest_run_id]
-    DigestRunSubscriber.import!(columns, params).ids
   end
 end
