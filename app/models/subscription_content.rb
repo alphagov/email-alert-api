@@ -1,4 +1,7 @@
 class SubscriptionContent < ApplicationRecord
+  # Any validations added this to this model won't be applied on record
+  # creation as this table is populated by the #insert_all bulk method
+
   belongs_to :subscription
   belongs_to :digest_run_subscriber, optional: true
   belongs_to :email, optional: true
