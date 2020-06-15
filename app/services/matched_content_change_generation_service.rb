@@ -8,7 +8,7 @@ class MatchedContentChangeGenerationService
   end
 
   def call
-    # if we already have any records already we expect the process completed
+    # if we have records already, then we expect the process completed
     # successfully previously since the insert is an atomic operation
     return if MatchedContentChange.exists?(content_change: content_change)
 
