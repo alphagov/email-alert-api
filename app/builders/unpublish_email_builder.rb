@@ -4,12 +4,14 @@ class UnpublishEmailBuilder
   end
 
   def call(emails, template)
-    Email.import!(email_records(emails, template)).ids
+    records = email_records(emails, template)
+    Email.insert_all!(records).pluck("id")
   end
 
 private
 
   def email_records(email_parameters, template)
+    now = Time.zone.now
     email_parameters.map do |email|
       {
         address: email.subscriber.address,
@@ -20,6 +22,8 @@ private
           ).fetch_binding,
         ),
         subscriber_id: email.subscriber.id,
+        created_at: now,
+        updated_at: now,
       }
     end
   end
