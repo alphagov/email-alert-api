@@ -83,7 +83,7 @@ RSpec.describe "report" do
 
   describe "csv_from_living_in_europe" do
     it "outputs a report of subscriptions to living in Europe lists" do
-      expect { Rake::Task["report:csv_from_living_in_europe"].invoke }
+      expect { Rake::Task["report:csv_from_living_in_europe"].invoke("2018-08-08") }
         .to output.to_stdout
     end
   end
