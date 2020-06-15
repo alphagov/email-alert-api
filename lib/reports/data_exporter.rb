@@ -17,12 +17,12 @@ class Reports::DataExporter
     export_csv(SubscriberList.where(slug: slugs), at: date)
   end
 
-  def export_csv_from_living_in_europe
-    export_csv(living_in_europe_subscriber_lists)
+  def export_csv_from_living_in_europe(date)
+    export_detailed_csv(living_in_europe_subscriber_lists, at: date)
   end
 
   def export_csv_from_travel_advice_at(date)
-    travel_advice_csv(travel_advice_subscriber_lists, at: date)
+    export_detailed_csv(travel_advice_subscriber_lists, at: date)
   end
 
 private
@@ -52,6 +52,7 @@ private
     netherlands
     poland
     portugal
+    romania
     slovakia
     slovenia
     spain
@@ -93,7 +94,7 @@ private
     end
   end
 
-  def travel_advice_csv(subscriber_lists, at: nil)
+  def export_detailed_csv(subscriber_lists, at: nil)
     CSV($stdout, headers: %i[title subscribed unsubscribed immediately daily weekly], write_headers: true) do |csv|
       subscriber_lists.find_each do |subscriber_list|
         csv << present_travel_advice_report(subscriber_list, at: at)
