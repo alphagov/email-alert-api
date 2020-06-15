@@ -31,12 +31,18 @@ private
 
   def import_subscription_content(content_change)
     ensure_subscription_content_import_running_only_once(content_change) do
-      SubscriptionContent.import!(
-        %i[content_change_id subscription_id],
-        subscription_ids(content_change).map { |id| [content_change.id, id] },
-        on_duplicate_key_ignore: true,
-        batch_size: 500,
-      )
+      subscription_ids(content_change).each_slice(500) do |group|
+        now = Time.zone.now
+        records = group.map do |subscription_id|
+          {
+            content_change_id: content_change.id,
+            subscription_id: subscription_id,
+            created_at: now,
+            updated_at: now,
+          }
+        end
+        SubscriptionContent.insert_all(records)
+      end
     end
   end
 

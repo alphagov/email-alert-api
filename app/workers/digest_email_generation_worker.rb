@@ -42,24 +42,21 @@ private
   end
 
   def fill_subscription_content(email, subscription_content, digest_run_subscriber)
-    columns = %i[email_id
-                 subscription_id
-                 content_change_id
-                 message_id
-                 digest_run_subscriber_id]
-
-    rows = subscription_content.flat_map do |result|
+    now = Time.zone.now
+    records = subscription_content.flat_map do |result|
       result.content.map do |content|
-        [
-          email.id,
-          result.subscription_id,
-          content.is_a?(ContentChange) ? content.id : nil,
-          content.is_a?(Message) ? content.id : nil,
-          digest_run_subscriber.id,
-        ]
+        {
+          email_id: email.id,
+          subscription_id: result.subscription_id,
+          content_change_id: content.is_a?(ContentChange) ? content.id : nil,
+          message_id: content.is_a?(Message) ? content.id : nil,
+          digest_run_subscriber_id: digest_run_subscriber.id,
+          created_at: now,
+          updated_at: now,
+        }
       end
     end
 
-    SubscriptionContent.import!(columns, rows)
+    SubscriptionContent.insert_all!(records)
   end
 end
