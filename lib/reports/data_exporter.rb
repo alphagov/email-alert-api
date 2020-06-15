@@ -17,8 +17,8 @@ class Reports::DataExporter
     export_csv(SubscriberList.where(slug: slugs), at: date)
   end
 
-  def export_csv_from_living_in_europe
-    export_csv(living_in_europe_subscriber_lists)
+  def export_csv_from_living_in_europe(date)
+    export_detailed_csv(living_in_europe_subscriber_lists, at: date)
   end
 
   def export_csv_from_travel_advice_at(date)
