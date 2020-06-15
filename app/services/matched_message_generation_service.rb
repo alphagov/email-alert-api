@@ -8,6 +8,10 @@ class MatchedMessageGenerationService
   end
 
   def call
+    # if we already have records already, then we expect the process completed
+    # successfully previously since the insert is an atomic operation
+    return if MatchedMessage.exists?(message: message)
+
     MatchedMessage.import!(columns, records)
   end
 

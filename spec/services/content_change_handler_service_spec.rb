@@ -56,11 +56,6 @@ RSpec.describe ContentChangeHandlerService do
         .to change { ContentChange.count }.by(1)
     end
 
-    it "creates a MatchedContentChange" do
-      expect { described_class.call(params: params, govuk_request_id: govuk_request_id) }
-        .to change { MatchedContentChange.count }.by(1)
-    end
-
     let(:content_change) { create(:content_change) }
 
     it "adds GovukDocumentTypes to the content_change tags" do

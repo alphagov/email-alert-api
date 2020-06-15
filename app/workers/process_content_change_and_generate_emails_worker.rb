@@ -7,6 +7,8 @@ class ProcessContentChangeAndGenerateEmailsWorker < ProcessAndGenerateEmailsWork
     content_change = ContentChange.find(content_change_id)
     return if content_change.processed?
 
+    MatchedContentChangeGenerationService.call(content_change)
+
     import_subscription_content(content_change)
 
     SubscribersForImmediateEmailQuery.call(content_change_id: content_change_id, message_id: nil).find_in_batches(batch_size: BATCH_SIZE) do |group|

@@ -1,11 +1,10 @@
 RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
-  let(:content_change) { create(:content_change, tags: { topics: { any: ["oil-and-gas/licensing"] } }) }
+  let(:content_change) { create(:content_change, tags: { topics: ["oil-and-gas/licensing"] }) }
   let(:email) { create(:email) }
 
   context "with a subscription" do
     let(:subscriber) { create(:subscriber) }
     let(:subscriber_list) { create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } }) }
-    let!(:matched_content_change) { create(:matched_content_change, subscriber_list: subscriber_list, content_change: content_change) }
     let!(:subscription) { create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list) }
 
     it "creates subscription content for the content change" do
@@ -18,6 +17,11 @@ RSpec.describe ProcessContentChangeAndGenerateEmailsWorker do
       expect { subject.perform(content_change.id) }
         .to change { content_change.reload.processed? }
         .to(true)
+    end
+
+    it "creates a MatchedContentChange" do
+      expect { subject.perform(content_change.id) }
+        .to change { MatchedContentChange.count }.by(1)
     end
 
     context "when the subscription content has already been imported" do
