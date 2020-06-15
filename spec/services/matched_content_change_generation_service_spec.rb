@@ -9,7 +9,7 @@ RSpec.describe MatchedContentChangeGenerationService do
 
   describe ".call" do
     it "creates a MatchedContentChange" do
-      expect { described_class.call(content_change: content_change) }
+      expect { described_class.call(content_change) }
         .to change { MatchedContentChange.count }.by(1)
     end
   end
