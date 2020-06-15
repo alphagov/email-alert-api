@@ -45,8 +45,6 @@ GEM
     activerecord (6.0.3.1)
       activemodel (= 6.0.3.1)
       activesupport (= 6.0.3.1)
-    activerecord-import (1.0.5)
-      activerecord (>= 3.2)
     activestorage (6.0.3.1)
       actionpack (= 6.0.3.1)
       activejob (= 6.0.3.1)
@@ -376,7 +374,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord-import (~> 1.0)
   aws-sdk-s3 (~> 1)
   bootsnap
   climate_control
