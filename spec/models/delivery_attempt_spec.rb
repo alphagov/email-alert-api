@@ -1,12 +1,4 @@
 RSpec.describe DeliveryAttempt, type: :model do
-  describe "validations" do
-    subject { create(:delivery_attempt) }
-
-    it "is valid for the default factory" do
-      expect(subject).to be_valid
-    end
-  end
-
   describe ".finished_sending_at" do
     subject { delivery_attempt.finished_sending_at }
 

@@ -15,8 +15,6 @@ class Email < ApplicationRecord
   enum status: { pending: 0, sent: 1, failed: 2 }
   enum failure_reason: { permanent_failure: 0, retries_exhausted_failure: 1, technical_failure: 2 }
 
-  validates :address, :subject, :body, presence: true
-
   def self.timed_bulk_insert(records, batch_size)
     return insert_all!(records) unless records.size == batch_size
 
