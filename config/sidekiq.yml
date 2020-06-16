@@ -3,18 +3,17 @@
 :concurrency: 32
 :logfile: ./log/sidekiq.json.log
 :timeout: 4
-
 # Any changes to the queues should be reflected in `docs/queues.md`.
+# https://github.com/mperham/sidekiq/wiki/Advanced-Options#queues
 :queues:
   - delivery_transactional
-  - [delivery_immediate_high, 10]
-  - [delivery_immediate, 5]
-  - [process_and_generate_emails, 4]
-  - [default, 3]
-  - [delivery_digest, 2]
-  - [email_generation_digest, 1]
+  - delivery_immediate_high
+  - delivery_digest
+  - delivery_immediate
+  - process_and_generate_emails
+  - email_generation_digest
+  - default
   - cleanup
-
 :schedule:
   daily_digest_initiator:
     cron: '30 8 * * * Europe/London' # every day at 8:30am
