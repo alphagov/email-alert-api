@@ -1,4 +1,7 @@
 class Email < ApplicationRecord
+  # Any validations added this to this model won't be applied on record
+  # creation as this table is populated by the #insert_all bulk method
+
   COURTESY_EMAIL = "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk".freeze
   has_many :delivery_attempts
 
@@ -15,11 +18,9 @@ class Email < ApplicationRecord
   enum status: { pending: 0, sent: 1, failed: 2 }
   enum failure_reason: { permanent_failure: 0, retries_exhausted_failure: 1, technical_failure: 2 }
 
-  validates :address, :subject, :body, presence: true
+  def self.timed_bulk_insert(records, batch_size)
+    return insert_all!(records) unless records.size == batch_size
 
-  def self.timed_bulk_insert(columns, records, batch_size)
-    return import!(columns, records) unless records.size == batch_size
-
-    MetricsService.email_bulk_insert(batch_size) { import!(columns, records) }
+    MetricsService.email_bulk_insert(batch_size) { insert_all!(records) }
   end
 end

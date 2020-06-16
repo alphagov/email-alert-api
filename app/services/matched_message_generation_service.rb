@@ -10,9 +10,19 @@ class MatchedMessageGenerationService
   def call
     # if we already have records already, then we expect the process completed
     # successfully previously since the insert is an atomic operation
-    return if MatchedMessage.exists?(message: message)
+    return if MatchedMessage.exists?(message: message) || subscriber_lists.empty?
 
-    MatchedMessage.import!(columns, records)
+    now = Time.zone.now
+    records = subscriber_lists.map do |list|
+      {
+        message_id: message.id,
+        subscriber_list_id: list.id,
+        created_at: now,
+        updated_at: now,
+      }
+    end
+
+    MatchedMessage.insert_all!(records)
   end
 
   private_class_method :new
@@ -21,13 +31,7 @@ private
 
   attr_reader :message
 
-  def columns
-    %i[message_id subscriber_list_id]
-  end
-
-  def records
-    SubscriberList
-      .matching_criteria_rules(message.criteria_rules)
-      .map { |subscriber_list| [message.id, subscriber_list.id] }
+  def subscriber_lists
+    @subscriber_lists ||= SubscriberList.matching_criteria_rules(message.criteria_rules)
   end
 end

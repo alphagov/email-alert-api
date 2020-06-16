@@ -30,12 +30,18 @@ private
 
   def import_subscription_content(message)
     ensure_subscription_content_import_running_only_once(message) do
-      SubscriptionContent.import!(
-        %i[message_id subscription_id],
-        subscription_ids(message).map { |id| [message.id, id] },
-        on_duplicate_key_ignore: true,
-        batch_size: 500,
-      )
+      subscription_ids(message).each_slice(500) do |group|
+        now = Time.zone.now
+        records = group.map do |subscription_id|
+          {
+            message_id: message.id,
+            subscription_id: subscription_id,
+            created_at: now,
+            updated_at: now,
+          }
+        end
+        SubscriptionContent.insert_all(records)
+      end
     end
   end
 
@@ -60,7 +66,7 @@ private
         message: message,
         subscriber_id: subscriber.id,
       },
-    ]).ids.first
+    ]).first
 
     DeliveryRequestWorker.perform_async_in_queue(
       email_id, queue: :delivery_immediate

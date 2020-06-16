@@ -10,7 +10,7 @@ class BulkEmailBuilder
   end
 
   def call
-    Email.import!(columns, records)
+    records.any? ? Email.insert_all!(records).pluck("id") : []
   end
 
   private_class_method :new
@@ -19,13 +19,19 @@ private
 
   attr_reader :subject, :body, :subscriber_lists
 
-  def columns
-    %i[address subject body subscriber_id]
-  end
-
   def records
-    subscribers.map do |address, subscriber_id|
-      [address, subject, body, subscriber_id]
+    @records ||= begin
+      now = Time.zone.now
+      subscribers.map do |address, subscriber_id|
+        {
+          address: address,
+          subject: subject,
+          body: body,
+          subscriber_id: subscriber_id,
+          created_at: now,
+          updated_at: now,
+        }
+      end
     end
   end
 

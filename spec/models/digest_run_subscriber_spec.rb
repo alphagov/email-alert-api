@@ -1,18 +1,42 @@
 require "rails_helper"
 
 RSpec.describe DigestRunSubscriber do
-  subject { create(:digest_run_subscriber) }
+  describe ".populate" do
+    let(:digest_run) { create(:digest_run) }
 
-  describe "mark_complete!" do
-    it "sets completed_at to Time.now" do
-      Timecop.freeze do
-        subject.mark_complete!
-        expect(subject.completed_at).to eq(Time.zone.now)
+    it "inserts digest run subscribers" do
+      subscribers = create_list(:subscriber, 2)
+      expect { described_class.populate(digest_run, subscribers.map(&:id)) }
+        .to change { described_class.count }.by(2)
+    end
+
+    it "sets the appropriate attributes" do
+      # usec is set to 0 to avoid Ruby/PostgreSQL differences in precision
+      Timecop.freeze(Time.zone.now.change(usec: 0)) do
+        subscriber = create(:subscriber)
+        described_class.populate(digest_run, [subscriber.id])
+        expect(described_class.last).to have_attributes(
+          digest_run_id: digest_run.id,
+          subscriber_id: subscriber.id,
+          created_at: Time.zone.now,
+          updated_at: Time.zone.now,
+        )
       end
+    end
+
+    it "returns an array of ids" do
+      subscriber = create(:subscriber)
+      ids = described_class.populate(digest_run, [subscriber.id])
+      expect(ids).to eq([described_class.last.id])
+    end
+
+    it "raises an error when given an empty collection of subscribers" do
+      expect { described_class.populate(digest_run, []) }
+        .to raise_error(ArgumentError)
     end
   end
 
-  describe "incomplete_for_run" do
+  describe ".incomplete_for_run" do
     it "returns records with the supplied digest_run_id that have completed_at nil" do
       create(:digest_run, id: 1)
       digest_run_subscriber = create(
@@ -44,6 +68,16 @@ RSpec.describe DigestRunSubscriber do
       )
 
       expect(described_class.incomplete_for_run(1).count).to eq(0)
+    end
+  end
+
+  describe "#mark_complete!" do
+    it "sets completed_at to Time.now" do
+      Timecop.freeze do
+        digest_run_subscriber = create(:digest_run_subscriber)
+        digest_run_subscriber.mark_complete!
+        expect(digest_run_subscriber.completed_at).to eq(Time.zone.now)
+      end
     end
   end
 end

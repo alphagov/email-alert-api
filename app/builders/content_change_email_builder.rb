@@ -8,11 +8,10 @@ class ContentChangeEmailBuilder
   end
 
   def call
-    Email.timed_bulk_insert(
-      columns,
-      records,
-      ProcessAndGenerateEmailsWorker::BATCH_SIZE,
-    )
+    return [] if records.empty?
+
+    Email.timed_bulk_insert(records, ProcessAndGenerateEmailsWorker::BATCH_SIZE)
+         .pluck("id")
   end
 
   private_class_method :new
@@ -22,22 +21,25 @@ private
   attr_reader :recipients_and_content
 
   def records
-    recipients_and_content.map do |recipient_and_content|
-      [
-        address = recipient_and_content.fetch(:address),
-        subject(recipient_and_content.fetch(:content_change)),
-        body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions), address),
-        recipient_and_content.fetch(:subscriber_id),
-      ]
+    @records ||= begin
+      now = Time.zone.now
+      recipients_and_content.map do |recipient_and_content|
+        address = recipient_and_content.fetch(:address)
+
+        {
+          address: address,
+          subject: subject(recipient_and_content.fetch(:content_change)),
+          body: body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions), address),
+          subscriber_id: recipient_and_content.fetch(:subscriber_id),
+          created_at: now,
+          updated_at: now,
+        }
+      end
     end
   end
 
   def subject(content_change)
     I18n.t!("emails.content_change.subject", title: content_change.title)
-  end
-
-  def columns
-    %i[address subject body subscriber_id]
   end
 
   def body(content_change, subscriptions, address)
