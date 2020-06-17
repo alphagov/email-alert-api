@@ -1,7 +1,7 @@
 class Metrics::SubscriptionContentExporter < Metrics::BaseExporter
   def call
-    GlobalMetricsService.critical_subscription_contents_total(critical_subscription_contents)
-    GlobalMetricsService.warning_subscription_contents_total(warning_subscription_contents)
+    GovukStatsd.gauge("subscription_contents.critical_total", critical_subscription_contents)
+    GovukStatsd.gauge("subscription_contents.warning_total", warning_subscription_contents)
   end
 
 private

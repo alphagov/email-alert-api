@@ -1,7 +1,7 @@
 class Metrics::DigestRunExporter < Metrics::BaseExporter
   def call
-    GlobalMetricsService.critical_digest_runs_total(critical_digest_runs)
-    GlobalMetricsService.warning_digest_runs_total(warning_digest_runs)
+    GovukStatsd.gauge("digest_runs.critical_total", critical_digest_runs)
+    GovukStatsd.gauge("digest_runs.warning_total", warning_digest_runs)
   end
 
 private

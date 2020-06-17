@@ -7,27 +7,18 @@ RSpec.describe Metrics::SubscriptionContentExporter do
         before do
           create(:subscription_content, created_at: 51.minutes.ago)
           create(:subscription_content, created_at: 36.minutes.ago)
-          allow(GlobalMetricsService.send(:statsd)).to receive(:gauge)
+          allow(GovukStatsd).to receive(:gauge)
         end
 
         it "records a metric for the number of subscription contents created over
         50 minutes ago (critical)" do
-          expect(GlobalMetricsService).to receive(:critical_subscription_contents_total).with(1)
+          expect(GovukStatsd).to receive(:gauge).with("subscription_contents.critical_total", 1)
           described_class.call
         end
 
         it "records a metric for the number of subscription contents created over
         35 minutes ago (warning)" do
-          expect(GlobalMetricsService).to receive(:warning_subscription_contents_total).with(2)
-          described_class.call
-        end
-
-        it "sends the correct values to statsd" do
-          expect(GlobalMetricsService.send(:statsd)).to receive(:gauge)
-          .with("subscription_contents.critical_total", 1)
-          expect(GlobalMetricsService.send(:statsd)).to receive(:gauge)
-          .with("subscription_contents.warning_total", 2)
-
+          expect(GovukStatsd).to receive(:gauge).with("subscription_contents.warning_total", 2)
           described_class.call
         end
       end
@@ -55,7 +46,7 @@ RSpec.describe Metrics::SubscriptionContentExporter do
       before do
         create(:subscription_content, created_at: 21.minutes.ago)
         create(:subscription_content, created_at: 11.minutes.ago)
-        allow(GlobalMetricsService.send(:statsd)).to receive(:gauge)
+        allow(GovukStatsd).to receive(:gauge)
       end
 
       around do |example|
@@ -64,22 +55,13 @@ RSpec.describe Metrics::SubscriptionContentExporter do
 
       it "records a metric for the number of subscription contents created over
       15 minutes ago (critical)" do
-        expect(GlobalMetricsService).to receive(:critical_subscription_contents_total).with(1)
+        expect(GovukStatsd).to receive(:gauge).with("subscription_contents.critical_total", 1)
         described_class.call
       end
 
       it "records a metric for the number of subscription contents created over
       10 minutes ago (warning)" do
-        expect(GlobalMetricsService).to receive(:warning_subscription_contents_total).with(2)
-        described_class.call
-      end
-
-      it "sends the correct values to statsd" do
-        expect(GlobalMetricsService.send(:statsd)).to receive(:gauge)
-        .with("subscription_contents.critical_total", 1)
-        expect(GlobalMetricsService.send(:statsd)).to receive(:gauge)
-        .with("subscription_contents.warning_total", 2)
-
+        expect(GovukStatsd).to receive(:gauge).with("subscription_contents.warning_total", 2)
         described_class.call
       end
     end
