@@ -1,9 +1,5 @@
-class ContentChangesWorker
-  include Sidekiq::Worker
-
-  sidekiq_options queue: :cleanup
-
-  def perform
+class Metrics::ContentChangeExporter < Metrics::BaseExporter
+  def call
     GlobalMetricsService.critical_content_changes_total(critical_content_changes)
     GlobalMetricsService.warning_content_changes_total(warning_content_changes)
   end

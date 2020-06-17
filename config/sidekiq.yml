@@ -34,18 +34,6 @@
   digest_run_completion_marker:
     every: '1m'
     class: DigestRunCompletionMarkerWorker
-  status_updates:
+  metrics_collection:
     every: '1m'
-    class: StatusUpdateWorker
-  subscription_contents:
-    every: '1m'
-    class: SubscriptionContentsWorker
-  content_changes:
-    every: '1m'
-    class: ContentChangesWorker
-  digest_runs:
-    every: '1m'
-    class: DigestRunWorker
-  messages:
-    every: '1m'
-    class: MessagesWorker
+    class: MetricsCollectionWorker

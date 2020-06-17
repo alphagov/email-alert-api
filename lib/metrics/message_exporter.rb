@@ -1,9 +1,5 @@
-class MessagesWorker
-  include Sidekiq::Worker
-
-  sidekiq_options queue: :cleanup
-
-  def perform
+class Metrics::MessageExporter < Metrics::BaseExporter
+  def call
     GlobalMetricsService.critical_messages_total(critical_messages)
     GlobalMetricsService.warning_messages_total(warning_messages)
   end

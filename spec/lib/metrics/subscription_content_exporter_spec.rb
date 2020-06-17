@@ -1,5 +1,5 @@
-RSpec.describe SubscriptionContentsWorker do
-  describe ".perform" do
+RSpec.describe Metrics::SubscriptionContentExporter do
+  describe ".call" do
     shared_examples "tests for critical and warning states" do
       context "find subscription contents created within the last hour" do
         let(:statsd) { double }
@@ -13,13 +13,13 @@ RSpec.describe SubscriptionContentsWorker do
         it "records a metric for the number of subscription contents created over
         50 minutes ago (critical)" do
           expect(GlobalMetricsService).to receive(:critical_subscription_contents_total).with(1)
-          described_class.new.perform
+          described_class.call
         end
 
         it "records a metric for the number of subscription contents created over
         35 minutes ago (warning)" do
           expect(GlobalMetricsService).to receive(:warning_subscription_contents_total).with(2)
-          described_class.new.perform
+          described_class.call
         end
 
         it "sends the correct values to statsd" do
@@ -28,7 +28,7 @@ RSpec.describe SubscriptionContentsWorker do
           expect(GlobalMetricsService.send(:statsd)).to receive(:gauge)
           .with("subscription_contents.warning_total", 2)
 
-          described_class.new.perform
+          described_class.call
         end
       end
     end
@@ -65,13 +65,13 @@ RSpec.describe SubscriptionContentsWorker do
       it "records a metric for the number of subscription contents created over
       15 minutes ago (critical)" do
         expect(GlobalMetricsService).to receive(:critical_subscription_contents_total).with(1)
-        described_class.new.perform
+        described_class.call
       end
 
       it "records a metric for the number of subscription contents created over
       10 minutes ago (warning)" do
         expect(GlobalMetricsService).to receive(:warning_subscription_contents_total).with(2)
-        described_class.new.perform
+        described_class.call
       end
 
       it "sends the correct values to statsd" do
@@ -80,20 +80,8 @@ RSpec.describe SubscriptionContentsWorker do
         expect(GlobalMetricsService.send(:statsd)).to receive(:gauge)
         .with("subscription_contents.warning_total", 2)
 
-        described_class.new.perform
+        described_class.call
       end
-    end
-  end
-
-  describe ".perform_async" do
-    before do
-      Sidekiq::Testing.fake! do
-        described_class.perform_async
-      end
-    end
-
-    it "gets put on the low priority 'cleanup' queue" do
-      expect(Sidekiq::Queues["cleanup"].size).to eq(1)
     end
   end
 end
