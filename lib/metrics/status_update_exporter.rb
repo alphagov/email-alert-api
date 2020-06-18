@@ -1,11 +1,7 @@
-class StatusUpdateWorker
-  include Sidekiq::Worker
-
-  sidekiq_options queue: :cleanup
-
-  def perform
-    GlobalMetricsService.delivery_attempt_pending_status_total(total_pending)
-    GlobalMetricsService.delivery_attempt_total(total)
+class Metrics::StatusUpdateExporter < Metrics::BaseExporter
+  def call
+    GovukStatsd.gauge("delivery_attempt.pending_status_total", total_pending)
+    GovukStatsd.gauge("delivery_attempt.total", total)
   end
 
 private

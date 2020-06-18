@@ -1,11 +1,7 @@
-class ContentChangesWorker
-  include Sidekiq::Worker
-
-  sidekiq_options queue: :cleanup
-
-  def perform
-    GlobalMetricsService.critical_content_changes_total(critical_content_changes)
-    GlobalMetricsService.warning_content_changes_total(warning_content_changes)
+class Metrics::ContentChangeExporter < Metrics::BaseExporter
+  def call
+    GovukStatsd.gauge("content_changes.critical_total", critical_content_changes)
+    GovukStatsd.gauge("content_changes.warning_total", warning_content_changes)
   end
 
 private

@@ -1,11 +1,7 @@
-class SubscriptionContentsWorker
-  include Sidekiq::Worker
-
-  sidekiq_options queue: :cleanup
-
-  def perform
-    GlobalMetricsService.critical_subscription_contents_total(critical_subscription_contents)
-    GlobalMetricsService.warning_subscription_contents_total(warning_subscription_contents)
+class Metrics::SubscriptionContentExporter < Metrics::BaseExporter
+  def call
+    GovukStatsd.gauge("subscription_contents.critical_total", critical_subscription_contents)
+    GovukStatsd.gauge("subscription_contents.warning_total", warning_subscription_contents)
   end
 
 private

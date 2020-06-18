@@ -1,11 +1,7 @@
-class DigestRunWorker
-  include Sidekiq::Worker
-
-  sidekiq_options queue: :cleanup
-
-  def perform
-    GlobalMetricsService.critical_digest_runs_total(critical_digest_runs)
-    GlobalMetricsService.warning_digest_runs_total(warning_digest_runs)
+class Metrics::DigestRunExporter < Metrics::BaseExporter
+  def call
+    GovukStatsd.gauge("digest_runs.critical_total", critical_digest_runs)
+    GovukStatsd.gauge("digest_runs.warning_total", warning_digest_runs)
   end
 
 private

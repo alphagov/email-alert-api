@@ -1,11 +1,7 @@
-class MessagesWorker
-  include Sidekiq::Worker
-
-  sidekiq_options queue: :cleanup
-
-  def perform
-    GlobalMetricsService.critical_messages_total(critical_messages)
-    GlobalMetricsService.warning_messages_total(warning_messages)
+class Metrics::MessageExporter < Metrics::BaseExporter
+  def call
+    GovukStatsd.gauge("messages.critical_total", critical_messages)
+    GovukStatsd.gauge("messages.warning_total", warning_messages)
   end
 
 private
