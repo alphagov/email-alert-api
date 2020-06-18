@@ -117,12 +117,25 @@ To send a test email to an email address (doesn't have to be subscribed to anyth
 $ bundle exec rake deliver:deliver_to_test_email[<email_address>]
 ```
 
-## Resend emails
+## Resend failed emails
 
-This task takes an array of email ids and re-sends them.
+There are two Rake tasks available to resend emails which didn't send for
+whatever reason and ended up in the failed state. This is most useful after
+an incident to resend all emails that failed with a technical failure.
+
+### Using a date range
 
 ```bash
-bundle exec rake troubleshoot:resend_failed_emails:by_id[<email_one_id>, <email_two_id>]
+bundle exec rake 'troubleshoot:resend_failed_emails:by_date[<from_date>,<to_date>]'
+```
+
+The date format should be in ISO8601 format, for example `2020-01-01T10:00:00Z`.
+Depending on the number of emails to send, the Rake task can take a few minutes to run.
+
+### Using email IDs
+
+```bash
+bundle exec rake 'troubleshoot:resend_failed_emails:by_id[<email_one_id>,<email_two_id>]'
 ```
 
 ## Query for subscriptions by title

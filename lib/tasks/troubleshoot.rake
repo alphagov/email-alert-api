@@ -44,6 +44,13 @@ namespace :troubleshoot do
     task by_id: [:environment] do |_, args|
       resend_failed_emails(Email.where(id: args.to_a))
     end
+
+    desc "Re-send failed emails by date range"
+    task :by_date, %i[from to] => [:environment] do |_, args|
+      from = Time.iso8601(args.fetch(:from))
+      to = Time.iso8601(args.fetch(:to))
+      resend_failed_emails(Email.where(created_at: from..to))
+    end
   end
 end
 
