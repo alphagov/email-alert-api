@@ -35,14 +35,14 @@ RSpec.describe "troubleshoot" do
     end
   end
 
-  describe "resend_failed_emails" do
+  describe "resend_failed_emails:by_id" do
     it "queues specified failed emails to resend" do
       email = create :email, status: :failed
 
       expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
         .with(email.id, queue: :delivery_immediate)
 
-      expect { Rake::Task["troubleshoot:resend_failed_emails"].invoke(email.id.to_s) }
+      expect { Rake::Task["troubleshoot:resend_failed_emails:by_id"].invoke(email.id.to_s) }
         .to output.to_stdout
     end
   end

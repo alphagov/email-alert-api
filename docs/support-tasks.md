@@ -122,7 +122,7 @@ $ bundle exec rake deliver:deliver_to_test_email[<email_address>]
 This task takes an array of email ids and re-sends them.
 
 ```bash
-bundle exec rake deliver:resend_failed_emails[<email_one_id>, <email_two_id>]
+bundle exec rake troubleshoot:resend_failed_emails:by_id[<email_one_id>, <email_two_id>]
 ```
 
 ## Query for subscriptions by title
