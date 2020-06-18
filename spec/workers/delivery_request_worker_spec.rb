@@ -65,8 +65,8 @@ RSpec.describe DeliveryRequestWorker do
         expect(subject.rate_limit_threshold).to eq(10)
       end
 
-      it "is 15000 by default" do
-        expect(subject.rate_limit_threshold).to eq(15_000)
+      it "is 21000 by default" do
+        expect(subject.rate_limit_threshold).to eq(21_000)
       end
     end
 
@@ -94,7 +94,7 @@ RSpec.describe DeliveryRequestWorker do
 
     describe "rate_limit_exceeded?" do
       it "checks the delivery_request limit" do
-        default_threshold = 15_000
+        default_threshold = 21_000
         default_interval = 60
 
         expect(rate_limiter).to receive(:exceeded?).with(

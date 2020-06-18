@@ -50,8 +50,8 @@ class DeliveryRequestWorker
   end
 
   def rate_limit_threshold
-    per_minute_to_allow_250_per_second = "15000"
-    ENV.fetch("DELIVERY_REQUEST_THRESHOLD", per_minute_to_allow_250_per_second).to_i
+    per_minute_to_allow_350_per_second = "21000"
+    ENV.fetch("DELIVERY_REQUEST_THRESHOLD", per_minute_to_allow_350_per_second).to_i
   end
 
   def rate_limit_interval
