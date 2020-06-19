@@ -8,7 +8,6 @@ gem "with_advisory_lock", "~> 4.6"
 
 gem "aws-sdk-s3", "~> 1"
 gem "faraday", "1.0.1"
-gem "foreman", "~> 0.87"
 gem "gds-api-adapters", "~> 67.0"
 gem "gds-sso", "~> 15.0"
 gem "govuk_app_config", "~> 2.2"
