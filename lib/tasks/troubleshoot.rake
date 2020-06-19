@@ -39,13 +39,26 @@ namespace :troubleshoot do
     DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_immediate)
   end
 
-  desc "Re-send failed emails by email ids"
-  task resend_failed_emails: [:environment] do |_, args|
-    failed_email_ids = Email.where(id: args.to_a, status: "failed").pluck(:id)
-
-    failed_email_ids.each do |email_id|
-      puts "Resending email: #{email_id}"
-      DeliveryRequestWorker.perform_async_in_queue(email_id, queue: :delivery_immediate)
+  namespace :resend_failed_emails do
+    desc "Re-send failed emails by email ids"
+    task by_id: [:environment] do |_, args|
+      resend_failed_emails(Email.where(id: args.to_a))
     end
+
+    desc "Re-send failed emails by date range"
+    task :by_date, %i[from to] => [:environment] do |_, args|
+      from = Time.iso8601(args.fetch(:from))
+      to = Time.iso8601(args.fetch(:to))
+      resend_failed_emails(Email.where(created_at: from..to))
+    end
+  end
+end
+
+def resend_failed_emails(scope)
+  ids = scope.where(status: :failed).pluck(:id)
+  puts "Resending #{ids.length} emails"
+
+  ids.each do |id|
+    DeliveryRequestWorker.perform_async_in_queue(id, queue: :delivery_immediate_high)
   end
 end
