@@ -5,13 +5,13 @@ RSpec.describe Reports::DataExporter do
 
     before do
       # not within time period
-      Timecop.freeze("2018-03-01") do
+      travel_to("2018-03-01") do
         create(:subscription, subscriber_list: subscriber_list)
         create(:subscription, :ended, subscriber_list: subscriber_list)
       end
 
       # within time period but only one is active
-      Timecop.freeze("2018-01-01") do
+      travel_to("2018-01-01") do
         create(:subscription, subscriber_list: subscriber_list)
         create(:subscription, :ended, subscriber_list: subscriber_list)
       end

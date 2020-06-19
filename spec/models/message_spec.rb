@@ -77,7 +77,7 @@ RSpec.describe Message do
 
   describe "#mark_processed!" do
     it "sets processed_at" do
-      Timecop.freeze do
+      freeze_time do
         message = create(:message)
         expect { message.mark_processed! }
           .to change(message, :processed_at)

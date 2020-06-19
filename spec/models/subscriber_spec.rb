@@ -234,11 +234,11 @@ RSpec.describe Subscriber, type: :model do
       subject(:subscriber) { create(:subscriber, :activated) }
 
       it "deactivates the subscriber" do
-        Timecop.freeze(Time.zone.parse("1/1/2017")) do
+        freeze_time do
           expect { subscriber.deactivate! }
             .to change { subscriber.reload.deactivated_at }
             .from(nil)
-            .to(Time.zone.parse("1/1/2017"))
+            .to(Time.zone.now)
 
           expect(subscriber.reload.deactivated?).to be true
         end

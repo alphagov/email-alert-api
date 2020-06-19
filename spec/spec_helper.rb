@@ -20,6 +20,7 @@ RSpec.configure do |config|
   config.include AuthenticationHelpers, type: :request
   config.include RequestHelpers, type: :request
   config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:each) do
     Sidekiq::Worker.clear_all

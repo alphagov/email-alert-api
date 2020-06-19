@@ -9,8 +9,8 @@ RSpec.describe "Create an auth token", type: :request do
   end
 
   around do |example|
-    Timecop.freeze do
-      Sidekiq::Testing.inline! { example.run }
+    Sidekiq::Testing.inline! do
+      freeze_time { example.run }
     end
   end
 

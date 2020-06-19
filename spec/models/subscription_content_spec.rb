@@ -1,9 +1,6 @@
 RSpec.describe SubscriptionContent do
   describe ".populate_for_content" do
-    around do |example|
-      # setting usec 0 to avoid Ruby/Postgres preceision differences
-      Timecop.freeze(Time.zone.now.change(usec: 0)) { example.run }
-    end
+    around { |example| freeze_time { example.run } }
 
     let(:email) { create(:email) }
     let(:subscriptions) { create_list(:subscription, 2) }

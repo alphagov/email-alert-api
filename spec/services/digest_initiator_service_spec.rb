@@ -1,8 +1,6 @@
 RSpec.describe DigestInitiatorService do
   describe ".call" do
-    around do |example|
-      Timecop.freeze(Time.zone.parse("08:30")) { example.run }
-    end
+    around { |example| travel_to(Time.zone.parse("08:30")) { example.run } }
 
     context "daily" do
       let(:range) { Frequency::DAILY }
