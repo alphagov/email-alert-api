@@ -59,6 +59,6 @@ def resend_failed_emails(scope)
   puts "Resending #{ids.length} emails"
 
   ids.each do |id|
-    DeliveryRequestWorker.perform_async_in_queue(id, queue: :delivery_immediate)
+    DeliveryRequestWorker.perform_async_in_queue(id, queue: :delivery_immediate_high)
   end
 end
