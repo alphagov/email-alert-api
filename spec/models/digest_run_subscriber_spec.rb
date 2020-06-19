@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe DigestRunSubscriber do
   describe ".populate" do
     let(:digest_run) { create(:digest_run) }

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "creating and delivering digests", type: :request do
   include UTMHelpers
 

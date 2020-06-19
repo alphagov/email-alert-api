@@ -71,7 +71,7 @@ RSpec.describe StatusUpdateService do
     end
 
     it "does not update the emails finished_sending_at timestamp" do
-      # We set `inline!` in rails_helper which causes jobs to fire immediately.
+      # We set `inline!` in spec_helper which causes jobs to fire immediately.
       # Since DeliveryRequestWorker is fired on temporary_failure, this has the side effect of
       # successfully sending the email and setting `finished_sending_at`.
       # In reality, DeliveryRequestWorker is set to perform in 3 hours time, so to mimic this

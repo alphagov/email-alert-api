@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe DigestEmailGenerationWorker do
   describe ".perform_async" do
     before do

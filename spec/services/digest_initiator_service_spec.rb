@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe DigestInitiatorService do
   describe ".call" do
     around do |example|
