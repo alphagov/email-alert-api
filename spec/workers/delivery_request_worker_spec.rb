@@ -23,8 +23,49 @@ RSpec.describe DeliveryRequestWorker do
         allow(rate_limiter).to receive(:exceeded?).and_return(true)
         expect {
           subject.perform(email.id, queue)
-        }.to raise_error(RatelimitExceededError)
+        }.to raise_error(described_class::RateLimitExceededError)
       end
+    end
+  end
+
+  describe ".sidekiq_retries_exhausted_block" do
+    around do |example|
+      Sidekiq::Testing.fake! do
+        freeze_time { example.run }
+      end
+    end
+
+    let(:email) { create(:email) }
+    let(:sidekiq_message) do
+      {
+        "args" => [email.id, "delivery_immediate_high"],
+        "queue" => "delivery_immediate_high",
+        "class" => described_class.name,
+      }
+    end
+
+    it "retries the job in 30s for a RatelimitExceededError" do
+      described_class.sidekiq_retries_exhausted_block.call(
+        sidekiq_message,
+        described_class::RateLimitExceededError.new,
+      )
+
+      expect(DeliveryRequestWorker.jobs).to contain_exactly(
+        hash_including(
+          "queue" => "delivery_immediate_high",
+          "args" => array_including(email.id, "delivery_immediate_high"),
+          "at" => 30.seconds.from_now.to_f,
+        ),
+      )
+    end
+
+    it "doesn't do anything for other errors" do
+      described_class.sidekiq_retries_exhausted_block.call(
+        sidekiq_message,
+        RuntimeError.new,
+      )
+
+      expect(DeliveryRequestWorker.jobs).to be_empty
     end
   end
 
@@ -122,7 +163,7 @@ RSpec.describe DeliveryRequestWorker do
         it "raises a RatelimitExceededError" do
           expect {
             subject.check_rate_limit!
-          }.to raise_error(RatelimitExceededError)
+          }.to raise_error(described_class::RateLimitExceededError)
         end
       end
     end

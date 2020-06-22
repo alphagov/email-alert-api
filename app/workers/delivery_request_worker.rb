@@ -1,10 +1,12 @@
 class DeliveryRequestWorker
+  class RateLimitExceededError < StandardError; end
+
   include Sidekiq::Worker
 
   sidekiq_options retry: 9
 
-  sidekiq_retries_exhausted do |msg, _e|
-    if msg["error_class"] == "RatelimitExceededError"
+  sidekiq_retries_exhausted do |msg, error|
+    if error.is_a?(RateLimitExceededError)
       email_id = msg["args"].first
       queue = msg["args"].second
       GovukStatsd.increment("delivery_request_worker.rescheduled")
@@ -33,7 +35,7 @@ class DeliveryRequestWorker
   def check_rate_limit!
     if rate_limit_exceeded?
       GovukStatsd.increment("delivery_request_worker.rate_limit_exceeded")
-      raise RatelimitExceededError
+      raise RateLimitExceededError
     end
   end
 
@@ -68,7 +70,4 @@ private
   def rate_limiter
     Services.rate_limiter
   end
-end
-
-class RatelimitExceededError < StandardError
 end
