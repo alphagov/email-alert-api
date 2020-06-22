@@ -56,13 +56,10 @@ RSpec.describe DeliveryRequestWorker do
 
   describe "rate_limiter" do
     describe "rate_limit_threshold" do
-      before do
-        ENV["DELIVERY_REQUEST_THRESHOLD"] = nil
-      end
-
       it "returns ENV['DELIVERY_REQUEST_THRESHOLD'] if set" do
-        ENV["DELIVERY_REQUEST_THRESHOLD"] = "10"
-        expect(subject.rate_limit_threshold).to eq(10)
+        ClimateControl.modify("DELIVERY_REQUEST_THRESHOLD": "10") do
+          expect(subject.rate_limit_threshold).to eq(10)
+        end
       end
 
       it "is 21000 by default" do
@@ -71,13 +68,10 @@ RSpec.describe DeliveryRequestWorker do
     end
 
     describe "rate_limit_interval" do
-      before do
-        ENV["DELIVERY_REQUEST_INTERVAL"] = nil
-      end
-
       it "returns ENV['DELIVERY_REQUEST_INTERVAL'] if set" do
-        ENV["DELIVERY_REQUEST_INTERVAL"] = "20"
-        expect(subject.rate_limit_interval).to eq(20)
+        ClimateControl.modify("DELIVERY_REQUEST_INTERVAL": "20") do
+          expect(subject.rate_limit_interval).to eq(20)
+        end
       end
 
       it "is 60 by default" do
