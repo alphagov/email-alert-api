@@ -27,8 +27,7 @@ private
         requested_volume - generated_volume,
       )
 
-      ProcessContentChangeAndGenerateEmailsWorker
-        .perform_async(content_change.id)
+      ProcessContentChangeWorker.perform_async(content_change.id)
     end
   end
 

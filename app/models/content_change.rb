@@ -25,4 +25,8 @@ class ContentChange < ApplicationRecord
   def processed?
     processed_at.present?
   end
+
+  def queue
+    priority == "high" ? :delivery_immediate_high : :delivery_immediate
+  end
 end

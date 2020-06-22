@@ -42,12 +42,6 @@ RSpec.describe MessageEmailBuilder do
 
     let(:email) { Email.find(email_import.first) }
 
-    describe "BATCH_SIZE" do
-      it "returns batch size of 5000" do
-        expect(ProcessAndGenerateEmailsWorker::BATCH_SIZE).to eq(5000)
-      end
-    end
-
     it "returns an email import" do
       expect(email_import.count).to eq(1)
     end
@@ -72,6 +66,10 @@ RSpec.describe MessageEmailBuilder do
 
     it "sets the subscriber id" do
       expect(email.subscriber_id).to eq(subscriber.id)
+    end
+
+    it "raises an ArgumentError when given an empty collection of parameters" do
+      expect { described_class.call([]) }.to raise_error(ArgumentError)
     end
 
     context "with a subscription" do

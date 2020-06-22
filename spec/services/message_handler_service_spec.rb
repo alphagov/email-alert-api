@@ -31,7 +31,7 @@ RSpec.describe MessageHandlerService do
     end
 
     it "queues a job" do
-      expect(ProcessMessageAndGenerateEmailsWorker).to receive(:perform_async)
+      expect(ProcessMessageWorker).to receive(:perform_async)
 
       described_class.call(params: params, govuk_request_id: govuk_request_id)
     end

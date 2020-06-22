@@ -28,4 +28,8 @@ class Message < ApplicationRecord
   def processed?
     processed_at.present?
   end
+
+  def queue
+    :delivery_immediate
+  end
 end

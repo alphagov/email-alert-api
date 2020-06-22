@@ -20,8 +20,7 @@ RSpec.describe Overloader do
     end
 
     it "kicks off a job to process the matches" do
-      expect(ProcessContentChangeAndGenerateEmailsWorker)
-        .to receive(:perform_async)
+      expect(ProcessContentChangeWorker).to receive(:perform_async)
 
       described_class.new(1).with_big_lists
     end
