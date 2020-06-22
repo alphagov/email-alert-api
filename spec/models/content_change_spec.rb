@@ -3,7 +3,7 @@ RSpec.describe ContentChange do
     subject { create(:content_change) }
 
     it "sets processed_at" do
-      Timecop.freeze do
+      freeze_time do
         expect { subject.mark_processed! }
           .to change(subject, :processed_at)
           .from(nil)

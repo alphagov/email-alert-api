@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "report" do
   describe "matched_content_changes" do
     it "outputs a CSV of matched content changes" do

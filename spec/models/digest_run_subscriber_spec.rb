@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe DigestRunSubscriber do
   describe ".populate" do
     let(:digest_run) { create(:digest_run) }
@@ -11,8 +9,7 @@ RSpec.describe DigestRunSubscriber do
     end
 
     it "sets the appropriate attributes" do
-      # usec is set to 0 to avoid Ruby/PostgreSQL differences in precision
-      Timecop.freeze(Time.zone.now.change(usec: 0)) do
+      freeze_time do
         subscriber = create(:subscriber)
         described_class.populate(digest_run, [subscriber.id])
         expect(described_class.last).to have_attributes(
@@ -73,7 +70,7 @@ RSpec.describe DigestRunSubscriber do
 
   describe "#mark_complete!" do
     it "sets completed_at to Time.now" do
-      Timecop.freeze do
+      freeze_time do
         digest_run_subscriber = create(:digest_run_subscriber)
         digest_run_subscriber.mark_complete!
         expect(digest_run_subscriber.completed_at).to eq(Time.zone.now)

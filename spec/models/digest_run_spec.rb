@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe DigestRun do
   context "with valid parameters" do
     it "can be created" do
@@ -53,14 +51,10 @@ RSpec.describe DigestRun do
     end
 
     context "configured with an env var" do
-      before do
-        ENV["DIGEST_RANGE_HOUR"] = "10"
-        Timecop.freeze("10:30", Time.zone.now)
-      end
-
-      after do
-        ENV["DIGEST_RANGE_HOUR"] = nil
-        Timecop.return
+      around do |example|
+        ClimateControl.modify(DIGEST_RANGE_HOUR: "10") do
+          travel_to(Time.zone.parse("10:30")) { example.run }
+        end
       end
 
       context "daily" do
@@ -106,7 +100,7 @@ RSpec.describe DigestRun do
 
     describe "validations" do
       it "fails if the calculated ends_at is in the future" do
-        Timecop.freeze(Time.zone.parse("07:00", Time.zone.now)) do
+        travel_to(Time.zone.parse("07:00")) do
           instance = described_class.create(date: Date.current, range: "daily")
           expect(instance.errors[:ends_at]).to eq(["must be in the past"])
         end
@@ -116,8 +110,7 @@ RSpec.describe DigestRun do
 
   context "when we are in British Summer Time" do
     around do |example|
-      # A UTC value of a typical time to start the digest
-      Timecop.freeze("2018-03-31T07:30:00+00:00") { example.run }
+      travel_to("2018-03-31 07:30 UTC") { example.run }
     end
 
     it "creates a digest run without errors" do
@@ -128,7 +121,7 @@ RSpec.describe DigestRun do
   describe "#mark_complete!" do
     context "with complete subscribers" do
       it "sets completed_at to the most recent subscriber completed_at" do
-        Timecop.freeze do
+        freeze_time do
           digest_run = create(:digest_run)
           create(:digest_run_subscriber, digest_run: digest_run, completed_at: Time.mktime(2018, 1, 1, 10))
           create(:digest_run_subscriber, digest_run: digest_run, completed_at: Time.mktime(2018, 1, 1, 9))
@@ -141,11 +134,11 @@ RSpec.describe DigestRun do
 
     context "with no subscribers" do
       it "sets completed_at to the current time" do
-        Timecop.freeze do
+        freeze_time do
           digest_run = create(:digest_run)
           digest_run.mark_complete!
           digest_run.reload
-          expect(digest_run.completed_at).to be_within(1.second).of(Time.zone.now)
+          expect(digest_run.completed_at).to eq Time.zone.now
         end
       end
     end

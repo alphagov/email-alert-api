@@ -44,9 +44,7 @@ RSpec.describe DeliveryRequestService do
   describe "#call" do
     let!(:email) { create(:email) }
 
-    around do |example|
-      Timecop.freeze(2017, 1, 1) { example.run }
-    end
+    around { |example| freeze_time { example.run } }
 
     it "calls the provider" do
       expect(subject.provider).to receive(:call)

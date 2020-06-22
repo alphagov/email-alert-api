@@ -24,7 +24,6 @@ group :test do
   gem "climate_control"
   gem "equivalent-xml"
   gem "factory_bot_rails"
-  gem "timecop"
   gem "webmock"
 end
 

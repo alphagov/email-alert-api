@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe DigestRunCompletionMarkerWorker, type: :worker do
   describe "#perform" do
     let(:digest_run) { create(:digest_run) }

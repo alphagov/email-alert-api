@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe ManageSubscriptionsLinkPresenter do
   describe ".call" do
     it "returns a manage subscriptions link" do

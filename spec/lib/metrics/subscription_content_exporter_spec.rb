@@ -25,18 +25,12 @@ RSpec.describe Metrics::SubscriptionContentExporter do
     end
 
     context "between 09:30 and 11:00" do
-      around do |example|
-        Timecop.freeze("10:00") { example.run }
-      end
-
+      around { |example| travel_to(Time.zone.parse("10:00")) { example.run } }
       include_examples "tests for critical and warning states"
     end
 
     context "between 12:30 and 13:30" do
-      around do |example|
-        Timecop.freeze("13:00") { example.run }
-      end
-
+      around { |example| travel_to(Time.zone.parse("13:00")) { example.run } }
       include_examples "tests for critical and warning states"
     end
 
@@ -49,9 +43,7 @@ RSpec.describe Metrics::SubscriptionContentExporter do
         allow(GovukStatsd).to receive(:gauge)
       end
 
-      around do |example|
-        Timecop.freeze("12:00") { example.run }
-      end
+      around { |example| travel_to(Time.zone.parse("12:00")) { example.run } }
 
       it "records a metric for the number of subscription contents created over
       15 minutes ago (critical)" do

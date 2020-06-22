@@ -1,17 +1,9 @@
-require "rails_helper"
-
 RSpec.describe DigestInitiatorService do
   describe ".call" do
-    around do |example|
-      Timecop.freeze(Time.zone.parse("08:30")) { example.run }
-    end
+    around { |example| travel_to(Time.zone.parse("08:30")) { example.run } }
 
     context "daily" do
       let(:range) { Frequency::DAILY }
-
-      after do
-        ENV["DIGEST_RANGE_HOUR"] = nil
-      end
 
       context "when there is no daily DigestRun for the date" do
         it "creates one" do

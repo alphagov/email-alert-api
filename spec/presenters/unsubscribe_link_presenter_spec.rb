@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe UnsubscribeLinkPresenter do
   describe ".call" do
     it "returns a presented unsubscribe link" do

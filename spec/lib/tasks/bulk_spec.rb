@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "bulk" do
   describe "email" do
     before do
