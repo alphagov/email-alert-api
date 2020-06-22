@@ -44,7 +44,7 @@ RSpec.describe DeliveryRequestWorker do
       }
     end
 
-    it "retries the job in 30s for a RatelimitExceededError" do
+    it "retries the job in 5 minutes for a RatelimitExceededError" do
       described_class.sidekiq_retries_exhausted_block.call(
         sidekiq_message,
         described_class::RateLimitExceededError.new,
@@ -54,7 +54,7 @@ RSpec.describe DeliveryRequestWorker do
         hash_including(
           "queue" => "delivery_immediate_high",
           "args" => array_including(email.id, "delivery_immediate_high"),
-          "at" => 30.seconds.from_now.to_f,
+          "at" => 5.minutes.from_now.to_f,
         ),
       )
     end

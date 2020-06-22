@@ -1,5 +1,5 @@
 class DeliveryRequestWorker
-  class RateLimitExceededError < StandardError; end
+  class RateLimitExceededError < RuntimeError; end
 
   include Sidekiq::Worker
 
@@ -10,7 +10,7 @@ class DeliveryRequestWorker
       email_id = msg["args"].first
       queue = msg["args"].second
       GovukStatsd.increment("delivery_request_worker.rescheduled")
-      DeliveryRequestWorker.set(queue: queue).perform_in(30.seconds, email_id, queue)
+      DeliveryRequestWorker.set(queue: queue).perform_in(5.minutes, email_id, queue)
     end
   end
 
