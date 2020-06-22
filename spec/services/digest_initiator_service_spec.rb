@@ -5,10 +5,6 @@ RSpec.describe DigestInitiatorService do
     context "daily" do
       let(:range) { Frequency::DAILY }
 
-      after do
-        ENV["DIGEST_RANGE_HOUR"] = nil
-      end
-
       context "when there is no daily DigestRun for the date" do
         it "creates one" do
           expect { described_class.call(range: range) }
