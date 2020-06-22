@@ -14,11 +14,8 @@ class DeliveryRequestWorker
     end
   end
 
-  def perform(email_id, queue)
-    @email_id = email_id
-    @queue = queue
-
-    check_rate_limit!
+  def perform(email_id, _queue)
+    check_rate_limit_exceeded
 
     email = MetricsService.delivery_request_worker_find_email do
       Email.find(email_id)
@@ -32,19 +29,15 @@ class DeliveryRequestWorker
     set(queue: queue).perform_async(*args, queue)
   end
 
-  def check_rate_limit!
-    if rate_limit_exceeded?
-      GovukStatsd.increment("delivery_request_worker.rate_limit_exceeded")
-      raise RateLimitExceededError
-    end
-  end
+private
 
-  def rate_limit_exceeded?
-    rate_limiter.exceeded?(
-      "delivery_request",
-      threshold: rate_limit_threshold,
-      interval: rate_limit_interval,
-    )
+  def check_rate_limit_exceeded
+    return unless rate_limiter.exceeded?("delivery_request",
+                                         threshold: rate_limit_threshold,
+                                         interval: rate_limit_interval)
+
+    GovukStatsd.increment("delivery_request_worker.rate_limit_exceeded")
+    raise RateLimitExceededError
   end
 
   def increment_rate_limiter
@@ -62,10 +55,6 @@ class DeliveryRequestWorker
     minute_in_seconds = "60"
     ENV.fetch("DELIVERY_REQUEST_INTERVAL", minute_in_seconds).to_i
   end
-
-private
-
-  attr_reader :email_id, :queue
 
   def rate_limiter
     Services.rate_limiter
