@@ -5,30 +5,33 @@ class DeliveryRequestService
     "delay" => DelayProvider,
   }.freeze
 
-  attr_reader :provider_name, :provider, :subject_prefix, :overrider
-
-  def initialize(config: EmailAlertAPI.config.email_service)
+  def initialize(email:, config: EmailAlertAPI.config.email_service)
+    @email = email
+    @attempt_id = SecureRandom.uuid
     @provider_name = config.fetch(:provider).downcase
-    @provider = PROVIDERS.fetch(provider_name)
     @subject_prefix = config.fetch(:email_subject_prefix)
     @overrider = EmailAddressOverrider.new(config)
   end
 
   def self.call(*args)
-    new.call(*args)
+    new(*args).call
   end
 
-  def call(email:)
-    reference = SecureRandom.uuid
-
-    address = determine_address(email, reference)
+  def call
     return false if address.nil?
 
-    delivery_attempt = create_delivery_attempt(email, reference)
-
-    status = MetricsService.email_send_request(provider_name) do
-      call_provider(address, reference, email)
+    MetricsService.delivery_request_service_first_delivery_attempt do
+      record_first_attempt_metrics unless DeliveryAttempt.exists?(email: email)
     end
+
+    delivery_attempt = MetricsService.delivery_request_service_create_delivery_attempt do
+      DeliveryAttempt.create!(id: attempt_id,
+                              email: email,
+                              status: :sending,
+                              provider: provider_name)
+    end
+
+    status = MetricsService.email_send_request(provider_name) { send_email }
 
     return true if status == :sending
 
@@ -43,45 +46,27 @@ class DeliveryRequestService
 
 private
 
-  def call_provider(address, reference, email)
+  attr_reader :attempt_id, :email, :provider_name, :subject_prefix, :overrider
+
+  def address
+    @address ||= overrider.destination_address(email.address)
+  end
+
+  def send_email
+    provider = PROVIDERS.fetch(provider_name)
+
     provider.call(
       address: address,
       subject: subject_prefix + email.subject,
       body: email.body,
-      reference: reference,
+      reference: attempt_id,
     )
   rescue StandardError => e
     GovukError.notify(e)
     :internal_failure
   end
 
-  def determine_address(email, reference)
-    overrider.destination_address(email.address).tap do |address|
-      next if address == email.address
-
-      Rails.logger.info(<<-INFO.strip_heredoc)
-        Overriding email address #{email.address} to #{address}
-        For email with reference: #{reference}
-      INFO
-    end
-  end
-
-  def create_delivery_attempt(email, reference)
-    MetricsService.delivery_request_service_first_delivery_attempt do
-      record_first_attempt_metrics(email) unless DeliveryAttempt.exists?(email: email)
-    end
-
-    MetricsService.delivery_request_service_create_delivery_attempt do
-      DeliveryAttempt.create!(
-        id: reference,
-        email: email,
-        status: :sending,
-        provider: provider_name,
-      )
-    end
-  end
-
-  def record_first_attempt_metrics(email)
+  def record_first_attempt_metrics
     now = Time.now.utc
     MetricsService.email_created_to_first_delivery_attempt(email.created_at, now)
 
