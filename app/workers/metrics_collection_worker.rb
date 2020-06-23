@@ -8,6 +8,5 @@ class MetricsCollectionWorker
     Metrics::DigestRunExporter.call
     Metrics::MessageExporter.call
     Metrics::StatusUpdateExporter.call
-    Metrics::SubscriptionContentExporter.call
   end
 end
