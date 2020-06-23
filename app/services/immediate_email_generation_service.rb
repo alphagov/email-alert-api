@@ -13,7 +13,11 @@ class ImmediateEmailGenerationService
     subscriber_batches.each do |batch|
       email_ids = batch.generate_emails
       email_ids.each do |id|
-        DeliveryRequestWorker.perform_async_in_queue(id, queue: content.queue)
+        DeliveryRequestWorker.perform_async_in_queue(
+          id,
+          worker_metrics,
+          queue: content.queue,
+        )
       end
     end
   end
@@ -38,5 +42,14 @@ private
           Batch.new(content, batch_of_subscribers.to_h)
         end
     end
+  end
+
+  def worker_metrics
+    @worker_metrics ||= case content
+                        when ContentChange
+                          { "content_change_created_at" => content.created_at.iso8601 }
+                        else
+                          {}
+                        end
   end
 end
