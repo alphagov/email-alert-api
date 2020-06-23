@@ -6,27 +6,35 @@ class DeliveryRequestWorker
   sidekiq_options retry: 9
 
   sidekiq_retries_exhausted do |msg, error|
-    if error.is_a?(RateLimitExceededError)
-      email_id = msg["args"].first
-      queue = msg["args"].second
-      GovukStatsd.increment("delivery_request_worker.rescheduled")
-      DeliveryRequestWorker.set(queue: queue).perform_in(5.minutes, email_id, queue)
-    end
+    next unless error.is_a?(RateLimitExceededError)
+
+    email_id, metrics = msg["args"]
+    GovukStatsd.increment("delivery_request_worker.rescheduled")
+    DeliveryRequestWorker.set(queue: msg["queue"])
+                         .perform_in(5.minutes, email_id, metrics)
   end
 
-  def perform(email_id, _queue)
+  def perform(email_id, metrics = {})
+    # existing jobs may have the second parameter set as a string, representing
+    # a queue and need their type changing. This can be removed once deployed
+    # and the queue is cleared
+    metrics = {} unless metrics.is_a?(Hash)
+
     check_rate_limit_exceeded
 
     email = MetricsService.delivery_request_worker_find_email do
       Email.find(email_id)
     end
 
-    attempted = DeliveryRequestService.call(email: email)
+    attempted = DeliveryRequestService.call(
+      email: email,
+      metrics: parsed_metrics(metrics),
+    )
     increment_rate_limiter if attempted
   end
 
   def self.perform_async_in_queue(*args, queue:)
-    set(queue: queue).perform_async(*args, queue)
+    set(queue: queue).perform_async(*args)
   end
 
 private
@@ -38,6 +46,15 @@ private
 
     GovukStatsd.increment("delivery_request_worker.rate_limit_exceeded")
     raise RateLimitExceededError
+  end
+
+  # Sidekiq uses JSON for a workers arguments, so richer objects are not
+  # available. This converts the scalar values to objects.
+  def parsed_metrics(metrics)
+    content_change_created_at = metrics["content_change_created_at"]
+      &.then { |t| Time.zone.iso8601(t) }
+
+    { content_change_created_at: content_change_created_at }.compact
   end
 
   def increment_rate_limiter

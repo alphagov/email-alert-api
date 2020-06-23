@@ -13,19 +13,34 @@ RSpec.describe DeliveryRequestWorker do
     let(:queue) { "default" }
 
     it "delegates sending the email to DeliveryRequestService" do
-      expect(DeliveryRequestService).to receive(:call).with(email: email)
-      described_class.new.perform(email.id, queue)
+      expect(DeliveryRequestService)
+        .to receive(:call)
+        .with(email: email, metrics: {})
+      described_class.new.perform(email.id, {})
+    end
+
+    it "parses scalar metrics and passes them to DeliveryRequestService" do
+      freeze_time do
+        expect(DeliveryRequestService)
+          .to receive(:call)
+          .with(email: email, metrics: { content_change_created_at: Time.zone.now })
+
+        described_class.new.perform(
+          email.id,
+          { "content_change_created_at" => Time.zone.now.iso8601 },
+        )
+      end
     end
 
     it "increments the rate limiter" do
       expect(rate_limiter).to receive(:add).with("delivery_request")
-      described_class.new.perform(email.id, queue)
+      described_class.new.perform(email.id)
     end
 
     context "when rate limit is exceeded" do
       it "raises a RatelimitExceededError" do
         allow(rate_limiter).to receive(:exceeded?).and_return(true)
-        expect { described_class.new.perform(email.id, queue) }
+        expect { described_class.new.perform(email.id) }
           .to raise_error(described_class::RateLimitExceededError)
       end
     end
@@ -41,7 +56,7 @@ RSpec.describe DeliveryRequestWorker do
     let(:email) { create(:email) }
     let(:sidekiq_message) do
       {
-        "args" => [email.id, "delivery_immediate_high"],
+        "args" => [email.id, {}],
         "queue" => "delivery_immediate_high",
         "class" => described_class.name,
       }
@@ -56,7 +71,7 @@ RSpec.describe DeliveryRequestWorker do
       expect(DeliveryRequestWorker.jobs).to contain_exactly(
         hash_including(
           "queue" => "delivery_immediate_high",
-          "args" => array_including(email.id, "delivery_immediate_high"),
+          "args" => array_including(email.id, {}),
           "at" => 5.minutes.from_now.to_f,
         ),
       )
