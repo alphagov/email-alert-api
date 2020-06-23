@@ -78,21 +78,18 @@ RSpec.describe DeliveryRequestService do
       end
     end
 
-    context "when this is the first delivery attempt of a content change" do
+    context "when this is the first delivery attempt and " \
+            "content_change_created_at metrics are provided" do
       around { |example| freeze_time { example.run } }
-      let(:content_change) { create(:content_change) }
-      before do
-        create(:subscription_content,
-               subscription: create(:subscription, :immediately),
-               content_change: content_change,
-               email: email)
-      end
 
       it "records the time from content change created until this delivery attempt" do
+        content_change_created_at = 1.hour.ago
+        metrics = { content_change_created_at: content_change_created_at }
         expect(MetricsService)
           .to receive(:content_change_created_to_first_delivery_attempt)
-          .with(content_change.created_at, Time.zone.now)
-        described_class.call(email: email)
+          .with(content_change_created_at, Time.zone.now)
+
+        described_class.call(email: email, metrics: metrics)
       end
     end
 

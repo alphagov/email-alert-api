@@ -5,8 +5,9 @@ class DeliveryRequestService
     "delay" => DelayProvider,
   }.freeze
 
-  def initialize(email:, config: EmailAlertAPI.config.email_service)
+  def initialize(email:, metrics: {}, config: EmailAlertAPI.config.email_service)
     @email = email
+    @metrics = metrics
     @attempt_id = SecureRandom.uuid
     @provider_name = config.fetch(:provider).downcase
     @subject_prefix = config.fetch(:email_subject_prefix)
@@ -46,7 +47,7 @@ class DeliveryRequestService
 
 private
 
-  attr_reader :attempt_id, :email, :provider_name, :subject_prefix, :overrider
+  attr_reader :attempt_id, :email, :metrics, :provider_name, :subject_prefix, :overrider
 
   def address
     @address ||= overrider.destination_address(email.address)
@@ -70,15 +71,11 @@ private
     now = Time.now.utc
     MetricsService.email_created_to_first_delivery_attempt(email.created_at, now)
 
-    content_change_id = SubscriptionContent.where(email: email)
-                                           .immediate
-                                           .pick(:content_change_id)
-    return unless content_change_id
+    return unless metrics[:content_change_created_at]
 
-    content_change_created_at = ContentChange.where(id: content_change_id)
-                                             .pick(:created_at)
-    return unless content_change_created_at
-
-    MetricsService.content_change_created_to_first_delivery_attempt(content_change_created_at, now)
+    MetricsService.content_change_created_to_first_delivery_attempt(
+      metrics[:content_change_created_at],
+      now,
+    )
   end
 end
