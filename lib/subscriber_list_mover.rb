@@ -93,6 +93,8 @@ class SubscriberListMover
   end
 
   def email_change_to_subscribers(emails_for_subscribed)
-    BulkEmailSenderService.call(emails_for_subscribed)
+    emails_for_subscribed.each do |id|
+      DeliveryRequestWorker.perform_async_in_queue(id, queue: :delivery_immediate)
+    end
   end
 end
