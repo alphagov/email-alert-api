@@ -1,5 +1,25 @@
 require "csv"
 
+# Example input:
+# [{ status: "Inactive (unsubscribed)", subscriber_list: "Test foo (slug: test-foo)", frequency: daily, ... }, {...}]
+#
+# Example output:
+# | Status                  | SubscriberList            | Frequency | Timeline                                                       |
+# | Inactive (unsubscribed) | Test foo (slug: test-foo) | daily     | Subscribed 2020-04-18 15:21:20 +0100, Ended 2020-05-12 11:41:04 +0100 |
+# | Active                  | Bar bar (slug: bar-bar)   | weekly    | Subscribed 2019-06-10 13:48:43 +0100                           |
+def hash_to_table(hash)
+  columns = hash.first.each_with_object({}) do |(col, _), h|
+    heading = col.to_s.humanize
+    h[col] = { label: heading, width: [hash.map { |g| g[col].size }.max, heading.size].max }
+  end
+
+  puts "| #{columns.map { |_, g| g[:label].ljust(g[:width]) }.join(' | ')} |"
+  hash.each do |h|
+    str = h.keys.map { |k| h[k].ljust(columns[k][:width]) }.join(" | ")
+    puts "| #{str} |"
+  end
+end
+
 namespace :manage do
   desc "View all subscriptions for a subscriber"
   task :view_subscriptions, [:email_address] => :environment do |_t, args|
@@ -16,20 +36,7 @@ namespace :manage do
         timeline: "Subscribed #{subscription.created_at}#{subscription.ended_at.present? ? ", Ended #{subscription.ended_at}" : ''}",
       }
     end
-    columns = results.first.each_with_object({}) do |(col, _), h|
-      heading = col.to_s.humanize
-      h[col] = { label: heading, width: [results.map { |g| g[col].size }.max, heading.size].max }
-    end
-
-    # Example output:
-    # | Status                  | SubscriberList            | Frequency | Timeline                                                       |
-    # | Inactive (unsubscribed) | Test foo (slug: test-foo) | daily     | Subscribed 2020-04-18 15:21:20 +0100, Ended 2020-05-12 11:41:04 +0100 |
-    # | Active                  | Bar bar (slug: bar-bar)   | weekly    | Subscribed 2019-06-10 13:48:43 +0100                           |
-    puts "| #{columns.map { |_, g| g[:label].ljust(g[:width]) }.join(' | ')} |"
-    results.each do |h|
-      str = h.keys.map { |k| h[k].ljust(columns[k][:width]) }.join(" | ")
-      puts "| #{str} |"
-    end
+    hash_to_table(results)
   end
 
   desc "View most recent email delivery attempts for a subscriber"
@@ -55,21 +62,7 @@ namespace :manage do
         subscription_slug: SubscriptionContent.find_by(email_id: email.id)&.subscription&.subscriber_list&.slug,
       }
     end
-
-    columns = results.first.each_with_object({}) do |(col, _), h|
-      heading = col.to_s.humanize
-      h[col] = { label: heading, width: [results.map { |g| g[col].size }.max, heading.size].max }
-    end
-
-    # Example output:
-    # | Status                  | SubscriberList            | Frequency | Timeline                                                       |
-    # | Inactive (unsubscribed) | Test foo (slug: test-foo) | daily     | Subscribed 2020-04-18 15:21:20 +0100, Ended 2020-05-12 11:41:04 +0100 |
-    # | Active                  | Bar bar (slug: bar-bar)   | weekly    | Subscribed 2019-06-10 13:48:43 +0100                           |
-    puts "| #{columns.map { |_, g| g[:label].ljust(g[:width]) }.join(' | ')} |"
-    results.each do |h|
-      str = h.keys.map { |k| h[k].ljust(columns[k][:width]) }.join(" | ")
-      puts "| #{str} |"
-    end
+    hash_to_table(results)
   end
 
   desc "Change the email address of a subscriber"
