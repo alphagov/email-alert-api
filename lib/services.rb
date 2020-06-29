@@ -4,6 +4,6 @@ module Services
   end
 
   def self.rate_limiter
-    @rate_limiter ||= Ratelimit.new("deliveries")
+    @rate_limiter ||= Ratelimit.new("email-alert-api:deliveries")
   end
 end
