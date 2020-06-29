@@ -1,23 +1,33 @@
 require "csv"
 
 # Example input:
-# [{ status: "Inactive (unsubscribed)", subscriber_list: "Test foo (slug: test-foo)", frequency: daily, ... }, {...}]
+# [{ status: "Inactive (unsubscribed)", subscriber_list: "Test foo (slug: test-foo)", frequency: "daily", ... }, {...}]
 #
 # Example output:
 # | Status                  | SubscriberList            | Frequency | Timeline                                                       |
 # | Inactive (unsubscribed) | Test foo (slug: test-foo) | daily     | Subscribed 2020-04-18 15:21:20 +0100, Ended 2020-05-12 11:41:04 +0100 |
 # | Active                  | Bar bar (slug: bar-bar)   | weekly    | Subscribed 2019-06-10 13:48:43 +0100                           |
 def hash_to_table(hash)
-  columns = hash.first.each_with_object({}) do |(col, _), h|
-    heading = col.to_s.humanize
-    h[col] = { label: heading, width: [hash.map { |g| g[col].size }.max, heading.size].max }
+  columns = []
+  hash.first.keys.each do |key|
+    heading = key.to_s.humanize
+    longest_value = hash.map { |row| row[key].to_s.size }.max
+    columns << {
+      id: key,
+      label: heading,
+      width: [longest_value, heading.size].max,
+    }
   end
 
-  puts "| #{columns.map { |_, g| g[:label].ljust(g[:width]) }.join(' | ')} |"
-  hash.each do |h|
-    str = h.keys.map { |k| h[k].ljust(columns[k][:width]) }.join(" | ")
-    puts "| #{str} |"
+  table = "| #{columns.map { |column| column[:label].ljust(column[:width]) }.join(' | ')} |\n"
+  hash.each do |row|
+    padded_values = row.keys.map do |key|
+      column_width = columns.find { |c| c[:id] == key }[:width]
+      row[key].to_s.ljust(column_width)
+    end
+    table += "| #{padded_values.join(' | ')} |\n"
   end
+  table
 end
 
 namespace :manage do
@@ -36,7 +46,7 @@ namespace :manage do
         timeline: "Subscribed #{subscription.created_at}#{subscription.ended_at.present? ? ", Ended #{subscription.ended_at}" : ''}",
       }
     end
-    hash_to_table(results)
+    puts hash_to_table(results)
   end
 
   desc "View most recent email delivery attempts for a subscriber"
@@ -62,7 +72,7 @@ namespace :manage do
         subscription_slug: SubscriptionContent.find_by(email_id: email.id)&.subscription&.subscriber_list&.slug,
       }
     end
-    hash_to_table(results)
+    puts hash_to_table(results)
   end
 
   desc "Change the email address of a subscriber"
