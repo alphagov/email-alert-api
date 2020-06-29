@@ -32,6 +32,46 @@ namespace :manage do
     end
   end
 
+  desc "View most recent email delivery attempts for a subscriber"
+  task :view_emails, %i[email_address limit] => :environment do |_t, args|
+    email_address = args[:email_address]
+    limit = args[:limit] || 10
+    subscriber = Subscriber.find_by_address(email_address)
+    abort("Cannot find any subscriber with email address #{email_address}.") if subscriber.nil?
+
+    subscription_ids = subscriber.subscriptions.pluck(:id)
+    subscriptions_contents = SubscriptionContent.where(subscription_id: subscription_ids).last(limit)
+    confirmation_emails = Email.where(subject: "Confirm your subscription", address: email_address).last(limit)
+    all_emails = (subscriptions_contents.map(&:email) + confirmation_emails).sort_by(&:created_at).last(limit)
+
+    results = all_emails.map do |email|
+      {
+        created_at: email.created_at,
+        status: email.sent? ? email.status : "Failed (#{email.status}). Reason: #{email.failure_reason}",
+        delivery_attempts: DeliveryAttempt.where(email_id: email.id).count,
+        email_subject: email.subject,
+        email_uuid: email.id,
+        # Confirmation emails have no corresponding subscription at this point. `subscription_slug: nil`
+        subscription_slug: SubscriptionContent.find_by(email_id: email.id)&.subscription&.subscriber_list&.slug,
+      }
+    end
+
+    columns = results.first.each_with_object({}) do |(col, _), h|
+      heading = col.to_s.humanize
+      h[col] = { label: heading, width: [results.map { |g| g[col].size }.max, heading.size].max }
+    end
+
+    # Example output:
+    # | Status                  | SubscriberList            | Frequency | Timeline                                                       |
+    # | Inactive (unsubscribed) | Test foo (slug: test-foo) | daily     | Subscribed 2020-04-18 15:21:20 +0100, Ended 2020-05-12 11:41:04 +0100 |
+    # | Active                  | Bar bar (slug: bar-bar)   | weekly    | Subscribed 2019-06-10 13:48:43 +0100                           |
+    puts "| #{columns.map { |_, g| g[:label].ljust(g[:width]) }.join(' | ')} |"
+    results.each do |h|
+      str = h.keys.map { |k| h[k].ljust(columns[k][:width]) }.join(" | ")
+      puts "| #{str} |"
+    end
+  end
+
   desc "Change the email address of a subscriber"
   task :change_email_address, %i[old_email_address new_email_address] => :environment do |_t, args|
     old_email_address = args[:old_email_address]
