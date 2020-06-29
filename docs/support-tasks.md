@@ -29,6 +29,21 @@ $ bundle exec rake manage:change_email_address[<old_email_address>, <new_email_a
 
 [change]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:change_email_address[from@example.org,to@example.org]
 
+## View subscriber's recent emails
+
+This task shows the most recent email delivery attempts made to the given user.
+It takes two parameters: `email_address` (required), and `limit` (optional).
+`limit` defaults to 10, but you can override this if you need to see more of
+the user's history.
+
+```bash
+$ bundle exec rake manage:view_emails[<email_address>,<limit>]
+```
+
+[⚙ Run rake task on production][view_emails]
+
+[view_emails]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:view_emails[email@example.org]
+
 ## View subscriber's subscriptions
 
 This task shows you all of the active and inactive subscriptions for a given user.
