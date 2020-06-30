@@ -49,6 +49,8 @@ class DeliveryRequestWorker
     rate_limiter.add("delivery_request")
   end
 
+  # More information around the rate limit can be found here ->
+  # https://docs.publishing.service.gov.uk/manual/govuk-notify.html under "GOV.UK Emails".
   def rate_limit_threshold
     per_minute_to_allow_350_per_second = "21000"
     ENV.fetch("DELIVERY_REQUEST_THRESHOLD", per_minute_to_allow_350_per_second).to_i
