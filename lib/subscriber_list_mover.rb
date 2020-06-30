@@ -9,7 +9,6 @@ class SubscriberListMover
 
   def call
     source_subscriber_list = SubscriberList.find_by(slug: from_slug)
-    sub_count = source_subscriber_list.subscriptions.active.count
     raise "Source subscriber list #{from_slug} does not exist" if source_subscriber_list.nil?
 
     source_subscriptions = Subscription.active.find_by(subscriber_list_id: source_subscriber_list.id)
@@ -19,6 +18,7 @@ class SubscriberListMover
     raise "Destination subscriber list #{to_slug} does not exist" if destination_subscriber_list.nil?
 
     subscribers = source_subscriber_list.subscribers.activated
+    sub_count = source_subscriber_list.subscriptions.active.count
     puts "#{sub_count} active subscribers moving from #{from_slug} to #{to_slug}"
 
     if send_email
@@ -93,6 +93,8 @@ class SubscriberListMover
   end
 
   def email_change_to_subscribers(emails_for_subscribed)
-    BulkEmailSenderService.call(emails_for_subscribed)
+    emails_for_subscribed.each do |id|
+      DeliveryRequestWorker.perform_async_in_queue(id, queue: :delivery_immediate)
+    end
   end
 end

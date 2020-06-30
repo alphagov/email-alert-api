@@ -134,8 +134,6 @@ namespace :manage do
     end
   end
 
-  # TODO: this currently has an issue where emails are sent before
-  #       migrating users to the new subscriber list and causes confusion.
   desc "Move all subscribers from one subscriber list to another"
   task :move_all_subscribers, %i[from_slug to_slug] => :environment do |_t, args|
     if ENV["SEND_EMAIL"]
