@@ -261,7 +261,7 @@ numerical id.
 - Replace the `deleted_at` field with an `ended_at` field.
 - Create an enum field for source (ideas are imported, user_signup,
   frequency_change)
-- Create an enum field for end (ideas are user_unsubscribe, non_existant_email,
+- Create an enum field for end (ideas are user_unsubscribe, non_existent_email,
   frequency_change)
 - Create an active boolean field
 - Drop the current unique key and replace it with one that incorporates active

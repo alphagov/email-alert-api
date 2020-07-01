@@ -6,7 +6,7 @@ class Subscription < ApplicationRecord
 
   enum frequency: { immediately: 0, daily: 1, weekly: 2 }
   enum source: { user_signed_up: 0, frequency_changed: 1, imported: 2, subscriber_list_changed: 3 }, _prefix: true
-  enum ended_reason: { unsubscribed: 0, non_existant_email: 1, frequency_changed: 2, subscriber_list_changed: 3, marked_as_spam: 4, unpublished: 5 }, _prefix: :ended
+  enum ended_reason: { unsubscribed: 0, non_existent_email: 1, frequency_changed: 2, subscriber_list_changed: 3, marked_as_spam: 4, unpublished: 5 }, _prefix: :ended
 
   validates :subscriber, uniqueness: { scope: :subscriber_list, conditions: -> { active } }
 
