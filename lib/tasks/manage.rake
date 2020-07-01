@@ -52,7 +52,7 @@ namespace :manage do
   desc "View most recent email delivery attempts for a subscriber"
   task :view_emails, %i[email_address limit] => :environment do |_t, args|
     email_address = args[:email_address]
-    limit = args[:limit] || 10
+    limit = args[:limit].to_i || 10
     subscriber = Subscriber.find_by_address(email_address)
     abort("Cannot find any subscriber with email address #{email_address}.") if subscriber.nil?
 
