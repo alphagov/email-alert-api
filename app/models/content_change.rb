@@ -18,6 +18,8 @@ class ContentChange < ApplicationRecord
 
   enum priority: { normal: 0, high: 1 }
 
+  scope :unprocessed, -> { where(processed_at: nil) }
+
   def mark_processed!
     update!(processed_at: Time.zone.now)
   end

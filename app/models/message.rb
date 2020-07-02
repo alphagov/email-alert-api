@@ -8,6 +8,8 @@ class Message < ApplicationRecord
   validates :criteria_rules, criteria_schema: true, allow_blank: true
   validates :sender_message_id, uuid: true, uniqueness: true, allow_nil: true
 
+  scope :unprocessed, -> { where(processed_at: nil) }
+
   validates_each :url, allow_nil: true do |record, attribute, value|
     parsed = URI.parse(value)
     if parsed.absolute? && parsed.scheme != "https"
