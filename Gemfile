@@ -18,6 +18,7 @@ gem "rails"
 gem "ratelimit"
 gem "redcarpet"
 gem "sidekiq-scheduler"
+gem "sidekiq-unique-jobs"
 gem "with_advisory_lock"
 
 group :test do
