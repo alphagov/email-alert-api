@@ -1,302 +1,152 @@
 RSpec.describe DeliveryRequestService do
-  let(:config) { EmailAlertAPI.config.email_service }
+  let(:email) { create(:email) }
+  let(:default_provider_name) { "pseudo" }
+  let(:default_provider) { PseudoProvider }
 
-  describe "#provider_name" do
-    it "defaults to 'pseudo'" do
-      expect(subject.provider_name).to eq("pseudo")
-    end
-
-    it "downcases the provider from the config" do
-      subject = described_class.new(config: config.merge(provider: "NOTIFY"))
-      expect(subject.provider_name).to eq("notify")
-    end
-  end
-
-  describe "#provider" do
-    it "defaults to the PseudoProvider" do
-      expect(subject.provider).to eq(PseudoProvider)
-    end
-
-    it "can be configured" do
-      subject = described_class.new(config: config.merge(provider: "NOTIFY"))
-      expect(subject.provider).to eq(NotifyProvider)
-    end
-  end
-
-  describe "#subject_prefix" do
-    it "defaults to be an empty string" do
-      expect(subject.subject_prefix).to eq("")
-    end
-
-    it "can be configured" do
-      subject = described_class.new(config: config.merge(email_subject_prefix: "STAGING - "))
-      expect(subject.subject_prefix).to eq("STAGING - ")
-    end
-  end
-
-  shared_examples "records a statistic" do |status|
-    it "records a #{status} statistic" do
-      expect(GovukStatsd).to receive(:increment).with("delivery_attempt.status.#{status.underscore}")
-      subject.call(email: email)
-    end
-  end
-
-  describe "#call" do
-    let!(:email) { create(:email) }
-
-    around { |example| freeze_time { example.run } }
-
-    it "calls the provider" do
-      expect(subject.provider).to receive(:call)
-        .with(
-          hash_including(
-            address: "test@example.com",
-            subject: "subject",
-            body: "body",
-          ),
-        )
-        .and_return(:sending)
-
-      attempted = subject.call(email: email)
-      expect(attempted).to be true
-    end
-
-    context "when the provider raises an exception" do
-      before do
-        expect(subject.provider).to receive(:call).and_raise("Unknown error!")
-      end
-
-      it "sets the status to internal_failure" do
-        subject.call(email: email)
-        expect(DeliveryAttempt.last.status).to eq("internal_failure")
-      end
-
-      include_examples "records a statistic", "internal_failure"
-    end
-
-    context "when the provider raises a technical failure exception" do
-      before do
-        expect(subject.provider).to receive(:call).and_return(:technical_failure)
-      end
-
-      it "sets the status to technical_failure" do
-        subject.call(email: email)
-        expect(DeliveryAttempt.last.status).to eq("technical_failure")
-      end
-
-      it "adds a completed_at time" do
-        subject.call(email: email)
-        expect(DeliveryAttempt.last.completed_at).not_to be(nil)
-      end
-
-      include_examples "records a statistic", "technical_failure"
-    end
-
-    context "when the email address is overridden" do
-      let(:subject) do
-        described_class.new(config: config.merge(email_address_override: address))
-      end
-
-      let(:address) { "overridden@example.com" }
-
-      it "calls the provider with the overridden email address" do
-        expect(subject.provider).to receive(:call)
-          .with(hash_including(address: address))
-          .and_return(:sending)
-
-        subject.call(email: email)
-      end
-
-      it "logs the email address is overriden" do
-        expect(Rails.logger).to receive(:info)
-          .with(match(/Overriding email address/))
-        subject.call(email: email)
-      end
-    end
-
-    context "when the email address isn't whitelisted" do
-      let(:subject) do
-        described_class.new(config: config.merge(
-          email_address_override: "overridden@example.com", email_address_override_whitelist_only: true,
-        ))
-      end
-
-      it "doesn't call the provider with the overridden email address" do
-        expect(subject.provider).to_not receive(:call)
-
-        attempted = subject.call(email: email)
-        expect(attempted).to be false
-      end
-    end
-
-    it "prefixes the subject if configured to do so" do
-      subject = described_class.new(config: config.merge(email_subject_prefix: "STAGING - "))
-      expect(subject.subject_prefix).to eq("STAGING - ")
-
-      expect(subject.provider).to receive(:call)
-        .with(
-          hash_including(
-            subject: "STAGING - subject",
-          ),
-        )
-        .and_return(:sending)
-
-      subject.call(email: email)
-    end
-
+  describe ".call" do
     it "creates a delivery attempt" do
-      expect { subject.call(email: email) }
-        .to change(DeliveryAttempt, :count).by(1)
+      expect { described_class.call(email: email) }
+        .to change { DeliveryAttempt.where(email: email).count }
+        .by(1)
     end
 
-    it "associates the delivery attempt with the email" do
-      subject.call(email: email)
-      expect(DeliveryAttempt.last.email).to eq(email)
+    it "calls the provider to send an email" do
+      email_parameters = { address: email.address,
+                           subject: email.subject,
+                           body: email.body }
+      expect(default_provider).to receive(:call)
+                              .with(hash_including(email_parameters))
+                              .and_return(:sending)
+      described_class.call(email: email)
     end
 
-    context "when the delivery attempt returns a final status" do
-      before { allow(subject.provider).to receive(:call).and_return(:delivered) }
+    it "can send an email to a configured provider" do
+      config = EmailAlertAPI.config.email_service.merge(provider: "NOTIFY")
+      expect(NotifyProvider).to receive(:call).and_return(:sending)
+      described_class.call(email: email, config: config)
+    end
 
-      it "sets the delivery attempt's status to provider response" do
-        subject.call(email: email)
-        expect(DeliveryAttempt.last).to be_delivered
+    it "can prefix the subject with a configured prefix" do
+      config = EmailAlertAPI.config.email_service.merge(email_subject_prefix: "[TEST] ")
+      expect(default_provider).to receive(:call)
+                              .with(hash_including(subject: "[TEST] #{email.subject}"))
+                              .and_return(:sending)
+      described_class.call(email: email, config: config)
+    end
+
+    it "can be configured to override a recepients email address" do
+      address = "override@example.com"
+      config = EmailAlertAPI.config.email_service.merge(email_address_override: address)
+      expect(default_provider).to receive(:call)
+                              .with(hash_including(address: address))
+                              .and_return(:sending)
+      described_class.call(email: email, config: config)
+    end
+
+    it "returns true when the overrider can provide an email address" do
+      overrider_double = instance_double(
+        described_class::EmailAddressOverrider,
+        destination_address: "test@example.com",
+      )
+      allow(described_class::EmailAddressOverrider)
+        .to receive(:new)
+        .and_return(overrider_double)
+
+      expect(described_class.call(email: email)).to be(true)
+    end
+
+    it "returns false when no email was sent due to filtering" do
+      overrider_double = instance_double(
+        described_class::EmailAddressOverrider,
+        destination_address: nil,
+      )
+      allow(described_class::EmailAddressOverrider)
+        .to receive(:new)
+        .and_return(overrider_double)
+
+      expect(described_class.call(email: email)).to be(false)
+    end
+
+    context "when this is the first delivery attempt" do
+      around { |example| freeze_time { example.run } }
+
+      it "records the time of the delivery attempt" do
+        expect(MetricsService)
+          .to receive(:email_created_to_first_delivery_attempt)
+          .with(email.created_at, Time.zone.now)
+        described_class.call(email: email)
+      end
+    end
+
+    context "when this is the first delivery attempt of a content change" do
+      around { |example| freeze_time { example.run } }
+      let(:content_change) { create(:content_change) }
+      before do
+        create(:subscription_content,
+               subscription: create(:subscription, :immediately),
+               content_change: content_change,
+               email: email)
       end
 
-      include_examples "records a statistic", "delivered"
-    end
-
-    it "sets the delivery attempt's provider to the name of the provider" do
-      subject.call(email: email)
-      expect(DeliveryAttempt.last.provider).to eq("pseudo")
-    end
-
-    it "sets the reference to same string that was sent the provider" do
-      reference = nil
-      expect(subject.provider).to receive(:call)
-        .with(->(params) { reference = params.fetch(:reference) })
-        .and_return(:sending)
-
-      subject.call(email: email)
-
-      expect(reference).to be_present
-      expect(DeliveryAttempt.last.id).to eq(reference)
-    end
-
-    it "records a metric for the delivery attempt" do
-      expect(MetricsService).to receive(:email_created_to_first_delivery_attempt)
-        .with(email.created_at, Time.now.utc)
-
-      subject.call(email: email)
-    end
-
-    it "records a metric for the request to the provdier" do
-      expect(MetricsService).to receive(:email_send_request)
-        .with("pseudo")
-        .and_return(:sending)
-
-      subject.call(email: email)
-    end
-
-    context "when the email is the first attempt of a content change" do
-      let(:subscription_content) { create(:subscription_content, email: email) }
-
-      it "records a metric for the time between content change creation time and delivery attempt" do
-        content_change = subscription_content.content_change
-
-        expect(MetricsService).to receive(:content_change_created_to_first_delivery_attempt)
-          .with(content_change.created_at, Time.now.utc)
-
-        subject.call(email: email)
+      it "records the time from content change created until this delivery attempt" do
+        expect(MetricsService)
+          .to receive(:content_change_created_to_first_delivery_attempt)
+          .with(content_change.created_at, Time.zone.now)
+        described_class.call(email: email)
       end
     end
-  end
 
-  describe described_class::EmailAddressOverrider do
-    let(:config) { EmailAlertAPI.config.email_service }
+    context "when this is not the first delivery attempt" do
+      before { create(:delivery_attempt, email: email) }
 
-    describe "#destination_address" do
-      subject(:destination_address) do
-        described_class.new(config).destination_address(address)
+      it "doesn't record the time of the delivery attempt" do
+        expect(MetricsService).not_to receive(:email_created_to_first_delivery_attempt)
+        described_class.call(email: email)
+      end
+    end
+
+    context "when sending the email returns a sending status" do
+      it "doesn't update the email status" do
+        allow(default_provider).to receive(:call).and_return(:sending)
+        expect(UpdateEmailStatusService).not_to receive(:call)
+        described_class.call(email: email)
+      end
+    end
+
+    context "when sending the email returns a non-sending status" do
+      before do
+        allow(default_provider).to receive(:call).and_return(:permanent_failure)
       end
 
-      context "when an override address is set" do
-        let(:config) { { email_address_override: "overriden@example.com" } }
-        let(:address) { "original@example.com" }
-
-        it "returns the overridden address" do
-          expect(destination_address).to eq("overriden@example.com")
-        end
-      end
-
-      context "when an override address is not set" do
-        let(:address) { "original@example.com" }
-
-        it "returns the original address" do
-          expect(destination_address).to eq("original@example.com")
-        end
-      end
-
-      context "when an override address is set and whitelist addresses are set" do
-        let(:config) do
-          {
-            email_address_override: "overriden@example.com",
-            email_address_override_whitelist: ["whitelist@example.com"],
-          }
-        end
-
-        context "when the argument is a whitelist address" do
-          let(:address) { "whitelist@example.com" }
-
-          it "returns the whitelisted address" do
-            expect(destination_address).to eq("whitelist@example.com")
-          end
-        end
-
-        context "when the argument is not a whitelist address" do
-          let(:address) { "original@example.com" }
-
-          it "returns the overriden address" do
-            expect(destination_address).to eq("overriden@example.com")
-          end
-        end
-      end
-
-      context "when an override address is set and whitelist addresses are set and only whitelist emails should be sent" do
-        let(:config) do
-          {
-            email_address_override: "overriden@example.com",
-            email_address_override_whitelist: ["whitelist@example.com"],
-            email_address_override_whitelist_only: true,
-          }
-        end
-
-        context "when the argument is a whitelist address" do
-          let(:address) { "whitelist@example.com" }
-
-          it "returns the whitelisted address" do
-            expect(destination_address).to eq("whitelist@example.com")
-          end
-        end
-
-        context "when the argument is not a whitelist address" do
-          let(:address) { "original@example.com" }
-
-          it "returns a nil address" do
-            expect(destination_address).to be_nil
-          end
+      it "sets the delivery attempt status and completed time" do
+        freeze_time do
+          scope = DeliveryAttempt.where(status: :permanent_failure,
+                                        completed_at: Time.zone.now)
+          expect { described_class.call(email: email) }
+            .to change(scope, :count).by(1)
         end
       end
 
-      context "when an override address is not set and whitelist addresses are set" do
-        let(:config) do
-          { email_address_override_whitelist: ["whitelist@example.com"] }
-        end
+      it "updates the email status" do
+        expect(UpdateEmailStatusService).to receive(:call)
+        described_class.call(email: email)
+      end
+    end
 
-        let(:address) { "original@example.com" }
+    context "when sending the email raises an error" do
+      before do
+        allow(default_provider).to receive(:call).and_raise("Ut oh")
+      end
 
-        it "returns the original address" do
-          expect(destination_address).to eq("original@example.com")
-        end
+      it "sets the delivery attempt status to internal_failure" do
+        scope = DeliveryAttempt.where(status: :internal_failure)
+        expect { described_class.call(email: email) }
+          .to change(scope, :count).by(1)
+      end
+
+      it "updates the email status" do
+        expect(UpdateEmailStatusService).to receive(:call)
+        described_class.call(email: email)
       end
     end
   end

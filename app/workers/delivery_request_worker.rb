@@ -1,22 +1,21 @@
 class DeliveryRequestWorker
+  class RateLimitExceededError < RuntimeError; end
+
   include Sidekiq::Worker
 
   sidekiq_options retry: 9
 
-  sidekiq_retries_exhausted do |msg, _e|
-    if msg["error_class"] == "RatelimitExceededError"
+  sidekiq_retries_exhausted do |msg, error|
+    if error.is_a?(RateLimitExceededError)
       email_id = msg["args"].first
       queue = msg["args"].second
       GovukStatsd.increment("delivery_request_worker.rescheduled")
-      DeliveryRequestWorker.set(queue: queue).perform_in(30.seconds, email_id, queue)
+      DeliveryRequestWorker.set(queue: queue).perform_in(5.minutes, email_id, queue)
     end
   end
 
-  def perform(email_id, queue)
-    @email_id = email_id
-    @queue = queue
-
-    check_rate_limit!
+  def perform(email_id, _queue)
+    check_rate_limit_exceeded
 
     email = MetricsService.delivery_request_worker_find_email do
       Email.find(email_id)
@@ -30,19 +29,15 @@ class DeliveryRequestWorker
     set(queue: queue).perform_async(*args, queue)
   end
 
-  def check_rate_limit!
-    if rate_limit_exceeded?
-      GovukStatsd.increment("delivery_request_worker.rate_limit_exceeded")
-      raise RatelimitExceededError
-    end
-  end
+private
 
-  def rate_limit_exceeded?
-    rate_limiter.exceeded?(
-      "delivery_request",
-      threshold: rate_limit_threshold,
-      interval: rate_limit_interval,
-    )
+  def check_rate_limit_exceeded
+    return unless rate_limiter.exceeded?("delivery_request",
+                                         threshold: rate_limit_threshold,
+                                         interval: rate_limit_interval)
+
+    GovukStatsd.increment("delivery_request_worker.rate_limit_exceeded")
+    raise RateLimitExceededError
   end
 
   def increment_rate_limiter
@@ -61,14 +56,7 @@ class DeliveryRequestWorker
     ENV.fetch("DELIVERY_REQUEST_INTERVAL", minute_in_seconds).to_i
   end
 
-private
-
-  attr_reader :email_id, :queue
-
   def rate_limiter
     Services.rate_limiter
   end
-end
-
-class RatelimitExceededError < StandardError
 end
