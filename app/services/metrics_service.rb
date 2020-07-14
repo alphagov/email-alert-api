@@ -1,5 +1,10 @@
 class MetricsService
   class << self
+    def content_change_emails(content_change, count)
+      count("content_change_emails.publishing_app.#{content_change.publishing_app}.immediate", count)
+      count("content_change_emails.document_type.#{content_change.document_type}.immediate", count)
+    end
+
     def sent_to_notify_successfully
       increment("notify.email_send_request.success")
     end
@@ -74,6 +79,10 @@ class MetricsService
 
     def timing(namespace, difference)
       GovukStatsd.timing(namespace, difference)
+    end
+
+    def count(namespace, value)
+      GovukStatsd.count(namespace, value)
     end
   end
 end
