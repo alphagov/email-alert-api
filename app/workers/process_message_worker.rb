@@ -1,7 +1,10 @@
 class ProcessMessageWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :process_and_generate_emails
+  sidekiq_options queue: :process_and_generate_emails,
+                  lock: :until_executed,
+                  lock_args: ->(args) { [args.first] },
+                  on_conflict: :log
 
   def perform(message_id)
     message = Message.find(message_id)

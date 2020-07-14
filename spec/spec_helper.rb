@@ -33,6 +33,8 @@ end
 
 WebMock.disable_net_connect!(allow_localhost: true)
 
+SidekiqUniqueJobs.config.enabled = false
+
 Sidekiq::Testing.inline!
 Sidekiq::Worker.clear_all
 Sidekiq::Logging.logger = nil
