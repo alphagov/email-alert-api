@@ -56,4 +56,20 @@ RSpec.describe ProcessContentChangeWorker do
       described_class.new.perform(processed_content.id)
     end
   end
+
+  describe ".perform_async" do
+    # We're expecting redis-namespace to raise a warning unfortunately
+    before { allow_any_instance_of(Redis::Namespace).to receive(:warn) }
+
+    around do |example|
+      SidekiqUniqueJobs.use_config(enabled: true, logger: Logger.new("/dev/null")) do
+        example.run
+      end
+    end
+
+    it "enforces job uniqueness with the correct sidekiq-unique-jobs option" do
+      expect(described_class).to receive(:uniqueness_with).with([content_change.id])
+      described_class.perform_async(content_change.id)
+    end
+  end
 end
