@@ -22,10 +22,10 @@ private
   end
 
   def critical_latency
-    10.minutes
+    120.minutes
   end
 
   def warning_latency
-    5.minutes
+    90.minutes
   end
 end

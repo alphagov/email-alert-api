@@ -3,8 +3,8 @@ RSpec.describe Metrics::MessageExporter do
     let(:statsd) { double }
 
     before do
-      3.times { create(:message, processed_at: nil, created_at: 10.minutes.ago) }
-      2.times { create(:message, processed_at: nil, created_at: 5.minutes.ago) }
+      3.times { create(:message, processed_at: nil, created_at: 122.minutes.ago) }
+      2.times { create(:message, processed_at: nil, created_at: 99.minutes.ago) }
       allow(GovukStatsd).to receive(:gauge)
     end
 

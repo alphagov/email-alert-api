@@ -3,8 +3,8 @@ RSpec.describe Metrics::ContentChangeExporter do
     let(:statsd) { double }
 
     before do
-      create(:content_change, created_at: 11.minutes.ago)
-      create(:content_change, created_at: 6.minutes.ago)
+      create(:content_change, created_at: 122.minutes.ago)
+      create(:content_change, created_at: 99.minutes.ago)
       allow(GovukStatsd).to receive(:gauge)
     end
 
