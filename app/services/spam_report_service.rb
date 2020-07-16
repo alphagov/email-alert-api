@@ -15,7 +15,7 @@ class SpamReportService
     subscriber_id = delivery_attempt.email.subscriber_id
     subscriber = Subscriber.find(subscriber_id)
 
-    UnsubscribeService.unsubscribe!(
+    UnsubscribeService.call(
       subscriber,
       subscriber.active_subscriptions,
       :marked_as_spam,

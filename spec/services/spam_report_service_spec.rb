@@ -6,7 +6,7 @@ RSpec.describe SpamReportService do
     let(:delivery_attempt) { create(:delivery_attempt, email: email) }
 
     it "delegates to the UnsubscribeService" do
-      expect(UnsubscribeService).to receive(:unsubscribe!)
+      expect(UnsubscribeService).to receive(:call)
         .with(subscriber, [subscription], :marked_as_spam)
 
       described_class.call(delivery_attempt)
