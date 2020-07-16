@@ -122,7 +122,7 @@ namespace :manage do
       puts "Subscriber #{email_address} not found"
     else
       puts "Unsubscribing #{email_address}"
-      UnsubscribeService.call(subscriber, subscriber.active_subscriptions, :unsubscribed)
+      UnsubscribeAllService.call(subscriber, :unsubscribed)
     end
   end
 
