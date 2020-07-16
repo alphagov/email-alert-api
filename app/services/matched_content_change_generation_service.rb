@@ -1,10 +1,6 @@
-class MatchedContentChangeGenerationService
+class MatchedContentChangeGenerationService < ApplicationService
   def initialize(content_change)
     @content_change = content_change
-  end
-
-  def self.call(*args)
-    new(*args).call
   end
 
   def call
@@ -24,8 +20,6 @@ class MatchedContentChangeGenerationService
 
     MatchedContentChange.insert_all!(records)
   end
-
-  private_class_method :new
 
 private
 

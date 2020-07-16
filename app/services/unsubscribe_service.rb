@@ -1,17 +1,11 @@
-class UnsubscribeService
+class UnsubscribeService < ApplicationService
   attr_reader :subscriber, :subscriptions, :reason
-
-  def self.call(*args)
-    new(*args).call
-  end
 
   def initialize(subscriber, subscriptions, reason)
     @subscriber = subscriber
     @subscriptions = subscriptions
     @reason = reason
   end
-
-  private_class_method :new
 
   def call
     ActiveRecord::Base.transaction do

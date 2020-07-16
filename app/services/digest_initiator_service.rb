@@ -1,10 +1,6 @@
-class DigestInitiatorService
+class DigestInitiatorService < ApplicationService
   def initialize(range:)
     @range = range
-  end
-
-  def self.call(*args)
-    new(*args).call
   end
 
   def call
@@ -23,8 +19,6 @@ class DigestInitiatorService
       digest_run.update(subscriber_count: subscriber_ids.count)
     end
   end
-
-  private_class_method :new
 
 private
 

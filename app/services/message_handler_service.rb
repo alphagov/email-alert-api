@@ -1,12 +1,8 @@
-class MessageHandlerService
+class MessageHandlerService < ApplicationService
   def initialize(params:, govuk_request_id:, user: nil)
     @params = params
     @govuk_request_id = govuk_request_id
     @user = user
-  end
-
-  def self.call(*args)
-    new(*args).call
   end
 
   def call
@@ -14,8 +10,6 @@ class MessageHandlerService
     Metrics.message_created
     ProcessMessageWorker.perform_async(message.id)
   end
-
-  private_class_method :new
 
 private
 

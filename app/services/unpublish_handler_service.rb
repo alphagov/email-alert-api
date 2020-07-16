@@ -1,4 +1,4 @@
-class UnpublishHandlerService
+class UnpublishHandlerService < ApplicationService
   TAXON_TEMPLATE = <<~BODY.freeze
     Your subscription to email updates about '<%=subject%>' has ended because this topic no longer exists on GOV.UK.
 
@@ -11,11 +11,14 @@ class UnpublishHandlerService
     taxon_tree: TAXON_TEMPLATE,
   }.freeze
 
-  def self.call(*args)
-    new.call(*args)
+  attr_reader :content_id, :redirect
+
+  def initialize(content_id, redirect)
+    @content_id = content_id
+    @redirect = redirect
   end
 
-  def call(content_id, redirect)
+  def call
     subscriber_lists = SubscriberList
                          .find_by_links_value(content_id)
                          .includes(:subscribers)

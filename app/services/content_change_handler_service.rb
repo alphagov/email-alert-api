@@ -1,12 +1,8 @@
-class ContentChangeHandlerService
+class ContentChangeHandlerService < ApplicationService
   def initialize(params:, govuk_request_id:, user: nil)
     @params = params
     @govuk_request_id = govuk_request_id
     @user = user
-  end
-
-  def self.call(*args)
-    new(*args).call
   end
 
   def call
@@ -14,8 +10,6 @@ class ContentChangeHandlerService
     Metrics.content_change_created
     ProcessContentChangeWorker.perform_async(content_change.id)
   end
-
-  private_class_method :new
 
 private
 

@@ -1,11 +1,5 @@
-class SpamReportService
+class SpamReportService < ApplicationService
   attr_reader :delivery_attempt
-
-  def self.call(*args)
-    new(*args).call
-  end
-
-  private_class_method :new
 
   def initialize(delivery_attempt)
     @delivery_attempt = delivery_attempt

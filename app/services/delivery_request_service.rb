@@ -1,4 +1,4 @@
-class DeliveryRequestService
+class DeliveryRequestService < ApplicationService
   PROVIDERS = {
     "notify" => NotifyProvider,
     "pseudo" => PseudoProvider,
@@ -12,10 +12,6 @@ class DeliveryRequestService
     @provider_name = config.fetch(:provider).downcase
     @subject_prefix = config.fetch(:email_subject_prefix)
     @overrider = EmailAddressOverrider.new(config)
-  end
-
-  def self.call(*args)
-    new(*args).call
   end
 
   def call

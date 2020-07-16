@@ -1,4 +1,4 @@
-class StatusUpdateService
+class StatusUpdateService < ApplicationService
   TEMPORARY_FAILURE_RETRY_DELAY = 6.hours
   TEMPORARY_FAILURE_RETRY_TIMEOUT = 24.hours
 
@@ -11,12 +11,8 @@ class StatusUpdateService
     @delivery_attempt = find_delivery_attempt(reference)
   end
 
-  def self.call(*args)
-    DeliveryAttempt.transaction { new(*args).call }
-  end
-
   def call
-    begin
+    DeliveryAttempt.transaction do
       delivery_attempt.update!(
         sent_at: sent_at,
         completed_at: completed_at,
@@ -46,8 +42,6 @@ class StatusUpdateService
     GovukStatsd.increment("status_update.failure")
     raise
   end
-
-  private_class_method :new
 
 private
 

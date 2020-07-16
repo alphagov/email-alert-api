@@ -1,10 +1,6 @@
-class MatchedMessageGenerationService
+class MatchedMessageGenerationService < ApplicationService
   def initialize(message)
     @message = message
-  end
-
-  def self.call(*args)
-    new(*args).call
   end
 
   def call
@@ -24,8 +20,6 @@ class MatchedMessageGenerationService
 
     MatchedMessage.insert_all!(records)
   end
-
-  private_class_method :new
 
 private
 
