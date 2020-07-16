@@ -74,46 +74,4 @@ RSpec.describe UnsubscribeService do
       end
     end
   end
-
-  describe ".subscriptions!" do
-    let(:subscriber) { create(:subscriber) }
-    let(:subscriptions) { create_list(:subscription, 3, subscriber: subscriber) }
-
-    context "when passed inconsistent subscriptions" do
-      it "raises an exception" do
-        expect {
-          subject.subscriptions!(subscriber, [create(:subscription)], :unpublished)
-        }.to raise_error "Subscriptions don't match subscriber"
-      end
-    end
-
-    context "when passed subscriptions for multiple subscribers" do
-      it "raises an exception" do
-        expect {
-          subject.subscriptions!(
-            subscriber,
-            subscriptions + [create(:subscription)],
-            :unpublished,
-          )
-        }.to raise_error "Can't process subscriptions for multiple subscribers"
-      end
-    end
-
-    context "when an ended_email_id is provided" do
-      it "gets passed through to Subscription#end" do
-        email = create(:email)
-
-        subject.subscriptions!(
-          subscriber,
-          subscriptions,
-          :unpublished,
-          ended_email_id: email.id,
-        )
-
-        subscriptions.each do |subscription|
-          expect(subscription.ended_email_id).to eq(email.id)
-        end
-      end
-    end
-  end
 end
