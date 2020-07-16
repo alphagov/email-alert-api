@@ -24,7 +24,7 @@ private
     digest_run = digest_run_subscriber.digest_run
     subscriber = digest_run_subscriber.subscriber
 
-    MetricsService.digest_email_generation(digest_run.range) do
+    Metrics.digest_email_generation(digest_run.range) do
       email = nil
       Email.transaction do
         digest_run_subscriber.mark_complete!

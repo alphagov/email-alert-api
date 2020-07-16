@@ -11,7 +11,7 @@ class MessageHandlerService
 
   def call
     message = Message.create!(message_params)
-    MetricsService.message_created
+    Metrics.message_created
     ProcessMessageWorker.perform_async(message.id)
   end
 

@@ -46,7 +46,7 @@ class SubscriberList < ApplicationRecord
         }
 
   def subscription_url
-    PublicUrlService.subscription_url(slug: slug)
+    PublicUrls.subscription_url(slug: slug)
   end
 
   def gov_delivery_id

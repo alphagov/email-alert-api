@@ -11,7 +11,7 @@ class DigestInitiatorService
     digest_run = create_digest_run
     return if digest_run.nil?
 
-    MetricsService.digest_initiator_service(range) do
+    Metrics.digest_initiator_service(range) do
       subscriber_ids = DigestRunSubscriberQuery.call(digest_run: digest_run).pluck(:id)
 
       subscriber_ids.each_slice(1000) do |subscriber_ids_chunk|

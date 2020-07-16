@@ -20,6 +20,6 @@ private
 
   def url
     base_path = "/email/unsubscribe/#{id}"
-    PublicUrlService.url_for(base_path: base_path)
+    PublicUrls.url_for(base_path: base_path)
   end
 end

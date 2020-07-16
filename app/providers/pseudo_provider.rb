@@ -13,7 +13,7 @@ class PseudoProvider
       Reference: #{reference}
     INFO
 
-    MetricsService.sent_to_pseudo_successfully
+    Metrics.sent_to_pseudo_successfully
     :delivered
   end
 

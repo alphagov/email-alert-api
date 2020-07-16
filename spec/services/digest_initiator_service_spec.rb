@@ -61,7 +61,7 @@ RSpec.describe DigestInitiatorService do
       end
 
       it "records a metric for the delivery attempt" do
-        expect(MetricsService).to receive(:digest_initiator_service)
+        expect(Metrics).to receive(:digest_initiator_service)
           .with("daily")
 
         described_class.call(range: range)

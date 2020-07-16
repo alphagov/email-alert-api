@@ -1,4 +1,4 @@
-RSpec.describe MetricsService do
+RSpec.describe Metrics do
   before do
     allow(GovukStatsd).to receive(:count)
   end

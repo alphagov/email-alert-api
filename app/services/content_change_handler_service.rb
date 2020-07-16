@@ -11,7 +11,7 @@ class ContentChangeHandlerService
 
   def call
     content_change = ContentChange.create!(content_change_params)
-    MetricsService.content_change_created
+    Metrics.content_change_created
     ProcessContentChangeWorker.perform_async(content_change.id)
   end
 

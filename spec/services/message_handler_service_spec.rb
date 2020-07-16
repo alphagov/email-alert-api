@@ -26,7 +26,7 @@ RSpec.describe MessageHandlerService do
     end
 
     it "records a metric" do
-      expect(MetricsService).to receive(:message_created)
+      expect(Metrics).to receive(:message_created)
       described_class.call(params: params, govuk_request_id: govuk_request_id)
     end
 

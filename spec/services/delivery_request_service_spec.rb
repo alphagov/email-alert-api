@@ -71,7 +71,7 @@ RSpec.describe DeliveryRequestService do
       around { |example| freeze_time { example.run } }
 
       it "records the time of the delivery attempt" do
-        expect(MetricsService)
+        expect(Metrics)
           .to receive(:email_created_to_first_delivery_attempt)
           .with(email.created_at, Time.zone.now)
         described_class.call(email: email)
@@ -85,7 +85,7 @@ RSpec.describe DeliveryRequestService do
       it "records the time from content change created until this delivery attempt" do
         content_change_created_at = 1.hour.ago
         metrics = { content_change_created_at: content_change_created_at }
-        expect(MetricsService)
+        expect(Metrics)
           .to receive(:content_change_created_to_first_delivery_attempt)
           .with(content_change_created_at, Time.zone.now)
 
@@ -97,7 +97,7 @@ RSpec.describe DeliveryRequestService do
       before { create(:delivery_attempt, email: email) }
 
       it "doesn't record the time of the delivery attempt" do
-        expect(MetricsService).not_to receive(:email_created_to_first_delivery_attempt)
+        expect(Metrics).not_to receive(:email_created_to_first_delivery_attempt)
         described_class.call(email: email)
       end
     end

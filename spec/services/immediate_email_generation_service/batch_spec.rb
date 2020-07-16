@@ -69,7 +69,7 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
       end
 
       it "sends stats about the generated emails" do
-        expect(MetricsService).to receive(:content_change_emails)
+        expect(Metrics).to receive(:content_change_emails)
                               .with(content_change, 2)
         instance.generate_emails
       end

@@ -66,7 +66,7 @@ RSpec.describe DigestEmailGenerationWorker do
     end
 
     it "records a metric for the delivery attempt" do
-      expect(MetricsService).to receive(:digest_email_generation)
+      expect(Metrics).to receive(:digest_email_generation)
         .with("daily")
 
       subject.perform(digest_run_subscriber.id)

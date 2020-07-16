@@ -35,7 +35,7 @@ private
     utm_campaign = "govuk-notifications"
     utm_content = frequency
     base_path = "#{content_change.base_path}?utm_source=#{utm_source}&utm_medium=#{utm_medium}&utm_campaign=#{utm_campaign}&utm_content=#{utm_content}"
-    PublicUrlService.url_for(base_path: base_path)
+    PublicUrls.url_for(base_path: base_path)
   end
 
   def public_updated_at_header

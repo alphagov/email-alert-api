@@ -1,4 +1,4 @@
-class MetricsService
+class Metrics
   class << self
     def content_change_emails(content_change, count)
       count("content_change_emails.publishing_app.#{content_change.publishing_app}.immediate", count)

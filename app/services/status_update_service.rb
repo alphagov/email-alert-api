@@ -40,7 +40,7 @@ class StatusUpdateService
       DeliveryRequestWorker.perform_in(TEMPORARY_FAILURE_RETRY_DELAY, email.id, :default)
     end
 
-    MetricsService.delivery_attempt_status_changed(status.underscore)
+    Metrics.delivery_attempt_status_changed(status.underscore)
     GovukStatsd.increment("status_update.success")
   rescue StandardError
     GovukStatsd.increment("status_update.failure")
