@@ -108,7 +108,7 @@ namespace :manage do
       if active_subscriptions.empty?
         puts "Subscriber #{email_address} already unsubscribed from #{subscriber_list_slug}"
       else
-        UnsubscribeService.subscription!(active_subscriptions.last, :unsubscribed)
+        UnsubscribeService.unsubscribe!(subscriber, [active_subscriptions.last], :unsubscribed)
         puts "Unsubscribing from #{email_address} from #{subscriber_list_slug}"
       end
     end
@@ -122,7 +122,7 @@ namespace :manage do
       puts "Subscriber #{email_address} not found"
     else
       puts "Unsubscribing #{email_address}"
-      UnsubscribeService.subscriber!(subscriber, :unsubscribed)
+      UnsubscribeService.unsubscribe!(subscriber, subscriber.active_subscriptions, :unsubscribed)
     end
   end
 

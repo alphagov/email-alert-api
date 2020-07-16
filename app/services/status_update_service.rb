@@ -34,7 +34,7 @@ class StatusUpdateService
     end
 
     if delivery_attempt.permanent_failure? && subscriber
-      UnsubscribeService.subscriber!(subscriber, :non_existent_email)
+      UnsubscribeService.call(subscriber, subscriber.active_subscriptions, :non_existent_email)
     # We check for a status of nil here too in case email hasn't had a status set
     elsif delivery_attempt.temporary_failure? && ["pending", nil].include?(email.status)
       DeliveryRequestWorker.perform_in(TEMPORARY_FAILURE_RETRY_DELAY, email.id, :default)

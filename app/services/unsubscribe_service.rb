@@ -1,18 +1,6 @@
 module UnsubscribeService
   class << self
-    def subscriber!(subscriber, reason)
-      unsubscribe!(subscriber, subscriber.active_subscriptions, reason)
-    end
-
-    def subscription!(subscription, reason)
-      unsubscribe!(subscription.subscriber, [subscription], reason)
-    end
-
-    def unsubscribe!(
-      subscriber,
-      subscriptions,
-      reason
-    )
+    def unsubscribe!(subscriber, subscriptions, reason)
       ActiveRecord::Base.transaction do
         subscriptions.each do |subscription|
           subscription.end(reason: reason)

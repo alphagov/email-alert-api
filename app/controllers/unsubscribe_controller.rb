@@ -1,21 +1,15 @@
 class UnsubscribeController < ApplicationController
   def unsubscribe
-    UnsubscribeService.subscription!(subscription, :unsubscribed)
+    subscription = Subscription.active.find(id)
+    UnsubscribeService.unsubscribe!(subscription.subscriber, [subscription], :unsubscribed)
   end
 
   def unsubscribe_all
-    UnsubscribeService.subscriber!(subscriber, :unsubscribed)
+    subscriber = Subscriber.activated.find(id)
+    UnsubscribeService.unsubscribe!(subscriber, subscriber.active_subscriptions, :unsubscribed)
   end
 
 private
-
-  def subscription
-    Subscription.active.find(id)
-  end
-
-  def subscriber
-    Subscriber.activated.find(id)
-  end
 
   def id
     params.fetch(:id)
