@@ -3,8 +3,12 @@ class ProcessContentChangeWorker
 
   sidekiq_options queue: :process_and_generate_emails,
                   lock: :until_executed,
-                  lock_args: ->(args) { [args.first] },
+                  unique_args: :uniqueness_with, # in upcoming version 7 of sidekiq-unique-jobs, :unique_args is replaced with :lock_args
                   on_conflict: :log
+
+  def self.uniqueness_with(args)
+    [args.first]
+  end
 
   def perform(content_change_id)
     content_change = ContentChange.find(content_change_id)
