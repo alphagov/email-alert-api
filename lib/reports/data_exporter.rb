@@ -1,28 +1,8 @@
 require "csv"
 
 class Reports::DataExporter
-  def export_csv_from_ids(ids)
-    export_csv(SubscriberList.where(id: ids))
-  end
-
-  def export_csv_from_ids_at(date, ids)
-    export_csv(SubscriberList.where(id: ids), at: date)
-  end
-
-  def export_csv_from_slugs(slugs)
-    export_csv(SubscriberList.where(slug: slugs))
-  end
-
-  def export_csv_from_slugs_at(date, slugs)
-    export_csv(SubscriberList.where(slug: slugs), at: date)
-  end
-
   def export_csv_from_living_in_europe(date)
     export_detailed_csv(living_in_europe_subscriber_lists, at: date)
-  end
-
-  def export_csv_from_travel_advice_at(date)
-    export_detailed_csv(travel_advice_subscriber_lists, at: date)
   end
 
 private
@@ -133,10 +113,6 @@ private
       .group(:frequency)
       .count
       .symbolize_keys
-  end
-
-  def travel_advice_subscriber_lists
-    SubscriberList.where("links->'countries' IS NOT NULL").or(SubscriberList.where(slug: "travel-advice-for-all-countries-travel-advice"))
   end
 
   def cleanup(title)
