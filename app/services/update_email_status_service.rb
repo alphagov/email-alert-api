@@ -1,10 +1,6 @@
-class UpdateEmailStatusService
+class UpdateEmailStatusService < ApplicationService
   def initialize(delivery_attempt)
     @delivery_attempt = delivery_attempt
-  end
-
-  def self.call(*args)
-    new(*args).call
   end
 
   def call
@@ -13,8 +9,6 @@ class UpdateEmailStatusService
     handle_permanent_failure if delivery_attempt.permanent_failure?
     handle_delivered if delivery_attempt.delivered?
   end
-
-  private_class_method :new
 
 private
 

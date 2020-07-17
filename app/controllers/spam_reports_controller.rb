@@ -3,7 +3,7 @@ class SpamReportsController < ApplicationController
 
   def create
     delivery_attempt = DeliveryAttempt.find(params[:reference])
-    UnsubscribeService.spam_report!(delivery_attempt)
+    SpamReportService.call(delivery_attempt)
     head :no_content
   end
 

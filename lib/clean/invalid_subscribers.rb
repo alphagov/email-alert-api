@@ -18,7 +18,7 @@ module Clean
       subscribers_to_remove =  Subscriber.where(id: subscriber_ids_to_remove).activated
       puts "Removing the following email subscriptions"
       puts subscribers_to_remove.pluck(:address)
-      subscribers_to_remove.each { |s| UnsubscribeService.subscriber!(s, :unsubscribed) } unless dry_run
+      subscribers_to_remove.each { |s| UnsubscribeAllService.call(s, :unsubscribed) } unless dry_run
     end
 
   private

@@ -22,7 +22,7 @@ class DeliveryRequestWorker
 
     check_rate_limit_exceeded
 
-    email = MetricsService.delivery_request_worker_find_email do
+    email = Metrics.delivery_request_worker_find_email do
       Email.find(email_id)
     end
 

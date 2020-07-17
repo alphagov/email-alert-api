@@ -18,6 +18,6 @@ private
   attr_reader :address
 
   def url
-    PublicUrlService.authenticate_url(address: address)
+    PublicUrls.authenticate_url(address: address)
   end
 end

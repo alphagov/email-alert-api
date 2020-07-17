@@ -1,4 +1,4 @@
-RSpec.describe PublicUrlService do
+RSpec.describe PublicUrls do
   describe ".url_for" do
     it "returns the GOV.UK url for the content item" do
       result = subject.url_for(base_path: "/foo/bar")

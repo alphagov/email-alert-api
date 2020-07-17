@@ -1,17 +1,13 @@
-class DigestInitiatorService
+class DigestInitiatorService < ApplicationService
   def initialize(range:)
     @range = range
-  end
-
-  def self.call(*args)
-    new(*args).call
   end
 
   def call
     digest_run = create_digest_run
     return if digest_run.nil?
 
-    MetricsService.digest_initiator_service(range) do
+    Metrics.digest_initiator_service(range) do
       subscriber_ids = DigestRunSubscriberQuery.call(digest_run: digest_run).pluck(:id)
 
       subscriber_ids.each_slice(1000) do |subscriber_ids_chunk|
@@ -23,8 +19,6 @@ class DigestInitiatorService
       digest_run.update(subscriber_count: subscriber_ids.count)
     end
   end
-
-  private_class_method :new
 
 private
 

@@ -1,4 +1,4 @@
-class StatusUpdateService
+class StatusUpdateService < ApplicationService
   TEMPORARY_FAILURE_RETRY_DELAY = 6.hours
   TEMPORARY_FAILURE_RETRY_TIMEOUT = 24.hours
 
@@ -11,12 +11,8 @@ class StatusUpdateService
     @delivery_attempt = find_delivery_attempt(reference)
   end
 
-  def self.call(*args)
-    DeliveryAttempt.transaction { new(*args).call }
-  end
-
   def call
-    begin
+    DeliveryAttempt.transaction do
       delivery_attempt.update!(
         sent_at: sent_at,
         completed_at: completed_at,
@@ -34,20 +30,18 @@ class StatusUpdateService
     end
 
     if delivery_attempt.permanent_failure? && subscriber
-      UnsubscribeService.subscriber!(subscriber, :non_existent_email)
+      UnsubscribeAllService.call(subscriber, :non_existent_email)
     # We check for a status of nil here too in case email hasn't had a status set
     elsif delivery_attempt.temporary_failure? && ["pending", nil].include?(email.status)
       DeliveryRequestWorker.perform_in(TEMPORARY_FAILURE_RETRY_DELAY, email.id, :default)
     end
 
-    MetricsService.delivery_attempt_status_changed(status.underscore)
+    Metrics.delivery_attempt_status_changed(status.underscore)
     GovukStatsd.increment("status_update.success")
   rescue StandardError
     GovukStatsd.increment("status_update.failure")
     raise
   end
-
-  private_class_method :new
 
 private
 

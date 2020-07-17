@@ -62,6 +62,6 @@ private
     url = subscriber_list.url
     tracked_url = url + (url.include?("?") ? "&" : "?") + query
 
-    PublicUrlService.url_for(base_path: tracked_url)
+    PublicUrls.url_for(base_path: tracked_url)
   end
 end

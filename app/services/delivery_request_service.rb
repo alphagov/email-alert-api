@@ -1,4 +1,4 @@
-class DeliveryRequestService
+class DeliveryRequestService < ApplicationService
   PROVIDERS = {
     "notify" => NotifyProvider,
     "pseudo" => PseudoProvider,
@@ -14,31 +14,27 @@ class DeliveryRequestService
     @overrider = EmailAddressOverrider.new(config)
   end
 
-  def self.call(*args)
-    new(*args).call
-  end
-
   def call
     return false if address.nil?
 
-    MetricsService.delivery_request_service_first_delivery_attempt do
+    Metrics.delivery_request_service_first_delivery_attempt do
       record_first_attempt_metrics unless DeliveryAttempt.exists?(email: email)
     end
 
-    delivery_attempt = MetricsService.delivery_request_service_create_delivery_attempt do
+    delivery_attempt = Metrics.delivery_request_service_create_delivery_attempt do
       DeliveryAttempt.create!(id: attempt_id,
                               email: email,
                               status: :sending,
                               provider: provider_name)
     end
 
-    status = MetricsService.email_send_request(provider_name) { send_email }
+    status = Metrics.email_send_request(provider_name) { send_email }
 
     return true if status == :sending
 
     ActiveRecord::Base.transaction do
       delivery_attempt.update!(status: status, completed_at: Time.zone.now)
-      MetricsService.delivery_attempt_status_changed(status)
+      Metrics.delivery_attempt_status_changed(status)
       UpdateEmailStatusService.call(delivery_attempt)
     end
 
@@ -69,11 +65,11 @@ private
 
   def record_first_attempt_metrics
     now = Time.now.utc
-    MetricsService.email_created_to_first_delivery_attempt(email.created_at, now)
+    Metrics.email_created_to_first_delivery_attempt(email.created_at, now)
 
     return unless metrics[:content_change_created_at]
 
-    MetricsService.content_change_created_to_first_delivery_attempt(
+    Metrics.content_change_created_to_first_delivery_attempt(
       metrics[:content_change_created_at],
       now,
     )

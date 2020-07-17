@@ -17,7 +17,7 @@ class ImmediateEmailGenerationService
         SubscriptionContent.populate_for_content(content, records)
       end
 
-      MetricsService.content_change_emails(content_change, email_parameters.count) if content_change
+      Metrics.content_change_emails(content_change, email_parameters.count) if content_change
       email_ids
     end
 

@@ -1,9 +1,5 @@
-class ImmediateEmailGenerationService
+class ImmediateEmailGenerationService < ApplicationService
   BATCH_SIZE = 5000
-
-  def self.call(*args)
-    new(*args).call
-  end
 
   def initialize(content)
     @content = content
@@ -21,8 +17,6 @@ class ImmediateEmailGenerationService
       end
     end
   end
-
-  private_class_method :new
 
 private
 

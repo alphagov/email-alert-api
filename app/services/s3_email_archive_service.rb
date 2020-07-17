@@ -1,15 +1,15 @@
-class S3EmailArchiveService
-  def self.call(*args)
-    new.call(*args)
-  end
+class S3EmailArchiveService < ApplicationService
+  attr_reader :batch
 
   # For batch we expect an array of hashes containing email data in the format
   # from EmailArchivePresenter
-  def call(batch)
-    group_by_date(batch).map { |prefix, records| send_to_s3(prefix, records) }
+  def initialize(batch)
+    @batch = batch
   end
 
-  private_class_method :new
+  def call
+    group_by_date(batch).map { |prefix, records| send_to_s3(prefix, records) }
+  end
 
 private
 

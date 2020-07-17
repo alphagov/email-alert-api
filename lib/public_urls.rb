@@ -1,4 +1,4 @@
-module PublicUrlService
+module PublicUrls
   class << self
     def url_for(base_path:)
       URI.join(website_root, base_path).to_s
