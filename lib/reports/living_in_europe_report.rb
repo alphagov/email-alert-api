@@ -1,7 +1,7 @@
 require "csv"
 
-class Reports::DataExporter
-  def export_csv_from_living_in_europe(date)
+class Reports::LivingInEuropeReport
+  def call(date)
     export_detailed_csv(living_in_europe_subscriber_lists, at: date)
   end
 

@@ -12,6 +12,6 @@ namespace :report do
 
   desc "Export the number of subscriptions for the 'Living in' taxons for European countries as of a given date (format: 'yyyy-mm-dd')"
   task :csv_from_living_in_europe, [:date] => :environment do |_, args|
-    Reports::DataExporter.new.export_csv_from_living_in_europe(args.date)
+    Reports::LivingInEuropeReport.new.call(args.date)
   end
 end
