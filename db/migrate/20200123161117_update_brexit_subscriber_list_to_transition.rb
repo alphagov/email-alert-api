@@ -5,7 +5,7 @@ class UpdateBrexitSubscriberListToTransition < ActiveRecord::Migration[5.2]
 
     subscriber_list.slug = "transition-p"
     subscriber_list.title = "Transition"
-    subscriber_list.save
+    subscriber_list.save!
   end
 
   def down
@@ -14,6 +14,6 @@ class UpdateBrexitSubscriberListToTransition < ActiveRecord::Migration[5.2]
 
     subscriber_list.slug = "brexit-p"
     subscriber_list.title = "Brexit"
-    subscriber_list.save
+    subscriber_list.save!
   end
 end

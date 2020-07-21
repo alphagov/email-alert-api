@@ -59,7 +59,7 @@ private
   end
 
   def create_fake_content_change
-    content_change = ContentChange.create(
+    content_change = ContentChange.create!(
       publishing_app: "test",
       document_type: "test",
       govuk_request_id: 1,

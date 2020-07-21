@@ -20,7 +20,7 @@ namespace :troubleshoot do
   desc "Send a test email to a subscriber by id"
   task :deliver_to_subscriber, [:id] => :environment do |_t, args|
     subscriber = Subscriber.find(args[:id])
-    email = Email.create(
+    email = Email.create!(
       address: subscriber.address,
       subject: "Test email",
       body: "This is a test email.",
@@ -31,7 +31,7 @@ namespace :troubleshoot do
 
   desc "Send a test email to an email address"
   task :deliver_to_test_email, [:test_email_address] => :environment do |_t, args|
-    email = Email.create(
+    email = Email.create!(
       address: args[:test_email_address],
       subject: "Test email",
       body: "This is a test email.",

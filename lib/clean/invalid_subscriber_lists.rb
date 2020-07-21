@@ -11,7 +11,7 @@ module Clean
 
         count += 1
         puts "#{dry_run ? '[DRY RUN]' : ''} Deleting subscriber_list #{list.slug}"
-        list.destroy unless dry_run
+        list.destroy! unless dry_run
       end
       dry_msg = dry_run ? "[DRY RUN] Would have deleted" : "Deleted"
       puts "#{dry_msg} #{count} subscriber lists"
