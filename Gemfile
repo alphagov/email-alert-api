@@ -33,4 +33,6 @@ group :development, :test do
   gem "pry-byebug"
   gem "rspec-rails"
   gem "rubocop-govuk"
+  gem "spring"
+  gem "spring-commands-rspec"
 end
