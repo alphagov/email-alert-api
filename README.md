@@ -57,10 +57,14 @@ bundle exec spring rspec
 
 ## Documentation
 
-- [API Endpoints](docs/api.md)
-- [Extracting analytics](docs/analytics.md)
-- [Admin tasks available](docs/tasks.md)
-- [Troubleshooting common problems](docs/troubleshooting.md)
+- [Analytics](docs/analytics.md)
+- [API](docs/api.md)
+- [Fields](docs/fields.md)
+- [Matching content to subscriber lists](docs/matching-content-to-subscriber-lists.md)
+- [Queues](docs/queues.md)
+- [Support tasks](docs/support-tasks.md)
+- [Transition from govDelivery](docs/transition-from-govdelivery.md)
+- [Troubleshooting](docs/troubleshooting.md)
 
 ## Licence
 
