@@ -44,29 +44,16 @@ notification services. Currently supports only [GOV.UK Notify](https://www.notif
 * GOV.UK Notify API key and other details (see
   [`email_service.yml`](config/email_service.yml) for required fields)
 
-### Initial setup
-
-* Check that the configuration in `config/database.yml` is correct
-* Run `bundle exec rake db:setup` to load the database
-
 ### Running the application
-
-```bash
-$ ./startup.sh
-```
-
-* email-alert-api runs on port 3088
-* sidekiq-monitoring for email-alert-api uses 3089
-
-### Running the test suite
-
-* Run `RAILS_ENV=test bundle exec rake db:setup` to load the database
-* Run `bundle exec spring rspec` to run the tests
-
-### Using test email addresses for signup
 
 Using any email address that ends with `@notifications.service.gov.uk`
 will not create a subscriber or a subscription, however will return a `201 Created` response.
+
+### Running the test suite
+
+```bash
+bundle exec spring rspec
+```
 
 ## Documentation
 
