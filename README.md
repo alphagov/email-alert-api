@@ -62,7 +62,7 @@ bundle exec spring rspec
 - [Matching content to subscriber lists](docs/matching-content-to-subscriber-lists.md)
 - [Queues](docs/queues.md)
 - [Support tasks](docs/support-tasks.md)
-- [Transition from govDelivery](docs/transition-from-govdelivery.md)
+- [ENV vars](docs/env-vars.md)
 - [Troubleshooting](docs/troubleshooting.md)
 
 ## Licence
