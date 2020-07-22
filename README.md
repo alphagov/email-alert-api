@@ -5,9 +5,6 @@ Sends emails to users that subscribe to specific GOV.UK email alerts.
 Provides a consistent internal interface to external email
 notification services. Currently supports only [GOV.UK Notify](https://www.notifications.service.gov.uk/).
 
-Given a tagged publication event, it sends email alerts for
-subscribers to those tags via the external services.
-
 ## Nomenclature
 
 - **Content change**:
