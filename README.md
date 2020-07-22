@@ -64,7 +64,7 @@ $ ./startup.sh
 ### Running the test suite
 
 * Run `RAILS_ENV=test bundle exec rake db:setup` to load the database
-* Run `bundle exec rspec` to run the tests
+* Run `bundle exec spring rspec` to run the tests
 
 ### Using test email addresses for signup
 
