@@ -26,7 +26,7 @@ class NotifyProvider
     unless e.message.end_with?("Not a valid email address")
       GovukError.notify(e, tags: { provider: "notify" })
     end
-    :technical_failure
+    :provider_communication_failure
   end
 
 private

@@ -44,9 +44,9 @@ RSpec.describe NotifyProvider do
           .and_raise(Notifications::Client::RequestError.new(error_response))
       end
 
-      it "returns a status of technical_failure" do
+      it "returns a status of provider_communication_failure" do
         return_value = described_class.call(arguments)
-        expect(return_value).to be(:technical_failure)
+        expect(return_value).to be(:provider_communication_failure)
       end
 
       it "notifies GovukError" do

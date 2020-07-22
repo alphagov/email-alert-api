@@ -8,7 +8,7 @@ RSpec.describe DeliveryAttempt, type: :model do
     end
 
     context "when email failed" do
-      let(:delivery_attempt) { build(:permanent_failure_delivery_attempt) }
+      let(:delivery_attempt) { build(:undeliverable_failure_delivery_attempt) }
       it { is_expected.to eq delivery_attempt.completed_at }
     end
 

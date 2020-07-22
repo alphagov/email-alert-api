@@ -115,28 +115,50 @@ RSpec.describe DeliveryRequestService do
     context "when sending the email returns a sending status" do
       it "doesn't update the email status" do
         allow(default_provider).to receive(:call).and_return(:sending)
-        expect(UpdateEmailStatusService).not_to receive(:call)
-        described_class.call(email: email)
+        expect { described_class.call(email: email) }
+          .not_to(change { email.reload.status })
       end
     end
 
-    context "when sending the email returns a non-sending status" do
+    context "when sending the email returns a delivered status" do
       before do
-        allow(default_provider).to receive(:call).and_return(:permanent_failure)
+        allow(default_provider).to receive(:call).and_return(:delivered)
       end
 
       it "sets the delivery attempt status and completed time" do
         freeze_time do
-          scope = DeliveryAttempt.where(status: :permanent_failure,
+          scope = DeliveryAttempt.where(status: :delivered,
                                         completed_at: Time.zone.now)
           expect { described_class.call(email: email) }
             .to change(scope, :count).by(1)
         end
       end
 
-      it "updates the email status" do
-        expect(UpdateEmailStatusService).to receive(:call)
-        described_class.call(email: email)
+      it "marks the email as sent" do
+        expect { described_class.call(email: email) }
+          .to change { email.reload.status }
+          .to("sent")
+      end
+    end
+
+    context "when sending the email returns a undeliverable_failure status" do
+      before do
+        allow(default_provider).to receive(:call).and_return(:undeliverable_failure)
+      end
+
+      it "sets the delivery attempt status and completed time" do
+        freeze_time do
+          scope = DeliveryAttempt.where(status: :undeliverable_failure,
+                                        completed_at: Time.zone.now)
+          expect { described_class.call(email: email) }
+            .to change(scope, :count).by(1)
+        end
+      end
+
+      it "marks the email as failed" do
+        expect { described_class.call(email: email) }
+          .to change { email.reload.status }
+          .to("failed")
       end
     end
 
@@ -145,15 +167,10 @@ RSpec.describe DeliveryRequestService do
         allow(default_provider).to receive(:call).and_raise("Ut oh")
       end
 
-      it "sets the delivery attempt status to internal_failure" do
-        scope = DeliveryAttempt.where(status: :internal_failure)
+      it "sets the delivery attempt status to provider_communication_failure" do
+        scope = DeliveryAttempt.where(status: :provider_communication_failure)
         expect { described_class.call(email: email) }
           .to change(scope, :count).by(1)
-      end
-
-      it "updates the email status" do
-        expect(UpdateEmailStatusService).to receive(:call)
-        described_class.call(email: email)
       end
     end
   end
