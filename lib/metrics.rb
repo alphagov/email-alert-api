@@ -5,6 +5,10 @@ class Metrics
       count("content_change_emails.document_type.#{content_change.document_type}.immediate", count)
     end
 
+    def marked_as_spam
+      increment("marked_as_spam")
+    end
+
     def sent_to_notify_successfully
       increment("notify.email_send_request.success")
     end

@@ -1,14 +1,15 @@
 class SpamReportService < ApplicationService
-  attr_reader :delivery_attempt
+  attr_reader :email
 
-  def initialize(delivery_attempt)
-    @delivery_attempt = delivery_attempt
+  def initialize(email)
+    @email = email
   end
 
   def call
-    subscriber_id = delivery_attempt.email.subscriber_id
+    subscriber_id = email.subscriber_id
     subscriber = Subscriber.find(subscriber_id)
     UnsubscribeAllService.call(subscriber, :marked_as_spam)
-    delivery_attempt.email.update!(marked_as_spam: true)
+    Metrics.marked_as_spam unless email.marked_as_spam?
+    email.update!(marked_as_spam: true)
   end
 end

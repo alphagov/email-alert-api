@@ -2,8 +2,8 @@ class SpamReportsController < ApplicationController
   wrap_parameters false
 
   def create
-    delivery_attempt = DeliveryAttempt.find(params[:reference])
-    SpamReportService.call(delivery_attempt)
+    email = DeliveryAttempt.find(params[:reference]).email
+    SpamReportService.call(email)
     head :no_content
   end
 
