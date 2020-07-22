@@ -59,7 +59,6 @@ bundle exec spring rspec
 
 - [Analytics](docs/analytics.md)
 - [API](docs/api.md)
-- [Fields](docs/fields.md)
 - [Matching content to subscriber lists](docs/matching-content-to-subscriber-lists.md)
 - [Queues](docs/queues.md)
 - [Support tasks](docs/support-tasks.md)

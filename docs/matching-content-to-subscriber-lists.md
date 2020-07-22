@@ -10,9 +10,6 @@ define how it matches published content:
 - `links`
 - `tags`
 
-Only one of these should be used on a given subscriber list; `tags` is
-deprecated. They can also both be empty `{}` if they aren't needed.
-
 These fields contain a JSON object which maps keys to arrays of values,
 similar to the links hash on a content item. For example:
 
@@ -26,6 +23,11 @@ similar to the links hash on a content item. For example:
     }
 }
 ```
+
+Only one of these should be used on a given subscriber list; `tags` is
+deprecated. They can also both be empty `{}` if they aren't needed.
+
+> You can find a list of permitted tags in [`lib/valid_tags.rb`](https://github.com/alphagov/email-alert-api/blob/3e0018510ea85f5d561e2865ad149832b94688a1/lib/valid_tags.rb).
 
 For a published content item to match the subscriber list on these
 fields, the links/tags in the request to email-alert-api must include
