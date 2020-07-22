@@ -24,8 +24,8 @@ similar to the links hash on a content item. For example:
 }
 ```
 
-Only one of these should be used on a given subscriber list; `tags` is
-deprecated. They can also both be empty `{}` if they aren't needed.
+Only one of these should be used on a given subscriber list. They
+can also both be empty `{}` if they aren't needed.
 
 > You can find a list of permitted tags in [`lib/valid_tags.rb`](https://github.com/alphagov/email-alert-api/blob/3e0018510ea85f5d561e2865ad149832b94688a1/lib/valid_tags.rb).
 
