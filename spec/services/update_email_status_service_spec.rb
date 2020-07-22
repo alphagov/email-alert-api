@@ -44,12 +44,6 @@ RSpec.describe UpdateEmailStatusService do
           .to("failed")
       end
 
-      it "sets failure reason to retries_exhausted_failure" do
-        expect { described_class.call(delivery_attempt) }
-          .to change { email.reload.failure_reason }
-          .to("retries_exhausted_failure")
-      end
-
       include_examples "email finished_sending_at timestamp"
     end
 
@@ -88,12 +82,6 @@ RSpec.describe UpdateEmailStatusService do
         expect { described_class.call(delivery_attempt) }
           .to change { email.reload.status }
           .to("failed")
-      end
-
-      it "sets failure reason to permanent_failure" do
-        expect { described_class.call(delivery_attempt) }
-          .to change { email.reload.failure_reason }
-          .to("permanent_failure")
       end
 
       include_examples "email finished_sending_at timestamp"

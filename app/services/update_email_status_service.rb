@@ -18,7 +18,6 @@ private
   def handle_technical_failure
     email.update!(
       status: :failed,
-      failure_reason: :technical_failure,
       finished_sending_at: delivery_attempt.finished_sending_at,
     )
   end
@@ -28,7 +27,6 @@ private
 
     email.update!(
       status: :failed,
-      failure_reason: :retries_exhausted_failure,
       finished_sending_at: delivery_attempt.finished_sending_at,
     )
   end
@@ -44,7 +42,6 @@ private
   def handle_permanent_failure
     email.update!(
       status: :failed,
-      failure_reason: :permanent_failure,
       finished_sending_at: delivery_attempt.finished_sending_at,
     )
   end
