@@ -64,7 +64,7 @@ private
   end
 
   def record_first_attempt_metrics
-    now = Time.now.utc
+    now = Time.zone.now.utc
     Metrics.email_created_to_first_delivery_attempt(email.created_at, now)
 
     return unless metrics[:content_change_created_at]

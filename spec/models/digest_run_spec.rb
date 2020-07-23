@@ -12,7 +12,7 @@ RSpec.describe DigestRun do
       context "daily" do
         it "sets starts_at to 8am on date - 1.day" do
           date = 2.days.ago
-          instance = described_class.create(date: date, range: "daily")
+          instance = described_class.create!(date: date, range: "daily")
 
           expect(instance.starts_at).to eq(
             Time.zone.parse("08:00", date - 1.day),
@@ -21,7 +21,7 @@ RSpec.describe DigestRun do
 
         it "sets ends_at to 8am on date" do
           date = 1.day.ago
-          instance = described_class.create(date: date, range: "daily")
+          instance = described_class.create!(date: date, range: "daily")
 
           expect(instance.ends_at).to eq(
             Time.zone.parse("08:00", date),
@@ -32,7 +32,7 @@ RSpec.describe DigestRun do
       context "weekly" do
         it "sets starts_at to 8am on date - 1.week" do
           date = 1.day.ago
-          instance = described_class.create(date: date, range: "weekly")
+          instance = described_class.create!(date: date, range: "weekly")
 
           expect(instance.starts_at).to eq(
             Time.zone.parse("08:00", (date - 1.week)),
@@ -41,7 +41,7 @@ RSpec.describe DigestRun do
 
         it "sets ends_at to 8am on date" do
           date = Date.current
-          instance = described_class.create(date: date, range: "weekly")
+          instance = described_class.create!(date: date, range: "weekly")
 
           expect(instance.ends_at).to eq(
             Time.zone.parse("08:00", date),
@@ -60,7 +60,7 @@ RSpec.describe DigestRun do
       context "daily" do
         it "sets starts_at to the configured hour on date - 1.day" do
           date = 1.week.ago
-          instance = described_class.create(date: date, range: "daily")
+          instance = described_class.create!(date: date, range: "daily")
 
           expect(instance.starts_at).to eq(
             Time.zone.parse("10:00", (date - 1.day)),
@@ -69,7 +69,7 @@ RSpec.describe DigestRun do
 
         it "sets ends_at to the configured hour on date" do
           date = 1.day.ago
-          instance = described_class.create(date: date, range: "daily")
+          instance = described_class.create!(date: date, range: "daily")
 
           expect(instance.ends_at).to eq(
             Time.zone.parse("10:00", date),
@@ -80,7 +80,7 @@ RSpec.describe DigestRun do
       context "weekly" do
         it "sets starts_at to the configured hour on date - 1.week" do
           date = Date.current
-          instance = described_class.create(date: date, range: "weekly")
+          instance = described_class.create!(date: date, range: "weekly")
 
           expect(instance.starts_at).to eq(
             Time.zone.parse("10:00", (date - 1.week)),
@@ -89,7 +89,7 @@ RSpec.describe DigestRun do
 
         it "sets ends_at to the configured hour on date" do
           date = 4.days.ago
-          instance = described_class.create(date: date, range: "weekly")
+          instance = described_class.create!(date: date, range: "weekly")
 
           expect(instance.ends_at).to eq(
             Time.zone.parse("10:00", date),
@@ -101,7 +101,8 @@ RSpec.describe DigestRun do
     describe "validations" do
       it "fails if the calculated ends_at is in the future" do
         travel_to(Time.zone.parse("07:00")) do
-          instance = described_class.create(date: Date.current, range: "daily")
+          instance = described_class.new(date: Date.current, range: "daily")
+          instance.validate
           expect(instance.errors[:ends_at]).to eq(["must be in the past"])
         end
       end
