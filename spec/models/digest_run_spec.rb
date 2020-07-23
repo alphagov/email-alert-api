@@ -101,7 +101,8 @@ RSpec.describe DigestRun do
     describe "validations" do
       it "fails if the calculated ends_at is in the future" do
         travel_to(Time.zone.parse("07:00")) do
-          instance = described_class.create!(date: Date.current, range: "daily")
+          instance = described_class.new(date: Date.current, range: "daily")
+          instance.validate
           expect(instance.errors[:ends_at]).to eq(["must be in the past"])
         end
       end
