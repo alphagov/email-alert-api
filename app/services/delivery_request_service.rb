@@ -16,7 +16,7 @@ class DeliveryRequestService < ApplicationService
   end
 
   def call
-    return false if address.nil?
+    return if address.nil?
 
     Metrics.delivery_request_service_first_delivery_attempt do
       record_first_attempt_metrics unless DeliveryAttempt.exists?(email: email)
@@ -31,7 +31,7 @@ class DeliveryRequestService < ApplicationService
 
     status = Metrics.email_send_request(provider_name) { send_email }
 
-    return true if status == :sending
+    return attempt if status == :sending
 
     ActiveRecord::Base.transaction do
       attempt.update!(status: status, completed_at: Time.zone.now)
@@ -40,7 +40,7 @@ class DeliveryRequestService < ApplicationService
       email.mark_as_failed(attempt.finished_sending_at) if attempt.undeliverable_failure?
     end
 
-    true
+    attempt
   end
 
 private

@@ -53,7 +53,7 @@ RSpec.describe DeliveryRequestService do
       described_class.call(email: email)
     end
 
-    it "returns true when the overrider can provide an email address" do
+    it "returns the delivery attempt when the overrider can provide an email address" do
       overrider_double = instance_double(
         described_class::EmailAddressOverrider,
         destination_address: "test@example.com",
@@ -62,10 +62,10 @@ RSpec.describe DeliveryRequestService do
         .to receive(:new)
         .and_return(overrider_double)
 
-      expect(described_class.call(email: email)).to be(true)
+      expect(described_class.call(email: email)).to be_a(DeliveryAttempt)
     end
 
-    it "returns false when no email was sent due to filtering" do
+    it "returns nil when no email was sent due to filtering" do
       overrider_double = instance_double(
         described_class::EmailAddressOverrider,
         destination_address: nil,
@@ -74,7 +74,7 @@ RSpec.describe DeliveryRequestService do
         .to receive(:new)
         .and_return(overrider_double)
 
-      expect(described_class.call(email: email)).to be(false)
+      expect(described_class.call(email: email)).to be_nil
     end
 
     context "when this is the first delivery attempt" do

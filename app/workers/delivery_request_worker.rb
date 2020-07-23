@@ -1,4 +1,6 @@
 class DeliveryRequestWorker
+  class ProviderCommunicationFailureError < RuntimeError; end
+
   include Sidekiq::Worker
 
   sidekiq_options retry: 9
@@ -32,11 +34,12 @@ class DeliveryRequestWorker
       Email.find(email_id)
     end
 
-    attempted = DeliveryRequestService.call(
+    attempt = DeliveryRequestService.call(
       email: email,
       metrics: parsed_metrics(metrics),
     )
-    increment_rate_limiter if attempted
+    increment_rate_limiter if attempt
+    raise ProviderCommunicationFailureError if attempt&.provider_communication_failure?
   end
 
   def self.perform_async_in_queue(email_id, metrics = {}, queue:)
