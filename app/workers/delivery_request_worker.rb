@@ -3,6 +3,15 @@ class DeliveryRequestWorker
 
   sidekiq_options retry: 9
 
+  sidekiq_retries_exhausted do |msg|
+    email = Email.find(msg["args"].first)
+    delivery_attempt = email.delivery_attempts
+                            .order(created_at: :desc)
+                            .first
+
+    email.mark_as_failed(delivery_attempt&.finished_sending_at || Time.zone.now)
+  end
+
   # Once all existing jobs have been processed we can remove these default
   # arguments
   def perform(email_id, metrics = {}, queue = nil)

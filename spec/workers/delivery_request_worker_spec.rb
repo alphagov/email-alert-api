@@ -61,6 +61,39 @@ RSpec.describe DeliveryRequestWorker do
     end
   end
 
+  describe ".sidekiq_retries_exhausted_block" do
+    let(:email) { create(:email) }
+    let(:sidekiq_message) do
+      {
+        "args" => [email.id, {}],
+        "queue" => "delivery_immediate_high",
+        "class" => described_class.name,
+      }
+    end
+
+    it "marks the job as failed" do
+      delivery_attempt = create(:provider_communication_failure_delivery_attempt,
+                                email: email)
+      described_class.sidekiq_retries_exhausted_block.call(sidekiq_message)
+      expect(email.reload).to have_attributes(
+        status: "failed",
+        finished_sending_at: delivery_attempt.reload.finished_sending_at,
+      )
+    end
+
+    context "when there isn't a delivery attempt" do
+      it "sets the email finished_sending_at time to current time" do
+        freeze_time do
+          described_class.sidekiq_retries_exhausted_block.call(sidekiq_message)
+          expect(email.reload).to have_attributes(
+            status: "failed",
+            finished_sending_at: Time.zone.now,
+          )
+        end
+      end
+    end
+  end
+
   describe ".perform_async_in_queue" do
     let(:email) { double(id: 0) }
 
