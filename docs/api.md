@@ -2,7 +2,9 @@
 
 ## Application
 
-* `GET /subscriber-lists?tags[organisation]=cabinet-office` - gets a stored subscriber list that's relevant to just the `cabinet-office` organisation, in the form:
+### `GET /subscriber-lists?tags[organisation]=cabinet-office`
+
+Gets a stored subscriber list that's relevant to just the `cabinet-office` organisation, in the form:
 
 ```json
 {
@@ -24,7 +26,7 @@
 }
 ```
 
-* `POST /subscriber-lists` with data:
+### `POST /subscriber-lists`
 
 ```json
 {
@@ -38,7 +40,7 @@
 }
 ```
 
-and it will respond with the JSON response for the `GET` call above.
+It will respond with the JSON response for the `GET` call above.
 
 The following fields are accepted:
 
@@ -64,7 +66,7 @@ The following fields are accepted:
 
 [valid tags]: https://github.com/alphagov/email-alert-api/blob/b6428880aa730e316803d7129db3ec47304e933b/lib/valid_tags.rb
 
-* `POST /content-changes` with data:
+### `POST /content-changes`
 
 ```json
 {
@@ -78,14 +80,14 @@ The following fields are accepted:
 }
 ```
 
-and it will respond with `202 Accepted` (the call is queued to prevent
+It will respond with `202 Accepted` (the call is queued to prevent
 slowness in the external notifications API).
 
 The following fields are accepted on this endpoint: `subject`, `from_address_id`, `urgent`, `header`, `footer`,
 `document_type`, `content_id`, `public_updated_at`, `publishing_app`, `email_document_supertype`,
 `government_document_supertype`, `title`, `description`, `change_note`, `base_path`, `priority` and `footnote`.
 
-* `POST /messages` with data:
+### `POST /messages`
 
 ```json
 {
@@ -99,12 +101,12 @@ The following fields are accepted on this endpoint: `subject`, `from_address_id`
 }
 ```
 
-and it will respond with `202 Accepted` (the call is queued).
+It will respond with `202 Accepted` (the call is queued).
 
 The following fields are accepted on this endpoint: `sender_message_id`,
 `title`, `url`, `body`, `criteria_rules`, and `priority`.
 
-* `POST /emails` with data:
+### `POST /emails`
 
 ```json
 {
@@ -114,9 +116,11 @@ The following fields are accepted on this endpoint: `sender_message_id`,
 }
 ```
 
-and it will respond with `202 Accepted` (the call is queued).
+It will respond with `202 Accepted` (the call is queued).
 
-* `GET /subscribers/xxx/subscriptions` - gets a subscriber's subscriptions, in the form:
+### `GET /subscribers/xxx/subscriptions`
+
+Gets a subscriber's subscriptions, in the form:
 
 ```json
 {
@@ -160,7 +164,7 @@ and it will respond with `202 Accepted` (the call is queued).
 }
 ```
 
-* `PATCH /subscribers/xxx` with data:
+### `PATCH /subscribers/xxx`
 
 ```json
 {
@@ -168,7 +172,7 @@ and it will respond with `202 Accepted` (the call is queued).
 }
 ```
 
-and it will respond with the details of the subscriber including the
+It will respond with the details of the subscriber including the
 new email address.
 
 * `DELETE /subscribers/xxx` - unsubscribes a provided subscriber and returns `204 No Content`.
@@ -183,16 +187,19 @@ new email address.
 }
 ```
 
-and it will create a new subscription between the email address and the
+It will create a new subscription between the email address and the
 subscriber list. It will respond with a `201 Created` if it's a new
-subscription or a `200 OK` if the subscription already exists. If a 
+subscription or a `200 OK` if the subscription already exists. If a
 subscription already exists but the frequency is different, the
 current subscription is ended and a new one with the updated frequency
-is created. A confirmation email will be sent if a new subscription is 
+is created. A confirmation email will be sent if a new subscription is
 created or if the subscriber is reactivated and the subscription already
 exists.
 
-* `PATCH /subscriptions/xxxx` with data:
+> Note: using any email address that ends with `@notifications.service.gov.uk`
+will not create a subscriber or a subscription, however will return a `201 Created` response.
+
+### `PATCH /subscriptions/xxxx`
 
 ```json
 {
@@ -200,12 +207,14 @@ exists.
 }
 ```
 
-and it will respond with the details of the subscription including the
+It will respond with the details of the subscription including the
 new frequency.
 
-* `POST /unsubscribe/xxx` - unsubscribes a subscriber from the provided subscription and returns `204 No Content`.
+### `POST /unsubscribe/xxx`
 
-* `POST /subscribers/auth-token` with data:
+Unsubscribes a subscriber from the provided subscription and returns `204 No Content`.
+
+### `POST /subscribers/auth-token`
 
 ```json
 {

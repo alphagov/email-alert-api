@@ -5,9 +5,6 @@ Sends emails to users that subscribe to specific GOV.UK email alerts.
 Provides a consistent internal interface to external email
 notification services. Currently supports only [GOV.UK Notify](https://www.notifications.service.gov.uk/).
 
-Given a tagged publication event, it sends email alerts for
-subscribers to those tags via the external services.
-
 ## Nomenclature
 
 - **Content change**:
@@ -47,36 +44,27 @@ subscribers to those tags via the external services.
 * GOV.UK Notify API key and other details (see
   [`email_service.yml`](config/email_service.yml) for required fields)
 
-### Initial setup
-
-* Check that the configuration in `config/database.yml` is correct
-* Run `bundle exec rake db:setup` to load the database
-
 ### Running the application
 
 ```bash
-$ ./startup.sh
+bundle exec rails server
 ```
-
-* email-alert-api runs on port 3088
-* sidekiq-monitoring for email-alert-api uses 3089
 
 ### Running the test suite
 
-* Run `RAILS_ENV=test bundle exec rake db:setup` to load the database
-* Run `bundle exec spring rspec` to run the tests
-
-### Using test email addresses for signup
-
-Using any email address that ends with `@notifications.service.gov.uk`
-will not create a subscriber or a subscription, however will return a `201 Created` response.
+```bash
+bundle exec spring rspec
+```
 
 ## Documentation
 
-- [API Endpoints](docs/api.md)
-- [Extracting analytics](docs/analytics.md)
-- [Admin tasks available](docs/tasks.md)
-- [Troubleshooting common problems](docs/troubleshooting.md)
+- [Analytics](docs/analytics.md)
+- [API](docs/api.md)
+- [Matching content to subscriber lists](docs/matching-content-to-subscriber-lists.md)
+- [Queues](docs/queues.md)
+- [Support tasks](docs/support-tasks.md)
+- [ENV vars](docs/env-vars.md)
+- [Troubleshooting](docs/troubleshooting.md)
 
 ## Licence
 
