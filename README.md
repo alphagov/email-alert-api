@@ -46,8 +46,9 @@ notification services. Currently supports only [GOV.UK Notify](https://www.notif
 
 ### Running the application
 
-Using any email address that ends with `@notifications.service.gov.uk`
-will not create a subscriber or a subscription, however will return a `201 Created` response.
+```bash
+bundle exec rails server
+```
 
 ### Running the test suite
 
