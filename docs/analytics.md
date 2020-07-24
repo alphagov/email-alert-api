@@ -31,28 +31,15 @@ Here are some example queries to pull out particular insights.
 ### How many subscribers does a list have
 
 ```ruby
+# total count right now
 SubscriberList.find(4194).active_subscriptions_count
-```
 
-There is a [rake task][rake-count-subscribers] that does this for you, and
-includes a breakdown of subscriptions that are Immediate, Daily or Weekly:
-
-```bash
-rake report:count_subscribers['subscriber-list-slug']
-```
-
-### How many subscribers did a list have at a particular point in time
-
-```ruby
+# total count at a particular point in time
 Subscription.active_on("2018-06-01").where(subscriber_list_id: 4194).count
 ```
 
-There is a [rake task][rake-count-subscribers-on] that does this for you, and
-includes a breakdown of subscriptions that are Immediate, Daily or Weekly:
-
-```bash
-rake report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
-```
+There are [rake tasks][support-tasks] that do this for you, and
+include a breakdown of subscriptions that are Immediate, Daily or Weekly.
 
 ### Lists with most new subscriptions in a time frame
 
@@ -203,6 +190,5 @@ LIMIT 10;
 [athena-queries]: https://docs.aws.amazon.com/athena/latest/ug/functions-operators-reference-section.html
 [aws]: https://aws.amazon.com
 [console-instructions]: https://docs.publishing.service.gov.uk/manual/seeing-things-in-the-aws-console.html
-[rake-count-subscribers]: https://deploy.blue.production.govuk.digital//job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers['subscriber-list-slug']
-[rake-count-subscribers-on]: https://deploy.blue.production.govuk.digital//job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
 [schema.rb]: https://github.com/alphagov/email-alert-api/tree/master/db/schema.rb
+[support-tasks]: /apis/email-alert-api/support-tasks.html#count-subscriptions-to-a-subscriber-list
