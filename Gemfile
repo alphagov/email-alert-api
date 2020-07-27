@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+gem "rails", "6.0.3.2"
+
 gem "aws-sdk-s3"
 gem "bootsnap", require: false
 gem "faraday"
@@ -14,7 +16,6 @@ gem "nokogiri"
 gem "notifications-ruby-client"
 gem "pg"
 gem "plek"
-gem "rails"
 gem "ratelimit"
 gem "redcarpet"
 gem "sidekiq-scheduler"

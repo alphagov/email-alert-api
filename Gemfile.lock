@@ -393,7 +393,7 @@ DEPENDENCIES
   pg
   plek
   pry-byebug
-  rails
+  rails (= 6.0.3.2)
   ratelimit
   redcarpet
   rspec-rails
