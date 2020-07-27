@@ -1,9 +1,10 @@
 RSpec.describe DeliveryRequestService do
-  let(:email) { create(:email) }
-  let(:default_provider_name) { "pseudo" }
-  let(:default_provider) { PseudoProvider }
-
   describe ".call" do
+    let(:email) { create(:email) }
+    let(:default_provider_name) { "pseudo" }
+    let(:default_provider) { PseudoProvider }
+    let(:email_service_config) { EmailAlertAPI.config.email_service }
+
     it "creates a delivery attempt" do
       expect { described_class.call(email: email) }
         .to change { DeliveryAttempt.where(email: email).count }
@@ -21,26 +22,35 @@ RSpec.describe DeliveryRequestService do
     end
 
     it "can send an email to a configured provider" do
-      config = EmailAlertAPI.config.email_service.merge(provider: "NOTIFY")
+      allow(EmailAlertAPI.config)
+        .to receive(:email_service)
+        .and_return(email_service_config.merge(provider: "NOTIFY"))
+
       expect(NotifyProvider).to receive(:call).and_return(:sending)
-      described_class.call(email: email, config: config)
+      described_class.call(email: email)
     end
 
     it "can prefix the subject with a configured prefix" do
-      config = EmailAlertAPI.config.email_service.merge(email_subject_prefix: "[TEST] ")
+      allow(EmailAlertAPI.config)
+        .to receive(:email_service)
+        .and_return(email_service_config.merge(email_subject_prefix: "[TEST] "))
+
       expect(default_provider).to receive(:call)
                               .with(hash_including(subject: "[TEST] #{email.subject}"))
                               .and_return(:sending)
-      described_class.call(email: email, config: config)
+      described_class.call(email: email)
     end
 
     it "can be configured to override a recepients email address" do
       address = "override@example.com"
-      config = EmailAlertAPI.config.email_service.merge(email_address_override: address)
+      allow(EmailAlertAPI.config)
+        .to receive(:email_service)
+        .and_return(email_service_config.merge(email_address_override: address))
+
       expect(default_provider).to receive(:call)
                               .with(hash_including(address: address))
                               .and_return(:sending)
-      described_class.call(email: email, config: config)
+      described_class.call(email: email)
     end
 
     it "returns true when the overrider can provide an email address" do

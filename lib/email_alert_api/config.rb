@@ -16,8 +16,8 @@ module EmailAlertAPI
     end
 
     def notify_client
-      api_key = @notify[:api_key]
-      base_url = @notify[:base_url]
+      api_key = notify[:api_key]
+      base_url = notify[:base_url]
       Notifications::Client.new(api_key, base_url)
     end
 
