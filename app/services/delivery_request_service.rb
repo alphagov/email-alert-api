@@ -5,7 +5,8 @@ class DeliveryRequestService < ApplicationService
     "delay" => DelayProvider,
   }.freeze
 
-  def initialize(email:, metrics: {}, config: EmailAlertAPI.config.email_service)
+  def initialize(email:, metrics: {})
+    config = EmailAlertAPI.config.email_service
     @email = email
     @metrics = metrics
     @attempt_id = SecureRandom.uuid

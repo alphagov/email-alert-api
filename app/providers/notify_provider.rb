@@ -1,7 +1,7 @@
 class NotifyProvider
-  def initialize(config: EmailAlertAPI.config.notify, notify_client: EmailAlertAPI.config.notify_client)
-    @client = notify_client
-    @template_id = config.fetch(:template_id)
+  def initialize
+    @client = EmailAlertAPI.config.notify_client
+    @template_id = EmailAlertAPI.config.notify.fetch(:template_id)
   end
 
   def self.call(*args)
