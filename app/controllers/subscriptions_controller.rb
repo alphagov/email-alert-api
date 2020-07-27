@@ -81,13 +81,10 @@ private
   end
 
   def subscriber
-    @subscriber ||= begin
-                      found = Subscriber.find_by_address(address)
-                      found || Subscriber.create!(
-                        address: address,
-                        signon_user_uid: current_user.uid,
-                      )
-                    end
+    @subscriber ||= Subscriber.resilient_find_or_create(
+      address,
+      signon_user_uid: current_user.uid,
+    )
   end
 
   def address

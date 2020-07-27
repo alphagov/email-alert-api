@@ -161,6 +161,62 @@ RSpec.describe Subscriber, type: :model do
     end
   end
 
+  describe ".resilient_find_or_create" do
+    context "when a subscriber already exists" do
+      let!(:subscriber) { create(:subscriber) }
+
+      it "fetches the subscriber" do
+        expect(described_class.resilient_find_or_create(subscriber.address))
+          .to eq(subscriber)
+      end
+
+      it "ignores any create fields" do
+        user_uid = SecureRandom.uuid
+        described_class.resilient_find_or_create(
+          subscriber.address,
+          singon_user_uid: user_uid,
+        )
+
+        expect(subscriber.reload.signon_user_uid).not_to eq(user_uid)
+      end
+    end
+
+    context "when a subscriber does not exist" do
+      let(:address) { "new-subscriber@example.com" }
+
+      it "creates a new subscriber" do
+        expect { described_class.resilient_find_or_create(address) }
+          .to change { Subscriber.exists?(address: address) }
+          .to(true)
+      end
+
+      it "sets any specified create fields" do
+        user_uid = SecureRandom.uuid
+        subscriber = described_class.resilient_find_or_create(
+          address,
+          signon_user_uid: user_uid,
+        )
+
+        expect(subscriber.reload)
+          .to have_attributes(address: address, signon_user_uid: user_uid)
+      end
+    end
+
+    context "when a subscriber is created after we fail to find the subscriber" do
+      let!(:subscriber) { create(:subscriber) }
+
+      it "retries one time before raising an error" do
+        allow(described_class).to receive(:find_by_address).and_return(nil, subscriber)
+        expect(described_class.resilient_find_or_create(subscriber.address))
+          .to eq(subscriber)
+
+        allow(described_class).to receive(:find_by_address).and_return(nil)
+        expect { described_class.resilient_find_or_create(subscriber.address) }
+          .to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+  end
+
   describe "#active_subscriptions" do
     let(:subscriber) { create(:subscriber) }
     before do
