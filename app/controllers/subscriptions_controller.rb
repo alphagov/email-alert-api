@@ -54,6 +54,11 @@ class SubscriptionsController < ApplicationController
       subscription_params.require(:id),
     )
 
+    if frequency.to_s == existing_subscription.frequency.to_s
+      render json: { subscription: existing_subscription }
+      return
+    end
+
     new_subscription = existing_subscription.subscriber.with_lock do
       existing_subscription.end(reason: :frequency_changed)
 
