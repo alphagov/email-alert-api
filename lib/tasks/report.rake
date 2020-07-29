@@ -14,4 +14,9 @@ namespace :report do
   task :csv_from_living_in_europe, [:date] => :environment do |_, args|
     Reports::LivingInEuropeReport.new.call(args.date)
   end
+
+  desc "Export the number of subscriptions for Brexit related tags "
+  task csv_brexit_subscribers: :environment do |_, args|
+    Reports::BrexitSubscribersReport.call
+  end
 end
