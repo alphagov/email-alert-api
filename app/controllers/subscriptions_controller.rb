@@ -16,7 +16,7 @@ class SubscriptionsController < ApplicationController
         subscriber_list: subscriber_list,
       )
 
-      create_new_subscription = frequency.to_s != existing_subscription&.frequency.to_s
+      create_new_subscription = frequency != existing_subscription&.frequency
 
       if create_new_subscription
         existing_subscription&.end(reason: :frequency_changed)
@@ -54,7 +54,7 @@ class SubscriptionsController < ApplicationController
       subscription_params.require(:id),
     )
 
-    if frequency.to_s == existing_subscription.frequency.to_s
+    if frequency == existing_subscription.frequency
       render json: { subscription: existing_subscription }
       return
     end
@@ -102,7 +102,7 @@ private
   end
 
   def frequency
-    subscription_params.fetch(:frequency, "immediately").to_sym
+    subscription_params.fetch(:frequency, "immediately")
   end
 
   def subscription_params
