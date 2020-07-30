@@ -14,14 +14,7 @@ class DeliveryRequestWorker
     email.mark_as_failed(delivery_attempt&.finished_sending_at || Time.zone.now)
   end
 
-  # Once all existing jobs have been processed we can remove these default
-  # arguments
-  def perform(email_id, metrics = {}, queue = nil)
-    # existing jobs may have the second parameter set as a string, representing
-    # a queue and need their type changing. This can be removed once deployed
-    # and the queue is cleared
-    metrics = {} unless metrics.is_a?(Hash)
-
+  def perform(email_id, metrics, queue)
     if rate_limit_exceeded?
       logger.warn("Rescheduling email #{email_id} due to exceeding rate limit")
       GovukStatsd.increment("delivery_request_worker.rescheduled")
