@@ -30,10 +30,6 @@ class StatusUpdateService < ApplicationService
 
     Metrics.delivery_attempt_status_changed(delivery_attempt_status)
     GovukStatsd.increment("status_update.status.#{status}")
-
-    # This statistic can be removed once we replace usage in monitoring
-    # with the status_update.status.* statistic
-    GovukStatsd.increment("status_update.success")
   end
 
 private
