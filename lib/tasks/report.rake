@@ -14,4 +14,24 @@ namespace :report do
   task :csv_from_living_in_europe, [:date] => :environment do |_, args|
     Reports::LivingInEuropeReport.new.call(args.date)
   end
+
+  desc "Export all subscriptions to Brexit related content"
+  task csv_brexit_subscribers: :environment do
+    Reports::BrexitSubscribersReport.call
+  end
+
+  desc "
+  Export all subscriptions to Brexit related content that were subscribed to before the given date.
+  Usage
+  report:csv_brexit_subscribers_on_or_before[yyyy-mm-dd]"
+  task :csv_brexit_subscribers_on_or_before, [:date] => [:environment] do |_task, args|
+    raise "Enter a date" if args[:date].empty?
+
+    begin
+      Date.parse(args[:date].to_s)
+    rescue ArgumentError
+      puts 'Invalid date. Please use "yyyy-mm-dd"'
+    end
+    Reports::BrexitSubscribersReport.call(args[:date])
+  end
 end
