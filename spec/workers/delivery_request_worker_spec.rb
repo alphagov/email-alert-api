@@ -4,7 +4,6 @@ RSpec.describe DeliveryRequestWorker do
   end
 
   before do
-    Sidekiq::Worker.clear_all
     allow(Services).to receive(:rate_limiter).and_return(rate_limiter)
   end
 
@@ -16,7 +15,7 @@ RSpec.describe DeliveryRequestWorker do
       expect(DeliveryRequestService)
         .to receive(:call)
         .with(email: email, metrics: {})
-      described_class.new.perform(email.id, {})
+      described_class.new.perform(email.id, {}, queue)
     end
 
     it "parses scalar metrics and passes them to DeliveryRequestService" do
@@ -28,31 +27,41 @@ RSpec.describe DeliveryRequestWorker do
         described_class.new.perform(
           email.id,
           { "content_change_created_at" => Time.zone.now.iso8601 },
+          queue,
         )
       end
     end
 
     it "increments the rate limiter" do
       expect(rate_limiter).to receive(:add).with("delivery_request")
-      described_class.new.perform(email.id)
+      described_class.new.perform(email.id, {}, queue)
     end
 
     context "when rate limit is exceeded" do
-      it "raises a RatelimitExceededError" do
-        allow(rate_limiter).to receive(:exceeded?).and_return(true)
-        expect { described_class.new.perform(email.id) }
-          .to raise_error(described_class::RateLimitExceededError)
+      around { |example| Sidekiq::Testing.fake! { example.run } }
+      before { allow(rate_limiter).to receive(:exceeded?).and_return(true) }
+
+      it "requeues the job for 5 minutes time" do
+        freeze_time do
+          described_class.new.perform(email.id, {}, queue)
+
+          job = {
+            "args" => array_including(email.id, {}, queue),
+            "at" => 5.minutes.from_now.to_f,
+            "class" => described_class.name,
+          }
+          expect(Sidekiq::Queues[queue]).to include(hash_including(job))
+        end
+      end
+
+      it "doesn't attempt to send the email" do
+        expect(DeliveryRequestService).not_to receive(:call)
+        described_class.new.perform(email.id, {}, queue)
       end
     end
   end
 
   describe ".sidekiq_retries_exhausted_block" do
-    around do |example|
-      Sidekiq::Testing.fake! do
-        freeze_time { example.run }
-      end
-    end
-
     let(:email) { create(:email) }
     let(:sidekiq_message) do
       {
@@ -62,28 +71,26 @@ RSpec.describe DeliveryRequestWorker do
       }
     end
 
-    it "retries the job in 5 minutes for a RatelimitExceededError" do
-      described_class.sidekiq_retries_exhausted_block.call(
-        sidekiq_message,
-        described_class::RateLimitExceededError.new,
-      )
-
-      expect(DeliveryRequestWorker.jobs).to contain_exactly(
-        hash_including(
-          "queue" => "delivery_immediate_high",
-          "args" => array_including(email.id, {}),
-          "at" => 5.minutes.from_now.to_f,
-        ),
+    it "marks the job as failed" do
+      delivery_attempt = create(:provider_communication_failure_delivery_attempt,
+                                email: email)
+      described_class.sidekiq_retries_exhausted_block.call(sidekiq_message)
+      expect(email.reload).to have_attributes(
+        status: "failed",
+        finished_sending_at: delivery_attempt.reload.finished_sending_at,
       )
     end
 
-    it "doesn't do anything for other errors" do
-      described_class.sidekiq_retries_exhausted_block.call(
-        sidekiq_message,
-        RuntimeError.new,
-      )
-
-      expect(DeliveryRequestWorker.jobs).to be_empty
+    context "when there isn't a delivery attempt" do
+      it "sets the email finished_sending_at time to current time" do
+        freeze_time do
+          described_class.sidekiq_retries_exhausted_block.call(sidekiq_message)
+          expect(email.reload).to have_attributes(
+            status: "failed",
+            finished_sending_at: Time.zone.now,
+          )
+        end
+      end
     end
   end
 

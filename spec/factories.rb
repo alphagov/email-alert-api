@@ -74,26 +74,14 @@ FactoryBot.define do
       completed_at { Time.zone.now }
     end
 
-    factory :temporary_failure_delivery_attempt do
-      status { :temporary_failure }
+    factory :undeliverable_failure_delivery_attempt do
+      status { :undeliverable_failure }
       sent_at { nil }
       completed_at { Time.zone.now }
     end
 
-    factory :permanent_failure_delivery_attempt do
-      status { :permanent_failure }
-      sent_at { nil }
-      completed_at { Time.zone.now }
-    end
-
-    factory :technical_failure_delivery_attempt do
-      status { :technical_failure }
-      sent_at { nil }
-      completed_at { Time.zone.now }
-    end
-
-    factory :internal_failure_delivery_attempt do
-      status { :internal_failure }
+    factory :provider_communication_failure_delivery_attempt do
+      status { :provider_communication_failure }
       sent_at { nil }
       completed_at { Time.zone.now }
     end

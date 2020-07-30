@@ -16,11 +16,21 @@ class Email < ApplicationRecord
         }
 
   enum status: { pending: 0, sent: 1, failed: 2 }
-  enum failure_reason: { permanent_failure: 0, retries_exhausted_failure: 1, technical_failure: 2 }
+
+  # This can be removed once the column is deleted.
+  self.ignored_columns = %i[failure_reason]
 
   def self.timed_bulk_insert(records, batch_size)
     return insert_all!(records) unless records.size == batch_size
 
     Metrics.email_bulk_insert(batch_size) { insert_all!(records) }
+  end
+
+  def mark_as_sent(finished_sending_at)
+    update!(status: :sent, finished_sending_at: finished_sending_at)
+  end
+
+  def mark_as_failed(finished_sending_at)
+    update!(status: :failed, finished_sending_at: finished_sending_at)
   end
 end

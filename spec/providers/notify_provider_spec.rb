@@ -9,12 +9,11 @@ RSpec.describe NotifyProvider do
         reference: "ref-123",
       }
     end
+    let(:notify_client) { instance_double("Notifications::Client") }
 
     it "calls the Notifications client" do
-      client = instance_double("Notifications::Client")
-      allow(Notifications::Client).to receive(:new).and_return(client)
-
-      expect(client).to receive(:send_email)
+      allow(Notifications::Client).to receive(:new).and_return(notify_client)
+      expect(notify_client).to receive(:send_email)
         .with(
           email_address: "email@address.com",
           template_id: template_id,
@@ -28,44 +27,48 @@ RSpec.describe NotifyProvider do
       described_class.call(arguments)
     end
 
-    context "when it sends successfully" do
-      before { stub_request(:post, /fake-notify/).to_return(body: {}.to_json) }
-
-      it "returns a status of sending" do
-        return_value = described_class.call(arguments)
-        expect(return_value).to be(:sending)
-      end
+    it "returns a sending status for a successful request" do
+      stub_request(:post, /fake-notify/).to_return(body: {}.to_json)
+      return_value = described_class.call(arguments)
+      expect(return_value).to be(:sending)
     end
 
-    context "when an error occurs" do
-      before do
-        error_response = double(code: 404, body: "an error")
-        allow_any_instance_of(Notifications::Client).to receive(:send_email)
-          .and_raise(Notifications::Client::RequestError.new(error_response))
-      end
+    it "returns a provider_communication_failure status for a Notify RequestError" do
+      error_response = double(code: 404, body: "an error")
+      allow(Notifications::Client).to receive(:new).and_return(notify_client)
+      allow(notify_client).to receive(:send_email)
+        .and_raise(Notifications::Client::RequestError.new(error_response))
 
-      it "returns a status of technical_failure" do
-        return_value = described_class.call(arguments)
-        expect(return_value).to be(:technical_failure)
-      end
+      expect(described_class.call(arguments))
+        .to be(:provider_communication_failure)
+    end
 
-      it "notifies GovukError" do
-        expect(GovukError).to receive(:notify)
-        described_class.call(arguments)
-      end
+    it "returns a provider_communication_failure status for a Notify Timeout" do
+      allow(Notifications::Client).to receive(:new).and_return(notify_client)
+      allow(notify_client).to receive(:send_email).and_raise(Net::OpenTimeout)
 
-      context "and it's an invalid email address error" do
-        before do
-          error_response = double(code: 404, body: '{"errors": [{"error": "ValidationError", "message": "email_address Not a valid email address"}]}')
-          allow_any_instance_of(Notifications::Client).to receive(:send_email)
-            .and_raise(Notifications::Client::BadRequestError.new(error_response))
-        end
+      expect(described_class.call(arguments))
+        .to be(:provider_communication_failure)
+    end
 
-        it "does not notify GovukError" do
-          expect(GovukError).not_to receive(:notify)
-          described_class.call(arguments)
-        end
-      end
+    it "returns a provider_communication_failure status for a Notify rejecting an email address" do
+      error_response = double(
+        code: 400,
+        body: {
+          errors: [
+            {
+              error: "ValidationError",
+              message: "email_address Not a valid email address",
+            },
+          ],
+        }.to_json,
+      )
+      allow(Notifications::Client).to receive(:new).and_return(notify_client)
+      allow(notify_client).to receive(:send_email)
+        .and_raise(Notifications::Client::BadRequestError.new(error_response))
+
+      expect(described_class.call(arguments))
+        .to be(:undeliverable_failure)
     end
   end
 end

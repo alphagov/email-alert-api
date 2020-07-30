@@ -1,51 +1,57 @@
 class DeliveryRequestWorker
-  class RateLimitExceededError < RuntimeError; end
+  class ProviderCommunicationFailureError < RuntimeError; end
 
   include Sidekiq::Worker
 
   sidekiq_options retry: 9
 
-  sidekiq_retries_exhausted do |msg, error|
-    next unless error.is_a?(RateLimitExceededError)
+  sidekiq_retries_exhausted do |msg|
+    email = Email.find(msg["args"].first)
+    delivery_attempt = email.delivery_attempts
+                            .order(created_at: :desc)
+                            .first
 
-    email_id, metrics = msg["args"]
-    GovukStatsd.increment("delivery_request_worker.rescheduled")
-    DeliveryRequestWorker.set(queue: msg["queue"])
-                         .perform_in(5.minutes, email_id, metrics)
+    email.mark_as_failed(delivery_attempt&.finished_sending_at || Time.zone.now)
   end
 
-  def perform(email_id, metrics = {})
+  # Once all existing jobs have been processed we can remove these default
+  # arguments
+  def perform(email_id, metrics = {}, queue = nil)
     # existing jobs may have the second parameter set as a string, representing
     # a queue and need their type changing. This can be removed once deployed
     # and the queue is cleared
     metrics = {} unless metrics.is_a?(Hash)
 
-    check_rate_limit_exceeded
+    if rate_limit_exceeded?
+      logger.warn("Rescheduling email #{email_id} due to exceeding rate limit")
+      GovukStatsd.increment("delivery_request_worker.rescheduled")
+      DeliveryRequestWorker.set(queue: queue || "delivery_immediate")
+                           .perform_in(5.minutes, email_id, metrics, queue)
+      return
+    end
 
     email = Metrics.delivery_request_worker_find_email do
       Email.find(email_id)
     end
 
-    attempted = DeliveryRequestService.call(
+    attempt = DeliveryRequestService.call(
       email: email,
       metrics: parsed_metrics(metrics),
     )
-    increment_rate_limiter if attempted
+    increment_rate_limiter if attempt
+    raise ProviderCommunicationFailureError if attempt&.provider_communication_failure?
   end
 
-  def self.perform_async_in_queue(*args, queue:)
-    set(queue: queue).perform_async(*args)
+  def self.perform_async_in_queue(email_id, metrics = {}, queue:)
+    set(queue: queue).perform_async(email_id, metrics, queue)
   end
 
 private
 
-  def check_rate_limit_exceeded
-    return unless rate_limiter.exceeded?("delivery_request",
-                                         threshold: rate_limit_threshold,
-                                         interval: rate_limit_interval)
-
-    GovukStatsd.increment("delivery_request_worker.rate_limit_exceeded")
-    raise RateLimitExceededError
+  def rate_limit_exceeded?
+    rate_limiter.exceeded?("delivery_request",
+                           threshold: rate_limit_threshold,
+                           interval: rate_limit_interval)
   end
 
   # Sidekiq uses JSON for a workers arguments, so richer objects are not

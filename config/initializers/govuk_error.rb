@@ -1,4 +1,6 @@
 GovukError.configure do |config|
+  config.excluded_exceptions << "DeliveryRequestWorker::ProviderCommunicationFailureError"
+
   # Don't capture postgres errors that occur during the time that the data sync
   # is running in integration and staging environments
   # This lambda is called with Ruby Exception objects, Raven::Event objects

@@ -16,13 +16,13 @@ class DeliveryRequestService < ApplicationService
   end
 
   def call
-    return false if address.nil?
+    return if address.nil?
 
     Metrics.delivery_request_service_first_delivery_attempt do
       record_first_attempt_metrics unless DeliveryAttempt.exists?(email: email)
     end
 
-    delivery_attempt = Metrics.delivery_request_service_create_delivery_attempt do
+    attempt = Metrics.delivery_request_service_create_delivery_attempt do
       DeliveryAttempt.create!(id: attempt_id,
                               email: email,
                               status: :sending,
@@ -31,15 +31,16 @@ class DeliveryRequestService < ApplicationService
 
     status = Metrics.email_send_request(provider_name) { send_email }
 
-    return true if status == :sending
+    return attempt if status == :sending
 
     ActiveRecord::Base.transaction do
-      delivery_attempt.update!(status: status, completed_at: Time.zone.now)
+      attempt.update!(status: status, completed_at: Time.zone.now)
       Metrics.delivery_attempt_status_changed(status)
-      UpdateEmailStatusService.call(delivery_attempt)
+      email.mark_as_sent(attempt.finished_sending_at) if attempt.delivered?
+      email.mark_as_failed(attempt.finished_sending_at) if attempt.undeliverable_failure?
     end
 
-    true
+    attempt
   end
 
 private
@@ -61,7 +62,7 @@ private
     )
   rescue StandardError => e
     GovukError.notify(e)
-    :internal_failure
+    :provider_communication_failure
   end
 
   def record_first_attempt_metrics

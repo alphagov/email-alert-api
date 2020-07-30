@@ -64,7 +64,7 @@ namespace :manage do
     results = all_emails.map do |email|
       {
         created_at: email.created_at,
-        status: email.sent? ? email.status : "Failed (#{email.status}). Reason: #{email.failure_reason}",
+        status: email.status,
         delivery_attempts: DeliveryAttempt.where(email_id: email.id).count,
         email_subject: email.subject,
         email_uuid: email.id,

@@ -1,159 +1,96 @@
 RSpec.describe StatusUpdateService do
-  let(:reference) { "b6589b2b-8f8e-457b-9ddf-237b62438ad1" }
+  describe ".call" do
+    let!(:delivery_attempt) { create(:delivery_attempt, id: reference, email: email) }
+    let(:email) { create(:email) }
+    let(:reference) { SecureRandom.uuid }
+    let(:status) { "delivered" }
+    let(:completed_at) { Time.zone.now.beginning_of_minute }
+    let(:sent_at) { completed_at }
+    let(:user) { create(:user) }
 
-  let!(:delivery_attempt) do
-    create(:delivery_attempt, id: reference, status: "sending")
-  end
-
-  let(:status) { "delivered" }
-  let(:completed_at) { Time.zone.parse("2017-05-14T12:15:30.000000Z") }
-  let(:sent_at) { Time.zone.parse("2017-05-14T12:15:30.000000Z") }
-
-  subject(:status_update) { described_class.call(reference: reference, status: status, completed_at: completed_at, sent_at: sent_at) }
-
-  shared_examples "records successful stats" do
-    before { allow(GovukStatsd).to receive(:increment) }
-
-    it "records a success statistic" do
-      expect(GovukStatsd).to receive(:increment).with("status_update.success")
-      status_update
+    let(:args) do
+      {
+        reference: reference,
+        status: status,
+        completed_at: completed_at,
+        sent_at: sent_at,
+        user: user,
+      }
     end
 
-    it "records a statistic on the number of status updates" do
-      expect(GovukStatsd).to receive(:increment).with("delivery_attempt.status.#{status.underscore}")
-      status_update
-    end
-  end
-
-  it "updates the delivery attempt's status" do
-    expect { status_update }
-      .to change { delivery_attempt.reload.status }
-      .to("delivered")
-  end
-
-  it "updates the completed_at field" do
-    expect { status_update }
-      .to change { delivery_attempt.reload.completed_at }
-      .to(completed_at)
-  end
-
-  it "updates the sent_at field on delivery" do
-    expect { status_update }
-      .to change { delivery_attempt.reload.sent_at }
-      .to(sent_at)
-  end
-
-  it "updates the emails finished_sending_at timestamp" do
-    expect { status_update }
-      .to change { delivery_attempt.reload.email.finished_sending_at }
-      .from(nil)
-      .to(sent_at)
-  end
-
-  include_examples "records successful stats"
-
-  context "with first temporary failure" do
-    let(:status) { "temporary-failure" }
-    let(:completed_at) { Time.zone.now }
-    let(:sent_at) { nil }
-
-    it "underscores statuses" do
-      expect { status_update }
-        .to change { delivery_attempt.reload.status }
-        .to("temporary_failure")
+    it "updates the delivery attempt record" do
+      described_class.call(args)
+      expect(delivery_attempt.reload)
+        .to have_attributes(sent_at: sent_at,
+                            completed_at: completed_at,
+                            signon_user_uid: user.uid)
     end
 
-    it "retries sending the email" do
-      expect(DeliveryRequestWorker).to receive(:perform_in)
-        .with(6.hours, delivery_attempt.email.id, :default)
-
-      status_update
+    it "updates the email status" do
+      expect { described_class.call(args) }
+        .to(change { email.reload.status })
     end
 
-    it "does not update the emails finished_sending_at timestamp" do
-      # We set `inline!` in spec_helper which causes jobs to fire immediately.
-      # Since DeliveryRequestWorker is fired on temporary_failure, this has the side effect of
-      # successfully sending the email and setting `finished_sending_at`.
-      # In reality, DeliveryRequestWorker is set to perform in 3 hours time, so to mimic this
-      # we set `fake!` which pushes it on to an array instead. For the sake of this test
-      # we don't want it to perform since we are testing the state between the start of temporary
-      # failure and 3 hours time when we try again.
-      Sidekiq::Testing.fake! do
-        expect { status_update }
-          .to_not(change { delivery_attempt.reload.email.finished_sending_at })
+    context "when provided a 'delivered' status" do
+      let(:status) { "delivered" }
+
+      it "sets the delivery attempt status to delivered" do
+        expect { described_class.call(args) }
+          .to change { delivery_attempt.reload.status }
+          .to("delivered")
       end
     end
 
-    include_examples "records successful stats"
-  end
+    context "when provided a 'permanent-failure' status" do
+      let(:status) { "permanent-failure" }
+      let(:subscriber) { create(:subscriber) }
+      let(:email) { create(:email, subscriber_id: subscriber.id, address: subscriber.address) }
 
-  context "with a temporary failure after previous one a day ago" do
-    let(:status) { "temporary-failure" }
-    let(:completed_at) { Time.zone.now }
-    let(:sent_at) { nil }
-    before do
-      create(
-        :temporary_failure_delivery_attempt,
-        email: delivery_attempt.email,
-        completed_at: 26.hours.ago,
-      )
+      it "sets the delivery attempt status to undeliverable_failure" do
+        expect { described_class.call(args) }
+          .to change { delivery_attempt.reload.status }
+          .to("undeliverable_failure")
+      end
+
+      it "unsubscribes the subscriber from any existing subscriptions" do
+        expect(UnsubscribeAllService).to receive(:call)
+                                     .with(subscriber, :non_existent_email)
+        described_class.call(args)
+      end
     end
 
-    it "doesn't retry sending the email" do
-      expect(DeliveryRequestWorker).not_to receive(:perform_in)
-      status_update
+    context "when provided a 'temporary-failure' status" do
+      let(:status) { "temporary-failure" }
+
+      it "sets the delivery attempt status to undeliverable_failure" do
+        expect { described_class.call(args) }
+          .to change { delivery_attempt.reload.status }
+          .to("undeliverable_failure")
+      end
     end
 
-    it "marks the email status as failed" do
-      expect { status_update }
-        .to change { delivery_attempt.reload.email.status }
-        .from("pending")
-        .to("failed")
+    context "when provided with an unexpected status" do
+      let(:status) { "surprise-failure" }
+
+      it "raises a DeliveryAttemptInvalidStatusError and notifies GovukError" do
+        message = "Recieved an unexpected status: 'surprise-failure'"
+        expect(GovukError).to receive(:notify).with(message)
+        expect { described_class.call(args) }
+          .to raise_error(StatusUpdateService::DeliveryAttemptInvalidStatusError,
+                          message)
+      end
     end
 
-    include_examples "records successful stats"
-  end
+    context "when the delivery attempt isn't in a sending state" do
+      let!(:delivery_attempt) do
+        create(:delivered_delivery_attempt, id: reference, email: email)
+      end
 
-  context "with a permanent failure" do
-    let(:status) { "permanent-failure" }
-
-    it "deactivates the subscriber" do
-      create(:subscriber, address: delivery_attempt.email.address)
-
-      expect { status_update }
-        .to change { Subscriber.last.deactivated? }
-        .from(false)
-        .to(true)
-    end
-
-    include_examples "records successful stats"
-  end
-
-  context "with a missing reference" do
-    let(:reference) { "missing" }
-
-    it "raises an error" do
-      expect { status_update }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-  end
-
-  context "with an unknown status" do
-    let(:status) { "unknown" }
-
-    it "raises an error" do
-      expect { status_update }
-        .to raise_error(StatusUpdateService::DeliveryAttemptInvalidStatusError)
-    end
-  end
-
-  context "when the delivery attempt already has a non waiting status" do
-    before do
-      delivery_attempt.update!(status: "delivered")
-    end
-
-    it "raises an error" do
-      expect { status_update }
-        .to raise_error(StatusUpdateService::DeliveryAttemptStatusConflictError)
+      it "raises a DeliveryAttemptStatusConflictError" do
+        expect { described_class.call(args) }
+          .to raise_error(StatusUpdateService::DeliveryAttemptStatusConflictError,
+                          "Status update already received")
+      end
     end
   end
 end
