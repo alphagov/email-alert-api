@@ -39,6 +39,3 @@ private
     DeliveryRequestWorker.perform_async_in_queue(id, queue: message.queue)
   end
 end
-
-# This can be deleted once there are no Sidekiq jobs queued to use this class
-ProcessMessageAndGenerateEmailsWorker = ProcessMessageWorker
