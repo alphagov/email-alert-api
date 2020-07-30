@@ -9,7 +9,7 @@ RSpec.describe "Receiving a spam report", type: :request do
   before { login_as(user) }
 
   describe "#create" do
-    let(:params) { { reference: reference } }
+    let(:params) { { reference: reference, to: subscriber.address } }
     let(:permissions) { %w[signin status_updates] }
 
     it "unsubscribes the user" do

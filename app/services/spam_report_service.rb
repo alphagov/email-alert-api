@@ -1,15 +1,29 @@
 class SpamReportService < ApplicationService
-  attr_reader :email
+  attr_reader :delivery_attempt_id, :email_address
 
-  def initialize(email)
-    @email = email
+  def initialize(delivery_attempt_id, email_address)
+    @delivery_attempt_id = delivery_attempt_id
+    @email_address = email_address
   end
 
   def call
-    subscriber_id = email.subscriber_id
-    subscriber = Subscriber.find(subscriber_id)
+    return if email.marked_as_spam?
+
     UnsubscribeAllService.call(subscriber, :marked_as_spam)
-    Metrics.marked_as_spam unless email.marked_as_spam?
+    Metrics.marked_as_spam
     email.update!(marked_as_spam: true)
+  rescue ActiveRecord::RecordNotFound
+    UnsubscribeAllService.call(subscriber, :marked_as_spam)
+    Metrics.marked_as_spam
+  end
+
+private
+
+  def email
+    @email ||= DeliveryAttempt.find(delivery_attempt_id).email
+  end
+
+  def subscriber
+    @subscriber ||= Subscriber.find_by(address: email_address)
   end
 end
