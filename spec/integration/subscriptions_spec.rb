@@ -208,6 +208,12 @@ RSpec.describe "Subscriptions", type: :request do
             patch "/subscriptions/#{subscription.id}", params: { frequency: "monthly" }
             expect(response.status).to eq(422)
           end
+
+          it "returns the current subscription if the frequency is not changed" do
+            patch "/subscriptions/#{subscription.id}", params: { frequency: "immediately" }
+            expect(response.status).to eq(200)
+            expect(data[:subscription][:id]).to eq(subscription.id)
+          end
         end
 
         context "without an existing subscription" do

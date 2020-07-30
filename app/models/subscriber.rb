@@ -26,6 +26,23 @@ class Subscriber < ApplicationRecord
     find_by!("lower(address) = ?", address.downcase)
   end
 
+  def self.resilient_find_or_create(address, create_params = {})
+    retries ||= 0
+    # we run this in it's own transaction as we anticipate failure here and
+    # want to isolate any failed transactions.
+    transaction(requires_new: true) do
+      subscriber = find_by_address(address)
+      subscriber || create!({ address: address }.merge(create_params))
+    end
+  rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
+    # if we have concurrent requests trying to find or create the same
+    # subscriber both can fail to find by address and then the both try
+    # create the record. This retries the first time an
+    # ActiveRecord::RecordNotUnique error is raised with the expectation
+    # that this occurring more than once is a bigger problem.
+    (retries += 1) == 1 ? retry : raise
+  end
+
   def activated?
     deactivated_at.nil?
   end
