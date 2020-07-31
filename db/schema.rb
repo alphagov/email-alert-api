@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_06_094740) do
+ActiveRecord::Schema.define(version: 2020_07_30_172117) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,12 +85,10 @@ ActiveRecord::Schema.define(version: 2020_04_06_094740) do
     t.datetime "archived_at"
     t.bigint "subscriber_id"
     t.integer "status", default: 0, null: false
-    t.integer "failure_reason"
     t.boolean "marked_as_spam"
     t.index ["address"], name: "index_emails_on_address"
     t.index ["archived_at"], name: "index_emails_on_archived_at"
     t.index ["created_at"], name: "index_emails_on_created_at"
-    t.index ["failure_reason"], name: "index_emails_on_failure_reason"
     t.index ["finished_sending_at"], name: "index_emails_on_finished_sending_at"
   end
 
