@@ -128,7 +128,7 @@ GEM
       statsd-ruby (~> 1.4.0)
       unicorn (>= 5.4, < 5.6)
     govuk_document_types (0.9.2)
-    govuk_sidekiq (3.0.5)
+    govuk_sidekiq (4.0.0)
       gds-api-adapters (>= 19.1.0)
       govuk_app_config (>= 1.1)
       redis-namespace (~> 1.6)
