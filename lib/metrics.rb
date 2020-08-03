@@ -5,10 +5,6 @@ class Metrics
       count("content_change_emails.document_type.#{content_change.document_type}.immediate", count)
     end
 
-    def marked_as_spam
-      increment("marked_as_spam")
-    end
-
     def unsubscribed(reason)
       increment("unsubscribed.reason.#{reason}")
     end

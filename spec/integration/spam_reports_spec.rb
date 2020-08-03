@@ -9,25 +9,30 @@ RSpec.describe "Receiving a spam report", type: :request do
   before { login_as(user) }
 
   describe "#create" do
-    let(:params) { { reference: reference, to: subscriber.address } }
+    let(:params) { { to: subscriber.address } }
     let(:permissions) { %w[signin status_updates] }
 
-    it "unsubscribes the user" do
-      post "/spam-reports", params: params
-      expect(subscriber.active_subscriptions).to be_empty
+    context "when there is a subscriber associated with the recipient email address" do
+      it "unsubscribes the user" do
+        post "/spam-reports", params: params
+        expect(subscriber.active_subscriptions).to be_empty
+      end
+
+      it "renders 204 no content" do
+        post "/spam-reports", params: params
+
+        expect(response.status).to eq(204)
+        expect(response.body).to eq("")
+      end
     end
 
-    it "renders 204 no content" do
-      post "/spam-reports", params: params
+    context "when there is no subscriber associated with the recipient email address" do
+      it "renders 204 no content" do
+        post "/spam-reports", params: { to: "not-a-subscriber@example.com" }
 
-      expect(response.status).to eq(204)
-      expect(response.body).to eq("")
-    end
-
-    it "marks the email as spam" do
-      expect { post "/spam-reports", params: params }
-        .to change { email.reload.marked_as_spam }
-        .to eq(true)
+        expect(response.status).to eq(204)
+        expect(response.body).to eq("")
+      end
     end
 
     context "when a user does not have 'status_updates' permission" do
