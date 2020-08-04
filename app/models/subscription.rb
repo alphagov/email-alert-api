@@ -5,8 +5,8 @@ class Subscription < ApplicationRecord
   has_many :subscription_contents, dependent: :destroy
 
   enum frequency: { immediately: 0, daily: 1, weekly: 2 }
-  enum source: { user_signed_up: 0, frequency_changed: 1, imported: 2, subscriber_list_changed: 3 }, _prefix: true
-  enum ended_reason: { unsubscribed: 0, non_existent_email: 1, frequency_changed: 2, subscriber_list_changed: 3, marked_as_spam: 4, unpublished: 5 }, _prefix: :ended
+  enum source: { user_signed_up: 0, frequency_changed: 1, imported: 2, subscriber_list_changed: 3, bulk_immediate_to_digest: 4 }, _prefix: true
+  enum ended_reason: { unsubscribed: 0, non_existent_email: 1, frequency_changed: 2, subscriber_list_changed: 3, marked_as_spam: 4, unpublished: 5, bulk_immediate_to_digest: 6 }, _prefix: :ended
 
   validates :subscriber, uniqueness: { scope: :subscriber_list, conditions: -> { active } }
 
