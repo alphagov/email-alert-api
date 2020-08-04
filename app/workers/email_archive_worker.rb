@@ -1,8 +1,6 @@
 class EmailArchiveWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :cleanup
-
   LOCK_NAME = "email_archive_worker".freeze
   BATCH_SIZE = 1000
 

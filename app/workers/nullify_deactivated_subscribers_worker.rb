@@ -1,8 +1,6 @@
 class NullifyDeactivatedSubscribersWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :cleanup
-
   def perform
     run_only_once do
       subscribers.find_each(&:nullify!)

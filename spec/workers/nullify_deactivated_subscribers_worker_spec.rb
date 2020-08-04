@@ -1,16 +1,4 @@
 RSpec.describe NullifyDeactivatedSubscribersWorker do
-  describe ".perform_async" do
-    before do
-      Sidekiq::Testing.fake! do
-        described_class.perform_async
-      end
-    end
-
-    it "gets added to the cleanup queue" do
-      expect(Sidekiq::Queues["cleanup"].size).to eq(1)
-    end
-  end
-
   describe ".perform" do
     context "with some subscribers" do
       before do
