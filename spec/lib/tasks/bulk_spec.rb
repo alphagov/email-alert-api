@@ -13,7 +13,7 @@ RSpec.describe "bulk" do
     it "builds emails for a subscriber list" do
       subscriber_list = create(:subscriber_list)
 
-      expect(BulkEmailBuilder)
+      expect(BulkSubscriberListEmailBuilder)
         .to receive(:call)
         .with(subject: "subject",
               body: "body",
@@ -26,8 +26,8 @@ RSpec.describe "bulk" do
     it "enqueues the emails for delivery" do
       subscriber_list = create(:subscriber_list)
 
-      allow(BulkEmailBuilder).to receive(:call)
-                              .and_return([1, 2])
+      allow(BulkSubscriberListEmailBuilder).to receive(:call)
+        .and_return([1, 2])
 
       expect(DeliveryRequestWorker)
         .to receive(:perform_async_in_queue)

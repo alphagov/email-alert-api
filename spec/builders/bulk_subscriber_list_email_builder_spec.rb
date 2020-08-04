@@ -1,4 +1,4 @@
-RSpec.describe BulkEmailBuilder do
+RSpec.describe BulkSubscriberListEmailBuilder do
   let(:email_subject) { "email subject" }
   let(:body) { "email body" }
 

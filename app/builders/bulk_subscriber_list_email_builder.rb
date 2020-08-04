@@ -1,4 +1,4 @@
-class BulkEmailBuilder
+class BulkSubscriberListEmailBuilder
   def initialize(subject:, body:, subscriber_lists:)
     @subject = subject
     @body = body

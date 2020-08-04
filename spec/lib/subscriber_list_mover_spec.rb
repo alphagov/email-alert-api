@@ -49,10 +49,10 @@ RSpec.describe SubscriberListMover do
 
   describe "#with_send_email_true" do
     it "sends an email to all subscribers" do
-      allow(BulkEmailBuilder).to receive(:call).and_return([1, 2])
+      allow(BulkSubscriberListEmailBuilder).to receive(:call).and_return([1, 2])
       source_subscriber_list = SubscriberList.find_by(slug: list_1.slug)
 
-      expect(BulkEmailBuilder)
+      expect(BulkSubscriberListEmailBuilder)
       .to receive(:call)
       .with(subject: "Changes to GOV.UK emails",
             body: anything,
