@@ -25,11 +25,19 @@ private
 
   def body
     <<~BODY
-      From now on, we'll group all the emails you get together into one digest when there's a change to content covered by one of these subscriptions:
+      We've changed how often you get some emails from GOV.UK. We've done this to make the number of emails you get more manageable.
+
+      You'll now get one email a day that will list any changes to:
 
       #{subscriptions.map { |subscription| "- #{subscription.subscriber_list.title}" }.join("\n")}
 
-      If you need to keep receiving immediate emails you can change this by [managing your email subscriptions](#{manage_subscriptions_link}).
+      If you do not get an email about those topics, it's because there have been no changes.
+
+      We’ve not changed how often you get emails for any other GOV.UK subscriptions you may have. We’ve only changed the subscriptions listed in this email.
+
+      # If you want to go back to immediate emails
+
+      You can go back to getting immediate updates about these topics by [managing your subscriptions](#{manage_subscriptions_link}).
     BODY
   end
 
