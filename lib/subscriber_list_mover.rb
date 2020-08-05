@@ -85,7 +85,7 @@ class SubscriberListMover
       GOV.UK
     BODY
 
-    BulkEmailBuilder.call(
+    BulkSubscriberListEmailBuilder.call(
       subject: email_subject,
       body: bulk_move_template,
       subscriber_lists: source_subscriber_list,
