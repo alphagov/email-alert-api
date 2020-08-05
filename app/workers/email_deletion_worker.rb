@@ -1,8 +1,6 @@
 class EmailDeletionWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :cleanup
-
   LOCK_NAME = "email_deletion_worker".freeze
 
   def perform

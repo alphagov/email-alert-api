@@ -32,8 +32,8 @@ Used to send digest emails to users who have requested either daily or weekly up
 
 Used to generate the emails for each content change to users who have requested daily or weekly updates to content. The jobs on this queue are scheduled to run every day at 8:30am for daily updates and every Saturday at 8:30am for weekly updates.
 
-## `cleanup`
+## `default`
 
-Used to perform various operations related to monitoring or tidying up the database. There are jobs which [archives emails to Athena][analytics] and others which calculates the number of unprocessed content changes or subscription contents and sends that data to Statsd for monitoring.
+Default queue for Sidekiq which we use to perform various miscellaneous operations. This currently includes initiating digest runs (daily and weekly) and then marking them as complete, monitoring and tidying up the database and recovering lost Sidekiq jobs.
 
 [analytics]: analytics.md
