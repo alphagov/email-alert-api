@@ -34,10 +34,10 @@ private
   end
 
   def manage_subscriptions_link
-    utm_source = "switch-to-daily-digest"
+    utm_campaign = "govuk-notifications-switch-to-daily-experiment"
     utm_medium = "email"
-    utm_campaign = "govuk-notifications"
-    utm_content = "initial-experiment"
+    utm_source = "gov.uk"
+    utm_content = "manage-subscriptions"
     base_url = PublicUrls.authenticate_url(address: subscriber.address)
     "#{base_url}&utm_source=#{utm_source}&utm_medium=#{utm_medium}&utm_campaign=#{utm_campaign}&utm_content=#{utm_content}"
   end
