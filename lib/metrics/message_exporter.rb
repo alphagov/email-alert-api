@@ -1,31 +1,18 @@
 class Metrics::MessageExporter < Metrics::BaseExporter
   def call
-    GovukStatsd.gauge("messages.critical_total", critical_messages)
-    GovukStatsd.gauge("messages.warning_total", warning_messages)
+    GovukStatsd.gauge("messages.unprocessed_total", unprocessed_messages)
   end
 
 private
 
-  def critical_messages
-    @critical_messages ||= count_messages(critical_latency)
-  end
-
-  def warning_messages
-    @warning_messages ||= count_messages(warning_latency)
-  end
-
-  def count_messages(age)
+  def unprocessed_messages
     Message
-    .where("created_at < ?", age.ago)
+    .where("created_at < ?", unprocessed_latency.ago)
     .where(processed_at: nil)
     .count
   end
 
-  def critical_latency
+  def unprocessed_latency
     120.minutes
-  end
-
-  def warning_latency
-    90.minutes
   end
 end
