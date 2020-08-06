@@ -6,20 +6,6 @@ namespace :clean do
     cleaner.remove_empty_subscriberlists(dry_run: dry_run)
   end
 
-  desc "Destroys SubscriberLists that don't pass validations and don't have active subscriptions"
-  task delete_invalid_subscriber_lists: :environment do
-    dry_run = ENV["DRY_RUN"] != "no"
-    cleaner = Clean::InvalidSubscriberLists.new
-    cleaner.destroy_invalid_subscriber_lists(dry_run: dry_run)
-  end
-
-  desc "Migrate subscribers to working specialist finder lists"
-  task migrate_specialist_subscribers: :environment do
-    dry_run = ENV["DRY_RUN"] != "no"
-    cleaner = Clean::MigrateSpecialistSubscriberLists.new
-    cleaner.migrate_subscribers_to_working_lists(dry_run: dry_run)
-  end
-
   desc <<~DESC
     Remove subscribers with multiple emails that failed to send
 
