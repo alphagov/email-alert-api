@@ -1,11 +1,8 @@
 RSpec.describe "Receiving a spam report", type: :request do
   let(:subscriber) { create(:subscriber) }
-  let(:email) { create(:email, subscriber_id: subscriber.id) }
-  let!(:delivery_attempt) { create(:delivery_attempt, email_id: email.id) }
-  let(:reference) { delivery_attempt.id }
-
   let(:permissions) { %w[signin status_updates] }
   let(:user) { create(:user, permissions: permissions) }
+
   before { login_as(user) }
 
   describe "#create" do
