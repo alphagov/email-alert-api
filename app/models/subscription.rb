@@ -60,5 +60,7 @@ class Subscription < ApplicationRecord
       ended_at: datetime || Time.zone.now,
       ended_email_id: ended_email_id,
     )
+
+    Metrics.unsubscribed(reason)
   end
 end

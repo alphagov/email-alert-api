@@ -147,5 +147,10 @@ RSpec.describe Subscription, type: :model do
         expect(subject.ended_at).to eq(Time.zone.now)
       end
     end
+
+    it "reports unsubscribe metrics" do
+      expect(Metrics).to receive(:unsubscribed).with(:unsubscribed)
+      subject.end(reason: :unsubscribed)
+    end
   end
 end

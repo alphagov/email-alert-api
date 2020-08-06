@@ -17,6 +17,9 @@ class Email < ApplicationRecord
 
   enum status: { pending: 0, sent: 1, failed: 2 }
 
+  # This can be removed once the column is deleted.
+  self.ignored_columns = %i[marked_as_spam]
+
   def self.timed_bulk_insert(records, batch_size)
     return insert_all!(records) unless records.size == batch_size
 
