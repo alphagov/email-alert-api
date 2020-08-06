@@ -14,7 +14,6 @@
   - [delivery_immediate, 2]
   - [delivery_digest, 2]
   - [default, 1]
-  - [cleanup, 1]
 :schedule:
   daily_digest_initiator:
     cron: '30 8 * * * Europe/London' # every day at 8:30am
