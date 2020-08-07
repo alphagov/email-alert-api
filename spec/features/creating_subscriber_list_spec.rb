@@ -42,4 +42,15 @@ RSpec.describe "Creating subscriber lists", type: :request do
     gov_delivery_id = data.dig(:subscriber_list, :gov_delivery_id)
     expect(gov_delivery_id).to eq("example")
   end
+
+  def lookup_subscriber_list_by_slug(slug, expected_status: 200)
+    get "/subscriber-lists/#{slug}"
+    expect(response.status).to eq(expected_status)
+    data.dig(:subscriber_list, :id)
+  end
+
+  def lookup_subscriber_list(params, expected_status: 200)
+    get "/subscriber-lists", params: params, headers: json_headers
+    expect(response.status).to eq(expected_status)
+  end
 end

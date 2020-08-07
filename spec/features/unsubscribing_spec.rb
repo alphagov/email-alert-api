@@ -31,4 +31,14 @@ RSpec.describe "Unsubscribing from a subscriber_list", type: :request do
     unsubscribe_from_subscriber_list(id, expected_status: 404)
     unsubscribe_from_subscriber_list("missing", expected_status: 404)
   end
+
+  def unsubscribe_from_subscriber_list(id, expected_status: 204)
+    post "/unsubscribe/#{id}"
+    expect(response.status).to eq(expected_status)
+  end
+
+  def extract_unsubscribe_id(email_data)
+    body = email_data.dig(:personalisation, :body)
+    body[%r{/unsubscribe/(.*)\)}, 1]
+  end
 end
