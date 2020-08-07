@@ -1,5 +1,5 @@
 RSpec.describe "bulk" do
-  include RequestHelpers
+  include NotifyRequestHelpers
 
   describe "email" do
     before do
