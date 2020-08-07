@@ -40,12 +40,14 @@ RSpec.describe S3EmailArchiveService do
   it "puts a gzipped object onto S3" do
     time = Time.zone.parse("2018-06-28 00:00:00 BST")
 
-    expect_any_instance_of(Aws::S3::Object).to receive(:put)
-      .with(
-        body: gzipped_match(%r/^{"archived_at_utc":"2018-06-27/),
-        content_encoding: "gzip",
-      ) do |args|
-      end
+    expect_any_instance_of(Aws::S3::Object).to receive(:put) do |**args|
+      decrypted = ActiveSupport::Gzip.decompress(args[:body])
+      regex = %r/^{"archived_at_utc":"2018-06-27/
+
+      expect(decrypted.match(regex)).to be_truthy
+      expect(args[:content_encoding]).to eq "gzip"
+    end
+
     described_class.call(
       [create_record(time: time)],
     )
