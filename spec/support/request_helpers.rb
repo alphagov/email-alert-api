@@ -7,11 +7,6 @@ module RequestHelpers
     stub_request(:post, /fake-notify/).to_return(body: body)
   end
 
-  def check_health_of_the_app
-    get "/healthcheck"
-    expect(response.status).to eq(200)
-  end
-
   def create_subscriber_list(overrides = {})
     params = { title: "Example", tags: {}, links: {} }.merge(overrides)
     post "/subscriber-lists", params: params.to_json, headers: json_headers
