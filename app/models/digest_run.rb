@@ -10,9 +10,6 @@ class DigestRun < ApplicationRecord
 
   enum range: { daily: 0, weekly: 1 }
 
-  # TEMPORARY (to remove once this column is dropped)
-  self.ignored_columns = %w[subscriber_count]
-
   def mark_complete!
     completed_at = digest_run_subscribers.maximum(:completed_at) || Time.zone.now
     update!(completed_at: completed_at)
