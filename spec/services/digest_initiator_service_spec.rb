@@ -53,11 +53,6 @@ RSpec.describe DigestInitiatorService do
 
           described_class.call(range: range)
         end
-
-        it "sets the digest_run_subscriber_count" do
-          described_class.call(range: range)
-          expect(DigestRun.last.subscriber_count).to eq(2)
-        end
       end
 
       it "records a metric for the delivery attempt" do
