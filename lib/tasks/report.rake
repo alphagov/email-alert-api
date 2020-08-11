@@ -17,7 +17,7 @@ namespace :report do
 
   desc "Export all subscriptions to Brexit related content"
   task csv_brexit_subscribers: :environment do
-    Reports::BrexitSubscribersReport.call
+    Reports::BrexitSubscribersReport.new.call
   end
 
   desc "Temporary report for subscribers taking action after being switched to daily digest"
@@ -37,6 +37,6 @@ namespace :report do
     rescue ArgumentError
       puts 'Invalid date. Please use "yyyy-mm-dd"'
     end
-    Reports::BrexitSubscribersReport.call(args[:date])
+    Reports::BrexitSubscribersReport.new(args[:date]).call
   end
 end

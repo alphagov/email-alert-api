@@ -4,16 +4,18 @@ class Reports::BrexitSubscribersReport
   CSV_HEADERS = %w[title slug tags subscribed unsubscribed immediately daily weekly].freeze
   attr_reader :date
 
-  def self.call(*args)
-    new(args).export_csv
+  def call
+    export_csv
   end
+
+private
 
   def initialize(date = nil)
     @date = date
   end
 
   def parsed_date
-    unless date.empty?
+    unless date.nil?
       @parsed_date ||= Date.parse(date.to_s)
     end
   end
@@ -34,31 +36,19 @@ class Reports::BrexitSubscribersReport
     subscriptions.any?
   end
 
-  def report_for_list(list, csv)
-    csv << [list.title, list.slug, list.tags, list.subscriptions.active.count, list.subscriptions.ended.count, list.subscriptions.active.immediately.count, list.subscriptions.active.daily.count, list.subscriptions.active.weekly.count]
-  end
-
-  def file_name
-    date_identifier = `date +%d%m%y_%H%M%S`.chomp
-    prefix =
-      date.empty? ? "brexit_report" : "brexit_report_subs_before_#{parsed_date}"
-    "/tmp/#{prefix}_#{date_identifier}.csv"
+  def row_data(list)
+    active = list.subscriptions.active
+    inactive = list.subscriptions.ended
+    [list.title, list.slug, list.tags, active.count, inactive.count, active.immediately.count, active.daily.count, active.weekly.count]
   end
 
   def export_csv
-    puts "building csv..."
-    csv = build_csv
-    puts "finished building"
-    File.write(file_name, csv)
-    puts "Done! It's in #{file_name}"
-  end
-
-  def build_csv
     subscriber_lists =
-      date.empty? ? brexit_lists : brexit_lists_before_date
-    CSV.generate do |csv|
-      csv << CSV_HEADERS
-      subscriber_lists.each { |list| report_for_list(list, csv) }
+      date.nil? ? brexit_lists : brexit_lists_before_date
+    CSV($stdout, headers: CSV_HEADERS, write_headers: true) do |csv|
+      subscriber_lists.each do |list|
+        csv << row_data(list)
+      end
     end
   end
 end

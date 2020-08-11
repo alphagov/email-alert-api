@@ -23,4 +23,18 @@ RSpec.describe "report" do
         .to output.to_stdout
     end
   end
+
+  describe "csv_brexit_subscribers" do
+    it "outputs a report of subscriptions to brexit lists" do
+      expect { Rake::Task["report:csv_brexit_subscribers"].invoke }
+        .to output.to_stdout
+    end
+  end
+
+  describe "csv_brexit_subscribers_on_or_before" do
+    it "outputs a report of subscriptions to brexit lists" do
+      expect { Rake::Task["report:csv_brexit_subscribers_on_or_before"].invoke("2020-12-07") }
+        .to output.to_stdout
+    end
+  end
 end

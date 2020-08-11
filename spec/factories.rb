@@ -155,6 +155,10 @@ FactoryBot.define do
       tags { { format: %w[medical_safety_alert], alert_type: %w[devices drugs field-safety-notices company-led-drugs] } }
     end
 
+    trait :brexit do
+      tags { { brexit_checklist_criteria: { any: %w[visiting-eu] } } }
+    end
+
     factory :subscriber_list_with_subscribers do
       transient do
         subscriber_count { 5 }
