@@ -12,18 +12,6 @@ namespace :troubleshoot do
     end
   end
 
-  desc "Send a test email to a subscriber by id"
-  task :deliver_to_subscriber, [:id] => :environment do |_t, args|
-    subscriber = Subscriber.find(args[:id])
-    email = Email.create!(
-      address: subscriber.address,
-      subject: "Test email",
-      body: "This is a test email.",
-      subscriber_id: subscriber.id,
-    )
-    DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_immediate)
-  end
-
   desc "Send a test email to an email address"
   task :deliver_to_test_email, [:test_email_address] => :environment do |_t, args|
     email = Email.create!(

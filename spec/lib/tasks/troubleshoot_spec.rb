@@ -6,16 +6,6 @@ RSpec.describe "troubleshoot" do
     end
   end
 
-  describe "deliver_to_subscriber" do
-    it "queues a test email to a specified subscriber" do
-      subscriber = create :subscriber
-      expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
-
-      expect { Rake::Task["troubleshoot:deliver_to_subscriber"].invoke(subscriber.id.to_s) }
-        .to change { Email.count }.by 1
-    end
-  end
-
   describe "deliver_to_test_email" do
     it "queues a test email to a test email address" do
       expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
