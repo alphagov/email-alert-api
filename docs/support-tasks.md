@@ -81,29 +81,6 @@ $ bundle exec rake manage:unsubscribe_all_subscriptions[<email_address>]
 
 [unsub]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:unsubscribe_all_subscriptions[email@example.org]
 
-## Unsubscribe a list of subscribers from all emails in bulk
-
-> **Note**
->
-> The CSV file should contain email addresses in the first column. All other data will be ignored.
-
-```shell
-$ bundle exec rake manage:unsubscribe_bulk_from_csv[<path to CSV file>]
-```
-
-## Manually unsubscribe subscribers
-
-This task unsubscribes subscribers from everything they have subscribed to.
-
-To unsubscribe a set of subscribers in bulk from a CSV file:
-
-```bash
-$ bundle exec rake manage:unsubscribe_bulk_from_csv[<path_to_csv_file>]
-```
-
-The CSV file should have email addresses in the first column. All
-other columns will be ignored.
-
 ## Move all subscribers from one list to another
 
 This is useful for changes such as departmental name changes, where new lists are created but subscribers should continue to receive emails.

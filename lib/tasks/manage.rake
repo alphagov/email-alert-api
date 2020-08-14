@@ -126,14 +126,6 @@ namespace :manage do
     end
   end
 
-  desc "Unsubscribe a list of subscribers (from a CSV file) from all subscriptions"
-  task :unsubscribe_bulk_from_csv, [:csv_file_path] => :environment do |_t, args|
-    email_addresses = CSV.read(args[:csv_file_path])
-    email_addresses.each do |email_address|
-      Rake::Task["manage:unsubscribe_single"].invoke(email_address[0])
-    end
-  end
-
   desc "Move all subscribers from one subscriber list to another"
   task :move_all_subscribers, %i[from_slug to_slug] => :environment do |_t, args|
     if ENV["SEND_EMAIL"]
