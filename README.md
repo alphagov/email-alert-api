@@ -64,7 +64,6 @@ bundle exec spring rspec
 - [Queues](docs/queues.md)
 - [Support tasks](docs/support-tasks.md)
 - [ENV vars](docs/env-vars.md)
-- [Troubleshooting](docs/troubleshooting.md)
 
 ## Licence
 
