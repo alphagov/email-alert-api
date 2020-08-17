@@ -12,13 +12,13 @@ class ProcessContentChangeWorker
 
   def perform(content_change_id)
     content_change = ContentChange.find(content_change_id)
-    return if content_change.processed?
+    return if content_change.processed_at
 
     MatchedContentChangeGenerationService.call(content_change)
     ImmediateEmailGenerationService.call(content_change)
 
     queue_courtesy_email(content_change)
-    content_change.mark_processed!
+    content_change.update!(processed_at: Time.zone.now)
   end
 
 private

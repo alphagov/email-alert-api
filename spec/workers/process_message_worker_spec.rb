@@ -43,9 +43,11 @@ RSpec.describe ProcessMessageWorker do
     end
 
     it "marks a message as processed" do
-      expect { described_class.new.perform(message.id) }
-        .to change { message.reload.processed? }
-        .to(true)
+      freeze_time do
+        expect { described_class.new.perform(message.id) }
+          .to change { message.reload.processed_at }
+          .to(Time.zone.now)
+      end
     end
 
     it "does nothing if the message is already processed" do

@@ -23,14 +23,6 @@ class Message < ApplicationRecord
 
   scope :unprocessed, -> { where(processed_at: nil) }
 
-  def mark_processed!
-    update!(processed_at: Time.zone.now)
-  end
-
-  def processed?
-    processed_at.present?
-  end
-
   def queue
     :delivery_immediate
   end

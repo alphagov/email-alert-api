@@ -74,16 +74,4 @@ RSpec.describe Message do
       expect(message).not_to be_valid
     end
   end
-
-  describe "#mark_processed!" do
-    it "sets processed_at" do
-      freeze_time do
-        message = create(:message)
-        expect { message.mark_processed! }
-          .to change(message, :processed_at)
-          .from(nil)
-          .to(Time.zone.now)
-      end
-    end
-  end
 end

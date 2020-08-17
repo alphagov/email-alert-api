@@ -42,9 +42,11 @@ RSpec.describe ProcessContentChangeWorker do
     end
 
     it "marks a content change as processed" do
-      expect { described_class.new.perform(content_change.id) }
-        .to change { content_change.reload.processed? }
-        .to(true)
+      freeze_time do
+        expect { described_class.new.perform(content_change.id) }
+          .to change { content_change.reload.processed_at }
+          .to(Time.zone.now)
+      end
     end
 
     it "does nothing if the content change is already processed" do
