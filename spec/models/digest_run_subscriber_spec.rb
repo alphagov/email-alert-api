@@ -67,14 +67,4 @@ RSpec.describe DigestRunSubscriber do
       expect(described_class.incomplete_for_run(1).count).to eq(0)
     end
   end
-
-  describe "#mark_complete!" do
-    it "sets completed_at to Time.now" do
-      freeze_time do
-        digest_run_subscriber = create(:digest_run_subscriber)
-        digest_run_subscriber.mark_complete!
-        expect(digest_run_subscriber.completed_at).to eq(Time.zone.now)
-      end
-    end
-  end
 end

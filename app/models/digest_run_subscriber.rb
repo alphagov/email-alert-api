@@ -20,12 +20,4 @@ class DigestRunSubscriber < ApplicationRecord
 
     insert_all!(records).pluck("id")
   end
-
-  def mark_complete!
-    update!(completed_at: Time.zone.now)
-  end
-
-  def completed?
-    completed_at.present?
-  end
 end
