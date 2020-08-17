@@ -16,6 +16,8 @@ class DigestInitiatorService < ApplicationService
         enqueue_jobs(digest_run_subscriber_ids)
       end
     end
+
+    digest_run.update!(processed_at: Time.zone.now)
   end
 
 private

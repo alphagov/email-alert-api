@@ -10,6 +10,12 @@ RSpec.describe DigestInitiatorService do
           expect { described_class.call(range: range) }
             .to change { DigestRun.daily.count }.from(0).to(1)
         end
+
+        it "marks the digest run as processed" do
+          described_class.call(range: range)
+          digest_run = DigestRun.last
+          expect(digest_run.processed_at).to eq(Time.zone.now)
+        end
       end
 
       context "when a DigestRun already exists" do
