@@ -119,55 +119,29 @@ RSpec.describe DigestRun do
     end
   end
 
-  describe "#mark_complete!" do
-    context "with complete subscribers" do
-      it "sets completed_at to the most recent subscriber completed_at" do
+  describe "#mark_as_completed" do
+    let(:digest_run) { create(:digest_run) }
+
+    context "when there are digest_run_subscribers" do
+      let(:digest_run_subscriber) do
+        create(:digest_run_subscriber, digest_run_id: digest_run.id, completed_at: Time.zone.now)
+      end
+
+      it "marks the digest run as completed based on the digest run subscriber time" do
+        expect { digest_run.mark_as_completed }
+          .to change { digest_run.completed_at }
+          .to(digest_run_subscriber.reload.completed_at)
+      end
+    end
+
+    context "when there aren't digest_run_subscribers" do
+      it "marks the digest run as completed based on the current time" do
         freeze_time do
-          digest_run = create(:digest_run)
-          create(:digest_run_subscriber, digest_run: digest_run, completed_at: Time.mktime(2018, 1, 1, 10))
-          create(:digest_run_subscriber, digest_run: digest_run, completed_at: Time.mktime(2018, 1, 1, 9))
-          digest_run.mark_complete!
-          digest_run.reload
-          expect(digest_run.completed_at).to eq Time.mktime(2018, 1, 1, 10)
+          expect { digest_run.mark_as_completed }
+            .to change { digest_run.completed_at }
+            .to(Time.zone.now)
         end
       end
-    end
-
-    context "with no subscribers" do
-      it "sets completed_at to the current time" do
-        freeze_time do
-          digest_run = create(:digest_run)
-          digest_run.mark_complete!
-          digest_run.reload
-          expect(digest_run.completed_at).to eq Time.zone.now
-        end
-      end
-    end
-  end
-
-  describe ".check_and_mark_complete!" do
-    let(:subject) { create(:digest_run) }
-
-    context "incomplete digest_run_subscribers" do
-      before do
-        create(:digest_run_subscriber, digest_run_id: subject.id)
-      end
-
-      it "marks the digest run complete" do
-        subject.check_and_mark_complete!
-        expect(subject.completed_at).to be_nil
-      end
-    end
-
-    context "no incomplete digest_run_subscribers" do
-      before do
-        create(:digest_run_subscriber, digest_run_id: subject.id, completed_at: Time.zone.now)
-      end
-    end
-
-    it "marks the digest run complete" do
-      subject.check_and_mark_complete!
-      expect(subject.completed_at).not_to be_nil
     end
   end
 end

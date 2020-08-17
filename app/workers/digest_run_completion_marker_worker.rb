@@ -1,7 +1,11 @@
 class DigestRunCompletionMarkerWorker
   include Sidekiq::Worker
 
-  def perform(*_ignore)
-    DigestRun.incomplete.each(&:check_and_mark_complete!)
+  def perform
+    DigestRun.incomplete.find_each do |digest_run|
+      unless DigestRunSubscriber.incomplete_for_run(digest_run.id).exists?
+        digest_run.mark_as_completed
+      end
+    end
   end
 end

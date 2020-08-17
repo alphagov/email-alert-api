@@ -10,23 +10,22 @@ RSpec.describe DigestRunCompletionMarkerWorker, type: :worker do
 
       it "doesn't mark the digest run complete" do
         expect { subject.perform }
-          .not_to(change { digest_run.reload.completed? })
+          .not_to(change { digest_run.reload.completed_at })
       end
     end
 
     context "when a digest_run has complete subscribers" do
+      let(:completed_time) { Date.yesterday.midday }
+
       before do
-        create(:digest_run_subscriber, digest_run: digest_run, completed_at: Time.mktime(2018, 1, 1, 10))
-        create(:digest_run_subscriber, digest_run: digest_run, completed_at: Time.mktime(2018, 1, 1, 9))
+        create(:digest_run_subscriber, digest_run: digest_run, completed_at: completed_time)
+        create(:digest_run_subscriber, digest_run: digest_run, completed_at: completed_time)
       end
 
       it "marks the digest run as complete at the most recent subscriber completion time" do
         expect { subject.perform }
-          .to(change { digest_run.reload.completed? }
-            .from(false)
-            .to(true))
-
-        expect(digest_run.completed_at).to eq Time.mktime(2018, 1, 1, 10)
+          .to change { digest_run.reload.completed_at }
+          .to(completed_time)
       end
     end
   end
