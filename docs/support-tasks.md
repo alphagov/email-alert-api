@@ -31,7 +31,7 @@ $ bundle exec rake manage:change_email_address[<old_email_address>, <new_email_a
 
 ## View subscriber's recent emails
 
-This task shows the most recent email delivery attempts made to the given user.
+This task shows the most recent emails for the given user.
 It takes two parameters: `email_address` (required), and `limit` (optional).
 `limit` defaults to 10, but you can override this if you need to see more of
 the user's history.

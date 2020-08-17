@@ -49,7 +49,7 @@ namespace :manage do
     puts hash_to_table(results)
   end
 
-  desc "View most recent email delivery attempts for a subscriber"
+  desc "View most recent email emails for a subscriber"
   task :view_emails, %i[email_address limit] => :environment do |_t, args|
     email_address = args[:email_address]
     limit = args[:limit].to_i || 10
@@ -65,7 +65,6 @@ namespace :manage do
       {
         created_at: email.created_at,
         status: email.status,
-        delivery_attempts: DeliveryAttempt.where(email_id: email.id).count,
         email_subject: email.subject,
         email_uuid: email.id,
         # Confirmation emails have no corresponding subscription at this point. `subscription_slug: nil`
