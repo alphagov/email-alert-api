@@ -22,12 +22,12 @@ should be run using the Jenkins `Run rake task` job for ease-of-use:
 This task changes a subscriber's email address.
 
 ```bash
-$ bundle exec rake manage:change_email_address[<old_email_address>, <new_email_address>]
+$ bundle exec rake support:change_email_address[<old_email_address>, <new_email_address>]
 ```
 
 [⚙ Run rake task on production][change]
 
-[change]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:change_email_address[from@example.org,to@example.org]
+[change]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=support:change_email_address[from@example.org,to@example.org]
 
 ## View subscriber's recent emails
 
@@ -37,24 +37,24 @@ It takes two parameters: `email_address` (required), and `limit` (optional).
 the user's history.
 
 ```bash
-$ bundle exec rake manage:view_emails[<email_address>,<limit>]
+$ bundle exec rake support:view_emails[<email_address>,<limit>]
 ```
 
 [⚙ Run rake task on production][view_emails]
 
-[view_emails]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:view_emails[email@example.org]
+[view_emails]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=support:view_emails[email@example.org]
 
 ## View subscriber's subscriptions
 
 This task shows you all of the active and inactive subscriptions for a given user.
 
 ```bash
-$ bundle exec rake manage:view_subscriptions[<email_address>]
+$ bundle exec rake support:view_subscriptions[<email_address>]
 ```
 
 [⚙ Run rake task on production][view]
 
-[view]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:view_subscriptions[email@example.org]
+[view]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=support:view_subscriptions[email@example.org]
 
 ## Unsubscribe a subscriber from a specific subscription
 
@@ -62,38 +62,24 @@ This task unsubscribes one subscriber from a subscription, given an email addres
 You can find out the slug of the subscriber list by running the `view_subscriptions` rake task. above
 
 ```bash
-$ bundle exec rake manage:unsubscribe_single_subscription[<email_address>,<subscriber_list_slug>]
+$ bundle exec rake support:unsubscribe_single_subscription[<email_address>,<subscriber_list_slug>]
 ```
 
 [⚙ Run rake task on production][unsub_specific]
 
-[unsub_specific]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:unsubscribe_single_subscription[email@example.org,subscriber-list-slug]
+[unsub_specific]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=support:unsubscribe_single_subscription[email@example.org,subscriber-list-slug]
 
 ## Unsubscribe a subscriber from all emails
 
 This task unsubscribes one subscriber from everything they have subscribed to.
 
 ```bash
-$ bundle exec rake manage:unsubscribe_all_subscriptions[<email_address>]
+$ bundle exec rake support:unsubscribe_all_subscriptions[<email_address>]
 ```
 
 [⚙ Run rake task on production][unsub]
 
-[unsub]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:unsubscribe_all_subscriptions[email@example.org]
-
-## Move all subscribers from one list to another
-
-This is useful for changes such as departmental name changes, where new lists are created but subscribers should continue to receive emails.
-
-```bash
-$ bundle exec rake manage:move_all_subscribers[<from_slug>, <to_slug>]
-```
-
-You need to supply the `slug` for the source and destination subscriber lists.
-
-[⚙ Run rake task on production][move]
-
-[move]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=manage:move_all_subscribers[<slug-of-old-list>,<slug-of-new-list>]
+[unsub]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=support:unsubscribe_all_subscriptions[email@example.org]
 
 ## Send a test email
 
@@ -112,7 +98,7 @@ an incident to resend all emails that failed with a technical failure.
 ### Using a date range
 
 ```bash
-bundle exec rake 'troubleshoot:resend_failed_emails:by_date[<from_date>,<to_date>]'
+bundle exec rake 'support:resend_failed_emails:by_date[<from_date>,<to_date>]'
 ```
 
 The date format should be in ISO8601 format, for example `2020-01-01T10:00:00Z`.
@@ -121,7 +107,7 @@ Depending on the number of emails to send, the Rake task can take a few minutes 
 ### Using email IDs
 
 ```bash
-bundle exec rake 'troubleshoot:resend_failed_emails:by_id[<email_one_id>,<email_two_id>]'
+bundle exec rake 'support:resend_failed_emails:by_id[<email_one_id>,<email_two_id>]'
 ```
 
 ## Count subscriptions to a subscriber list
@@ -144,28 +130,3 @@ rake report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
 
 [rake-count-subscribers]: https://deploy.blue.production.govuk.digital//job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers['subscriber-list-slug']
 [rake-count-subscribers-on]: https://deploy.blue.production.govuk.digital//job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
-
-## Query for subscriptions by title
-
-This task will return subscriptions with titles containing the string provided
-(not case sensitive). It is to be used in conjunction with the next rake task as
-part of [renaming a country](https://docs.publishing.service.gov.uk/manual/rename-a-country.html).
-
-```bash
-$ bundle exec rake manage:find_subscriber_list_by_title[<title>]
-```
-
-It will output the number of subscriptions found and the `title` and `slug` for
-each one.
-
-## Update a subscription title
-
-This task updates a subscription's `title`. You need to provide the `slug`,
-`new_title`, and `new_slug`.
-
-```bash
-$ bundle exec rake manage:update_subscriber_list[<slug>,<new_title>,<new_slug>]
-```
-
-If successful it will confirm the change by returning the updated `title` and `slug`
-in the output.

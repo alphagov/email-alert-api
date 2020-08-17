@@ -1,61 +1,19 @@
-RSpec.describe "bulk" do
+RSpec.describe "data_migration" do
   include NotifyRequestHelpers
-
-  describe "email" do
-    before do
-      Rake::Task["bulk:email"].reenable
-    end
-
-    around(:each) do |example|
-      ClimateControl.modify(SUBJECT: "subject", BODY: "body") do
-        example.run
-      end
-    end
-
-    it "builds emails for a subscriber list" do
-      subscriber_list = create(:subscriber_list)
-
-      expect(BulkSubscriberListEmailBuilder)
-        .to receive(:call)
-        .with(subject: "subject",
-              body: "body",
-              subscriber_lists: [subscriber_list])
-        .and_call_original
-
-      Rake::Task["bulk:email"].invoke(subscriber_list.id)
-    end
-
-    it "enqueues the emails for delivery" do
-      subscriber_list = create(:subscriber_list)
-
-      allow(BulkSubscriberListEmailBuilder).to receive(:call)
-        .and_return([1, 2])
-
-      expect(DeliveryRequestWorker)
-        .to receive(:perform_async_in_queue)
-        .with(1, queue: :delivery_immediate)
-
-      expect(DeliveryRequestWorker)
-        .to receive(:perform_async_in_queue)
-        .with(2, queue: :delivery_immediate)
-
-      Rake::Task["bulk:email"].invoke(subscriber_list.id)
-    end
-  end
 
   describe "switch_to_daily_digest" do
     let(:list1) { create :subscriber_list }
     let(:list2) { create :subscriber_list }
 
     before do
-      Rake::Task["bulk:switch_to_daily_digest"].reenable
+      Rake::Task["data_migration:switch_to_daily_digest"].reenable
       stub_notify
     end
 
     it "switches immediate subscriptions to daily" do
       subscription = create :subscription, subscriber_list: list1, frequency: :immediately
 
-      Rake::Task["bulk:switch_to_daily_digest"].invoke(list1.slug, list2.slug)
+      Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug, list2.slug)
       new_subscription = subscription.subscriber.subscriptions.active.first
 
       expect(subscription.reload).to be_ended
@@ -69,7 +27,7 @@ RSpec.describe "bulk" do
       create :subscription, subscriber_list: list1, frequency: :daily
       create :subscription, frequency: :immediately
 
-      expect { Rake::Task["bulk:switch_to_daily_digest"].invoke(list1.slug) }
+      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug) }
         .to raise_error("No subscriptions to change")
     end
 
@@ -78,7 +36,7 @@ RSpec.describe "bulk" do
       create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
       create :subscription, subscriber_list: list2, frequency: :immediately, subscriber: subscriber
 
-      Rake::Task["bulk:switch_to_daily_digest"].invoke(list1.slug, list2.slug)
+      Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug, list2.slug)
       email_data = expect_an_email_was_sent
 
       expect(email_data[:email_address]).to eq(subscriber.address)
@@ -89,7 +47,7 @@ RSpec.describe "bulk" do
 
     context "when a list is not found" do
       it "raises an error" do
-        expect { Rake::Task["bulk:switch_to_daily_digest"].invoke(list1.slug, "foo") }
+        expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug, "foo") }
           .to raise_error("One or more lists were not found")
       end
     end
@@ -108,13 +66,13 @@ RSpec.describe "bulk" do
       end
 
       it "only sends an email to switched subscribers" do
-        expect { Rake::Task["bulk:switch_to_daily_digest"].invoke(list1.slug) }
+        expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug) }
           .to output.to_stdout
           .and change { Email.count }.by(1)
       end
 
       it "persists changes for other subscribers" do
-        expect { Rake::Task["bulk:switch_to_daily_digest"].invoke(list1.slug) }
+        expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug) }
           .to output.to_stdout
           .and change { Subscription.count }.by(1)
 

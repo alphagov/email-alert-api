@@ -30,7 +30,7 @@ def hash_to_table(hash)
   table
 end
 
-namespace :manage do
+namespace :support do
   desc "View all subscriptions for a subscriber"
   task :view_subscriptions, [:email_address] => :environment do |_t, args|
     email_address = args[:email_address]
@@ -125,47 +125,52 @@ namespace :manage do
     end
   end
 
-  desc "Move all subscribers from one subscriber list to another"
-  task :move_all_subscribers, %i[from_slug to_slug] => :environment do |_t, args|
-    if ENV["SEND_EMAIL"]
-      args = args.to_hash.merge!(send_email: ENV["SEND_EMAIL"])
-    end
+  desc "Query the Notify API for email(s) by email ID"
+  task :get_notifications_from_notify_by_email_id, [:id] => :environment do |_t, args|
+    delivery_attempts = DeliveryAttempt.where(email_id: args[:id])
 
-    SubscriberListMover.new(**args).call
-  end
-
-  desc "Find subscriber lists by title match"
-  task :find_subscriber_list_by_title, %i[title] => :environment do |_t, args|
-    title = args[:title]
-    subscriber_lists = SubscriberList.where("title ILIKE ?", "%#{title}%")
-
-    raise "Cannot find any subscriber lists with title containing `#{title}`" if subscriber_lists.nil?
-
-    puts "Found #{subscriber_lists.count} subscriber lists containing '#{title}'"
-
-    subscriber_lists.each do |subscriber_list|
-      puts "============================="
-      puts "title: #{subscriber_list.title}"
-      puts "slug: #{subscriber_list.slug}"
-    end
-  end
-
-  desc "Update subscriber list title and slug"
-  task :update_subscriber_list, %i[slug new_title new_slug] => :environment do |_t, args|
-    slug = args[:slug]
-    new_title = args[:new_title]
-    new_slug = args[:new_slug]
-
-    subscriber_list = SubscriberList.find_by(slug: slug)
-    raise "Cannot find subscriber list with #{slug}" if subscriber_list.nil?
-
-    subscriber_list.title = new_title
-    subscriber_list.slug = new_slug
-
-    if subscriber_list.save!
-      puts "Subscriber list updated with title:#{new_title} and slug: #{new_slug}"
+    if delivery_attempts.count.zero?
+      puts "No results returned"
     else
-      puts "Error updating subscriber list with title:#{new_title} and slug: #{new_slug}"
+      delivery_attempts.each do |delivery_attempt|
+        NotificationsFromNotify.call(delivery_attempt.id)
+      end
+    end
+  end
+
+  desc "Send a test email to an email address"
+  task :deliver_to_test_email, [:test_email_address] => :environment do |_t, args|
+    email = Email.create!(
+      address: args[:test_email_address],
+      subject: "Test email",
+      body: "This is a test email.",
+    )
+    DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_immediate)
+  end
+
+  namespace :resend_failed_emails do
+    desc "Re-send failed emails by email ids"
+    task by_id: [:environment] do |_, args|
+      scope = Email.where(id: args.to_a)
+      ids = scope.where(status: :failed).pluck(:id)
+      puts "Resending #{ids.length} emails"
+
+      ids.each do |id|
+        DeliveryRequestWorker.perform_async_in_queue(id, queue: :delivery_immediate_high)
+      end
+    end
+
+    desc "Re-send failed emails by date range"
+    task :by_date, %i[from to] => [:environment] do |_, args|
+      from = Time.iso8601(args.fetch(:from))
+      to = Time.iso8601(args.fetch(:to))
+      scope = Email.where(created_at: from..to)
+      ids = scope.where(status: :failed).pluck(:id)
+      puts "Resending #{ids.length} emails"
+
+      ids.each do |id|
+        DeliveryRequestWorker.perform_async_in_queue(id, queue: :delivery_immediate_high)
+      end
     end
   end
 end
