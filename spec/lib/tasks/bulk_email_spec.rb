@@ -1,7 +1,7 @@
-RSpec.describe "bulk" do
-  describe "email" do
+RSpec.describe "bulk_email" do
+  describe "for_lists" do
     before do
-      Rake::Task["bulk:email"].reenable
+      Rake::Task["bulk_email:for_lists"].reenable
     end
 
     around(:each) do |example|
@@ -20,7 +20,7 @@ RSpec.describe "bulk" do
               subscriber_lists: [subscriber_list])
         .and_call_original
 
-      Rake::Task["bulk:email"].invoke(subscriber_list.id)
+      Rake::Task["bulk_email:for_lists"].invoke(subscriber_list.id)
     end
 
     it "enqueues the emails for delivery" do
@@ -37,7 +37,7 @@ RSpec.describe "bulk" do
         .to receive(:perform_async_in_queue)
         .with(2, queue: :delivery_immediate)
 
-      Rake::Task["bulk:email"].invoke(subscriber_list.id)
+      Rake::Task["bulk_email:for_lists"].invoke(subscriber_list.id)
     end
   end
 end

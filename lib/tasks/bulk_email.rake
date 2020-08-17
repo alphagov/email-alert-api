@@ -1,6 +1,6 @@
-namespace :bulk do
+namespace :bulk_email do
   desc "Send a bulk email to many subscriber lists"
-  task :email, [] => :environment do |_t, args|
+  task :for_lists, [] => :environment do |_t, args|
     email_ids = BulkSubscriberListEmailBuilder.call(
       subject: ENV.fetch("SUBJECT"),
       body: ENV.fetch("BODY"),
