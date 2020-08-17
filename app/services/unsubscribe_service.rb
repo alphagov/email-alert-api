@@ -14,7 +14,7 @@ class UnsubscribeService < ApplicationService
       end
 
       if !subscriber.deactivated? && no_other_subscriptions?(subscriber, subscriptions)
-        subscriber.deactivate!
+        subscriber.deactivate
       end
     end
   end

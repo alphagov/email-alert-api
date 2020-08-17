@@ -9,7 +9,7 @@ class SubscriptionsController < ApplicationController
 
     subscription, email, status = subscriber.with_lock do
       deactivated_subscriber = subscriber.deactivated?
-      subscriber.activate! if deactivated_subscriber
+      subscriber.activate if deactivated_subscriber
 
       existing_subscription = Subscription.active.find_by(
         subscriber: subscriber,

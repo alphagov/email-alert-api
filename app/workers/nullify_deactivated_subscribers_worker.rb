@@ -3,7 +3,7 @@ class NullifyDeactivatedSubscribersWorker
 
   def perform
     run_only_once do
-      subscribers.find_each(&:nullify!)
+      subscribers.find_each(&:nullify)
     end
   end
 

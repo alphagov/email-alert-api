@@ -16,7 +16,7 @@ private
 
   def find_subscriber(address)
     Subscriber.find_by_address!(address).tap do |subscriber|
-      subscriber.activate! if subscriber.deactivated?
+      subscriber.activate if subscriber.deactivated?
     end
   end
 

@@ -47,7 +47,7 @@ class Subscriber < ApplicationRecord
     deactivated_at.nil?
   end
 
-  def activate!
+  def activate
     raise "Cannot activate if nullified." if nullified?
     raise "Already activated." if activated?
 
@@ -58,7 +58,7 @@ class Subscriber < ApplicationRecord
     deactivated_at.present?
   end
 
-  def deactivate!(datetime: nil)
+  def deactivate(datetime: nil)
     raise "Already deactivated." if deactivated?
 
     update!(deactivated_at: datetime || Time.zone.now)
@@ -68,7 +68,7 @@ class Subscriber < ApplicationRecord
     address.nil?
   end
 
-  def nullify!
+  def nullify
     raise "Already nullified." if nullified?
     raise "Must be deactivated first." unless deactivated?
 

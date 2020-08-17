@@ -52,7 +52,7 @@ RSpec.describe "Subscribers auth token", type: :request do
     end
 
     context "when we have a deactivated user" do
-      before { subscriber.deactivate! }
+      before { subscriber.deactivate }
 
       it "re-activates the subscriber" do
         expect { post path, params: params }
