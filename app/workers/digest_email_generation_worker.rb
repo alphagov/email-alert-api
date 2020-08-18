@@ -12,7 +12,7 @@ class DigestEmailGenerationWorker
     )
 
     if subscription_content.empty?
-      digest_run_subscriber.update!(completed_at: Time.zone.now)
+      digest_run_subscriber.update!(processed_at: Time.zone.now)
     else
       create_and_send_email(digest_run_subscriber, subscription_content)
     end
@@ -27,7 +27,7 @@ private
     Metrics.digest_email_generation(digest_run.range) do
       email = nil
       Email.transaction do
-        digest_run_subscriber.update!(completed_at: Time.zone.now)
+        digest_run_subscriber.update!(processed_at: Time.zone.now)
         email = DigestEmailBuilder.call(
           address: subscriber.address,
           subscription_content: subscription_content,

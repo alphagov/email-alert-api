@@ -124,13 +124,13 @@ RSpec.describe DigestRun do
 
     context "when there are digest_run_subscribers" do
       let(:digest_run_subscriber) do
-        create(:digest_run_subscriber, digest_run_id: digest_run.id, completed_at: Time.zone.now)
+        create(:digest_run_subscriber, digest_run_id: digest_run.id, processed_at: Time.zone.now)
       end
 
-      it "marks the digest run as completed based on the digest run subscriber time" do
+      it "marks the digest run as completed based on the digest run subscriber proceesed time" do
         expect { digest_run.mark_as_completed }
           .to change { digest_run.completed_at }
-          .to(digest_run_subscriber.reload.completed_at)
+          .to(digest_run_subscriber.reload.processed_at)
       end
     end
 
