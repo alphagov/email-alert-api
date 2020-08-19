@@ -16,7 +16,7 @@ class SubscriberDeactivationWorker
                          .pluck(:ended_at)
                          .last
 
-      subscriber.deactivate!(datetime: deactivated_at)
+      subscriber.deactivate(datetime: deactivated_at)
     end
   end
 end

@@ -12,13 +12,13 @@ class ProcessMessageWorker
 
   def perform(message_id)
     message = Message.find(message_id)
-    return if message.processed?
+    return if message.processed_at
 
     MatchedMessageGenerationService.call(message)
     ImmediateEmailGenerationService.call(message)
 
     queue_courtesy_email(message)
-    message.mark_processed!
+    message.update!(processed_at: Time.zone.now)
   end
 
 private

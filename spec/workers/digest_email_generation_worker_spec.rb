@@ -73,9 +73,11 @@ RSpec.describe DigestEmailGenerationWorker do
     end
 
     it "marks the DigestRunSubscriber completed" do
-      expect { subject.perform(digest_run_subscriber.id) }
-        .to change { digest_run_subscriber.reload.completed? }
-        .to(true)
+      freeze_time do
+        expect { subject.perform(digest_run_subscriber.id) }
+          .to change { digest_run_subscriber.reload.completed_at }
+          .to(Time.zone.now)
+      end
     end
 
     it "creates SubscriptionContents" do
@@ -86,7 +88,7 @@ RSpec.describe DigestEmailGenerationWorker do
 
     it "doesn't mark the digest run complete" do
       expect { subject.perform(digest_run_subscriber.id) }
-        .not_to(change { digest_run.reload.completed? })
+        .not_to(change { digest_run.reload.completed_at })
     end
 
     context "when there are no content changes to send" do
@@ -98,9 +100,11 @@ RSpec.describe DigestEmailGenerationWorker do
       end
 
       it "marks the digest run subscriber completed" do
-        expect { subject.perform(digest_run_subscriber.id) }
-          .to change { digest_run_subscriber.reload.completed? }
-          .to(true)
+        freeze_time do
+          expect { subject.perform(digest_run_subscriber.id) }
+            .to change { digest_run_subscriber.reload.completed_at }
+            .to(Time.zone.now)
+        end
       end
     end
   end

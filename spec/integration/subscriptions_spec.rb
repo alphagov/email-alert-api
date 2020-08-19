@@ -87,9 +87,8 @@ RSpec.describe "Subscriptions", type: :request do
         end
 
         context "with a deactivated subscriber" do
-          before do
-            subscriber.deactivate!
-          end
+          before { subscriber.deactivate }
+
           it "sends a confirmation email" do
             stub_notify
             create_subscription

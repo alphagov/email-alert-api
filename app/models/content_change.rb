@@ -20,14 +20,6 @@ class ContentChange < ApplicationRecord
 
   scope :unprocessed, -> { where(processed_at: nil) }
 
-  def mark_processed!
-    update!(processed_at: Time.zone.now)
-  end
-
-  def processed?
-    processed_at.present?
-  end
-
   def queue
     priority == "high" ? :delivery_immediate_high : :delivery_immediate
   end

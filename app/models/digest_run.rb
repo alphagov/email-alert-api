@@ -10,17 +10,9 @@ class DigestRun < ApplicationRecord
 
   enum range: { daily: 0, weekly: 1 }
 
-  def mark_complete!
-    completed_at = digest_run_subscribers.maximum(:completed_at) || Time.zone.now
-    update!(completed_at: completed_at)
-  end
-
-  def check_and_mark_complete!
-    mark_complete! unless has_incomplete_subscribers?
-  end
-
-  def completed?
-    completed_at.present?
+  def mark_as_completed
+    completed_time = digest_run_subscribers.maximum(:completed_at) || Time.zone.now
+    update!(completed_at: completed_time)
   end
 
 private
@@ -56,9 +48,5 @@ private
 
   def digest_range_hour
     ENV.fetch("DIGEST_RANGE_HOUR", 8).to_i
-  end
-
-  def has_incomplete_subscribers?
-    digest_run_subscribers.incomplete_for_run(id).exists?
   end
 end

@@ -29,7 +29,7 @@ RSpec.describe Subscriber, type: :model do
     end
 
     it "is valid for a nil email address when deactivated" do
-      subject.deactivate!
+      subject.deactivate
       subject.address = nil
       expect(subject).to be_valid
     end
@@ -108,8 +108,8 @@ RSpec.describe Subscriber, type: :model do
     it "is valid to have more than one nullified subscriber" do
       create(:subscriber, :nullified)
 
-      subject.deactivate!
-      subject.nullify!
+      subject.deactivate
+      subject.nullify
       expect(subject).to be_valid
     end
   end
@@ -242,12 +242,12 @@ RSpec.describe Subscriber, type: :model do
       expect(subscriber.ended_subscriptions.count).to eq 1
     end
   end
-  describe "#activate!" do
+  describe "#activate" do
     context "when activated" do
       subject(:subscriber) { create(:subscriber, :activated) }
 
       it "refuses to activate again" do
-        expect { subscriber.activate! }.to raise_error(/Already activated/)
+        expect { subscriber.activate }.to raise_error(/Already activated/)
       end
     end
 
@@ -257,7 +257,7 @@ RSpec.describe Subscriber, type: :model do
       subject(:subscriber) { create(:subscriber, :deactivated, deactivated_at: deactivated_at) }
 
       it "activates the subscriber" do
-        expect { subscriber.activate! }
+        expect { subscriber.activate }
           .to change { subscriber.reload.deactivated_at }
           .from(deactivated_at)
           .to(nil)
@@ -266,12 +266,12 @@ RSpec.describe Subscriber, type: :model do
       end
 
       it "appears in the activated scope" do
-        subscriber.activate!
+        subscriber.activate
         expect(Subscriber.activated.count).to eq(1)
       end
 
       it "doesn't appear in the deactivated scope" do
-        subscriber.activate!
+        subscriber.activate
         expect(Subscriber.deactivated.count).to eq(0)
       end
     end
@@ -280,18 +280,18 @@ RSpec.describe Subscriber, type: :model do
       subject(:subscriber) { create(:subscriber, :nullified) }
 
       it "refuses to activate" do
-        expect { subscriber.activate! }.to raise_error(/Cannot activate/)
+        expect { subscriber.activate }.to raise_error(/Cannot activate/)
       end
     end
   end
 
-  describe "#deactivate!" do
+  describe "#deactivate" do
     context "when activated" do
       subject(:subscriber) { create(:subscriber, :activated) }
 
       it "deactivates the subscriber" do
         freeze_time do
-          expect { subscriber.deactivate! }
+          expect { subscriber.deactivate }
             .to change { subscriber.reload.deactivated_at }
             .from(nil)
             .to(Time.zone.now)
@@ -301,12 +301,12 @@ RSpec.describe Subscriber, type: :model do
       end
 
       it "appears in the deactivated scope" do
-        subscriber.deactivate!
+        subscriber.deactivate
         expect(Subscriber.deactivated.count).to eq(1)
       end
 
       it "doesn't appear in the activated scope" do
-        subscriber.deactivate!
+        subscriber.deactivate
         expect(Subscriber.activated.count).to eq(0)
       end
     end
@@ -315,16 +315,16 @@ RSpec.describe Subscriber, type: :model do
       subject(:subscriber) { create(:subscriber, :deactivated) }
 
       it "refuses to deactivate" do
-        expect { subscriber.deactivate! }.to raise_error(/Already deactivated/)
+        expect { subscriber.deactivate }.to raise_error(/Already deactivated/)
       end
     end
   end
 
-  describe "#nullify!" do
+  describe "#nullify" do
     subject(:subscriber) { create(:subscriber, :deactivated, address: "foo@bar.com") }
 
     it "sets the address to nil and saves the record" do
-      expect { subscriber.nullify! }
+      expect { subscriber.nullify }
         .to change { subscriber.reload.address }
         .from("foo@bar.com")
         .to(nil)
@@ -333,20 +333,20 @@ RSpec.describe Subscriber, type: :model do
     end
 
     it "appears in the nullified scope" do
-      subscriber.nullify!
+      subscriber.nullify
       expect(Subscriber.nullified.count).to eq(1)
     end
 
     it "doesn't appear in the activated scope" do
-      subscriber.nullify!
+      subscriber.nullify
       expect(Subscriber.activated.count).to eq(0)
     end
 
     context "already nullified" do
       it "refuses to nullify again" do
-        subscriber.nullify!
+        subscriber.nullify
 
-        expect { subscriber.nullify! }.to raise_error(/Already nullified/)
+        expect { subscriber.nullify }.to raise_error(/Already nullified/)
       end
     end
   end
