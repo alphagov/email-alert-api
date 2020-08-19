@@ -3,7 +3,7 @@ class DigestRunCompletionMarkerWorker
 
   def perform
     DigestRun.incomplete.find_each do |digest_run|
-      unless DigestRunSubscriber.incomplete_for_run(digest_run.id).exists?
+      unless DigestRunSubscriber.unprocessed_for_run(digest_run.id).exists?
         digest_run.mark_as_completed
       end
     end

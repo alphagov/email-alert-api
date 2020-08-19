@@ -72,10 +72,10 @@ RSpec.describe DigestEmailGenerationWorker do
       subject.perform(digest_run_subscriber.id)
     end
 
-    it "marks the DigestRunSubscriber completed" do
+    it "marks the DigestRunSubscriber as processed" do
       freeze_time do
         expect { subject.perform(digest_run_subscriber.id) }
-          .to change { digest_run_subscriber.reload.completed_at }
+          .to change { digest_run_subscriber.reload.processed_at }
           .to(Time.zone.now)
       end
     end
@@ -86,7 +86,7 @@ RSpec.describe DigestEmailGenerationWorker do
         .by(2)
     end
 
-    it "doesn't mark the digest run complete" do
+    it "doesn't mark the digest run as processed" do
       expect { subject.perform(digest_run_subscriber.id) }
         .not_to(change { digest_run.reload.completed_at })
     end
@@ -99,10 +99,10 @@ RSpec.describe DigestEmailGenerationWorker do
           .to_not change(Email, :count)
       end
 
-      it "marks the digest run subscriber completed" do
+      it "marks the digest run subscriber as processed" do
         freeze_time do
           expect { subject.perform(digest_run_subscriber.id) }
-            .to change { digest_run_subscriber.reload.completed_at }
+            .to change { digest_run_subscriber.reload.processed_at }
             .to(Time.zone.now)
         end
       end

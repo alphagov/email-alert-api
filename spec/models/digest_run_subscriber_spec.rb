@@ -33,27 +33,27 @@ RSpec.describe DigestRunSubscriber do
     end
   end
 
-  describe ".incomplete_for_run" do
-    it "returns records with the supplied digest_run_id that have completed_at nil" do
+  describe ".unprocessed_for_run" do
+    it "returns records with the supplied digest_run_id that have processed_at of nil" do
       create(:digest_run, id: 1)
       digest_run_subscriber = create(
         :digest_run_subscriber,
         digest_run_id: 1,
-        completed_at: nil,
+        processed_at: nil,
       )
 
-      expect(described_class.incomplete_for_run(1).first).to eq(digest_run_subscriber)
+      expect(described_class.unprocessed_for_run(1).first).to eq(digest_run_subscriber)
     end
 
-    it "doesn't return completed_records" do
+    it "doesn't return processed items" do
       create(:digest_run, id: 1)
       create(
         :digest_run_subscriber,
         digest_run_id: 1,
-        completed_at: Time.zone.now,
+        processed_at: Time.zone.now,
       )
 
-      expect(described_class.incomplete_for_run(1).count).to eq(0)
+      expect(described_class.unprocessed_for_run(1).count).to eq(0)
     end
 
     it "doesn't return records from other runs" do
@@ -61,10 +61,10 @@ RSpec.describe DigestRunSubscriber do
       create(
         :digest_run_subscriber,
         digest_run_id: 2,
-        completed_at: nil,
+        processed_at: nil,
       )
 
-      expect(described_class.incomplete_for_run(1).count).to eq(0)
+      expect(described_class.unprocessed_for_run(1).count).to eq(0)
     end
   end
 end
