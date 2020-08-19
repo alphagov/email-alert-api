@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 2020_08_18_150135) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "processed_at"
     t.index ["completed_at"], name: "index_digest_runs_on_completed_at"
     t.index ["created_at"], name: "index_digest_runs_on_created_at"
   end
