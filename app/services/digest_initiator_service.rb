@@ -37,7 +37,7 @@ private
   end
 
   def enqueue_jobs(digest_run_subscriber_ids)
-    Array(digest_run_subscriber_ids).each do |digest_run_subscriber_id|
+    digest_run_subscriber_ids.each do |digest_run_subscriber_id|
       DigestEmailGenerationWorker.perform_async(digest_run_subscriber_id)
     end
   end
