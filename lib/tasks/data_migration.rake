@@ -36,43 +36,8 @@ namespace :data_migration do
 
   desc "Switch immediate subscribers of the following lists to daily digest (experiment)"
   task switch_to_daily_digest_experiment: :environment do
-    Rake::Task["bulk:switch_to_daily_digest"].invoke(
-      "news-and-communications-2",
-      "guidance-and-regulation-2",
-      "guidance-and-regulation",
-      "guidance-about-all-topics-by-all-organisations",
-      "news-and-communications-3",
-      "news-and-communications",
-      "all-announcements-about-all-topics-by-all-organisations",
-      "business-and-industry",
-      "crime-justice-and-law",
-      "statistics",
-      "government-efficiency-transparency-and-accountability-2",
-      "press-releases-about-all-topics-by-all-organisations",
-      "environment-agency",
-      "corporate-information",
-      "all-types-of-document-about-all-topics-by-department-for-environment-food-rural-affairs",
-      "department-for-environment-food-rural-affairs",
-      "hm-revenue-customs",
-      "animal-and-plant-health-agency",
-      "ministry-of-defence",
-      "car-driving-tests",
-      "car-motorcycle-and-van-mot-tests",
-      "business-tax-self-employment",
-      "driving-and-motorcycle-tests",
-      "ofsted",
-      "rail-accident-investigation-branch",
-      "correspondence-related-to-education-and-education-and-skills-funding-agency-2",
-      "news-stories-about-all-topics-by-department-of-health-and-social-care",
-      "department-for-education",
-      "international-development-funding",
-      "the-charity-commission",
-      "theory-tests",
-      "standards-and-testing-agency",
-      "personal-tax-self-assessment",
-      "planning-and-development-planning-officer-guidance",
-      "civil-service-fast-track-apprenticeship",
-      "further-education-and-skills-apprenticeships",
+    Rake::Task["data_migration:switch_to_daily_digest"].invoke(
+      *File.read(Rails.root.join("config/experiment_2_slugs.txt")).split("\n"),
     )
   end
 

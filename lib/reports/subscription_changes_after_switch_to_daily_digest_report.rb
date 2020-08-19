@@ -1,6 +1,13 @@
 class Reports::SubscriptionChangesAfterSwitchToDailyDigestReport
   def self.call
-    updated_subscriptions = Subscription.where(source: 4).where.not(ended_at: nil)
+    experiment_2_list_ids = SubscriberList.where(
+      slug: File.read(Rails.root.join("config/experiment_2_slugs.txt")).split("\n"),
+    ).pluck(:id)
+
+    updated_subscriptions = Subscription
+      .where(source: :bulk_immediate_to_digest)
+      .where(subscriber_list_id: experiment_2_list_ids)
+      .where.not(ended_at: nil)
 
     newer_subscriptions = updated_subscriptions.all.flat_map do |s|
       Subscription
