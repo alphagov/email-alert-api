@@ -35,9 +35,9 @@ private
 
       We’ve not changed how often you get emails for any other GOV.UK subscriptions you may have. We’ve only changed the subscriptions listed in this email.
 
-      # If you want to go back to immediate emails
+      # If you want to go back to individual emails
 
-      You can go back to getting immediate updates about these topics by [managing your subscriptions](#{manage_subscriptions_link}).
+      You can go back to getting individual updates about these topics by [managing your subscriptions](#{manage_subscriptions_link}).
     BODY
   end
 
