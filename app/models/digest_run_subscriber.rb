@@ -18,7 +18,7 @@ class DigestRunSubscriber < ApplicationRecord
       }
     end
 
-    insert_all!(records).pluck("id")
+    insert_all(records).pluck("id")
   end
 
   def mark_complete!
