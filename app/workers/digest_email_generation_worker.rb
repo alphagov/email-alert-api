@@ -4,40 +4,41 @@ class DigestEmailGenerationWorker
   sidekiq_options queue: :email_generation_digest
 
   def perform(digest_run_subscriber_id)
-    digest_run_subscriber = DigestRunSubscriber.includes(:subscriber, :digest_run)
-                                               .find(digest_run_subscriber_id)
-    subscription_content = DigestSubscriptionContentQuery.call(
-      digest_run_subscriber.subscriber,
-      digest_run_subscriber.digest_run,
-    )
+    email = nil
+    DigestRun.transaction do
+      digest_run_subscriber = DigestRunSubscriber.lock.find(digest_run_subscriber_id)
 
-    if subscription_content.empty?
+      return if digest_run_subscriber.processed_at
+
+      subscription_content = DigestSubscriptionContentQuery.call(
+        digest_run_subscriber.subscriber,
+        digest_run_subscriber.digest_run,
+      )
+
+      email = create_email(digest_run_subscriber, subscription_content)
       digest_run_subscriber.update!(processed_at: Time.zone.now)
-    else
-      create_and_send_email(digest_run_subscriber, subscription_content)
+    end
+
+    if email
+      DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_digest)
     end
   end
 
 private
 
-  def create_and_send_email(digest_run_subscriber, subscription_content)
-    digest_run = digest_run_subscriber.digest_run
-    subscriber = digest_run_subscriber.subscriber
+  def create_email(digest_run_subscriber, subscription_content)
+    return if subscription_content.empty?
 
-    Metrics.digest_email_generation(digest_run.range) do
-      email = nil
-      Email.transaction do
-        digest_run_subscriber.update!(processed_at: Time.zone.now)
-        email = DigestEmailBuilder.call(
-          address: subscriber.address,
-          subscription_content: subscription_content,
-          digest_run: digest_run,
-          subscriber_id: subscriber.id,
-        )
-        fill_subscription_content(email, subscription_content, digest_run_subscriber)
-      end
+    Metrics.digest_email_generation(digest_run_subscriber.digest_run.range) do
+      email = DigestEmailBuilder.call(
+        address: digest_run_subscriber.subscriber.address,
+        subscription_content: subscription_content,
+        digest_run: digest_run_subscriber.digest_run,
+        subscriber_id: digest_run_subscriber.subscriber_id,
+      )
+      fill_subscription_content(email, subscription_content, digest_run_subscriber)
 
-      DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_digest)
+      email
     end
   end
 

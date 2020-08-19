@@ -53,7 +53,15 @@ RSpec.describe DigestEmailGenerationWorker do
         .and_return(subscription_content)
     end
 
-    it "creates an email" do
+    it "delegates creating an email to DigestEmailBuilder" do
+      expect(DigestEmailBuilder)
+        .to receive(:call)
+        .with(address: subscriber.address,
+              subscription_content: instance_of(Array),
+              digest_run: digest_run,
+              subscriber_id: subscriber.id)
+        .and_call_original
+
       expect { subject.perform(digest_run_subscriber.id) }
         .to change { Email.count }.by(1)
     end
@@ -86,9 +94,13 @@ RSpec.describe DigestEmailGenerationWorker do
         .by(2)
     end
 
-    it "doesn't mark the digest run as processed" do
-      expect { subject.perform(digest_run_subscriber.id) }
-        .not_to(change { digest_run.reload.completed_at })
+    context "when the digest run subscriber has already been processed" do
+      before { digest_run_subscriber.update!(processed_at: Time.zone.now) }
+
+      it "doesn't create an email" do
+        expect { subject.perform(digest_run_subscriber.id) }
+          .to_not change(Email, :count)
+      end
     end
 
     context "when there are no content changes to send" do
