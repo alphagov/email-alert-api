@@ -4,9 +4,20 @@ class DigestInitiatorService < ApplicationService
   end
 
   def call
-    digest_run = create_digest_run
-    return if digest_run.nil?
+    run_with_advisory_lock do
+      digest_run = DigestRun.find_or_create_by!(date: Date.current, range: range)
+      return if digest_run.processed_at
 
+      create_digest_run_subscribers(digest_run)
+      digest_run.update!(processed_at: Time.zone.now)
+    end
+  end
+
+private
+
+  attr_reader :range
+
+  def create_digest_run_subscribers(digest_run)
     Metrics.digest_initiator_service(range) do
       subscriber_ids = DigestRunSubscriberQuery.call(digest_run: digest_run).pluck(:id)
 
@@ -15,24 +26,6 @@ class DigestInitiatorService < ApplicationService
 
         enqueue_jobs(digest_run_subscriber_ids)
       end
-    end
-
-    digest_run.update!(processed_at: Time.zone.now)
-  end
-
-private
-
-  attr_reader :range
-
-  def create_digest_run
-    run_with_advisory_lock do
-      digest_run = DigestRun.find_or_initialize_by(
-        date: Date.current, range: range,
-      )
-      return if digest_run.persisted?
-
-      digest_run.save!
-      digest_run
     end
   end
 
@@ -43,12 +36,8 @@ private
   end
 
   def run_with_advisory_lock
-    DigestRun.with_advisory_lock(lock_name, timeout_seconds: 0) do
+    DigestRun.with_advisory_lock("#{range}_digest_initiator", timeout_seconds: 0) do
       yield
     end
-  end
-
-  def lock_name
-    "#{range}_digest_initiator"
   end
 end
