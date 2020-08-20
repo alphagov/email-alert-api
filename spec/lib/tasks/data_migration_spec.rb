@@ -13,7 +13,9 @@ RSpec.describe "data_migration" do
     it "switches immediate subscriptions to daily" do
       subscription = create :subscription, subscriber_list: list1, frequency: :immediately
 
-      Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug, list2.slug)
+      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug, list2.slug) }
+        .to output.to_stdout
+
       new_subscription = subscription.subscriber.subscriptions.active.first
 
       expect(subscription.reload).to be_ended
@@ -36,9 +38,10 @@ RSpec.describe "data_migration" do
       create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
       create :subscription, subscriber_list: list2, frequency: :immediately, subscriber: subscriber
 
-      Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug, list2.slug)
-      email_data = expect_an_email_was_sent
+      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug, list2.slug) }
+        .to output.to_stdout
 
+      email_data = expect_an_email_was_sent
       expect(email_data[:email_address]).to eq(subscriber.address)
       expect(email_data[:personalisation][:subject]).to eq("Your GOV.UK email subscriptions")
       expect(email_data[:personalisation][:body]).to include(list1.title)
@@ -57,11 +60,11 @@ RSpec.describe "data_migration" do
       let!(:subscription2) { create :subscription, subscriber_list: list1, frequency: :immediately }
 
       before do
-        allow(Subscription).to receive(:create!).and_call_original
+        allow(Subscription).to receive(:insert_all!).and_call_original
 
         allow(Subscription)
-          .to receive(:create!)
-          .with(hash_including(subscriber_id: subscription2.subscriber_id))
+          .to receive(:insert_all!)
+          .with(array_including([hash_including(subscriber_id: subscription2.subscriber_id)]))
           .and_raise("An error")
       end
 
