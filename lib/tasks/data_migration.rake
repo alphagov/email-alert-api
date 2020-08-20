@@ -52,13 +52,6 @@ namespace :data_migration do
     end
   end
 
-  desc "Switch immediate subscribers of the following lists to daily digest (experiment)"
-  task switch_to_daily_digest_experiment: :environment do
-    Rake::Task["data_migration:switch_to_daily_digest"].invoke(
-      *File.read(Rails.root.join("config/experiment_2_slugs.txt")).split("\n"),
-    )
-  end
-
   desc "Move all subscribers from one subscriber list to another"
   task :move_all_subscribers, %i[from_slug to_slug] => :environment do |_t, args|
     if ENV["SEND_EMAIL"]
