@@ -28,7 +28,7 @@ RSpec.describe DigestEmailGenerationWorker do
       create(:digest_run_subscriber, digest_run: digest_run, subscriber: subscriber)
     end
 
-    let(:subscription_content) do
+    let(:digest_items) do
       [
         double(
           subscription_id: subscription_one.id,
@@ -48,16 +48,14 @@ RSpec.describe DigestEmailGenerationWorker do
     end
 
     before do
-      allow(DigestSubscriptionContentQuery)
-        .to receive(:call)
-        .and_return(subscription_content)
+      allow(DigestItemsQuery).to receive(:call).and_return(digest_items)
     end
 
     it "delegates creating an email to DigestEmailBuilder" do
       expect(DigestEmailBuilder)
         .to receive(:call)
         .with(address: subscriber.address,
-              subscription_content: instance_of(Array),
+              digest_items: instance_of(Array),
               digest_run: digest_run,
               subscriber_id: subscriber.id)
         .and_call_original
@@ -103,8 +101,8 @@ RSpec.describe DigestEmailGenerationWorker do
       end
     end
 
-    context "when there are no content changes to send" do
-      let(:subscription_content) { [] }
+    context "when there are no digest items to send" do
+      let(:digest_items) { [] }
 
       it "doesn't create an email" do
         expect { subject.perform(digest_run_subscriber.id) }

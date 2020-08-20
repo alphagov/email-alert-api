@@ -1,7 +1,7 @@
 class DigestEmailBuilder
-  def initialize(address:, subscription_content:, digest_run:, subscriber_id:)
+  def initialize(address:, digest_items:, digest_run:, subscriber_id:)
     @address = address
-    @subscription_content = subscription_content
+    @digest_items = digest_items
     @digest_run = digest_run
     @subscriber_id = subscriber_id
   end
@@ -23,7 +23,7 @@ class DigestEmailBuilder
 
 private
 
-  attr_reader :address, :subscription_content, :digest_run, :subscriber_id
+  attr_reader :address, :digest_items, :digest_run, :subscriber_id
 
   def body
     <<~BODY
@@ -39,8 +39,8 @@ private
   end
 
   def presented_results
-    subscription_content.map { |result| presented_segment(result) }
-                        .join("\n&nbsp;\n\n")
+    digest_items.map { |result| presented_segment(result) }
+                .join("\n&nbsp;\n\n")
   end
 
   def presented_segment(segment)

@@ -3,7 +3,7 @@ RSpec.describe DigestEmailBuilder do
   let(:subscriber) { build(:subscriber) }
   let(:address) { subscriber.address }
   let(:subscriber_id) { subscriber.id }
-  let(:subscription_content) do
+  let(:digest_items) do
     [
       double(
         subscription_id: "ABC1",
@@ -31,7 +31,7 @@ RSpec.describe DigestEmailBuilder do
   let(:email) do
     described_class.call(
       address: address,
-      subscription_content: subscription_content,
+      digest_items: digest_items,
       digest_run: digest_run,
       subscriber_id: subscriber_id,
     )

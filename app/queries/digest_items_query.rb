@@ -1,4 +1,4 @@
-class DigestSubscriptionContentQuery
+class DigestItemsQuery
   Result = Struct.new(:subscription_id, :subscriber_list_title, :subscriber_list_url, :subscriber_list_description, :content)
 
   def initialize(subscriber, digest_run)

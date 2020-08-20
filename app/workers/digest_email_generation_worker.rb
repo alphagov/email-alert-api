@@ -10,12 +10,12 @@ class DigestEmailGenerationWorker
 
       return if digest_run_subscriber.processed_at
 
-      subscription_content = DigestSubscriptionContentQuery.call(
+      digest_items = DigestItemsQuery.call(
         digest_run_subscriber.subscriber,
         digest_run_subscriber.digest_run,
       )
 
-      email = create_email(digest_run_subscriber, subscription_content)
+      email = create_email(digest_run_subscriber, digest_items)
       digest_run_subscriber.update!(processed_at: Time.zone.now)
     end
 
@@ -26,25 +26,25 @@ class DigestEmailGenerationWorker
 
 private
 
-  def create_email(digest_run_subscriber, subscription_content)
-    return if subscription_content.empty?
+  def create_email(digest_run_subscriber, digest_items)
+    return if digest_items.empty?
 
     Metrics.digest_email_generation(digest_run_subscriber.digest_run.range) do
       email = DigestEmailBuilder.call(
         address: digest_run_subscriber.subscriber.address,
-        subscription_content: subscription_content,
+        digest_items: digest_items,
         digest_run: digest_run_subscriber.digest_run,
         subscriber_id: digest_run_subscriber.subscriber_id,
       )
-      fill_subscription_content(email, subscription_content, digest_run_subscriber)
+      fill_subscription_content(email, digest_items, digest_run_subscriber)
 
       email
     end
   end
 
-  def fill_subscription_content(email, subscription_content, digest_run_subscriber)
+  def fill_subscription_content(email, digest_items, digest_run_subscriber)
     now = Time.zone.now
-    records = subscription_content.flat_map do |result|
+    records = digest_items.flat_map do |result|
       result.content.map do |content|
         {
           email_id: email.id,
