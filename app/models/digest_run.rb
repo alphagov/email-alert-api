@@ -6,8 +6,6 @@ class DigestRun < ApplicationRecord
   has_many :digest_run_subscribers, dependent: :destroy
   has_many :subscribers, through: :digest_run_subscribers
 
-  scope :incomplete, -> { where(completed_at: nil) }
-
   enum range: { daily: 0, weekly: 1 }
 
   def mark_as_completed

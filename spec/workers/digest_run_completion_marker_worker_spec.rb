@@ -1,20 +1,7 @@
 RSpec.describe DigestRunCompletionMarkerWorker, type: :worker do
   describe "#perform" do
-    let(:digest_run) { create(:digest_run) }
-
-    context "when a digest_run has unprocessed subscribers" do
-      before do
-        create(:digest_run_subscriber, digest_run: digest_run)
-        create(:digest_run_subscriber, digest_run: digest_run, processed_at: Time.zone.now)
-      end
-
-      it "doesn't mark the digest run complete" do
-        expect { subject.perform }
-          .not_to(change { digest_run.reload.completed_at })
-      end
-    end
-
-    context "when a digest_run has processed subscribers" do
+    context "when a digest run is processed and has processed subscribers" do
+      let(:digest_run) { create(:digest_run, processed_at: Time.zone.now) }
       let(:completed_time) { Date.yesterday.midday }
 
       before do
@@ -26,6 +13,27 @@ RSpec.describe DigestRunCompletionMarkerWorker, type: :worker do
         expect { subject.perform }
           .to change { digest_run.reload.completed_at }
           .to(completed_time)
+      end
+    end
+
+    context "when a digest run is processed and has unprocessed subscribers" do
+      let(:digest_run) { create(:digest_run, processed_at: Time.zone.now) }
+
+      before do
+        create(:digest_run_subscriber, digest_run: digest_run)
+        create(:digest_run_subscriber, digest_run: digest_run, processed_at: Time.zone.now)
+      end
+
+      it "doesn't mark the digest run as complete" do
+        expect { subject.perform }.not_to(change { digest_run.reload.completed_at })
+      end
+    end
+
+    context "when a digest run is unprocessed and doesn't have subscribers" do
+      let(:digest_run) { create(:digest_run, processed_at: nil) }
+
+      it "doesn't mark the digest run as complete" do
+        expect { subject.perform }.not_to(change { digest_run.reload.completed_at })
       end
     end
   end
