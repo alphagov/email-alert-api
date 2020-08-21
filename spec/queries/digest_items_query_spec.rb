@@ -1,4 +1,4 @@
-RSpec.describe DigestSubscriptionContentQuery do
+RSpec.describe DigestItemsQuery do
   describe ".call" do
     let(:subscriber) { create(:subscriber) }
     let(:ends_at) { Time.zone.parse("2017-01-02 08:00") }
