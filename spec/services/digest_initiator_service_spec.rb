@@ -7,8 +7,8 @@ RSpec.describe DigestInitiatorService do
       allow(DigestEmailGenerationWorker).to receive(:perform_async)
     end
 
-    context "when a digest run doesn't exist" do
-      it "creates a digest run for the current data with the specified range" do
+    context "when a digest run isn't processed" do
+      it "can create a digest run for the current data with the specified range" do
         expect { described_class.call(range: Frequency::DAILY) }
           .to change { DigestRun.daily.where(date: Date.current).count }
           .by(1)
@@ -38,11 +38,32 @@ RSpec.describe DigestInitiatorService do
         expect(DigestEmailGenerationWorker).to have_received(:perform_async).with(ids[0])
         expect(DigestEmailGenerationWorker).to have_received(:perform_async).with(ids[1])
       end
+
+      it "can resume a partially processed digest run" do
+        digest_run = create(:digest_run,
+                            range: Frequency::DAILY,
+                            date: Date.current)
+        create(:digest_run_subscriber,
+               digest_run: digest_run,
+               subscriber: subscribers.first)
+
+        freeze_time do
+          expect { described_class.call(range: Frequency::DAILY) }
+            .to change { DigestRunSubscriber.exists?(subscriber: subscribers.last) }
+            .to(true)
+            .and change { digest_run.reload.processed_at }
+            .from(nil)
+            .to(Time.zone.now)
+        end
+      end
     end
 
-    context "when a digest run already exists" do
+    context "when the digest run is already processed" do
       it "exits without creating any DigestRunSubscribers" do
-        create(:digest_run, range: Frequency::DAILY, date: Date.current)
+        create(:digest_run,
+               range: Frequency::DAILY,
+               date: Date.current,
+               processed_at: Time.zone.now)
         expect { described_class.call(range: Frequency::DAILY) }
           .not_to(change { DigestRunSubscriber.count })
       end
