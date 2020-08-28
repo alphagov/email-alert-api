@@ -4,7 +4,6 @@ RSpec.describe MetricsCollectionWorker do
       expect(Metrics::ContentChangeExporter).to receive(:call)
       expect(Metrics::DigestRunExporter).to receive(:call)
       expect(Metrics::MessageExporter).to receive(:call)
-      expect(Metrics::StatusUpdateExporter).to receive(:call)
 
       subject.perform
     end
