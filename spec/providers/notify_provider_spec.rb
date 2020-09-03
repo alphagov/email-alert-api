@@ -27,10 +27,10 @@ RSpec.describe NotifyProvider do
       described_class.call(arguments)
     end
 
-    it "returns a sending status for a successful request" do
+    it "returns a sent status for a successful request" do
       stub_request(:post, /fake-notify/).to_return(body: {}.to_json)
       return_value = described_class.call(arguments)
-      expect(return_value).to be(:sending)
+      expect(return_value).to be(:sent)
     end
 
     it "returns a provider_communication_failure status for a Notify RequestError" do

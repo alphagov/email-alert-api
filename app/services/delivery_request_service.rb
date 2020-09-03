@@ -25,13 +25,13 @@ class DeliveryRequestService < ApplicationService
     attempt = Metrics.delivery_request_service_create_delivery_attempt do
       DeliveryAttempt.create!(id: attempt_id,
                               email: email,
-                              status: :sending,
+                              status: :sent,
                               provider: provider_name)
     end
 
     status = Metrics.email_send_request(provider_name) { send_email }
 
-    return attempt if status == :sending
+    return attempt if status == :sent
 
     ActiveRecord::Base.transaction do
       attempt.update!(status: status, completed_at: Time.zone.now)

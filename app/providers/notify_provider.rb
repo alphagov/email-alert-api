@@ -20,7 +20,7 @@ class NotifyProvider
     )
 
     Metrics.sent_to_notify_successfully
-    :sending
+    :sent
   rescue Notifications::Client::RequestError, Net::OpenTimeout => e
     Metrics.failed_to_send_to_notify
 

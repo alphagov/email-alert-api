@@ -17,7 +17,7 @@ RSpec.describe DeliveryRequestService do
                            body: email.body }
       expect(default_provider).to receive(:call)
                               .with(hash_including(email_parameters))
-                              .and_return(:sending)
+                              .and_return(:sent)
       described_class.call(email: email)
     end
 
@@ -26,7 +26,7 @@ RSpec.describe DeliveryRequestService do
         .to receive(:email_service)
         .and_return(email_service_config.merge(provider: "NOTIFY"))
 
-      expect(NotifyProvider).to receive(:call).and_return(:sending)
+      expect(NotifyProvider).to receive(:call).and_return(:sent)
       described_class.call(email: email)
     end
 
@@ -37,7 +37,7 @@ RSpec.describe DeliveryRequestService do
 
       expect(default_provider).to receive(:call)
                               .with(hash_including(subject: "[TEST] #{email.subject}"))
-                              .and_return(:sending)
+                              .and_return(:sent)
       described_class.call(email: email)
     end
 
@@ -49,7 +49,7 @@ RSpec.describe DeliveryRequestService do
 
       expect(default_provider).to receive(:call)
                               .with(hash_including(address: address))
-                              .and_return(:sending)
+                              .and_return(:sent)
       described_class.call(email: email)
     end
 
@@ -112,9 +112,9 @@ RSpec.describe DeliveryRequestService do
       end
     end
 
-    context "when sending the email returns a sending status" do
+    context "when sending the email returns a sent status" do
       it "doesn't update the email status" do
-        allow(default_provider).to receive(:call).and_return(:sending)
+        allow(default_provider).to receive(:call).and_return(:sent)
         expect { described_class.call(email: email) }
           .not_to(change { email.reload.status })
       end

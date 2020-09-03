@@ -81,7 +81,7 @@ RSpec.describe StatusUpdateService do
       end
     end
 
-    context "when the delivery attempt isn't in a sending state" do
+    context "when the delivery attempt isn't in a sent state" do
       let!(:delivery_attempt) do
         create(:delivered_delivery_attempt, id: reference, email: email)
       end
