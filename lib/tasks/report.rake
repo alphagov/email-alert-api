@@ -20,11 +20,6 @@ namespace :report do
     Reports::BrexitSubscribersReport.call
   end
 
-  desc "Temporary report for subscribers taking action after being switched to daily digest"
-  task subscription_changes_after_switch_to_daily_digest: :environment do
-    Reports::SubscriptionChangesAfterSwitchToDailyDigestReport.call
-  end
-
   desc "
   Export all subscriptions to Brexit related content that were subscribed to before the given date.
   Usage
