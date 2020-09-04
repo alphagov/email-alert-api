@@ -29,7 +29,7 @@ immediately and daily/weekly digests for others.
 
 ### Diagram
 
-![Sequence Diagram](../digests.png)
+![Sequence Diagram](adr-002/digests.png)
 
 ### Components
 
