@@ -17,6 +17,13 @@ RSpec.describe "report" do
     end
   end
 
+  describe "matched_content_changes" do
+    it "outputs a CSV of matched content changes" do
+      expect { Rake::Task["report:matched_content_changes"].invoke }
+        .to output.to_stdout
+    end
+  end
+
   describe "csv_from_living_in_europe" do
     it "outputs a report of subscriptions to living in Europe lists" do
       expect { Rake::Task["report:csv_from_living_in_europe"].invoke("2018-08-08") }
