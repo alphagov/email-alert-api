@@ -53,7 +53,7 @@ bundle exec rails server
 ### Running the test suite
 
 ```bash
-bundle exec spring rspec
+bundle exec rspec
 ```
 
 ## Documentation
