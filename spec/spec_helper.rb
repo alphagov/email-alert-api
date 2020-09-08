@@ -17,6 +17,8 @@ Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |file| require file }
 
 Rails.application.load_tasks
 
+ActiveRecord::Migration.maintain_test_schema!
+
 RSpec.configure do |config|
   config.disable_monkey_patching!
   config.use_transactional_fixtures = true
