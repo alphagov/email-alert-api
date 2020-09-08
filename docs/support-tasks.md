@@ -109,24 +109,3 @@ Depending on the number of emails to send, the Rake task can take a few minutes 
 ```bash
 bundle exec rake 'support:resend_failed_emails:by_id[<email_one_id>,<email_two_id>]'
 ```
-
-## Count subscriptions to a subscriber list
-
-This shows subscription counts by Immediate, Daily or Weekly:
-
-```bash
-rake report:count_subscribers['subscriber-list-slug']
-```
-
-[⚙ Run rake task on production][rake-count-subscribers]
-
-If you need to know the number of subscriptions on a particular day:
-
-```bash
-rake report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
-```
-
-[⚙ Run rake task on production][rake-count-subscribers-on]
-
-[rake-count-subscribers]: https://deploy.blue.production.govuk.digital//job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers['subscriber-list-slug']
-[rake-count-subscribers-on]: https://deploy.blue.production.govuk.digital//job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']

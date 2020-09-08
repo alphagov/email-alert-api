@@ -19,91 +19,48 @@ Amazon S3 in hourly batches. After 14 days the email will be removed from the
 database. Thus for recent information the `emails` database table can be used
 otherwise the email archive should be queried.
 
-## Analytics through Rails console
+## Analytics through Rake tasks
 
 A large number of analytic insights can be discovered by working with the
 [database schema][schema.rb] and querying the data. The intention is that when
-useful common queries are identified they will be made accessible via API
-endpoints or rake tasks.
+useful common queries are identified they will be made accessible via rake tasks.
 
-Here are some example queries to pull out particular insights.
+### Count subscriptions to a subscriber list
 
-### How many subscribers does a list have
+This shows subscription counts by Immediate, Daily or Weekly:
 
-```ruby
-# total count right now
-SubscriberList.find(4194).active_subscriptions_count
-
-# total count at a particular point in time
-Subscription.active_on("2018-06-01").where(subscriber_list_id: 4194).count
+```bash
+rake report:count_subscribers['subscriber-list-slug']
 ```
 
-There are [rake tasks][support-tasks] that do this for you, and
-include a breakdown of subscriptions that are Immediate, Daily or Weekly.
+[⚙ Run rake task on Integration][rake-count-subscribers]
 
-### Lists with most new subscriptions in a time frame
+[rake-count-subscribers]: https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers['subscriber-list-slug']
 
-```ruby
-pp Subscription.where(
-    "created_at BETWEEN ? AND ?", "2018-06-01", "2018-07-01"
-  ).group(
-    :subscriber_list_id
-  ).having(
-    "count(*) > 10"
-  ).order(
-    count: :desc
-  ).pluck(:subscriber_list_id, Arel.sql("COUNT(*) AS count"))
+If you need to know the number of subscriptions on a particular day:
+
+```bash
+rake report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
 ```
 
-### Lists with most ended subscriptions in a time frame
+[⚙ Run rake task on Integration][rake-count-subscribers-on]
 
-```ruby
-pp Subscription.where(
-    "ended_at BETWEEN ? AND ?", "2018-06-01", "2018-07-01"
-  ).group(
-    :subscriber_list_id
-  ).having(
-    "count(*) > 10"
-  ).order(
-    count: :desc
-  ).pluck(:subscriber_list_id, Arel.sql("COUNT(*) AS count"))
+[rake-count-subscribers-on]: https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
+
+## Content changes for each subscriber list
+
+This generates a CSV report of matched content changes over the last week.
+
+```bash
+rake report:matched_content_changes
+
+# or with a specific range
+START_DATE=2020-08-07 END_DATE=2020-08-13 rake report:matched_content_changes
 ```
 
-### How many emails did subscribers were generated emails for digest runs
+[⚙ Run rake task on Integration][rake-matched-content-changes]
 
-```ruby
-pp DigestRun.where(
-    "date >= ? AND date <= ?", "2018-06-04", "2018-06-10"
-  ).where(
-    range: :daily
-  ).order(date: :asc).pluck(:date, :subscriber_count)
-```
-
-### Which hours are content_changes being created at
-
-```ruby
-pp ContentChange.group("EXTRACT(HOUR FROM created_at)").count
-```
-
-### Which days of the week have the most content changes
-
-```ruby
-pp ContentChange.group("to_char(created_at, 'Day')").count
-```
-
-### How many content changes per subscription list in a timeframe
-
-```ruby
-pp MatchedContentChange.joins(:content_change).joins(:subscriber_list).where(
-  "content_changes.created_at BETWEEN ? AND ?",
-  "2018-06-01",
-  "2018-07-01"
-).group(
-  :subscriber_list_id, "subscriber_lists.title"
-).order("COUNT(*) DESC").limit(10).pluck(
-  :subscriber_list_id, "subscriber_lists.title", Arel.sql("COUNT(*)")
-)
-```
+[rake-matched-content-changes]: https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:matched_content_changes
 
 ## Analytics through Athena
 

@@ -10,6 +10,12 @@ namespace :report do
                                                date: args[:date])
   end
 
+  desc "Outputs a CSV of content changes by subscriber list"
+  task matched_content_changes: :environment do
+    puts Reports::MatchedContentChangesReport.new.call(start_time: ENV["START_DATE"],
+                                                       end_time: ENV["END_DATE"])
+  end
+
   desc "Export the number of subscriptions for the 'Living in' taxons for European countries as of a given date (format: 'yyyy-mm-dd')"
   task :csv_from_living_in_europe, [:date] => :environment do |_, args|
     Reports::LivingInEuropeReport.new.call(args.date)
