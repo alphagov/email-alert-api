@@ -22,12 +22,12 @@ private
     @records ||= begin
       now = Time.zone.now
 
-      recipients_and_messages.map do |address:, message:, subscriptions:, subscriber_id:|
+      recipients_and_messages.map do |x|
         {
-          address: address,
-          subject: subject(message),
-          body: body(message, subscriptions, address),
-          subscriber_id: subscriber_id,
+          address: x[:address],
+          subject: subject(x[:message]),
+          body: body(x[:message], x[:subscriptions], x[:address]),
+          subscriber_id: x[:subscriber_id],
           created_at: now,
           updated_at: now,
         }

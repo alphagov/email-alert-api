@@ -19,7 +19,7 @@ private
   attr_reader :initial_scope, :criteria_rules
 
   def rule_condition(scope, rule)
-    return type_rule(scope, rule) if rule[:type]
+    return type_rule(scope, **rule) if rule[:type]
     return any_of_rule(scope, rule[:any_of]) if rule[:any_of]
     return all_of_rule(scope, rule[:all_of]) if rule[:all_of]
 

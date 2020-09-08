@@ -6,8 +6,8 @@ class DigestEmailBuilder
     @subscriber_id = subscriber_id
   end
 
-  def self.call(*args)
-    new(*args).call
+  def self.call(**args)
+    new(**args).call
   end
 
   def call

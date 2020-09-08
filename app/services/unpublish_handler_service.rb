@@ -13,7 +13,7 @@ class UnpublishHandlerService < ApplicationService
 
   attr_reader :content_id, :redirect
 
-  def initialize(content_id, redirect)
+  def initialize(content_id, redirect, **)
     @content_id = content_id
     @redirect = redirect
   end

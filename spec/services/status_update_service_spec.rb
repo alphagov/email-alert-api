@@ -18,7 +18,7 @@ RSpec.describe StatusUpdateService do
     end
 
     it "updates the delivery attempt record" do
-      described_class.call(args)
+      described_class.call(**args)
       expect(delivery_attempt.reload)
         .to have_attributes(sent_at: time,
                             completed_at: time,
@@ -29,7 +29,7 @@ RSpec.describe StatusUpdateService do
       let(:status) { "delivered" }
 
       it "sets the delivery attempt status to delivered" do
-        expect { described_class.call(args) }
+        expect { described_class.call(**args) }
           .to change { delivery_attempt.reload.status }.to("delivered")
           .and change { email.reload.finished_sending_at }.to(time)
       end
@@ -41,7 +41,7 @@ RSpec.describe StatusUpdateService do
       let(:email) { create(:email, subscriber_id: subscriber.id, address: subscriber.address) }
 
       it "sets the delivery attempt status to undeliverable_failure" do
-        expect { described_class.call(args) }
+        expect { described_class.call(**args) }
           .to change { delivery_attempt.reload.status }
           .to("undeliverable_failure")
       end
@@ -49,7 +49,7 @@ RSpec.describe StatusUpdateService do
       it "unsubscribes the subscriber from any existing subscriptions" do
         expect(UnsubscribeAllService).to receive(:call)
                                      .with(subscriber, :non_existent_email)
-        described_class.call(args)
+        described_class.call(**args)
       end
     end
 
@@ -57,7 +57,7 @@ RSpec.describe StatusUpdateService do
       let(:status) { "temporary-failure" }
 
       it "sets the delivery attempt status to undeliverable_failure" do
-        expect { described_class.call(args) }
+        expect { described_class.call(**args) }
           .to change { delivery_attempt.reload.status }.to("undeliverable_failure")
           .and change { email.reload.finished_sending_at }.to(time)
       end
@@ -69,7 +69,7 @@ RSpec.describe StatusUpdateService do
       it "raises a DeliveryAttemptInvalidStatusError and notifies GovukError" do
         message = "Recieved an unexpected status: 'surprise-failure'"
         expect(GovukError).to receive(:notify).with(message)
-        expect { described_class.call(args) }
+        expect { described_class.call(**args) }
           .to raise_error(StatusUpdateService::DeliveryAttemptInvalidStatusError,
                           message)
       end
@@ -81,7 +81,7 @@ RSpec.describe StatusUpdateService do
       end
 
       it "raises a DeliveryAttemptStatusConflictError" do
-        expect { described_class.call(args) }
+        expect { described_class.call(**args) }
           .to raise_error(StatusUpdateService::DeliveryAttemptStatusConflictError,
                           "Status update already received")
       end

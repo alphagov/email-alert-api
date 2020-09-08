@@ -1,6 +1,6 @@
 class SubscriberListsController < ApplicationController
   def index
-    subscriber_list = FindExactQuery.new(find_exact_query_params).exact_match
+    subscriber_list = FindExactQuery.new(**find_exact_query_params).exact_match
     if subscriber_list
       render json: subscriber_list.to_json
     else

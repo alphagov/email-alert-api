@@ -61,7 +61,7 @@ RSpec.describe MatchedForNotification do
       end
 
       it "finds subscriber lists matching all topics" do
-        lists = execute_query(topics: %w[vat tax])
+        lists = execute_query({ topics: %w[vat tax] })
         expect(lists).to eq([@all_topics_tax_vat])
       end
     end
@@ -73,12 +73,12 @@ RSpec.describe MatchedForNotification do
       end
 
       it "finds subscriber lists matching on both of all and one of any topics" do
-        lists = execute_query(topics: %w[vat tax licensing])
+        lists = execute_query({ topics: %w[vat tax licensing] })
         expect(lists).to eq([@all_topics_tax_vat_any_topics_licensing_paye])
       end
 
       it "does not find subscriber list for mixture of all and any topics when not all topics present" do
-        lists = execute_query(field: :links, query_hash: { topics: %w[vat licensing] })
+        lists = execute_query({ field: :links, query_hash: { topics: %w[vat licensing] } })
         expect(lists).not_to include(@all_topics_tax_vat_any_topics_licensing_paye)
       end
     end
@@ -90,12 +90,12 @@ RSpec.describe MatchedForNotification do
       end
 
       it "finds subscriber lists matching a mix of all topics and any policies" do
-        lists = execute_query(topics: %w[vat tax], policies: %w[economy industry])
+        lists = execute_query({ topics: %w[vat tax], policies: %w[economy industry] })
         expect(lists).to eq([@all_topics_tax_vat_any_policies_economy_industry])
       end
 
       it "does not find subscriber list for mix of all topics and any policies when not all topics present" do
-        lists = execute_query(field: :links, query_hash: { topics: %w[vat], policies: %w[economy] })
+        lists = execute_query({ field: :links, query_hash: { topics: %w[vat], policies: %w[economy] } })
         expect(lists).not_to include(@all_topics_tax_vat_any_policies_economy_industry)
       end
     end
@@ -108,17 +108,17 @@ RSpec.describe MatchedForNotification do
       end
 
       it "finds subscriber lists matching a mix of all topics and policies" do
-        lists = execute_query(topics: %w[vat tax licensing], policies: %w[economy industry])
+        lists = execute_query({ topics: %w[vat tax licensing], policies: %w[economy industry] })
         expect(lists).to include(@all_topics_tax_vat_all_policies_economy_industry)
       end
 
       it "does not find subscriber list for all topics when not all topics present" do
-        lists = execute_query(topics: %w[vat schools])
+        lists = execute_query({ topics: %w[vat schools] })
         expect(lists).not_to include(@all_topics_tax_vat)
       end
 
       it "does not find subscriber list for mix of all topics and policies when not all policies present" do
-        lists = execute_query(topics: %w[vat tax ufos], policies: %w[economy acceptable_footwear])
+        lists = execute_query({ topics: %w[vat tax ufos], policies: %w[economy acceptable_footwear] })
         expect(lists).to_not include(@all_topics_tax_vat_all_policies_economy_schools)
       end
     end
@@ -129,7 +129,7 @@ RSpec.describe MatchedForNotification do
       end
 
       it "finds lists where all the link types in the subscription have a value present" do
-        lists = execute_query(topics: %w[licensing], another_link_thats_not_part_of_the_subscription: %w[elephants])
+        lists = execute_query({ topics: %w[licensing], another_link_thats_not_part_of_the_subscription: %w[elephants] })
         expect(lists).to eq([@topics_any_licensing])
       end
     end
@@ -140,12 +140,12 @@ RSpec.describe MatchedForNotification do
       end
 
       it "finds lists where all the link types in the subscription have a value present" do
-        lists = execute_query(topics: %w[licensing elephants])
+        lists = execute_query({ topics: %w[licensing elephants] })
         expect(lists).to eq([@topics_any_licensing])
       end
 
       it "doesn't return lists which have no tag types present in the document" do
-        lists = execute_query(another_tag_thats_not_part_of_any_subscription: %w[elephants])
+        lists = execute_query({ another_tag_thats_not_part_of_any_subscription: %w[elephants] })
         expect(lists).to eq([])
       end
     end
@@ -166,12 +166,12 @@ RSpec.describe MatchedForNotification do
       end
 
       it "finds the list when the criteria values is a string that is present in the subscriber list values for the field" do
-        lists = execute_query(format: "employment_tribunal_decision")
+        lists = execute_query({ format: "employment_tribunal_decision" })
         expect(lists).to eq([@subscriber_list])
       end
 
       it "does not find the list when the criteria values is a string that is not present in the subscriber list values for the field" do
-        lists = execute_query(format: "drug_safety_update")
+        lists = execute_query({ format: "drug_safety_update" })
         expect(lists).to eq([])
       end
     end

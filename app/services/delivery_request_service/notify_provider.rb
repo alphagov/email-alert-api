@@ -4,8 +4,8 @@ class DeliveryRequestService::NotifyProvider
     @template_id = EmailAlertAPI.config.notify.fetch(:template_id)
   end
 
-  def self.call(*args)
-    new.call(*args)
+  def self.call(**args)
+    new.call(**args)
   end
 
   def call(address:, subject:, body:, reference:)

@@ -299,7 +299,7 @@ RSpec.describe FindExactQuery do
       government_document_supertype: "",
     }
 
-    described_class.new(defaults.merge(params))
+    described_class.new(**defaults.merge(params))
   end
 
   def create_subscriber_list(params = {})

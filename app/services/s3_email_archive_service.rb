@@ -3,7 +3,7 @@ class S3EmailArchiveService < ApplicationService
 
   # For batch we expect an array of hashes containing email data in the format
   # from EmailArchivePresenter
-  def initialize(batch)
+  def initialize(batch, **)
     @batch = batch
   end
 
