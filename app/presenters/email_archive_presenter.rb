@@ -13,9 +13,7 @@ class EmailArchivePresenter
       content_change: build_content_change(record),
       message: build_message(record),
       created_at_utc: record.fetch("created_at").utc.strftime(S3_DATETIME_FORMAT),
-      finished_sending_at_utc: record.fetch("finished_sending_at").utc.strftime(S3_DATETIME_FORMAT),
       id: record.fetch("id"),
-      sent: record.fetch("sent"),
       subject: record.fetch("subject"),
       subscriber_id: record.fetch("subscriber_id"),
     }

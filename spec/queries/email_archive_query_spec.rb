@@ -1,7 +1,6 @@
 RSpec.describe EmailArchiveQuery do
   describe ".call" do
     subject(:scope) { described_class.call }
-    let(:now) { Time.zone.now }
 
     context "when there are archivable emails" do
       before { create(:archivable_email) }
@@ -116,22 +115,6 @@ RSpec.describe EmailArchiveQuery do
 
       it "has no digest run ids" do
         expect(scope.first.digest_run_ids).to be_empty
-      end
-    end
-
-    context "when an email is sent" do
-      before { create(:archivable_email, status: :sent) }
-
-      it "is available in the result" do
-        expect(scope.first.sent).to be true
-      end
-    end
-
-    context "when an email is not sent" do
-      before { create(:archivable_email, status: :failed) }
-
-      it "is available in the result" do
-        expect(scope.first.sent).to be false
       end
     end
   end
