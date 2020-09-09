@@ -113,10 +113,14 @@ RSpec.describe DeliveryRequestService do
     end
 
     context "when sending the email returns a sent status" do
-      it "doesn't update the email status" do
+      it "marks the email as sent and sets the sent_at time" do
         allow(default_provider).to receive(:call).and_return(:sent)
-        expect { described_class.call(email: email) }
-          .not_to(change { email.reload.status })
+
+        freeze_time do
+          expect { described_class.call(email: email) }
+            .to change { email.status }.to("sent")
+            .and change { email.sent_at }.to(Time.zone.now)
+        end
       end
     end
 
@@ -134,10 +138,20 @@ RSpec.describe DeliveryRequestService do
         end
       end
 
-      it "marks the email as sent" do
-        expect { described_class.call(email: email) }
-          .to change { email.reload.status }
-          .to("sent")
+      it "marks the email as sent and sets the sent_at and finished_sending_at time" do
+        freeze_time do
+          expect { described_class.call(email: email) }
+            .to change { email.status }.to("sent")
+            .and change { email.sent_at }.to(Time.zone.now)
+            .and change { email.finished_sending_at }.to(Time.zone.now)
+        end
+      end
+
+      it "records that the delivery attempt status has changed" do
+        expect(Metrics)
+          .to receive(:delivery_attempt_status_changed)
+          .with(:delivered)
+        described_class.call(email: email)
       end
     end
 
@@ -155,10 +169,19 @@ RSpec.describe DeliveryRequestService do
         end
       end
 
-      it "marks the email as failed" do
-        expect { described_class.call(email: email) }
-          .to change { email.reload.status }
-          .to("failed")
+      it "marks the email as failed and sets finished_sending_at time" do
+        freeze_time do
+          expect { described_class.call(email: email) }
+            .to change { email.status }.to("failed")
+            .and change { email.finished_sending_at }.to(Time.zone.now)
+        end
+      end
+
+      it "records that the delivery attempt status has changed" do
+        expect(Metrics)
+          .to receive(:delivery_attempt_status_changed)
+          .with(:undeliverable_failure)
+        described_class.call(email: email)
       end
     end
 
@@ -171,6 +194,13 @@ RSpec.describe DeliveryRequestService do
         scope = DeliveryAttempt.where(status: :provider_communication_failure)
         expect { described_class.call(email: email) }
           .to change(scope, :count).by(1)
+      end
+
+      it "records that the delivery attempt status has changed" do
+        expect(Metrics)
+          .to receive(:delivery_attempt_status_changed)
+          .with(:provider_communication_failure)
+        described_class.call(email: email)
       end
     end
   end

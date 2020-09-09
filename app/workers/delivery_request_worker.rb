@@ -11,7 +11,7 @@ class DeliveryRequestWorker
                             .order(created_at: :desc)
                             .first
 
-    email.mark_as_failed(delivery_attempt&.finished_sending_at || Time.zone.now)
+    email.update!(status: :failed, finished_sending_at: (delivery_attempt&.finished_sending_at || Time.zone.now))
   end
 
   def perform(email_id, metrics, queue)

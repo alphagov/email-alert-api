@@ -28,26 +28,4 @@ RSpec.describe Email do
       end
     end
   end
-
-  describe "#mark_as_sent" do
-    it "updates an email as sent with a finished_sending_at time" do
-      email = create(:email)
-      freeze_time do
-        expect { email.mark_as_sent(Time.zone.now) }
-          .to change { email.status }.to("sent")
-          .and change { email.finished_sending_at }.to(Time.zone.now)
-      end
-    end
-  end
-
-  describe "#mark_as_failed" do
-    it "updates an email as failed with a finished_sending_at time" do
-      email = create(:email)
-      freeze_time do
-        expect { email.mark_as_failed(Time.zone.now) }
-          .to change { email.status }.to("failed")
-          .and change { email.finished_sending_at }.to(Time.zone.now)
-      end
-    end
-  end
 end

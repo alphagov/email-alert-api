@@ -4,16 +4,15 @@ RSpec.describe StatusUpdateService do
     let(:email) { create(:email) }
     let(:reference) { SecureRandom.uuid }
     let(:status) { "delivered" }
-    let(:completed_at) { Time.zone.now.beginning_of_minute }
-    let(:sent_at) { completed_at }
+    let(:time) { Time.zone.now.beginning_of_minute }
     let(:user) { create(:user) }
 
     let(:args) do
       {
         reference: reference,
         status: status,
-        completed_at: completed_at,
-        sent_at: sent_at,
+        completed_at: time,
+        sent_at: time,
         user: user,
       }
     end
@@ -21,14 +20,9 @@ RSpec.describe StatusUpdateService do
     it "updates the delivery attempt record" do
       described_class.call(args)
       expect(delivery_attempt.reload)
-        .to have_attributes(sent_at: sent_at,
-                            completed_at: completed_at,
+        .to have_attributes(sent_at: time,
+                            completed_at: time,
                             signon_user_uid: user.uid)
-    end
-
-    it "updates the email status" do
-      expect { described_class.call(args) }
-        .to(change { email.reload.status })
     end
 
     context "when provided a 'delivered' status" do
@@ -36,8 +30,8 @@ RSpec.describe StatusUpdateService do
 
       it "sets the delivery attempt status to delivered" do
         expect { described_class.call(args) }
-          .to change { delivery_attempt.reload.status }
-          .to("delivered")
+          .to change { delivery_attempt.reload.status }.to("delivered")
+          .and change { email.reload.finished_sending_at }.to(time)
       end
     end
 
@@ -64,8 +58,8 @@ RSpec.describe StatusUpdateService do
 
       it "sets the delivery attempt status to undeliverable_failure" do
         expect { described_class.call(args) }
-          .to change { delivery_attempt.reload.status }
-          .to("undeliverable_failure")
+          .to change { delivery_attempt.reload.status }.to("undeliverable_failure")
+          .and change { email.reload.finished_sending_at }.to(time)
       end
     end
 

@@ -31,13 +31,19 @@ class DeliveryRequestService < ApplicationService
 
     status = Metrics.email_send_request(provider_name) { send_email }
 
-    return attempt if status == :sent
-
     ActiveRecord::Base.transaction do
-      attempt.update!(status: status, completed_at: Time.zone.now)
-      Metrics.delivery_attempt_status_changed(status)
-      email.mark_as_sent(attempt.finished_sending_at) if attempt.delivered?
-      email.mark_as_failed(attempt.finished_sending_at) if attempt.undeliverable_failure?
+      case status
+      when :sent
+        email.update!(status: :sent, sent_at: Time.zone.now)
+      when :delivered
+        record_metric_and_update_attempt(attempt, status)
+        email.update!(status: :sent, finished_sending_at: attempt.finished_sending_at, sent_at: Time.zone.now)
+      when :undeliverable_failure
+        record_metric_and_update_attempt(attempt, status)
+        email.update!(status: :failed, finished_sending_at: attempt.finished_sending_at)
+      when :provider_communication_failure
+        record_metric_and_update_attempt(attempt, status)
+      end
     end
 
     attempt
@@ -75,5 +81,10 @@ private
       metrics[:content_change_created_at],
       now,
     )
+  end
+
+  def record_metric_and_update_attempt(attempt, status)
+    Metrics.delivery_attempt_status_changed(status)
+    attempt.update!(status: status, completed_at: Time.zone.now)
   end
 end

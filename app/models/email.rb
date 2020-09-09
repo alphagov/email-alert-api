@@ -22,12 +22,4 @@ class Email < ApplicationRecord
 
     Metrics.email_bulk_insert(batch_size) { insert_all!(records) }
   end
-
-  def mark_as_sent(finished_sending_at)
-    update!(status: :sent, finished_sending_at: finished_sending_at)
-  end
-
-  def mark_as_failed(finished_sending_at)
-    update!(status: :failed, finished_sending_at: finished_sending_at)
-  end
 end
