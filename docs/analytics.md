@@ -47,7 +47,7 @@ rake report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
 
 [rake-count-subscribers-on]: https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:count_subscribers_on[yyyy-mm-dd,'subscriber-list-slug']
 
-## Content changes for each subscriber list
+### Content changes for each subscriber list
 
 This generates a CSV report of matched content changes over the last week.
 
