@@ -17,9 +17,7 @@ private
       content_change_ids,
       digest_run_ids,
       message_ids,
-      :finished_sending_at,
       :id,
-      sent,
       :subject,
       :subscriber_id,
       subscription_ids,
@@ -59,13 +57,5 @@ private
       .distinct
       .select("digest_run_subscribers.digest_run_id")
     "ARRAY(#{query.to_sql}) AS digest_run_ids"
-  end
-
-  def sent
-    "CASE\
-      WHEN status=#{Email.statuses['sent']}\
-      THEN true\
-      ELSE false\
-    END AS sent"
   end
 end

@@ -12,9 +12,7 @@ RSpec.describe S3EmailArchiveService do
       archived_at_utc: time.utc.to_s(:db),
       content_change: nil,
       created_at_utc: time.utc.to_s(:db),
-      finished_sending_at_utc: time.utc.to_s(:db),
       id: SecureRandom.uuid,
-      sent: true,
       subject: "Test email",
       subscriber_id: SecureRandom.uuid,
     }
@@ -53,7 +51,7 @@ RSpec.describe S3EmailArchiveService do
     )
   end
 
-  context "when the batch contains items with different finished_sending_at days" do
+  context "when the batch contains items with different created_at days" do
     let(:batch) do
       [
         create_record(time: Time.zone.parse("2018-06-28 10:00")),
