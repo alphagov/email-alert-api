@@ -8,93 +8,43 @@ RSpec.describe DigestRun do
       }.to change { DigestRun.count }.from(0).to(1)
     end
 
-    context "with no environment vars set" do
-      context "daily" do
-        it "sets starts_at to 8am on date - 1.day" do
-          date = 2.days.ago
-          instance = described_class.create!(date: date, range: "daily")
+    context "daily" do
+      it "sets starts_at to 8am on date - 1.day" do
+        date = 2.days.ago
+        instance = described_class.create!(date: date, range: "daily")
 
-          expect(instance.starts_at).to eq(
-            Time.zone.parse("08:00", date - 1.day),
-          )
-        end
-
-        it "sets ends_at to 8am on date" do
-          date = 1.day.ago
-          instance = described_class.create!(date: date, range: "daily")
-
-          expect(instance.ends_at).to eq(
-            Time.zone.parse("08:00", date),
-          )
-        end
+        expect(instance.starts_at).to eq(
+          Time.zone.parse("08:00", date - 1.day),
+        )
       end
 
-      context "weekly" do
-        it "sets starts_at to 8am on date - 1.week" do
-          saturday = Date.new(2020, 9, 5)
-          instance = described_class.create!(date: saturday, range: "weekly")
+      it "sets ends_at to 8am on date" do
+        date = 1.day.ago
+        instance = described_class.create!(date: date, range: "daily")
 
-          expect(instance.starts_at).to eq(
-            Time.zone.parse("08:00", (saturday - 1.week)),
-          )
-        end
-
-        it "sets ends_at to 8am on date" do
-          saturday = Date.new(2020, 9, 5)
-          instance = described_class.create!(date: saturday, range: "weekly")
-
-          expect(instance.ends_at).to eq(
-            Time.zone.parse("08:00", saturday),
-          )
-        end
+        expect(instance.ends_at).to eq(
+          Time.zone.parse("08:00", date),
+        )
       end
     end
 
-    context "configured with an env var" do
-      around do |example|
-        ClimateControl.modify(DIGEST_RANGE_HOUR: "10") do
-          travel_to(Time.zone.parse("10:30")) { example.run }
-        end
+    context "weekly" do
+      it "sets starts_at to 8am on date - 1.week" do
+        saturday = Date.new(2020, 9, 5)
+        instance = described_class.create!(date: saturday, range: "weekly")
+
+        expect(instance.starts_at).to eq(
+          Time.zone.parse("08:00", (saturday - 1.week)),
+        )
       end
 
-      context "daily" do
-        it "sets starts_at to the configured hour on date - 1.day" do
-          date = 1.week.ago
-          instance = described_class.create!(date: date, range: "daily")
+      it "sets ends_at to 8am on date" do
+        saturday = Date.new(2020, 9, 5)
+        instance = described_class.create!(date: saturday, range: "weekly")
 
-          expect(instance.starts_at).to eq(
-            Time.zone.parse("10:00", (date - 1.day)),
-          )
-        end
-
-        it "sets ends_at to the configured hour on date" do
-          date = 1.day.ago
-          instance = described_class.create!(date: date, range: "daily")
-
-          expect(instance.ends_at).to eq(
-            Time.zone.parse("10:00", date),
-          )
-        end
-      end
-
-      context "weekly" do
-        it "sets starts_at to the configured hour on date - 1.week" do
-          saturday = Date.new(2020, 9, 5)
-          instance = described_class.create!(date: saturday, range: "weekly")
-
-          expect(instance.starts_at).to eq(
-            Time.zone.parse("10:00", (saturday - 1.week)),
-          )
-        end
-
-        it "sets ends_at to the configured hour on date" do
-          saturday = Date.new(2020, 9, 5)
-          instance = described_class.create!(date: saturday, range: "weekly")
-
-          expect(instance.ends_at).to eq(
-            Time.zone.parse("10:00", saturday),
-          )
-        end
+        expect(instance.ends_at).to eq(
+          Time.zone.parse("08:00", saturday),
+        )
       end
     end
 

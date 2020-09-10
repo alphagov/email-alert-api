@@ -1,4 +1,6 @@
 class DigestRun < ApplicationRecord
+  DIGEST_RANGE_HOUR = 8
+
   validates :starts_at, :ends_at, :date, :range, presence: true
   before_validation :set_range_dates, on: :create
   validate :ends_at_is_in_the_past
@@ -40,18 +42,14 @@ private
   end
 
   def configured_starts_at
-    Time.zone.parse("#{digest_range_hour}:00", starts_at_time)
+    Time.zone.parse("#{DIGEST_RANGE_HOUR}:00", starts_at_time)
   end
 
   def configured_ends_at
-    Time.zone.parse("#{digest_range_hour}:00", date)
+    Time.zone.parse("#{DIGEST_RANGE_HOUR}:00", date)
   end
 
   def starts_at_time
     (daily? ? date - 1.day : date - 1.week)
-  end
-
-  def digest_range_hour
-    ENV.fetch("DIGEST_RANGE_HOUR", 8).to_i
   end
 end
