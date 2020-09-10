@@ -18,17 +18,9 @@ class DigestRun < ApplicationRecord
 
 private
 
-  def starts_at=(value)
-    super
-  end
-
-  def ends_at=(value)
-    super
-  end
-
   def set_range_dates
-    self.starts_at = configured_starts_at
-    self.ends_at = configured_ends_at
+    self.starts_at = Time.zone.parse("#{DIGEST_RANGE_HOUR}:00", starts_at_time)
+    self.ends_at = Time.zone.parse("#{DIGEST_RANGE_HOUR}:00", date)
   end
 
   def ends_at_is_in_the_past
@@ -39,14 +31,6 @@ private
     return if daily? || ends_at.saturday?
 
     errors.add(:ends_at, "must be a Saturday for weekly digests")
-  end
-
-  def configured_starts_at
-    Time.zone.parse("#{DIGEST_RANGE_HOUR}:00", starts_at_time)
-  end
-
-  def configured_ends_at
-    Time.zone.parse("#{DIGEST_RANGE_HOUR}:00", date)
   end
 
   def starts_at_time
