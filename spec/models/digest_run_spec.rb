@@ -31,20 +31,20 @@ RSpec.describe DigestRun do
 
       context "weekly" do
         it "sets starts_at to 8am on date - 1.week" do
-          date = 1.day.ago
-          instance = described_class.create!(date: date, range: "weekly")
+          saturday = Date.new(2020, 9, 5)
+          instance = described_class.create!(date: saturday, range: "weekly")
 
           expect(instance.starts_at).to eq(
-            Time.zone.parse("08:00", (date - 1.week)),
+            Time.zone.parse("08:00", (saturday - 1.week)),
           )
         end
 
         it "sets ends_at to 8am on date" do
-          date = Date.current
-          instance = described_class.create!(date: date, range: "weekly")
+          saturday = Date.new(2020, 9, 5)
+          instance = described_class.create!(date: saturday, range: "weekly")
 
           expect(instance.ends_at).to eq(
-            Time.zone.parse("08:00", date),
+            Time.zone.parse("08:00", saturday),
           )
         end
       end
@@ -79,20 +79,20 @@ RSpec.describe DigestRun do
 
       context "weekly" do
         it "sets starts_at to the configured hour on date - 1.week" do
-          date = Date.current
-          instance = described_class.create!(date: date, range: "weekly")
+          saturday = Date.new(2020, 9, 5)
+          instance = described_class.create!(date: saturday, range: "weekly")
 
           expect(instance.starts_at).to eq(
-            Time.zone.parse("10:00", (date - 1.week)),
+            Time.zone.parse("10:00", (saturday - 1.week)),
           )
         end
 
         it "sets ends_at to the configured hour on date" do
-          date = 4.days.ago
-          instance = described_class.create!(date: date, range: "weekly")
+          saturday = Date.new(2020, 9, 5)
+          instance = described_class.create!(date: saturday, range: "weekly")
 
           expect(instance.ends_at).to eq(
-            Time.zone.parse("10:00", date),
+            Time.zone.parse("10:00", saturday),
           )
         end
       end
@@ -105,6 +105,12 @@ RSpec.describe DigestRun do
           instance.validate
           expect(instance.errors[:ends_at]).to eq(["must be in the past"])
         end
+      end
+
+      it "fails if a weekly digest does not end on a Saturday" do
+        instance = described_class.new(date: Date.new(2020, 9, 10), range: "weekly")
+        instance.validate
+        expect(instance.errors[:ends_at]).to eq(["must be a Saturday for weekly digests"])
       end
     end
   end

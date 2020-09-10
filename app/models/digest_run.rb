@@ -2,6 +2,7 @@ class DigestRun < ApplicationRecord
   validates :starts_at, :ends_at, :date, :range, presence: true
   before_validation :set_range_dates, on: :create
   validate :ends_at_is_in_the_past
+  validate :weekly_digest_is_on_a_saturday
 
   has_many :digest_run_subscribers, dependent: :destroy
   has_many :subscribers, through: :digest_run_subscribers
@@ -30,6 +31,12 @@ private
 
   def ends_at_is_in_the_past
     errors.add(:ends_at, "must be in the past") if ends_at >= Time.zone.now
+  end
+
+  def weekly_digest_is_on_a_saturday
+    return if daily? || ends_at.saturday?
+
+    errors.add(:ends_at, "must be a Saturday for weekly digests")
   end
 
   def configured_starts_at
