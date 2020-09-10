@@ -1,11 +1,12 @@
 class DigestInitiatorService < ApplicationService
-  def initialize(range:)
+  def initialize(date:, range:)
     @range = range
+    @date = date
   end
 
   def call
     run_with_advisory_lock do
-      digest_run = DigestRun.find_or_create_by!(date: Date.current, range: range)
+      digest_run = DigestRun.find_or_create_by!(date: date, range: range)
       return if digest_run.processed_at
 
       create_digest_run_subscribers(digest_run)
@@ -15,7 +16,7 @@ class DigestInitiatorService < ApplicationService
 
 private
 
-  attr_reader :range
+  attr_reader :range, :date
 
   def create_digest_run_subscribers(digest_run)
     Metrics.digest_initiator_service(range) do
