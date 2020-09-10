@@ -1,5 +1,8 @@
 ENV["RAILS_ENV"] ||= "test"
 
+require "simplecov"
+SimpleCov.start "rails"
+
 $LOAD_PATH << File.join(__dir__, "..")
 
 require "webmock/rspec"
