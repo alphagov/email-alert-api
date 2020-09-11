@@ -24,7 +24,9 @@ private
   end
 
   def ends_at_is_in_the_past
-    errors.add(:date, "must be after #{DIGEST_RANGE_HOUR}:00") if ends_at >= Time.zone.now
+    return if ends_at < Time.zone.now
+
+    errors.add(:date, "must be in the past, or today if after #{DIGEST_RANGE_HOUR}:00")
   end
 
   def weekly_digest_is_on_a_saturday
