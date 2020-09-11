@@ -1,5 +1,5 @@
 class WeeklyDigestInitiatorWorker < DigestInitiatorWorker
-  def perform
-    DigestInitiatorService.call(range: Frequency::WEEKLY)
+  def perform(date = Date.current)
+    DigestInitiatorService.call(date: date, range: Frequency::WEEKLY)
   end
 end

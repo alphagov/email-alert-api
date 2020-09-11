@@ -61,20 +61,20 @@ RSpec.describe "create and delive a weekly digest", type: :request do
     )
 
     # publish two items to each list
-    travel_to(Time.zone.parse("2016-12-27 09:30")) do
+    travel_to(Time.zone.parse("2017-01-01 09:30")) do
       create_content_change(
         title: "Title one",
         content_id: SecureRandom.uuid,
         description: "Description one",
         change_note: "Change note one",
-        public_updated_at: "2016-12-27 10:00:00",
+        public_updated_at: "2017-01-01 10:00:00",
         links: {
           topics: [list_one_topic_id],
         },
       )
     end
 
-    travel_to(Time.zone.parse("2016-12-27 09:31")) do
+    travel_to(Time.zone.parse("2017-01-01 09:31")) do
       create_message(
         title: "Title two",
         url: "/base-path",
@@ -84,26 +84,26 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       )
     end
 
-    travel_to(Time.zone.parse("2016-12-30 09:32")) do
+    travel_to(Time.zone.parse("2017-01-04 09:32")) do
       create_content_change(
         title: "Title three",
         content_id: SecureRandom.uuid,
         description: "Description three",
         change_note: "Change note three",
-        public_updated_at: "2016-12-30 09:00:00",
+        public_updated_at: "2017-01-04 09:00:00",
         links: {
           taxon_tree: [list_two_taxon_id],
         },
       )
     end
 
-    travel_to(Time.zone.parse("2017-01-01 09:33")) do
+    travel_to(Time.zone.parse("2017-01-06 09:33")) do
       create_content_change(
         title: "Title four",
         content_id: SecureRandom.uuid,
         description: "Description four",
         change_note: "Change note four",
-        public_updated_at: "2017-01-01 09:30:00",
+        public_updated_at: "2017-01-06 09:30:00",
         links: {
           taxon_tree: [SecureRandom.uuid,
                        list_two_taxon_id,
@@ -140,7 +140,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       ),
     )
 
-    travel_to(Time.zone.parse("2017-01-02 10:00")) do
+    travel_to(Time.zone.parse("2017-01-07 10:00")) do
       WeeklyDigestInitiatorWorker.new.perform
       Sidekiq::Worker.drain_all
     end
@@ -188,7 +188,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       Change note one
 
       Time updated
-      10:00am, 27 December 2016
+      10:00am, 1 January 2017
 
       ---
 
@@ -213,7 +213,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       Change note three
 
       Time updated
-      9:00am, 30 December 2016
+      9:00am, 4 January 2017
 
       ---
 
@@ -226,7 +226,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       Change note four
 
       Time updated
-      9:30am, 1 January 2017
+      9:30am, 6 January 2017
 
       ---
 
@@ -258,7 +258,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       Change note one
 
       Time updated
-      10:00am, 27 December 2016
+      10:00am, 1 January 2017
 
       ---
 
