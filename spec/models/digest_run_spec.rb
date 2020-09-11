@@ -1,4 +1,9 @@
 RSpec.describe DigestRun do
+  around do |example|
+    saturday = Time.zone.parse("2020-09-05 09:30")
+    travel_to(saturday) { example.run }
+  end
+
   context "with valid parameters" do
     it "can be created" do
       expect {
@@ -10,68 +15,40 @@ RSpec.describe DigestRun do
 
     context "daily" do
       it "sets starts_at to 8am on date - 1.day" do
-        date = 2.days.ago
-        instance = described_class.create!(date: date, range: "daily")
-
-        expect(instance.starts_at).to eq(
-          Time.zone.parse("08:00", date - 1.day),
-        )
+        instance = described_class.create!(date: Date.current, range: "daily")
+        expect(instance.starts_at).to eq(Time.zone.parse("08:00", Date.current - 1.day))
       end
 
       it "sets ends_at to 8am on date" do
-        date = 1.day.ago
-        instance = described_class.create!(date: date, range: "daily")
-
-        expect(instance.ends_at).to eq(
-          Time.zone.parse("08:00", date),
-        )
+        instance = described_class.create!(date: Date.current, range: "daily")
+        expect(instance.ends_at).to eq(Time.zone.parse("08:00", Date.current))
       end
     end
 
     context "weekly" do
       it "sets starts_at to 8am on date - 1.week" do
-        saturday = Date.new(2020, 9, 5)
-        instance = described_class.create!(date: saturday, range: "weekly")
-
-        expect(instance.starts_at).to eq(
-          Time.zone.parse("08:00", (saturday - 1.week)),
-        )
+        instance = described_class.create!(date: Date.current, range: "weekly")
+        expect(instance.starts_at).to eq(Time.zone.parse("08:00", (Date.current - 1.week)))
       end
 
       it "sets ends_at to 8am on date" do
-        saturday = Date.new(2020, 9, 5)
-        instance = described_class.create!(date: saturday, range: "weekly")
-
-        expect(instance.ends_at).to eq(
-          Time.zone.parse("08:00", saturday),
-        )
+        instance = described_class.create!(date: Date.current, range: "weekly")
+        expect(instance.ends_at).to eq(Time.zone.parse("08:00", Date.current))
       end
     end
 
     describe "validations" do
       it "fails if the calculated ends_at is in the future" do
-        travel_to(Time.zone.parse("07:00")) do
-          instance = described_class.new(date: Date.current, range: "daily")
-          instance.validate
-          expect(instance.errors[:ends_at]).to eq(["must be in the past"])
-        end
+        instance = described_class.new(date: Date.current + 1.day, range: "daily")
+        instance.validate
+        expect(instance.errors[:ends_at]).to eq(["must be in the past"])
       end
 
       it "fails if a weekly digest does not end on a Saturday" do
-        instance = described_class.new(date: Date.new(2020, 9, 10), range: "weekly")
+        instance = described_class.new(date: Date.current - 1.day, range: "weekly")
         instance.validate
         expect(instance.errors[:ends_at]).to eq(["must be a Saturday for weekly digests"])
       end
-    end
-  end
-
-  context "when we are in British Summer Time" do
-    around do |example|
-      travel_to("2018-03-31 07:30 UTC") { example.run }
-    end
-
-    it "creates a digest run without errors" do
-      described_class.create!(date: Date.current, range: :daily)
     end
   end
 
@@ -92,11 +69,9 @@ RSpec.describe DigestRun do
 
     context "when there aren't digest_run_subscribers" do
       it "marks the digest run as completed based on the current time" do
-        freeze_time do
-          expect { digest_run.mark_as_completed }
-            .to change { digest_run.completed_at }
-            .to(Time.zone.now)
-        end
+        expect { digest_run.mark_as_completed }
+          .to change { digest_run.completed_at }
+          .to(Time.zone.now)
       end
     end
   end

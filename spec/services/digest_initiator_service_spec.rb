@@ -2,6 +2,11 @@ RSpec.describe DigestInitiatorService do
   describe ".call" do
     let(:subscribers) { create_list(:subscriber, 2) }
 
+    around do |example|
+      saturday = Time.zone.parse("2020-09-05 09:30")
+      travel_to(saturday) { example.run }
+    end
+
     before do
       allow(DigestRunSubscriberQuery).to receive(:call).and_return(subscribers)
       allow(DigestEmailGenerationWorker).to receive(:perform_async)
@@ -13,19 +18,15 @@ RSpec.describe DigestInitiatorService do
           .to change { DigestRun.daily.where(date: Date.current).count }
           .by(1)
 
-        saturday = Date.new(2020, 9, 5)
-
-        expect { described_class.call(date: saturday, range: Frequency::WEEKLY) }
-          .to change { DigestRun.weekly.where(date: saturday).count }
+        expect { described_class.call(date: Date.current, range: Frequency::WEEKLY) }
+          .to change { DigestRun.weekly.where(date: Date.current).count }
           .by(1)
       end
 
       it "marks the digest run as processed" do
-        freeze_time do
-          described_class.call(date: Date.current, range: Frequency::DAILY)
-          digest_run = DigestRun.last
-          expect(digest_run.processed_at).to eq(Time.zone.now)
-        end
+        described_class.call(date: Date.current, range: Frequency::DAILY)
+        digest_run = DigestRun.last
+        expect(digest_run.processed_at).to eq(Time.zone.now)
       end
 
       it "creates a DigestRunSubscriber for each subscription" do
@@ -49,14 +50,12 @@ RSpec.describe DigestInitiatorService do
                digest_run: digest_run,
                subscriber: subscribers.first)
 
-        freeze_time do
-          expect { described_class.call(date: Date.current, range: Frequency::DAILY) }
-            .to change { DigestRunSubscriber.exists?(subscriber: subscribers.last) }
-            .to(true)
-            .and change { digest_run.reload.processed_at }
-            .from(nil)
-            .to(Time.zone.now)
-        end
+        expect { described_class.call(date: Date.current, range: Frequency::DAILY) }
+          .to change { DigestRunSubscriber.exists?(subscriber: subscribers.last) }
+          .to(true)
+          .and change { digest_run.reload.processed_at }
+          .from(nil)
+          .to(Time.zone.now)
       end
     end
 
