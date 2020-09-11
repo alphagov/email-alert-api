@@ -41,13 +41,14 @@ RSpec.describe DigestRun do
       it "fails if the calculated ends_at is in the future" do
         instance = described_class.new(date: Date.current + 1.day, range: "daily")
         instance.validate
-        expect(instance.errors[:ends_at]).to eq(["must be in the past"])
+        expected_time = "#{DigestRun::DIGEST_RANGE_HOUR}:00"
+        expect(instance.errors[:date]).to eq(["must be after #{expected_time}"])
       end
 
       it "fails if a weekly digest does not end on a Saturday" do
         instance = described_class.new(date: Date.current - 1.day, range: "weekly")
         instance.validate
-        expect(instance.errors[:ends_at]).to eq(["must be a Saturday for weekly digests"])
+        expect(instance.errors[:date]).to eq(["must be a Saturday for weekly digests"])
       end
     end
   end

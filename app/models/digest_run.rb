@@ -24,13 +24,13 @@ private
   end
 
   def ends_at_is_in_the_past
-    errors.add(:ends_at, "must be in the past") if ends_at >= Time.zone.now
+    errors.add(:date, "must be after #{DIGEST_RANGE_HOUR}:00") if ends_at >= Time.zone.now
   end
 
   def weekly_digest_is_on_a_saturday
-    return if daily? || ends_at.saturday?
+    return if daily? || date.saturday?
 
-    errors.add(:ends_at, "must be a Saturday for weekly digests")
+    errors.add(:date, "must be a Saturday for weekly digests")
   end
 
   def starts_at_time
