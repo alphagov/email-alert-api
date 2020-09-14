@@ -11,6 +11,7 @@ class DeliveryRequestWorker
                             .order(created_at: :desc)
                             .first
 
+    # Deprecated: finished_sending_at is deprecated and soon to be removed due to the introduction of sent_at
     email.update!(status: :failed, finished_sending_at: (delivery_attempt&.finished_sending_at || Time.zone.now))
   end
 
