@@ -11,7 +11,8 @@ class DeliveryRequestWorker
                             .order(created_at: :desc)
                             .first
 
-    email.mark_as_failed(delivery_attempt&.finished_sending_at || Time.zone.now)
+    # Deprecated: finished_sending_at is deprecated and soon to be removed due to the introduction of sent_at
+    email.update!(status: :failed, finished_sending_at: (delivery_attempt&.finished_sending_at || Time.zone.now))
   end
 
   def perform(email_id, metrics, queue)

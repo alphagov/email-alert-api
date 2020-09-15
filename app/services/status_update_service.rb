@@ -18,7 +18,8 @@ class StatusUpdateService < ApplicationService
       )
     end
 
-    update_email_status(delivery_attempt)
+    # Deprecated: finished_sending_at is deprecated and soon to be removed due to the introduction of sent_at
+    email.update!(finished_sending_at: delivery_attempt.finished_sending_at)
 
     if status == "permanent-failure" && subscriber
       UnsubscribeAllService.call(subscriber, :non_existent_email)
@@ -48,7 +49,7 @@ private
                 .lock
                 .find(reference)
 
-    unless attempt.sending?
+    unless attempt.sent?
       raise DeliveryAttemptStatusConflictError, "Status update already received"
     end
 
@@ -67,12 +68,6 @@ private
       GovukError.notify(error)
       raise DeliveryAttemptInvalidStatusError, error
     end
-  end
-
-  def update_email_status(delivery_attempt)
-    finished_sending_at = delivery_attempt.finished_sending_at
-    email.mark_as_sent(finished_sending_at) if delivery_attempt.delivered?
-    email.mark_as_failed(finished_sending_at) if delivery_attempt.undeliverable_failure?
   end
 
   class DeliveryAttemptInvalidStatusError < RuntimeError; end
