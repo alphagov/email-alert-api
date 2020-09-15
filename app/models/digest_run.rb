@@ -11,8 +11,6 @@ class DigestRun < ApplicationRecord
 
   enum range: { daily: 0, weekly: 1 }
 
-  scope :unprocessed, -> { where(processed_at: nil) }
-
   def mark_as_completed
     completed_time = digest_run_subscribers.maximum(:processed_at) || Time.zone.now
     update!(completed_at: completed_time)
