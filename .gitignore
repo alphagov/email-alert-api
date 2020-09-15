@@ -1,3 +1,4 @@
 tmp
 /log/*
 !/log/.gitkeep
+coverage
