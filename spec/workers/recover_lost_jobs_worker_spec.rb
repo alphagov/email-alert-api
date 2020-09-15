@@ -27,5 +27,42 @@ RSpec.describe RecoverLostJobsWorker do
         subject.perform
       end
     end
+
+    describe "DigestRunSubscriber recovery" do
+      it "does not requeue unprocessed work that is under 1-hour old" do
+        create(:digest_run_subscriber, created_at: 59.minutes.ago)
+        expect(DigestEmailGenerationWorker).not_to receive(:perform_async)
+        subject.perform
+      end
+
+      it "requeues incomplete work that is over 1-hour old" do
+        create(:digest_run_subscriber, created_at: 1.hour.ago)
+        expect(DigestEmailGenerationWorker).to receive(:perform_async)
+        subject.perform
+      end
+    end
+
+    describe "DigestRun recovery" do
+      before do
+        saturday = Time.zone.parse("2017-01-07 10:30")
+        travel_to saturday
+      end
+
+      it "does not requeue unprocessed work that is under 1-hour old" do
+        create(:digest_run, created_at: 59.minutes.ago, date: Date.current, range: :daily)
+        create(:digest_run, created_at: 59.minutes.ago, date: Date.current, range: :weekly)
+        expect(DailyDigestInitiatorWorker).not_to receive(:perform_async)
+        expect(WeeklyDigestInitiatorWorker).not_to receive(:perform_async)
+        subject.perform
+      end
+
+      it "requeues incomplete work that is over 1-hour old" do
+        create(:digest_run, created_at: 1.hour.ago, date: Date.current, range: :daily)
+        create(:digest_run, created_at: 1.hour.ago, date: Date.current, range: :weekly)
+        expect(DailyDigestInitiatorWorker).to receive(:perform_async)
+        expect(WeeklyDigestInitiatorWorker).to receive(:perform_async)
+        subject.perform
+      end
+    end
   end
 end
