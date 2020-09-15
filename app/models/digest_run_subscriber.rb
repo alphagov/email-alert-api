@@ -5,7 +5,8 @@ class DigestRunSubscriber < ApplicationRecord
   belongs_to :digest_run
   belongs_to :subscriber
 
-  scope :unprocessed_for_run, ->(digest_run_id) { where(digest_run_id: digest_run_id).where(processed_at: nil) }
+  scope :for_run, ->(digest_run_id) { where(digest_run_id: digest_run_id) }
+  scope :unprocessed, -> { where(processed_at: nil) }
 
   def self.populate(digest_run, subscriber_ids)
     now = Time.zone.now
