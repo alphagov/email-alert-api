@@ -3,8 +3,8 @@ RSpec.describe Metrics::DigestRunExporter do
     let(:statsd) { double }
 
     before do
-      create(:digest_run, created_at: 61.minutes.ago)
-      create(:digest_run, created_at: 21.minutes.ago)
+      create(:digest_run, created_at: 2.days.ago, date: 2.days.ago)
+      create(:digest_run, created_at: 21.minutes.ago, date: Time.zone.today)
       allow(GovukStatsd).to receive(:gauge)
     end
 
