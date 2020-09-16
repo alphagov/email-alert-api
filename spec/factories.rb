@@ -70,17 +70,14 @@ FactoryBot.define do
 
     factory :delivered_delivery_attempt do
       status { :delivered }
-      sent_at { Time.zone.now }
     end
 
     factory :undeliverable_failure_delivery_attempt do
       status { :undeliverable_failure }
-      sent_at { nil }
     end
 
     factory :provider_communication_failure_delivery_attempt do
       status { :provider_communication_failure }
-      sent_at { nil }
     end
   end
 
@@ -231,7 +228,9 @@ FactoryBot.define do
     subscriber_list
   end
 
-  factory :user
+  factory :user do
+    uid { SecureRandom.uuid }
+  end
 
   factory :content_item do
     sequence(:path) { |n| "/content-item-#{n}" }

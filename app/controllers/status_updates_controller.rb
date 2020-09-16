@@ -11,7 +11,6 @@ class StatusUpdatesController < ApplicationController
 
   def create
     StatusUpdateService.call(
-      sent_at: params[:sent_at],
       reference: params.require(:reference),
       status: params.require(:status),
       user: current_user,

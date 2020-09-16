@@ -54,8 +54,8 @@ module RequestHelpers
     expect(response.status).to eq(202)
   end
 
-  def send_status_update(reference, status, sent_at, expected_status: 204)
-    params = { reference: reference, status: status, sent_at: sent_at }
+  def send_status_update(reference, status, expected_status: 204)
+    params = { reference: reference, status: status }
     post "/status-updates", params: params.to_json, headers: json_headers
     expect(response.status).to eq(expected_status)
   end
