@@ -2,6 +2,8 @@ class Email < ApplicationRecord
   # Any validations added this to this model won't be applied on record
   # creation as this table is populated by the #insert_all bulk method
 
+  self.ignored_columns = %w[finished_sending_at]
+
   COURTESY_EMAIL = "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk".freeze
   has_many :delivery_attempts
 
