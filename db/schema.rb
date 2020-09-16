@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_16_163844) do
+ActiveRecord::Schema.define(version: 2020_09_16_164443) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,7 +81,6 @@ ActiveRecord::Schema.define(version: 2020_09_16_163844) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "address", null: false
-    t.datetime "finished_sending_at"
     t.datetime "archived_at"
     t.bigint "subscriber_id"
     t.integer "status", default: 0, null: false
@@ -89,7 +88,6 @@ ActiveRecord::Schema.define(version: 2020_09_16_163844) do
     t.index ["address"], name: "index_emails_on_address"
     t.index ["archived_at"], name: "index_emails_on_archived_at"
     t.index ["created_at"], name: "index_emails_on_created_at"
-    t.index ["finished_sending_at"], name: "index_emails_on_finished_sending_at"
   end
 
   create_table "matched_content_changes", force: :cascade do |t|
