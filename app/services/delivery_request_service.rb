@@ -85,6 +85,6 @@ private
 
   def record_metric_and_update_attempt(attempt, status)
     Metrics.delivery_attempt_status_changed(status)
-    attempt.update!(status: status, completed_at: Time.zone.now)
+    attempt.update!(status: status)
   end
 end

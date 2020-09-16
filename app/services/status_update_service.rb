@@ -1,8 +1,7 @@
 class StatusUpdateService < ApplicationService
-  def initialize(reference:, status:, completed_at:, sent_at:, user: nil)
+  def initialize(reference:, status:, sent_at:, user: nil)
     @reference = reference
     @status = status
-    @completed_at = completed_at
     @sent_at = sent_at
     @user = user
     @delivery_attempt = find_delivery_attempt(reference)
@@ -12,7 +11,6 @@ class StatusUpdateService < ApplicationService
     ApplicationRecord.transaction do
       delivery_attempt.update!(
         sent_at: sent_at,
-        completed_at: completed_at,
         status: delivery_attempt_status,
         signon_user_uid: user&.uid,
       )
@@ -32,7 +30,7 @@ class StatusUpdateService < ApplicationService
 
 private
 
-  attr_reader :delivery_attempt, :reference, :status, :user, :completed_at, :sent_at
+  attr_reader :delivery_attempt, :reference, :status, :user, :sent_at
   delegate :email, to: :delivery_attempt
 
   def subscriber

@@ -11,7 +11,6 @@ RSpec.describe StatusUpdateService do
       {
         reference: reference,
         status: status,
-        completed_at: time,
         sent_at: time,
         user: user,
       }
@@ -20,9 +19,7 @@ RSpec.describe StatusUpdateService do
     it "updates the delivery attempt record" do
       described_class.call(**args)
       expect(delivery_attempt.reload)
-        .to have_attributes(sent_at: time,
-                            completed_at: time,
-                            signon_user_uid: user.uid)
+        .to have_attributes(sent_at: time, signon_user_uid: user.uid)
     end
 
     context "when provided a 'delivered' status" do

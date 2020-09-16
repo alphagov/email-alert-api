@@ -129,10 +129,9 @@ RSpec.describe DeliveryRequestService do
         allow(default_provider).to receive(:call).and_return(:delivered)
       end
 
-      it "sets the delivery attempt status and completed time" do
+      it "sets the delivery attempt status" do
         freeze_time do
-          scope = DeliveryAttempt.where(status: :delivered,
-                                        completed_at: Time.zone.now)
+          scope = DeliveryAttempt.where(status: :delivered)
           expect { described_class.call(email: email) }
             .to change(scope, :count).by(1)
         end
@@ -159,10 +158,9 @@ RSpec.describe DeliveryRequestService do
         allow(default_provider).to receive(:call).and_return(:undeliverable_failure)
       end
 
-      it "sets the delivery attempt status and completed time" do
+      it "sets the delivery attempt status" do
         freeze_time do
-          scope = DeliveryAttempt.where(status: :undeliverable_failure,
-                                        completed_at: Time.zone.now)
+          scope = DeliveryAttempt.where(status: :undeliverable_failure)
           expect { described_class.call(email: email) }
             .to change(scope, :count).by(1)
         end
