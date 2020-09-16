@@ -1,4 +1,4 @@
-RSpec.describe Metrics::ContentChangeExporter do
+RSpec.describe MetricsCollectionWorker::ContentChangeExporter do
   describe ".call" do
     let(:statsd) { double }
 

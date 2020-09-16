@@ -1,4 +1,4 @@
-class Metrics::MessageExporter < Metrics::BaseExporter
+class MetricsCollectionWorker::MessageExporter < MetricsCollectionWorker::BaseExporter
   def call
     GovukStatsd.gauge("messages.unprocessed_total", unprocessed_messages)
   end

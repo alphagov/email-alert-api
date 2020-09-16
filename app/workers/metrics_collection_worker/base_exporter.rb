@@ -1,4 +1,4 @@
-class Metrics::BaseExporter
+class MetricsCollectionWorker::BaseExporter
   def self.call
     new.call
   end

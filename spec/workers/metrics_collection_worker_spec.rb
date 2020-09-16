@@ -1,9 +1,9 @@
 RSpec.describe MetricsCollectionWorker do
   describe ".perform" do
     it "delegates to collect metrics" do
-      expect(Metrics::ContentChangeExporter).to receive(:call)
-      expect(Metrics::DigestRunExporter).to receive(:call)
-      expect(Metrics::MessageExporter).to receive(:call)
+      expect(MetricsCollectionWorker::ContentChangeExporter).to receive(:call)
+      expect(MetricsCollectionWorker::DigestRunExporter).to receive(:call)
+      expect(MetricsCollectionWorker::MessageExporter).to receive(:call)
 
       subject.perform
     end
