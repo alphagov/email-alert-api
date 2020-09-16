@@ -63,22 +63,10 @@ FactoryBot.define do
     end
   end
 
-  factory :delivery_attempt, aliases: [:sent_delivery_attempt] do
+  factory :delivery_attempt do
     email
     status { :sent }
     provider { :notify }
-
-    factory :delivered_delivery_attempt do
-      status { :delivered }
-    end
-
-    factory :undeliverable_failure_delivery_attempt do
-      status { :undeliverable_failure }
-    end
-
-    factory :provider_communication_failure_delivery_attempt do
-      status { :provider_communication_failure }
-    end
   end
 
   factory :digest_run do

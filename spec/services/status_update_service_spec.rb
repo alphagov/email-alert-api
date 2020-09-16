@@ -70,7 +70,7 @@ RSpec.describe StatusUpdateService do
 
     context "when the delivery attempt isn't in a sent state" do
       let!(:delivery_attempt) do
-        create(:delivered_delivery_attempt, id: reference, email: email)
+        create(:delivery_attempt, status: :delivered, id: reference, email: email)
       end
 
       it "raises a DeliveryAttemptStatusConflictError" do
