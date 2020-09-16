@@ -2,7 +2,7 @@ RSpec.describe DeliveryRequestService do
   describe ".call" do
     let(:email) { create(:email) }
     let(:default_provider_name) { "pseudo" }
-    let(:default_provider) { PseudoProvider }
+    let(:default_provider) { DeliveryRequestService::PseudoProvider }
     let(:email_service_config) { EmailAlertAPI.config.email_service }
 
     it "creates a delivery attempt" do
@@ -26,7 +26,7 @@ RSpec.describe DeliveryRequestService do
         .to receive(:email_service)
         .and_return(email_service_config.merge(provider: "NOTIFY"))
 
-      expect(NotifyProvider).to receive(:call).and_return(:sent)
+      expect(DeliveryRequestService::NotifyProvider).to receive(:call).and_return(:sent)
       described_class.call(email: email)
     end
 

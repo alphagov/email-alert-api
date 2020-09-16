@@ -1,4 +1,4 @@
-class NotifyProvider
+class DeliveryRequestService::NotifyProvider
   def initialize
     @client = EmailAlertAPI.config.notify_client
     @template_id = EmailAlertAPI.config.notify.fetch(:template_id)

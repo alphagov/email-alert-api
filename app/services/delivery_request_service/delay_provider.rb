@@ -1,4 +1,4 @@
-class DelayProvider
+class DeliveryRequestService::DelayProvider
   def self.call(*args)
     new.call(*args)
   end
