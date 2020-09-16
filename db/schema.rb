@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_03_094629) do
+ActiveRecord::Schema.define(version: 2020_09_16_095316) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(version: 2020_09_03_094629) do
     t.datetime "processed_at"
     t.index ["completed_at"], name: "index_digest_runs_on_completed_at"
     t.index ["created_at"], name: "index_digest_runs_on_created_at"
+    t.index ["date", "range"], name: "index_digest_runs_on_date_and_range", unique: true
   end
 
   create_table "emails", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
