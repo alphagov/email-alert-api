@@ -18,9 +18,6 @@ class StatusUpdateService < ApplicationService
       )
     end
 
-    # Deprecated: finished_sending_at is deprecated and soon to be removed due to the introduction of sent_at
-    email.update!(finished_sending_at: delivery_attempt.finished_sending_at)
-
     if status == "permanent-failure" && subscriber
       UnsubscribeAllService.call(subscriber, :non_existent_email)
     end

@@ -110,18 +110,15 @@ FactoryBot.define do
 
     factory :archivable_email do
       status { :sent }
-      finished_sending_at { 2.days.ago }
     end
 
     factory :archived_email do
       status { :sent }
-      finished_sending_at { 2.days.ago }
       archived_at { 1.day.ago }
     end
 
     factory :deleteable_email do
       status { :sent }
-      finished_sending_at { 15.days.ago }
       archived_at { 14.days.ago }
     end
   end

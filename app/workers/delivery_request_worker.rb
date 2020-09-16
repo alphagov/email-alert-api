@@ -6,13 +6,7 @@ class DeliveryRequestWorker
   sidekiq_options retry: 9
 
   sidekiq_retries_exhausted do |msg|
-    email = Email.find(msg["args"].first)
-    delivery_attempt = email.delivery_attempts
-                            .order(created_at: :desc)
-                            .first
-
-    # Deprecated: finished_sending_at is deprecated and soon to be removed due to the introduction of sent_at
-    email.update!(status: :failed, finished_sending_at: (delivery_attempt&.finished_sending_at || Time.zone.now))
+    Email.find(msg["args"].first).update!(status: :failed)
   end
 
   def perform(email_id, metrics, queue)

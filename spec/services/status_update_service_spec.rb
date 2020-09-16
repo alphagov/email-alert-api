@@ -31,7 +31,6 @@ RSpec.describe StatusUpdateService do
       it "sets the delivery attempt status to delivered" do
         expect { described_class.call(**args) }
           .to change { delivery_attempt.reload.status }.to("delivered")
-          .and change { email.reload.finished_sending_at }.to(time)
       end
     end
 
@@ -59,7 +58,6 @@ RSpec.describe StatusUpdateService do
       it "sets the delivery attempt status to undeliverable_failure" do
         expect { described_class.call(**args) }
           .to change { delivery_attempt.reload.status }.to("undeliverable_failure")
-          .and change { email.reload.finished_sending_at }.to(time)
       end
     end
 
