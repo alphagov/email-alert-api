@@ -1,4 +1,4 @@
-class Metrics::DigestRunExporter < Metrics::BaseExporter
+class MetricsCollectionWorker::DigestRunExporter < MetricsCollectionWorker::BaseExporter
   def call
     GovukStatsd.gauge("digest_runs.critical_total", critical_digest_runs)
     GovukStatsd.gauge("digest_runs.warning_total", warning_digest_runs)

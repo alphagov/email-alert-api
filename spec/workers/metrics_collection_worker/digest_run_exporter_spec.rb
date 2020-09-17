@@ -1,4 +1,4 @@
-RSpec.describe Metrics::DigestRunExporter do
+RSpec.describe MetricsCollectionWorker::DigestRunExporter do
   describe ".call" do
     let(:statsd) { double }
 

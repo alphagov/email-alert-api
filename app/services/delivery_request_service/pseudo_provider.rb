@@ -1,4 +1,4 @@
-class PseudoProvider
+class DeliveryRequestService::PseudoProvider
   LOG_PATH = Rails.root.join("log/pseudo_email.log").freeze
 
   def self.call(*args)
