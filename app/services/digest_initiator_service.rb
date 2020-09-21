@@ -37,7 +37,7 @@ private
   end
 
   def run_with_advisory_lock
-    DigestRun.with_advisory_lock("#{range}_digest_initiator-#{date}", timeout_seconds: 0) do
+    ApplicationRecord.with_advisory_lock("#{range}_digest_initiator-#{date}", timeout_seconds: 0) do
       yield
     end
   end

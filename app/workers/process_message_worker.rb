@@ -1,24 +1,19 @@
 class ProcessMessageWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :process_and_generate_emails,
-                  lock: :until_executed,
-                  unique_args: :uniqueness_with, # in upcoming version 7 of sidekiq-unique-jobs, :unique_args is replaced with :lock_args
-                  on_conflict: :log
-
-  def self.uniqueness_with(args)
-    [args.first]
-  end
+  sidekiq_options queue: :process_and_generate_emails
 
   def perform(message_id)
-    message = Message.find(message_id)
-    return if message.processed_at
+    ApplicationRecord.try_lock do
+      message = Message.find(message_id)
+      return if message.processed_at
 
-    MatchedMessageGenerationService.call(message)
-    ImmediateEmailGenerationService.call(message)
+      MatchedMessageGenerationService.call(message)
+      ImmediateEmailGenerationService.call(message)
 
-    queue_courtesy_email(message)
-    message.update!(processed_at: Time.zone.now)
+      queue_courtesy_email(message)
+      message.update!(processed_at: Time.zone.now)
+    end
   end
 
 private
