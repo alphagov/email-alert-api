@@ -95,9 +95,4 @@ namespace :data_migration do
       puts "Error updating subscriber list with title:#{new_title} and slug: #{new_slug}"
     end
   end
-
-  desc "Remove ancient, unprocessed digest run subscribers"
-  task remove_ancient_unprocessed_digest_run_subscribers: :environment do
-    DigestRunSubscriber.where("created_at < ?", 1.week.ago).where(processed_at: nil).delete_all
-  end
 end
