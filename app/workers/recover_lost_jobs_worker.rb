@@ -3,6 +3,6 @@ class RecoverLostJobsWorker
 
   def perform
     RecoverLostJobsWorker::UnprocessedCheck.new.call
-    RecoverLostJobsWorker::DigestRunsCheck.new.call
+    RecoverLostJobsWorker::MissingDigestRunsCheck.new.call
   end
 end
