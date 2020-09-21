@@ -4,7 +4,7 @@ class DigestRunCompletionMarkerWorker
   def perform
     candidates = DigestRun.where.not(processed_at: nil).where(completed_at: nil)
     candidates.find_each do |digest_run|
-      unless DigestRunSubscriber.unprocessed_for_run(digest_run.id).exists?
+      unless DigestRunSubscriber.where(processed_at: nil, digest_run: digest_run).exists?
         digest_run.mark_as_completed
       end
     end

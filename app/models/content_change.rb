@@ -18,8 +18,6 @@ class ContentChange < ApplicationRecord
 
   enum priority: { normal: 0, high: 1 }
 
-  scope :unprocessed, -> { where(processed_at: nil) }
-
   def queue
     priority == "high" ? :delivery_immediate_high : :delivery_immediate
   end

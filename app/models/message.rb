@@ -21,8 +21,6 @@ class Message < ApplicationRecord
 
   enum priority: { normal: 0, high: 1 }
 
-  scope :unprocessed, -> { where(processed_at: nil) }
-
   def queue
     :delivery_immediate
   end
