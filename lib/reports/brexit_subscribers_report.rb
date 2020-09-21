@@ -15,7 +15,7 @@ class Reports::BrexitSubscribersReport
   def call
     subscriber_lists =
       date.empty? ? brexit_lists : brexit_lists_before_date
-    CSV($stdout, headers: CSV_HEADERS, write_headers: true) do |csv|
+    CSV.instance($stdout, headers: CSV_HEADERS, write_headers: true) do |csv|
       subscriber_lists.each do |list|
         csv << row_data(list)
       end

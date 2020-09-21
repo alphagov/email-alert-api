@@ -67,7 +67,7 @@ private
   end
 
   def export_csv(subscriber_lists, at: nil)
-    CSV($stdout, headers: CSV_HEADERS, write_headers: true) do |csv|
+    CSV.instance($stdout, headers: CSV_HEADERS, write_headers: true) do |csv|
       subscriber_lists.find_each do |subscriber_list|
         csv << present_subscriber_list(subscriber_list, at: at)
       end
@@ -75,7 +75,7 @@ private
   end
 
   def export_detailed_csv(subscriber_lists, at: nil)
-    CSV($stdout, headers: %i[title subscribed unsubscribed immediately daily weekly], write_headers: true) do |csv|
+    CSV.instance($stdout, headers: %i[title subscribed unsubscribed immediately daily weekly], write_headers: true) do |csv|
       subscriber_lists.find_each do |subscriber_list|
         csv << present_travel_advice_report(subscriber_list, at: at)
       end
