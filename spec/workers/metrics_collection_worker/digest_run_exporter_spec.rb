@@ -12,10 +12,5 @@ RSpec.describe MetricsCollectionWorker::DigestRunExporter do
       expect(GovukStatsd).to receive(:gauge).with("digest_runs.critical_total", 1)
       described_class.call
     end
-
-    it "records number of unprocessed digest runs over 20 minutes old (warning)" do
-      expect(GovukStatsd).to receive(:gauge).with("digest_runs.warning_total", 2)
-      described_class.call
-    end
   end
 end
