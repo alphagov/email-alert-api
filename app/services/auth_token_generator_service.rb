@@ -9,10 +9,14 @@ class AuthTokenGeneratorService < ApplicationService
     @expiry = expiry
   end
 
+  def self.call(*args)
+    new(*args).call
+  end
+
   def call
     len = ActiveSupport::MessageEncryptor.key_len(CIPHER)
     key = ActiveSupport::KeyGenerator.new(secret).generate_key("", len)
-    crypt = ActiveSupport::MessageEncryptor.new(key, OPTIONS)
+    crypt = ActiveSupport::MessageEncryptor.new(key, **OPTIONS)
     token = crypt.encrypt_and_sign(data, expires_in: expiry)
     CGI.escape(token)
   end

@@ -24,12 +24,12 @@ RSpec.describe DeliveryRequestService::NotifyProvider do
           },
         )
 
-      described_class.call(arguments)
+      described_class.call(**arguments)
     end
 
     it "returns a sent status for a successful request" do
       stub_request(:post, /fake-notify/).to_return(body: {}.to_json)
-      return_value = described_class.call(arguments)
+      return_value = described_class.call(**arguments)
       expect(return_value).to be(:sent)
     end
 
@@ -39,7 +39,7 @@ RSpec.describe DeliveryRequestService::NotifyProvider do
       allow(notify_client).to receive(:send_email)
         .and_raise(Notifications::Client::RequestError.new(error_response))
 
-      expect(described_class.call(arguments))
+      expect(described_class.call(**arguments))
         .to be(:provider_communication_failure)
     end
 
@@ -47,7 +47,7 @@ RSpec.describe DeliveryRequestService::NotifyProvider do
       allow(Notifications::Client).to receive(:new).and_return(notify_client)
       allow(notify_client).to receive(:send_email).and_raise(Net::OpenTimeout)
 
-      expect(described_class.call(arguments))
+      expect(described_class.call(**arguments))
         .to be(:provider_communication_failure)
     end
 
@@ -67,7 +67,7 @@ RSpec.describe DeliveryRequestService::NotifyProvider do
       allow(notify_client).to receive(:send_email)
         .and_raise(Notifications::Client::BadRequestError.new(error_response))
 
-      expect(described_class.call(arguments))
+      expect(described_class.call(**arguments))
         .to be(:undeliverable_failure)
     end
   end

@@ -5,8 +5,8 @@ class BulkSubscriberListEmailBuilder
     @subscriber_lists = subscriber_lists
   end
 
-  def self.call(*args)
-    new(*args).call
+  def self.call(**args)
+    new(**args).call
   end
 
   def call

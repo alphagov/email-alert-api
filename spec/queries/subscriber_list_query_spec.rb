@@ -91,35 +91,35 @@ RSpec.describe SubscriberListQuery do
     it "includes subscriber lists where the content_purpose_supergroup is set to the desired value" do
       list_params = { document_type: "travel_advice", tags: { content_purpose_supergroup: { any: %w[guidance_and_regulation] } } }
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
-      query = described_class.new(defaults.merge(query_params))
+      query = described_class.new(**defaults.merge(query_params))
       expect(query.lists).to include(subscriber_list)
     end
 
     it "includes subscriber lists even if the content_purpose_supergroup is nil, if the document_type is the same value" do
       list_params = { document_type: "travel_advice" }
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
-      query = described_class.new(defaults.merge(query_params))
+      query = described_class.new(**defaults.merge(query_params))
       expect(query.lists).to include(subscriber_list)
     end
 
     it "includes subscriber lists where the content_purpose_supergroup is set to the same value" do
       list_params = { tags: { content_purpose_supergroup: { any: %w[guidance_and_regulation] } } }
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
-      query = described_class.new(defaults.merge(query_params))
+      query = described_class.new(**defaults.merge(query_params))
       expect(query.lists).to include(subscriber_list)
     end
 
     it "excludes subscriber lists where the content_purpose_supergroup is set to a different value" do
       list_params = { document_type: "travel_advice", tags: { content_purpose_supergroup: { any: %w[news_and_communications] } } }
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
-      query = described_class.new(defaults.merge(query_params))
+      query = described_class.new(**defaults.merge(query_params))
       expect(query.lists).not_to include(subscriber_list)
     end
 
     it "excludes subscriber lists where the content_purpose_supergroup is set to the same value but the document type is different" do
       list_params = { tags: { content_purpose_supergroup: { any: %w[guidance_and_regulation] } }, document_type: "edition" }
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
-      query = described_class.new(defaults.merge(query_params))
+      query = described_class.new(**defaults.merge(query_params))
       expect(query.lists).not_to include(subscriber_list)
     end
   end
@@ -130,14 +130,14 @@ RSpec.describe SubscriberListQuery do
 
     it "includes subscriber lists where the content_purpose_subgroup is set to the desired value" do
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
-      query = described_class.new(defaults.merge(query_params))
+      query = described_class.new(**defaults.merge(query_params))
       expect(query.lists).to include(subscriber_list)
     end
 
     it "excludes subscriber lists where the content_purpose_subgroup is set to a different value" do
       list_params = { tags: { content_purpose_subgroup: { any: %w[speeches_and_statements] } } }
       subscriber_list = create(:subscriber_list, defaults.merge(list_params))
-      query = described_class.new(defaults.merge(query_params))
+      query = described_class.new(**defaults.merge(query_params))
       expect(query.lists).not_to include(subscriber_list)
     end
   end

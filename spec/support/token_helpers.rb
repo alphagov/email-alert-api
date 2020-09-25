@@ -7,7 +7,7 @@ module TokenHelpers
     key = ActiveSupport::KeyGenerator.new(secret).generate_key("", len)
 
     options = AuthTokenGeneratorService::OPTIONS
-    crypt = ActiveSupport::MessageEncryptor.new(key, options)
+    crypt = ActiveSupport::MessageEncryptor.new(key, **options)
     crypt.decrypt_and_verify(CGI.unescape(data))
   end
 end

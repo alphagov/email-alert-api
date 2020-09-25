@@ -1,6 +1,6 @@
 class DeliveryRequestService::DelayProvider
-  def self.call(*args)
-    new.call(*args)
+  def self.call(**args)
+    new.call(**args)
   end
 
   def call(**_args)

@@ -1,7 +1,7 @@
 class ImmediateEmailGenerationService < ApplicationService
   BATCH_SIZE = 5000
 
-  def initialize(content)
+  def initialize(content, **)
     @content = content
   end
 
