@@ -1,14 +1,7 @@
 class DigestEmailGenerationWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :email_generation_digest,
-                  lock: :until_executed,
-                  unique_args: :uniqueness_with, # in upcoming version 7 of sidekiq-unique-jobs, :unique_args is replaced with :lock_args
-                  on_conflict: :log
-
-  def self.uniqueness_with(args)
-    [args.first]
-  end
+  sidekiq_options queue: :email_generation_digest
 
   def perform(digest_run_subscriber_id)
     email = nil
