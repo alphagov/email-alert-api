@@ -63,28 +63,10 @@ FactoryBot.define do
     end
   end
 
-  factory :delivery_attempt, aliases: [:sent_delivery_attempt] do
+  factory :delivery_attempt do
     email
     status { :sent }
     provider { :notify }
-
-    factory :delivered_delivery_attempt do
-      status { :delivered }
-      sent_at { Time.zone.now }
-      completed_at { Time.zone.now }
-    end
-
-    factory :undeliverable_failure_delivery_attempt do
-      status { :undeliverable_failure }
-      sent_at { nil }
-      completed_at { Time.zone.now }
-    end
-
-    factory :provider_communication_failure_delivery_attempt do
-      status { :provider_communication_failure }
-      sent_at { nil }
-      completed_at { Time.zone.now }
-    end
   end
 
   factory :digest_run do
@@ -110,18 +92,15 @@ FactoryBot.define do
 
     factory :archivable_email do
       status { :sent }
-      finished_sending_at { 2.days.ago }
     end
 
     factory :archived_email do
       status { :sent }
-      finished_sending_at { 2.days.ago }
       archived_at { 1.day.ago }
     end
 
     factory :deleteable_email do
       status { :sent }
-      finished_sending_at { 15.days.ago }
       archived_at { 14.days.ago }
     end
   end
@@ -237,7 +216,9 @@ FactoryBot.define do
     subscriber_list
   end
 
-  factory :user
+  factory :user do
+    uid { SecureRandom.uuid }
+  end
 
   factory :content_item do
     sequence(:path) { |n| "/content-item-#{n}" }

@@ -72,24 +72,14 @@ RSpec.describe DeliveryRequestWorker do
     end
 
     it "marks the job as failed" do
-      delivery_attempt = create(:provider_communication_failure_delivery_attempt,
-                                email: email)
-      described_class.sidekiq_retries_exhausted_block.call(sidekiq_message)
-      expect(email.reload).to have_attributes(
-        status: "failed",
-        finished_sending_at: delivery_attempt.reload.finished_sending_at,
-      )
+      expect { described_class.sidekiq_retries_exhausted_block.call(sidekiq_message) }
+        .to change { email.reload.status }.to("failed")
     end
 
     context "when there isn't a delivery attempt" do
-      it "sets the email finished_sending_at time to current time" do
-        freeze_time do
-          described_class.sidekiq_retries_exhausted_block.call(sidekiq_message)
-          expect(email.reload).to have_attributes(
-            status: "failed",
-            finished_sending_at: Time.zone.now,
-          )
-        end
+      it "marks the email as failed" do
+        described_class.sidekiq_retries_exhausted_block.call(sidekiq_message)
+        expect(email.reload.status).to eq("failed")
       end
     end
   end

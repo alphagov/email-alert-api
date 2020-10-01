@@ -37,12 +37,10 @@ class DeliveryRequestService < ApplicationService
         email.update!(status: :sent, sent_at: Time.zone.now)
       when :delivered
         record_metric_and_update_attempt(attempt, status)
-        # Deprecated: finished_sending_at is deprecated and soon to be removed due to the introduction of sent_at
-        email.update!(status: :sent, finished_sending_at: attempt.finished_sending_at, sent_at: Time.zone.now)
+        email.update!(status: :sent, sent_at: Time.zone.now)
       when :undeliverable_failure
         record_metric_and_update_attempt(attempt, status)
-        # Deprecated: finished_sending_at is deprecated and soon to be removed due to the introduction of sent_at
-        email.update!(status: :failed, finished_sending_at: attempt.finished_sending_at)
+        email.update!(status: :failed)
       when :provider_communication_failure
         record_metric_and_update_attempt(attempt, status)
       end
@@ -87,6 +85,6 @@ private
 
   def record_metric_and_update_attempt(attempt, status)
     Metrics.delivery_attempt_status_changed(status)
-    attempt.update!(status: status, completed_at: Time.zone.now)
+    attempt.update!(status: status)
   end
 end

@@ -1,9 +1,7 @@
 class StatusUpdateService < ApplicationService
-  def initialize(reference:, status:, completed_at:, sent_at:, user: nil)
+  def initialize(reference:, status:, user: nil)
     @reference = reference
     @status = status
-    @completed_at = completed_at
-    @sent_at = sent_at
     @user = user
     @delivery_attempt = find_delivery_attempt(reference)
   end
@@ -11,15 +9,10 @@ class StatusUpdateService < ApplicationService
   def call
     ApplicationRecord.transaction do
       delivery_attempt.update!(
-        sent_at: sent_at,
-        completed_at: completed_at,
         status: delivery_attempt_status,
         signon_user_uid: user&.uid,
       )
     end
-
-    # Deprecated: finished_sending_at is deprecated and soon to be removed due to the introduction of sent_at
-    email.update!(finished_sending_at: delivery_attempt.finished_sending_at)
 
     if status == "permanent-failure" && subscriber
       UnsubscribeAllService.call(subscriber, :non_existent_email)
@@ -35,7 +28,7 @@ class StatusUpdateService < ApplicationService
 
 private
 
-  attr_reader :delivery_attempt, :reference, :status, :user, :completed_at, :sent_at
+  attr_reader :delivery_attempt, :reference, :status, :user
   delegate :email, to: :delivery_attempt
 
   def subscriber

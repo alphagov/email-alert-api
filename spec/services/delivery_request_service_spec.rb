@@ -129,21 +129,19 @@ RSpec.describe DeliveryRequestService do
         allow(default_provider).to receive(:call).and_return(:delivered)
       end
 
-      it "sets the delivery attempt status and completed time" do
+      it "sets the delivery attempt status" do
         freeze_time do
-          scope = DeliveryAttempt.where(status: :delivered,
-                                        completed_at: Time.zone.now)
+          scope = DeliveryAttempt.where(status: :delivered)
           expect { described_class.call(email: email) }
             .to change(scope, :count).by(1)
         end
       end
 
-      it "marks the email as sent and sets the sent_at and finished_sending_at time" do
+      it "marks the email as sent and sets the sent_at" do
         freeze_time do
           expect { described_class.call(email: email) }
             .to change { email.status }.to("sent")
             .and change { email.sent_at }.to(Time.zone.now)
-            .and change { email.finished_sending_at }.to(Time.zone.now)
         end
       end
 
@@ -160,21 +158,17 @@ RSpec.describe DeliveryRequestService do
         allow(default_provider).to receive(:call).and_return(:undeliverable_failure)
       end
 
-      it "sets the delivery attempt status and completed time" do
+      it "sets the delivery attempt status" do
         freeze_time do
-          scope = DeliveryAttempt.where(status: :undeliverable_failure,
-                                        completed_at: Time.zone.now)
+          scope = DeliveryAttempt.where(status: :undeliverable_failure)
           expect { described_class.call(email: email) }
             .to change(scope, :count).by(1)
         end
       end
 
-      it "marks the email as failed and sets finished_sending_at time" do
-        freeze_time do
-          expect { described_class.call(email: email) }
-            .to change { email.status }.to("failed")
-            .and change { email.finished_sending_at }.to(Time.zone.now)
-        end
+      it "marks the email as failed" do
+        expect { described_class.call(email: email) }
+          .to change { email.status }.to("failed")
       end
 
       it "records that the delivery attempt status has changed" do

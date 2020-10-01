@@ -11,18 +11,13 @@ RSpec.describe StatusUpdateService do
       {
         reference: reference,
         status: status,
-        completed_at: time,
-        sent_at: time,
         user: user,
       }
     end
 
     it "updates the delivery attempt record" do
-      described_class.call(**args)
-      expect(delivery_attempt.reload)
-        .to have_attributes(sent_at: time,
-                            completed_at: time,
-                            signon_user_uid: user.uid)
+      expect { described_class.call(**args) }
+        .to change { delivery_attempt.reload.signon_user_uid }.to(user.uid)
     end
 
     context "when provided a 'delivered' status" do
@@ -31,7 +26,6 @@ RSpec.describe StatusUpdateService do
       it "sets the delivery attempt status to delivered" do
         expect { described_class.call(**args) }
           .to change { delivery_attempt.reload.status }.to("delivered")
-          .and change { email.reload.finished_sending_at }.to(time)
       end
     end
 
@@ -59,7 +53,6 @@ RSpec.describe StatusUpdateService do
       it "sets the delivery attempt status to undeliverable_failure" do
         expect { described_class.call(**args) }
           .to change { delivery_attempt.reload.status }.to("undeliverable_failure")
-          .and change { email.reload.finished_sending_at }.to(time)
       end
     end
 
@@ -77,7 +70,7 @@ RSpec.describe StatusUpdateService do
 
     context "when the delivery attempt isn't in a sent state" do
       let!(:delivery_attempt) do
-        create(:delivered_delivery_attempt, id: reference, email: email)
+        create(:delivery_attempt, status: :delivered, id: reference, email: email)
       end
 
       it "raises a DeliveryAttemptStatusConflictError" do
