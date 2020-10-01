@@ -1,7 +1,5 @@
-class DeliveryRequestWorker
+class DeliveryRequestWorker < ApplicationWorker
   class ProviderCommunicationFailureError < RuntimeError; end
-
-  include Sidekiq::Worker
 
   sidekiq_options retry: 9
 

@@ -1,6 +1,4 @@
-class MetricsCollectionWorker
-  include Sidekiq::Worker
-
+class MetricsCollectionWorker < ApplicationWorker
   def perform
     ContentChangeExporter.call
     DigestRunExporter.call

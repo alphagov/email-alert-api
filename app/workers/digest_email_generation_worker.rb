@@ -1,6 +1,4 @@
-class DigestEmailGenerationWorker
-  include Sidekiq::Worker
-
+class DigestEmailGenerationWorker < ApplicationWorker
   sidekiq_options queue: :email_generation_digest
 
   def perform(digest_run_subscriber_id)

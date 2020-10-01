@@ -1,10 +1,8 @@
-class ProcessContentChangeWorker
-  include Sidekiq::Worker
-
+class ProcessContentChangeWorker < ApplicationWorker
   sidekiq_options queue: :process_and_generate_emails
 
   def perform(content_change_id)
-    run_with_advisory_lock(content_change_id) do
+    run_with_advisory_lock(ContentChange, content_change_id) do
       content_change = ContentChange.find(content_change_id)
       return if content_change.processed_at
 
@@ -32,10 +30,5 @@ private
     ]).first
 
     DeliveryRequestWorker.perform_async_in_queue(id, queue: content_change.queue)
-  end
-
-  def run_with_advisory_lock(content_change_id)
-    key = "content-change-#{content_change_id}"
-    ApplicationRecord.with_advisory_lock(key, timeout_seconds: 0) { yield }
   end
 end

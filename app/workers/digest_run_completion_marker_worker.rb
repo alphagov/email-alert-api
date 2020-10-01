@@ -1,6 +1,4 @@
-class DigestRunCompletionMarkerWorker
-  include Sidekiq::Worker
-
+class DigestRunCompletionMarkerWorker < ApplicationWorker
   def perform
     candidates = DigestRun.where.not(processed_at: nil).where(completed_at: nil)
     candidates.find_each do |digest_run|
