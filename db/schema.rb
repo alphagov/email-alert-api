@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_16_095316) do
+ActiveRecord::Schema.define(version: 2020_09_16_164443) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,8 +47,6 @@ ActiveRecord::Schema.define(version: 2020_09_16_095316) do
     t.datetime "updated_at", null: false
     t.string "signon_user_uid"
     t.uuid "email_id", null: false
-    t.datetime "completed_at"
-    t.datetime "sent_at"
     t.index ["created_at"], name: "index_delivery_attempts_on_created_at"
     t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
     t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
@@ -83,7 +81,6 @@ ActiveRecord::Schema.define(version: 2020_09_16_095316) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "address", null: false
-    t.datetime "finished_sending_at"
     t.datetime "archived_at"
     t.bigint "subscriber_id"
     t.integer "status", default: 0, null: false
@@ -91,7 +88,6 @@ ActiveRecord::Schema.define(version: 2020_09_16_095316) do
     t.index ["address"], name: "index_emails_on_address"
     t.index ["archived_at"], name: "index_emails_on_archived_at"
     t.index ["created_at"], name: "index_emails_on_created_at"
-    t.index ["finished_sending_at"], name: "index_emails_on_finished_sending_at"
   end
 
   create_table "matched_content_changes", force: :cascade do |t|
