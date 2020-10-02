@@ -95,4 +95,16 @@ namespace :data_migration do
       puts "Error updating subscriber list with title:#{new_title} and slug: #{new_slug}"
     end
   end
+
+  desc "Update one of the tags in a subscriber list"
+  task :update_subscriber_list_tag, %i[key old_criterion new_criterion] => :environment do |_t, args|
+    SubscriberList.where("tags->>'#{args[:key]}' IS NOT NULL").find_each do |list|
+      old_criteria = list.tags[args[:key].to_sym][:any]
+      next unless old_criteria.include?(args[:old_criterion])
+
+      new_criteria = old_criteria - [args[:old_criterion]] + [args[:new_criterion]]
+      list.update!(tags: list.tags.merge(args[:key].to_sym => { any: new_criteria }))
+      puts "Updated #{args[:key]} in #{list.title} to #{new_criteria}"
+    end
+  end
 end
