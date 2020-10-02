@@ -1,13 +1,10 @@
-class EmailArchiveWorker
-  include Sidekiq::Worker
-
-  LOCK_NAME = "email_archive_worker".freeze
+class EmailArchiveWorker < ApplicationWorker
   BATCH_SIZE = 1000
 
   def perform
     return unless ENV.include?("EMAIL_ARCHIVE_S3_ENABLED")
 
-    Email.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
+    run_with_advisory_lock(Email, "archive") do
       start_time = Time.zone.now
       archived_count = 0
 

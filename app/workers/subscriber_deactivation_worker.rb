@@ -1,6 +1,4 @@
-class SubscriberDeactivationWorker
-  include Sidekiq::Worker
-
+class SubscriberDeactivationWorker < ApplicationWorker
   sidekiq_options retry: 3
 
   def perform(subscriber_ids)

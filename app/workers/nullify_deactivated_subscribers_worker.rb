@@ -1,8 +1,6 @@
-class NullifyDeactivatedSubscribersWorker
-  include Sidekiq::Worker
-
+class NullifyDeactivatedSubscribersWorker < ApplicationWorker
   def perform
-    run_only_once do
+    run_with_advisory_lock(Subscriber, "nullify") do
       subscribers.find_each(&:nullify)
     end
   end
@@ -14,11 +12,5 @@ private
       .deactivated
       .not_nullified
       .where("deactivated_at < ?", 28.days.ago)
-  end
-
-  def run_only_once
-    Subscriber.with_advisory_lock("nullify_deactivated_subscribers", timeout_seconds: 0) do
-      yield
-    end
   end
 end

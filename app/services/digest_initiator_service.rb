@@ -5,13 +5,11 @@ class DigestInitiatorService < ApplicationService
   end
 
   def call
-    run_with_advisory_lock do
-      digest_run = DigestRun.find_or_create_by!(date: date, range: range)
-      return if digest_run.processed_at
+    digest_run = DigestRun.find_or_create_by!(date: date, range: range)
+    return if digest_run.processed_at
 
-      create_digest_run_subscribers(digest_run)
-      digest_run.update!(processed_at: Time.zone.now)
-    end
+    create_digest_run_subscribers(digest_run)
+    digest_run.update!(processed_at: Time.zone.now)
   end
 
 private
@@ -33,12 +31,6 @@ private
   def enqueue_jobs(digest_run_subscriber_ids)
     digest_run_subscriber_ids.each do |digest_run_subscriber_id|
       DigestEmailGenerationWorker.perform_async(digest_run_subscriber_id)
-    end
-  end
-
-  def run_with_advisory_lock
-    DigestRun.with_advisory_lock("#{range}_digest_initiator-#{date}", timeout_seconds: 0) do
-      yield
     end
   end
 end

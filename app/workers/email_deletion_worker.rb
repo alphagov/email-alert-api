@@ -1,10 +1,6 @@
-class EmailDeletionWorker
-  include Sidekiq::Worker
-
-  LOCK_NAME = "email_deletion_worker".freeze
-
+class EmailDeletionWorker < ApplicationWorker
   def perform
-    Email.with_advisory_lock(LOCK_NAME, timeout_seconds: 0) do
+    run_with_advisory_lock(Email, "delete") do
       start_time = Time.zone.now
       deleted_count = Email.deleteable.delete_all
       log_complete(deleted_count, start_time, Time.zone.now)
