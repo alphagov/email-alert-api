@@ -17,6 +17,6 @@ private
   end
 
   def critical_latency
-    1.hour
+    2.hours
   end
 end
