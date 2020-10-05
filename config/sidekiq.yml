@@ -7,13 +7,14 @@
 # See https://github.com/mperham/sidekiq/wiki/Advanced-Options#queues
 # Use powers of 2: higher priority groups are checked twice as often.
 :queues:
-  - [delivery_transactional, 8]
-  - [delivery_immediate_high, 8]
-  - [process_and_generate_emails, 4]
-  - [email_generation_digest, 4]
-  - [delivery_immediate, 2]
-  - [delivery_digest, 2]
-  - [default, 1]
+  # See here to understand priorities: https://github.com/mperham/sidekiq/wiki/Advanced-Options#queues
+  - [delivery_transactional, 8] # To send one-off emails, such as subscription confirmation.
+  - [delivery_immediate_high, 8] # To send high priority emails to users with immediate subscriptions e.g. travel advice.
+  - [process_and_generate_emails, 4] # To generate emails to users with immediate subscriptions for content changes and messages.
+  - [email_generation_digest, 4] # To generate emails to users with daily or weekly subscriptions for content changes and messages.
+  - [delivery_immediate, 2] # To send emails to users with immediate subscriptions.
+  - [delivery_digest, 2] # To send digest emails to users with either daily or weekly subscriptions.
+  - [default, 1] # Miscellaneous operations e.g. initiating digest runs, monitoring, DB cleanup and recovering lost Sidekiq jobs.
 :schedule:
   daily_digest_initiator:
     cron: '30 8 * * * Europe/London' # every day at 8:30am
