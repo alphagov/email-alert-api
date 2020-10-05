@@ -61,7 +61,6 @@ bundle exec rspec
 - [Analytics](docs/analytics.md)
 - [API](docs/api.md)
 - [Matching content to subscriber lists](docs/matching-content-to-subscriber-lists.md)
-- [Queues](docs/queues.md)
 - [Support tasks](docs/support-tasks.md)
 - [ENV vars](docs/env-vars.md)
 
