@@ -26,6 +26,8 @@ Rails.application.routes.draw do
     post "/subscribers/auth-token", to: "subscribers_auth_token#auth_token"
     post "/subscriptions/auth-token", to: "subscriptions_auth_token#auth_token"
 
+    post "/subscribers/account-jwt", to: "subscribers_account_jwt#account_jwt"
+
     post "/unsubscribe/:id", to: "unsubscribe#unsubscribe"
 
     get "/healthcheck", to: "healthcheck#index"
