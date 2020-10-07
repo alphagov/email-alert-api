@@ -71,15 +71,6 @@ RSpec.describe "Creating a subscription", type: :request do
           end
         end
 
-        context "with a notify email address" do
-          it "returns a 201 but doesn't create a subscriber or subscription" do
-            params = JSON.dump(address: "simulate-delivered@notifications.service.gov.uk", subscriber_list_id: subscriber_list.id, frequency: "daily")
-            expect { post "/subscriptions", params: params, headers: json_headers }.to_not change(Subscriber, :count)
-
-            expect(response.status).to eq(201)
-          end
-        end
-
         context "with a deactivated subscriber" do
           before do
             create(:subscriber, :deactivated, address: "deactivated@example.com")
