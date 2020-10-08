@@ -1,7 +1,5 @@
 class SubscriptionsController < ApplicationController
   def create
-    return render json: { id: 0 }, status: :created if smoke_test_address?
-
     subscriber = Subscriber.resilient_find_or_create(
       address,
       signon_user_uid: current_user.uid,
@@ -84,10 +82,6 @@ class SubscriptionsController < ApplicationController
   end
 
 private
-
-  def smoke_test_address?
-    address.end_with?("@notifications.service.gov.uk")
-  end
 
   def address
     subscription_params.require(:address)
