@@ -1,54 +1,72 @@
+require "csv"
+
 namespace :data_migration do
-  desc "Switch immediate subscribers of the specified list slugs to daily digest"
-  task switch_to_daily_digest: :environment do |_t, args|
-    list_ids = SubscriberList.where(slug: args.extras).pluck(:id)
-    raise "One or more lists were not found" if list_ids.count != args.extras.count
+  desc "Experiment 3 in switching immediate subscribers to daily digest"
+  task switch_to_daily_digest_experiment: :environment do
+    lists = CSV.read(Rails.root.join("config/experiment_3_lists.csv"), headers: true)
 
-    subscriptions = Subscription.active.immediately.where(subscriber_list_id: list_ids)
-    raise "No subscriptions to change" if subscriptions.none?
+    list_count = SubscriberList.where(slug: lists.map { |l| l.fetch("slug") }).count
+    raise "One or more lists were not found" if lists.size != list_count
 
-    subscribers = Subscriber.where(id: subscriptions.pluck(:subscriber_id))
+    subscriber_and_subscription_ids = lists.each_with_object({}) do |list, memo|
+      subscription_scope = Subscription.active
+                                       .immediately
+                                       .joins(:subscriber_list)
+                                       .where("subscriber_lists.slug": list.fetch("slug"))
 
-    subscribers.find_in_batches(batch_size: 1000).with_index do |subscriber_batch, index|
-      puts "Processing batch #{index}"
+      total = subscription_scope.count
+      to_migrate = (total * list.fetch("proportion").to_f).round
+      random_subscriptions = subscription_scope.limit(to_migrate)
+                                               .order("RANDOM()")
+                                               .pluck(:id, :subscriber_id)
 
-      subscriptions_by_subscriber = subscriptions
-        .where(subscriber: subscriber_batch)
-        .includes(:subscriber, :subscriber_list)
-        .group_by(&:subscriber)
+      random_subscriptions.each do |(subscription_id, subscriber_id)|
+        memo[subscriber_id] ||= []
+        memo[subscriber_id] << subscription_id
+      end
 
-      subscriptions_by_subscriber.each do |subscriber, immediate_subscriptions|
-        email_id = nil
-        now = Time.zone.now
+      puts "Migrating #{random_subscriptions.size} of #{total} immediate subscribers of #{list.fetch('slug')}"
+    end
 
-        subscriber.with_lock do
-          new_subscriptions = immediate_subscriptions.map do |subscription|
-            {
-              subscriber_id: subscription.subscriber_id,
-              subscriber_list_id: subscription.subscriber_list_id,
-              frequency: :daily,
-              source: :bulk_immediate_to_digest,
-              created_at: now,
-              updated_at: now,
-            }
-          end
+    subscribers = Subscriber.where(id: subscriber_and_subscription_ids.keys)
+    subscribers.find_each.with_index do |subscriber, index|
+      email_id = nil
+      now = Time.zone.now
+      subscription_ids = subscriber_and_subscription_ids.fetch(subscriber.id)
 
-          Subscription.where(id: immediate_subscriptions.map(&:id)).update_all(
-            ended_reason: :bulk_immediate_to_digest,
-            ended_at: now,
-          )
+      subscriber.with_lock do
+        immediate_subscriptions = Subscription.active.immediately.where(id: subscription_ids)
 
-          Subscription.insert_all!(new_subscriptions)
-
-          email_id = SwitchToDailyDigestEmailBuilder.call(
-            subscriber, immediate_subscriptions
-          )
+        new_subscriptions = immediate_subscriptions.map do |subscription|
+          {
+            subscriber_id: subscriber.id,
+            subscriber_list_id: subscription.subscriber_list_id,
+            frequency: :daily,
+            source: :bulk_immediate_to_digest,
+            created_at: now,
+            updated_at: now,
+          }
         end
 
-        DeliveryRequestWorker.perform_async_in_queue(email_id, queue: :default)
-      rescue StandardError => e
-        puts "Skipping subscriber: #{e}"
+        Subscription.where(id: immediate_subscriptions.map(&:id)).update_all(
+          ended_reason: :bulk_immediate_to_digest,
+          ended_at: now,
+        )
+
+        Subscription.insert_all!(new_subscriptions)
+
+        email_id = SwitchToDailyDigestEmailBuilder.call(
+          subscriber, immediate_subscriptions
+        )
       end
+
+      DeliveryRequestWorker.perform_async_in_queue(email_id, queue: :default)
+
+      progress = index + 1
+      total = subscriber_and_subscription_ids.size
+      puts "Processed #{progress} of #{total} subscribers" if (progress % 1000).zero?
+    rescue StandardError => e
+      puts "Skipping subscriber #{subscriber.id}: #{e}"
     end
   end
 

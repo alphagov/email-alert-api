@@ -1,19 +1,26 @@
 RSpec.describe "data_migration" do
   include NotifyRequestHelpers
 
-  describe "switch_to_daily_digest" do
-    let(:list1) { create :subscriber_list }
-    let(:list2) { create :subscriber_list }
+  describe "switch_to_daily_digest_experiment" do
+    let!(:list1) { create :subscriber_list }
+    let!(:list2) { create :subscriber_list }
+    let(:list_data) do
+      [
+        { "slug" => list1.slug, "proportion" => "1" },
+        { "slug" => list2.slug, "proportion" => "0.5" },
+      ]
+    end
 
     before do
-      Rake::Task["data_migration:switch_to_daily_digest"].reenable
+      allow(CSV).to receive(:open).and_return(list_data)
+      Rake::Task["data_migration:switch_to_daily_digest_experiment"].reenable
       stub_notify
     end
 
     it "switches immediate subscriptions to daily" do
       subscription = create :subscription, subscriber_list: list1, frequency: :immediately
 
-      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug, list2.slug) }
+      expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
         .to output.to_stdout
 
       new_subscription = subscription.subscriber.subscriptions.active.first
@@ -26,11 +33,24 @@ RSpec.describe "data_migration" do
     end
 
     it "does not change other subscriptions" do
-      create :subscription, subscriber_list: list1, frequency: :daily
-      create :subscription, frequency: :immediately
+      digest = create :subscription, subscriber_list: list1, frequency: :daily
+      non_list = create :subscription, frequency: :immediately
 
-      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug) }
-        .to raise_error("No subscriptions to change")
+      expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
+        .to output.to_stdout
+
+      expect(digest.reload).not_to be_ended
+      expect(non_list.reload).not_to be_ended
+    end
+
+    it "can change a proportion of subscriptions" do
+      create_list :subscription, 4, subscriber_list: list2, frequency: :immediately
+
+      expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
+        .to output.to_stdout
+        .and change { Subscription.active.immediately.where(subscriber_list: list2).count }
+        .from(4)
+        .to(2)
     end
 
     it "sends a summary email to affected subscribers" do
@@ -38,7 +58,7 @@ RSpec.describe "data_migration" do
       create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
       create :subscription, subscriber_list: list2, frequency: :immediately, subscriber: subscriber
 
-      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug, list2.slug) }
+      expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
         .to output.to_stdout
 
       email_data = expect_an_email_was_sent
@@ -49,8 +69,12 @@ RSpec.describe "data_migration" do
     end
 
     context "when a list is not found" do
+      let(:list_data) do
+        [{ "slug" => "missing-list", "proportion" => "1" }]
+      end
+
       it "raises an error" do
-        expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug, "foo") }
+        expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
           .to raise_error("One or more lists were not found")
       end
     end
@@ -69,13 +93,13 @@ RSpec.describe "data_migration" do
       end
 
       it "only sends an email to switched subscribers" do
-        expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug) }
+        expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
           .to output.to_stdout
           .and change { Email.count }.by(1)
       end
 
       it "persists changes for other subscribers" do
-        expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke(list1.slug) }
+        expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
           .to output.to_stdout
           .and change { Subscription.count }.by(1)
 
