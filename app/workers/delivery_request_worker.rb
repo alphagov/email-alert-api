@@ -16,12 +16,8 @@ class DeliveryRequestWorker < ApplicationWorker
       return
     end
 
-    email = Metrics.delivery_request_worker_find_email do
-      Email.find(email_id)
-    end
-
     attempt = DeliveryRequestService.call(
-      email: email,
+      email: Email.find(email_id),
       metrics: parsed_metrics(metrics),
     )
     increment_rate_limiter if attempt

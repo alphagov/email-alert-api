@@ -45,18 +45,6 @@ class Metrics
       time("email_bulk_insert.#{size}.timing", &block)
     end
 
-    def delivery_request_worker_find_email(&block)
-      time("delivery_request_worker_find_email.timing", &block)
-    end
-
-    def delivery_request_service_first_delivery_attempt(&block)
-      time("delivery_request_service_first_delivery_attempt.timing", &block)
-    end
-
-    def delivery_request_service_create_delivery_attempt(&block)
-      time("delivery_request_service_create_delivery_attempt.timing", &block)
-    end
-
     def email_created_to_first_delivery_attempt(created_time, first_attempt_time)
       difference = (first_attempt_time - created_time) * 1000
       timing("email_created_to_first_delivery_attempt", difference)
@@ -65,10 +53,6 @@ class Metrics
     def content_change_created_to_first_delivery_attempt(created_time, first_attempt_time)
       difference = (first_attempt_time - created_time) * 1000
       timing("content_change_created_to_first_delivery_attempt", difference)
-    end
-
-    def delivery_attempt_status_changed(status)
-      increment("delivery_attempt.status.#{status}")
     end
 
   private

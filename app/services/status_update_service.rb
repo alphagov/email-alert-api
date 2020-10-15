@@ -22,7 +22,6 @@ class StatusUpdateService < ApplicationService
       Rails.logger.warn("Email #{reference} failed with a #{status}")
     end
 
-    Metrics.delivery_attempt_status_changed(delivery_attempt_status)
     GovukStatsd.increment("status_update.status.#{status}")
   end
 

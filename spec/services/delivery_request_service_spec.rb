@@ -144,13 +144,6 @@ RSpec.describe DeliveryRequestService do
             .and change { email.sent_at }.to(Time.zone.now)
         end
       end
-
-      it "records that the delivery attempt status has changed" do
-        expect(Metrics)
-          .to receive(:delivery_attempt_status_changed)
-          .with(:delivered)
-        described_class.call(email: email)
-      end
     end
 
     context "when sending the email returns a undeliverable_failure status" do
@@ -170,13 +163,6 @@ RSpec.describe DeliveryRequestService do
         expect { described_class.call(email: email) }
           .to change { email.status }.to("failed")
       end
-
-      it "records that the delivery attempt status has changed" do
-        expect(Metrics)
-          .to receive(:delivery_attempt_status_changed)
-          .with(:undeliverable_failure)
-        described_class.call(email: email)
-      end
     end
 
     context "when sending the email raises an error" do
@@ -188,13 +174,6 @@ RSpec.describe DeliveryRequestService do
         scope = DeliveryAttempt.where(status: :provider_communication_failure)
         expect { described_class.call(email: email) }
           .to change(scope, :count).by(1)
-      end
-
-      it "records that the delivery attempt status has changed" do
-        expect(Metrics)
-          .to receive(:delivery_attempt_status_changed)
-          .with(:provider_communication_failure)
-        described_class.call(email: email)
       end
     end
   end
