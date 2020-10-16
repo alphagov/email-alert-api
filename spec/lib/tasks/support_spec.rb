@@ -21,6 +21,8 @@ RSpec.describe "support" do
   end
 
   describe "get_notifications_from_notify_by_email_id" do
+    before { stub_request(:get, /notify/).to_return(status: 404) }
+
     it "outputs the status of notifications with a specified email ID" do
       expect { Rake::Task["support:get_notifications_from_notify_by_email_id"].invoke("1") }
         .to output.to_stdout
