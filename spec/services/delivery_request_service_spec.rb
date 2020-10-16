@@ -5,16 +5,11 @@ RSpec.describe DeliveryRequestService do
     let(:default_provider) { DeliveryRequestService::PseudoProvider }
     let(:email_service_config) { EmailAlertAPI.config.email_service }
 
-    it "creates a delivery attempt" do
-      expect { described_class.call(email: email) }
-        .to change { DeliveryAttempt.where(email: email).count }
-        .by(1)
-    end
-
     it "calls the provider to send an email" do
       email_parameters = { address: email.address,
                            subject: email.subject,
-                           body: email.body }
+                           body: email.body,
+                           reference: email.id }
       expect(default_provider).to receive(:call)
                               .with(hash_including(email_parameters))
                               .and_return(:sent)
@@ -53,18 +48,6 @@ RSpec.describe DeliveryRequestService do
       described_class.call(email: email)
     end
 
-    it "returns the delivery attempt when the overrider can provide an email address" do
-      overrider_double = instance_double(
-        described_class::EmailAddressOverrider,
-        destination_address: "test@example.com",
-      )
-      allow(described_class::EmailAddressOverrider)
-        .to receive(:new)
-        .and_return(overrider_double)
-
-      expect(described_class.call(email: email)).to be_a(DeliveryAttempt)
-    end
-
     it "returns nil when no email was sent due to filtering" do
       overrider_double = instance_double(
         described_class::EmailAddressOverrider,
@@ -77,103 +60,57 @@ RSpec.describe DeliveryRequestService do
       expect(described_class.call(email: email)).to be_nil
     end
 
-    context "when this is the first delivery attempt" do
-      around { |example| freeze_time { example.run } }
+    it "marks an email as sent when the provider returns a sent status" do
+      allow(default_provider).to receive(:call).and_return(:sent)
 
-      it "records the time of the delivery attempt" do
-        expect(Metrics)
-          .to receive(:email_created_to_first_delivery_attempt)
-          .with(email.created_at, Time.zone.now)
-        described_class.call(email: email)
+      freeze_time do
+        expect { described_class.call(email: email) }
+          .to change { email.status }.to("sent")
+          .and change { email.sent_at }.to(Time.zone.now)
       end
     end
 
-    context "when this is the first delivery attempt and " \
-            "content_change_created_at metrics are provided" do
-      around { |example| freeze_time { example.run } }
+    it "marks an email as sent when the provider returns a delivered status" do
+      allow(default_provider).to receive(:call).and_return(:delivered)
 
-      it "records the time from content change created until this delivery attempt" do
+      freeze_time do
+        expect { described_class.call(email: email) }
+          .to change { email.status }.to("sent")
+          .and change { email.sent_at }.to(Time.zone.now)
+      end
+    end
+
+    it "marks an email as failed when the provider returns a undeliverable_failure status" do
+      allow(default_provider).to receive(:call).and_return(:undeliverable_failure)
+
+      expect { described_class.call(email: email) }
+        .to change { email.status }.to("failed")
+    end
+
+    it "raises a ProviderCommunicationFailureError when then provider returns a " \
+      "provider_communication_failure status" do
+      allow(default_provider).to receive(:call).and_return(:provider_communication_failure)
+
+      expect { described_class.call(email: email) }
+        .to raise_error(described_class::ProviderCommunicationFailureError)
+    end
+
+    it "raises a ProviderCommunicationFailureError when then provider raises an error" do
+      allow(default_provider).to receive(:call).and_raise("boom")
+
+      expect { described_class.call(email: email) }
+        .to raise_error(described_class::ProviderCommunicationFailureError)
+    end
+
+    it "can record content change creation metrics when these are provided" do
+      freeze_time do
         content_change_created_at = 1.hour.ago
         metrics = { content_change_created_at: content_change_created_at }
         expect(Metrics)
-          .to receive(:content_change_created_to_first_delivery_attempt)
+          .to receive(:content_change_created_until_email_sent)
           .with(content_change_created_at, Time.zone.now)
 
         described_class.call(email: email, metrics: metrics)
-      end
-    end
-
-    context "when this is not the first delivery attempt" do
-      before { create(:delivery_attempt, email: email) }
-
-      it "doesn't record the time of the delivery attempt" do
-        expect(Metrics).not_to receive(:email_created_to_first_delivery_attempt)
-        described_class.call(email: email)
-      end
-    end
-
-    context "when sending the email returns a sent status" do
-      it "marks the email as sent and sets the sent_at time" do
-        allow(default_provider).to receive(:call).and_return(:sent)
-
-        freeze_time do
-          expect { described_class.call(email: email) }
-            .to change { email.status }.to("sent")
-            .and change { email.sent_at }.to(Time.zone.now)
-        end
-      end
-    end
-
-    context "when sending the email returns a delivered status" do
-      before do
-        allow(default_provider).to receive(:call).and_return(:delivered)
-      end
-
-      it "sets the delivery attempt status" do
-        freeze_time do
-          scope = DeliveryAttempt.where(status: :delivered)
-          expect { described_class.call(email: email) }
-            .to change(scope, :count).by(1)
-        end
-      end
-
-      it "marks the email as sent and sets the sent_at" do
-        freeze_time do
-          expect { described_class.call(email: email) }
-            .to change { email.status }.to("sent")
-            .and change { email.sent_at }.to(Time.zone.now)
-        end
-      end
-    end
-
-    context "when sending the email returns a undeliverable_failure status" do
-      before do
-        allow(default_provider).to receive(:call).and_return(:undeliverable_failure)
-      end
-
-      it "sets the delivery attempt status" do
-        freeze_time do
-          scope = DeliveryAttempt.where(status: :undeliverable_failure)
-          expect { described_class.call(email: email) }
-            .to change(scope, :count).by(1)
-        end
-      end
-
-      it "marks the email as failed" do
-        expect { described_class.call(email: email) }
-          .to change { email.status }.to("failed")
-      end
-    end
-
-    context "when sending the email raises an error" do
-      before do
-        allow(default_provider).to receive(:call).and_raise("Ut oh")
-      end
-
-      it "sets the delivery attempt status to provider_communication_failure" do
-        scope = DeliveryAttempt.where(status: :provider_communication_failure)
-        expect { described_class.call(email: email) }
-          .to change(scope, :count).by(1)
       end
     end
   end

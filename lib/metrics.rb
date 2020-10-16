@@ -45,13 +45,10 @@ class Metrics
       time("email_bulk_insert.#{size}.timing", &block)
     end
 
-    def email_created_to_first_delivery_attempt(created_time, first_attempt_time)
-      difference = (first_attempt_time - created_time) * 1000
-      timing("email_created_to_first_delivery_attempt", difference)
-    end
-
-    def content_change_created_to_first_delivery_attempt(created_time, first_attempt_time)
-      difference = (first_attempt_time - created_time) * 1000
+    def content_change_created_until_email_sent(created_time, sent_time)
+      difference = (sent_time - created_time) * 1000
+      timing("content_change_created_until_email_sent", difference)
+      # legacy - to be removed once dashboard is updated
       timing("content_change_created_to_first_delivery_attempt", difference)
     end
 

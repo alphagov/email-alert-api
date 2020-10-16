@@ -1,4 +1,6 @@
 class DeliveryRequestService < ApplicationService
+  class ProviderCommunicationFailureError < RuntimeError; end
+
   PROVIDERS = {
     "notify" => NotifyProvider,
     "pseudo" => PseudoProvider,
@@ -9,7 +11,6 @@ class DeliveryRequestService < ApplicationService
     config = EmailAlertAPI.config.email_service
     @email = email
     @metrics = metrics
-    @attempt_id = SecureRandom.uuid
     @provider_name = config.fetch(:provider).downcase
     @subject_prefix = config.fetch(:email_subject_prefix)
     @overrider = EmailAddressOverrider.new(config)
@@ -18,36 +19,25 @@ class DeliveryRequestService < ApplicationService
   def call
     return if address.nil?
 
-    record_first_attempt_metrics unless DeliveryAttempt.exists?(email: email)
-
-    attempt = DeliveryAttempt.create!(id: attempt_id,
-                                      email: email,
-                                      status: :sent,
-                                      provider: provider_name)
-
     status = Metrics.email_send_request(provider_name) { send_email }
 
-    ActiveRecord::Base.transaction do
-      case status
-      when :sent
-        email.update!(status: :sent, sent_at: Time.zone.now)
-      when :delivered
-        attempt.update!(status: status)
-        email.update!(status: :sent, sent_at: Time.zone.now)
-      when :undeliverable_failure
-        attempt.update!(status: status)
-        email.update!(status: :failed)
-      when :provider_communication_failure
-        attempt.update!(status: status)
-      end
+    case status
+    when :sent
+      email.update!(status: :sent, sent_at: Time.zone.now)
+    when :delivered
+      email.update!(status: :sent, sent_at: Time.zone.now)
+    when :undeliverable_failure
+      email.update!(status: :failed)
+    when :provider_communication_failure
+      raise ProviderCommunicationFailureError
     end
 
-    attempt
+    record_sent_metrics
   end
 
 private
 
-  attr_reader :attempt_id, :email, :metrics, :provider_name, :subject_prefix, :overrider
+  attr_reader :email, :metrics, :provider_name, :subject_prefix, :overrider
 
   def address
     @address ||= overrider.destination_address(email.address)
@@ -60,22 +50,20 @@ private
       address: address,
       subject: subject_prefix + email.subject,
       body: email.body,
-      reference: attempt_id,
+      reference: email.id,
     )
   rescue StandardError => e
     GovukError.notify(e)
-    :provider_communication_failure
+    raise ProviderCommunicationFailureError
   end
 
-  def record_first_attempt_metrics
-    now = Time.zone.now.utc
-    Metrics.email_created_to_first_delivery_attempt(email.created_at, now)
-
+  def record_sent_metrics
+    return unless email.sent_at
     return unless metrics[:content_change_created_at]
 
-    Metrics.content_change_created_to_first_delivery_attempt(
+    Metrics.content_change_created_until_email_sent(
       metrics[:content_change_created_at],
-      now,
+      email.sent_at,
     )
   end
 end
