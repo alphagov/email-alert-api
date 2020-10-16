@@ -1,4 +1,4 @@
-class DeliveryRequestWorker < ApplicationWorker
+class SendEmailWorker < ApplicationWorker
   # More information around the rate limit can be found here ->
   # https://docs.publishing.service.gov.uk/manual/govuk-notify.html under "GOV.UK Emails".
   RATE_LIMIT_THRESHOLD = 21_600 # max requests in a minute, equates to 350 a second
@@ -13,15 +13,15 @@ class DeliveryRequestWorker < ApplicationWorker
   def perform(email_id, metrics, queue)
     if rate_limit_exceeded?
       logger.warn("Rescheduling email #{email_id} due to exceeding rate limit")
-      GovukStatsd.increment("delivery_request_worker.rescheduled")
-      DeliveryRequestWorker.set(queue: queue || "delivery_immediate")
+      GovukStatsd.increment("send_email_worker.rescheduled")
+      SendEmailWorker.set(queue: queue || "delivery_immediate")
                            .perform_in(5.minutes, email_id, metrics, queue)
       return
     end
 
     increment_rate_limiter
 
-    DeliveryRequestService.call(
+    SendEmailService.call(
       email: Email.find(email_id),
       metrics: parsed_metrics(metrics),
     )
@@ -34,7 +34,7 @@ class DeliveryRequestWorker < ApplicationWorker
 private
 
   def rate_limit_exceeded?
-    rate_limiter.exceeded?("delivery_request",
+    rate_limiter.exceeded?("requests",
                            threshold: RATE_LIMIT_THRESHOLD,
                            interval: RATE_LIMIT_INTERVAL)
   end
@@ -49,12 +49,15 @@ private
   end
 
   def increment_rate_limiter
-    rate_limiter.add("delivery_request")
+    rate_limiter.add("requests")
   end
 
   def rate_limiter
     @rate_limiter ||= Sidekiq.redis do |redis|
-      Ratelimit.new("deliveries", redis: redis)
+      Ratelimit.new("send_email", redis: redis)
     end
   end
 end
+
+# For backwards compatibility
+DeliveryRequestWorker = SendEmailWorker

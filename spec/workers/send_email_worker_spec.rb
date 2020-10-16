@@ -1,4 +1,4 @@
-RSpec.describe DeliveryRequestWorker do
+RSpec.describe SendEmailWorker do
   let(:rate_limiter) do
     instance_double(Ratelimit, exceeded?: false, add: nil)
   end
@@ -11,16 +11,16 @@ RSpec.describe DeliveryRequestWorker do
     let(:email) { create(:email) }
     let(:queue) { "default" }
 
-    it "delegates sending the email to DeliveryRequestService" do
-      expect(DeliveryRequestService)
+    it "delegates sending the email to SendEmailService" do
+      expect(SendEmailService)
         .to receive(:call)
         .with(email: email, metrics: {})
       described_class.new.perform(email.id, {}, queue)
     end
 
-    it "parses scalar metrics and passes them to DeliveryRequestService" do
+    it "parses scalar metrics and passes them to SendEmailService" do
       freeze_time do
-        expect(DeliveryRequestService)
+        expect(SendEmailService)
           .to receive(:call)
           .with(email: email, metrics: { content_change_created_at: Time.zone.now })
 
@@ -33,7 +33,7 @@ RSpec.describe DeliveryRequestWorker do
     end
 
     it "increments the rate limiter" do
-      expect(rate_limiter).to receive(:add).with("delivery_request")
+      expect(rate_limiter).to receive(:add).with("requests")
       described_class.new.perform(email.id, {}, queue)
     end
 
@@ -55,7 +55,7 @@ RSpec.describe DeliveryRequestWorker do
       end
 
       it "doesn't attempt to send the email" do
-        expect(DeliveryRequestService).not_to receive(:call)
+        expect(SendEmailService).not_to receive(:call)
         described_class.new.perform(email.id, {}, queue)
       end
     end

@@ -30,7 +30,7 @@ RSpec.describe "Sending an email to a recipient" do
 
   context "when an override is not set" do
     it "sends an email to the original address" do
-      DeliveryRequestService.call(email: email)
+      SendEmailService.call(email: email)
       expect_notify_request_for(email_address: original_address)
     end
   end
@@ -39,7 +39,7 @@ RSpec.describe "Sending an email to a recipient" do
     let(:email_address_override) { "override@example.com" }
 
     it "sends an email to the override address" do
-      DeliveryRequestService.call(email: email)
+      SendEmailService.call(email: email)
       expect_notify_request_for(email_address: "override@example.com")
     end
   end
@@ -52,7 +52,7 @@ RSpec.describe "Sending an email to a recipient" do
     let(:original_address) { "whitelist-1@example.com" }
 
     it "sends to the whitelist address" do
-      DeliveryRequestService.call(email: email)
+      SendEmailService.call(email: email)
       expect_notify_request_for(email_address: "whitelist-1@example.com")
     end
   end

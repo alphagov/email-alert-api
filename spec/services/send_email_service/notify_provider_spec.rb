@@ -1,4 +1,4 @@
-RSpec.describe DeliveryRequestService::NotifyProvider do
+RSpec.describe SendEmailService::NotifyProvider do
   describe ".call" do
     let(:template_id) { EmailAlertAPI.config.notify.fetch(:template_id) }
     let(:arguments) do

@@ -42,7 +42,7 @@ RSpec.describe "Sending an unpublish message", type: :request do
     end
 
     before do
-      allow(DeliveryRequestService).to receive(:call)
+      allow(SendEmailService).to receive(:call)
       login_with_internal_app
       post "/unpublish-messages", params: @request_params, headers: json_headers
     end
@@ -56,7 +56,7 @@ RSpec.describe "Sending an unpublish message", type: :request do
     end
 
     it "sends an email" do
-      expect(DeliveryRequestService).to have_received(:call).at_least(:once)
+      expect(SendEmailService).to have_received(:call).at_least(:once)
     end
 
     it "unsubscribes all affected subscriptions" do

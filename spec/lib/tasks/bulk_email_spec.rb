@@ -28,11 +28,11 @@ RSpec.describe "bulk_email" do
       allow(BulkSubscriberListEmailBuilder).to receive(:call)
         .and_return([1, 2])
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
         .with(1, queue: :delivery_immediate)
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
         .with(2, queue: :delivery_immediate)
 
@@ -70,11 +70,11 @@ RSpec.describe "bulk_email" do
       allow(BulkSubscriberListEmailBuilder).to receive(:call)
         .and_return([1, 2])
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
         .with(1, queue: :delivery_immediate)
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
         .with(2, queue: :delivery_immediate)
 

@@ -29,6 +29,6 @@ private
       },
     ]).first
 
-    DeliveryRequestWorker.perform_async_in_queue(id, queue: content_change.queue)
+    SendEmailWorker.perform_async_in_queue(id, queue: content_change.queue)
   end
 end

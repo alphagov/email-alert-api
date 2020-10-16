@@ -35,7 +35,7 @@ RSpec.describe ProcessMessageWorker do
         .with([hash_including(address: Email::COURTESY_EMAIL)])
         .and_return([email.id])
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
         .with(email.id, queue: :delivery_immediate)
 
@@ -54,7 +54,7 @@ RSpec.describe ProcessMessageWorker do
       processed_message = create(:message, processed_at: Time.zone.now)
 
       expect(ImmediateEmailGenerationService).not_to receive(:call)
-      expect(DeliveryRequestWorker).not_to receive(:perform_async_in_queue)
+      expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
 
       described_class.new.perform(processed_message.id)
     end

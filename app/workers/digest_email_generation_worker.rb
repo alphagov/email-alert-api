@@ -18,7 +18,7 @@ class DigestEmailGenerationWorker < ApplicationWorker
     end
 
     if email
-      DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_digest)
+      SendEmailWorker.perform_async_in_queue(email.id, queue: :delivery_digest)
     end
   end
 

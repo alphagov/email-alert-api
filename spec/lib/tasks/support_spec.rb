@@ -29,7 +29,7 @@ RSpec.describe "support" do
 
   describe "deliver_to_test_email" do
     it "queues a test email to a test email address" do
-      expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
+      expect(SendEmailWorker).to receive(:perform_async_in_queue)
 
       expect { Rake::Task["support:deliver_to_test_email"].invoke("foo@bar.com") }
         .to change { Email.count }.by 1
@@ -40,7 +40,7 @@ RSpec.describe "support" do
     it "queues specified failed emails to resend" do
       email = create :email, status: :failed
 
-      expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
+      expect(SendEmailWorker).to receive(:perform_async_in_queue)
         .with(email.id, queue: :delivery_immediate_high)
 
       expect { Rake::Task["support:resend_failed_emails:by_id"].invoke(email.id.to_s) }
@@ -52,7 +52,7 @@ RSpec.describe "support" do
     it "queues specified failed emails to resend" do
       email = create :email, status: :failed
 
-      expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
+      expect(SendEmailWorker).to receive(:perform_async_in_queue)
         .with(email.id, queue: :delivery_immediate_high)
 
       from = (email.created_at - 1.day).iso8601

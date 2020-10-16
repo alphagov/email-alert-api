@@ -1,4 +1,4 @@
-class DeliveryRequestService < ApplicationService
+class SendEmailService < ApplicationService
   class ProviderCommunicationFailureError < RuntimeError; end
 
   PROVIDERS = {

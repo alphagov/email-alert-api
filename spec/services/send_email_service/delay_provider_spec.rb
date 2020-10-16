@@ -1,4 +1,4 @@
-RSpec.describe DeliveryRequestService::DelayProvider do
+RSpec.describe SendEmailService::DelayProvider do
   describe ".call" do
     let(:args) do
       {

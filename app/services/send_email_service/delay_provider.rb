@@ -1,4 +1,4 @@
-class DeliveryRequestService::DelayProvider
+class SendEmailService::DelayProvider
   def self.call(**args)
     new.call(**args)
   end

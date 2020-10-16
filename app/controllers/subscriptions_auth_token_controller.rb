@@ -14,7 +14,7 @@ class SubscriptionsAuthTokenController < ApplicationController
   end
 
   def do_send(email)
-    DeliveryRequestWorker
+    SendEmailWorker
       .perform_async_in_queue(email.id, queue: :delivery_transactional)
   end
 
