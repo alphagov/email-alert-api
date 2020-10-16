@@ -53,6 +53,8 @@ private
   end
 
   def rate_limiter
-    Services.rate_limiter
+    @rate_limiter ||= Sidekiq.redis do |redis|
+      Ratelimit.new("deliveries", redis: redis)
+    end
   end
 end
