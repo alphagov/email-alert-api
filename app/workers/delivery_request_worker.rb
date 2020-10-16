@@ -1,4 +1,9 @@
 class DeliveryRequestWorker < ApplicationWorker
+  # More information around the rate limit can be found here ->
+  # https://docs.publishing.service.gov.uk/manual/govuk-notify.html under "GOV.UK Emails".
+  RATE_LIMIT_THRESHOLD = 21_600 # max requests in a minute, equates to 350 a second
+  RATE_LIMIT_INTERVAL = 60
+
   sidekiq_options retry: 9
 
   sidekiq_retries_exhausted do |msg|
@@ -30,8 +35,8 @@ private
 
   def rate_limit_exceeded?
     rate_limiter.exceeded?("delivery_request",
-                           threshold: rate_limit_threshold,
-                           interval: rate_limit_interval)
+                           threshold: RATE_LIMIT_THRESHOLD,
+                           interval: RATE_LIMIT_INTERVAL)
   end
 
   # Sidekiq uses JSON for a workers arguments, so richer objects are not
@@ -45,18 +50,6 @@ private
 
   def increment_rate_limiter
     rate_limiter.add("delivery_request")
-  end
-
-  # More information around the rate limit can be found here ->
-  # https://docs.publishing.service.gov.uk/manual/govuk-notify.html under "GOV.UK Emails".
-  def rate_limit_threshold
-    per_minute_to_allow_350_per_second = "21000"
-    ENV.fetch("DELIVERY_REQUEST_THRESHOLD", per_minute_to_allow_350_per_second).to_i
-  end
-
-  def rate_limit_interval
-    minute_in_seconds = "60"
-    ENV.fetch("DELIVERY_REQUEST_INTERVAL", minute_in_seconds).to_i
   end
 
   def rate_limiter
