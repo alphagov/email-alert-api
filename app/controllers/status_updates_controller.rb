@@ -1,20 +1,28 @@
 class StatusUpdatesController < ApplicationController
   wrap_parameters false
 
-  rescue_from StatusUpdateService::DeliveryAttemptStatusConflictError do |e|
-    render json: { error: e.message }, status: :conflict
-  end
-
-  rescue_from StatusUpdateService::DeliveryAttemptInvalidStatusError do |e|
-    render json: { error: e.message }, status: :unprocessable_entity
-  end
-
   def create
-    StatusUpdateService.call(
-      reference: params.require(:reference),
-      status: params.require(:status),
-      user: current_user,
-    )
+    status = params.require(:status)
+    reference = params.require(:reference)
+
+    Rails.logger.info("Email #{reference} callback received with status: #{status}")
+    GovukStatsd.increment("status_update.status.#{status}")
+
+    # We are deliberatly omitting "technical-failure" as Notify say this is
+    # not sent via callback. If we start receiving these we should chat to
+    # Notify about why.
+    unless %w[delivered permanent-failure temporary-failure].include?(status)
+      error = "Recieved an unexpected status from Notify: '#{status}'"
+      GovukError.notify(error)
+      render json: { error: error }, status: :unprocessable_entity
+      return
+    end
+
+    if status == "permanent-failure"
+      subscriber = Subscriber.find_by(address: params.require(:to))
+      UnsubscribeAllService.call(subscriber, :non_existent_email) if subscriber
+    end
+
     head :no_content
   end
 
