@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_20_153450) do
+ActiveRecord::Schema.define(version: 2020_10_16_164726) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_153450) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["digest_run_id", "subscriber_id"], name: "index_digest_run_subscribers_on_digest_run_id_and_subscriber_id", unique: true
+    t.index ["subscriber_id"], name: "index_digest_run_subscribers_on_subscriber_id"
   end
 
   create_table "digest_runs", force: :cascade do |t|
@@ -88,6 +89,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_153450) do
     t.index ["address"], name: "index_emails_on_address"
     t.index ["archived_at"], name: "index_emails_on_archived_at"
     t.index ["created_at"], name: "index_emails_on_created_at"
+    t.index ["subscriber_id"], name: "index_emails_on_subscriber_id"
   end
 
   create_table "matched_content_changes", force: :cascade do |t|
