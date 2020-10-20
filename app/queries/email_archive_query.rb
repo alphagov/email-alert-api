@@ -4,7 +4,7 @@ class EmailArchiveQuery
   end
 
   def call
-    Email.archivable.select(fields)
+    Email.where(archived_at: nil).select(fields)
   end
 
   private_class_method :new
