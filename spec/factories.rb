@@ -85,7 +85,7 @@ FactoryBot.define do
     subscriber
   end
 
-  factory :email, aliases: %i[pending_email] do
+  factory :email do
     address { "test@example.com" }
     subject { "subject" }
     body { "body" }
@@ -189,14 +189,6 @@ FactoryBot.define do
     trait :with_message do
       content_change { nil }
       message
-    end
-
-    trait :with_archivable_email do
-      association :email, factory: :archivable_email
-
-      after(:create) do |subscription_content, _evaluator|
-        subscription_content.email.update(subscriber_id: subscription_content.subscription.subscriber.id)
-      end
     end
   end
 
