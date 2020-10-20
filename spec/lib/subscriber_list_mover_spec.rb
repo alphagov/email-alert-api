@@ -60,11 +60,11 @@ RSpec.describe SubscriberListMover do
 
       expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
-        .with(1, queue: :delivery_immediate)
+        .with(1, queue: :send_email_immediate)
 
       expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
-        .with(2, queue: :delivery_immediate)
+        .with(2, queue: :send_email_immediate)
 
       described_class.new(from_slug: list_1.slug, to_slug: list_2.slug, send_email: true).call
     end

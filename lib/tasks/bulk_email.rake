@@ -7,7 +7,7 @@ namespace :bulk_email do
       subscriber_lists: SubscriberList.where(id: args.extras),
     )
     email_ids.each do |id|
-      SendEmailWorker.perform_async_in_queue(id, queue: :delivery_immediate)
+      SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate)
     end
   end
 

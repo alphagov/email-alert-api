@@ -22,6 +22,6 @@ class Message < ApplicationRecord
   enum priority: { normal: 0, high: 1 }
 
   def queue
-    :delivery_immediate
+    :send_email_immediate
   end
 end

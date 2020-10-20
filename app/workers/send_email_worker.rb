@@ -14,7 +14,7 @@ class SendEmailWorker < ApplicationWorker
     if rate_limit_exceeded?
       logger.warn("Rescheduling email #{email_id} due to exceeding rate limit")
       GovukStatsd.increment("send_email_worker.rescheduled")
-      SendEmailWorker.set(queue: queue || "delivery_immediate")
+      SendEmailWorker.set(queue: queue || "send_email_immediate")
                            .perform_in(5.minutes, email_id, metrics, queue)
       return
     end

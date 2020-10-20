@@ -43,7 +43,7 @@ RSpec.describe "support" do
       email = create :email, status: :failed
 
       expect(SendEmailWorker).to receive(:perform_async_in_queue)
-        .with(email.id, queue: :delivery_immediate_high)
+        .with(email.id, queue: :send_email_immediate_high)
 
       expect { Rake::Task["support:resend_failed_emails:by_id"].invoke(email.id.to_s) }
         .to output.to_stdout
@@ -55,7 +55,7 @@ RSpec.describe "support" do
       email = create :email, status: :failed
 
       expect(SendEmailWorker).to receive(:perform_async_in_queue)
-        .with(email.id, queue: :delivery_immediate_high)
+        .with(email.id, queue: :send_email_immediate_high)
 
       from = (email.created_at - 1.day).iso8601
       to = (email.created_at + 1.day).iso8601

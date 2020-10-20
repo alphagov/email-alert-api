@@ -19,6 +19,6 @@ class ContentChange < ApplicationRecord
   enum priority: { normal: 0, high: 1 }
 
   def queue
-    priority == "high" ? :delivery_immediate_high : :delivery_immediate
+    priority == "high" ? :send_email_immediate_high : :send_email_immediate
   end
 end

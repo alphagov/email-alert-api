@@ -36,7 +36,7 @@ RSpec.describe ProcessContentChangeWorker do
 
       expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
-        .with(email.id, queue: :delivery_immediate)
+        .with(email.id, queue: :send_email_immediate)
 
       described_class.new.perform(content_change.id)
     end

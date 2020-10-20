@@ -66,7 +66,7 @@ private
     email_ids.zip(subscriptions) do |email_id, subscription|
       SendEmailWorker.perform_async_in_queue(
         email_id,
-        queue: :delivery_immediate,
+        queue: :send_email_immediate,
       )
 
       subscription.update!(
@@ -102,7 +102,7 @@ private
     email_ids.each do |email_id|
       SendEmailWorker.perform_async_in_queue(
         email_id,
-        queue: :delivery_immediate,
+        queue: :send_email_immediate,
       )
     end
   end

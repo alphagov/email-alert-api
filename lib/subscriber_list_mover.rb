@@ -94,7 +94,7 @@ class SubscriberListMover
 
   def email_change_to_subscribers(emails_for_subscribed)
     emails_for_subscribed.each do |id|
-      SendEmailWorker.perform_async_in_queue(id, queue: :delivery_immediate)
+      SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate)
     end
   end
 end

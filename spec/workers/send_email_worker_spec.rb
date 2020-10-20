@@ -66,7 +66,7 @@ RSpec.describe SendEmailWorker do
     let(:sidekiq_message) do
       {
         "args" => [email.id, {}],
-        "queue" => "delivery_immediate_high",
+        "queue" => "send_email_immediate_high",
         "class" => described_class.name,
       }
     end
@@ -87,26 +87,13 @@ RSpec.describe SendEmailWorker do
   describe ".perform_async_in_queue" do
     let(:email) { double(id: 0) }
 
-    before do
-      Sidekiq::Testing.fake! do
-        described_class.perform_async_in_queue(email.id, queue: queue)
-      end
+    around do |example|
+      Sidekiq::Testing.fake! { example.run }
     end
 
-    context "with a delivery digest queue" do
-      let(:queue) { "delivery_digest" }
-
-      it "adds a worker to the correct queue" do
-        expect(Sidekiq::Queues["delivery_digest"].size).to eq(1)
-      end
-    end
-
-    context "with a delivery immediate queue" do
-      let(:queue) { "delivery_immediate" }
-
-      it "adds a worker to the correct queue" do
-        expect(Sidekiq::Queues["delivery_immediate"].size).to eq(1)
-      end
+    it "can add a job to a specific queue" do
+      described_class.perform_async_in_queue(email.id, queue: "send_email_immediate")
+      expect(Sidekiq::Queues["send_email_immediate"].size).to eq(1)
     end
   end
 end

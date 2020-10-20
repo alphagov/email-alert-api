@@ -34,7 +34,7 @@ RSpec.describe ImmediateEmailGenerationService do
       email_ids = Email.order(created_at: :desc).pluck(:id)
       expect(SendEmailWorker)
         .to have_received(:perform_async_in_queue)
-        .with(email_ids.first, an_instance_of(Hash), queue: :delivery_immediate)
+        .with(email_ids.first, an_instance_of(Hash), queue: :send_email_immediate)
     end
 
     it "sets metrics for the SendEmailWorker" do
@@ -57,7 +57,7 @@ RSpec.describe ImmediateEmailGenerationService do
         described_class.call(content_change)
         expect(SendEmailWorker)
           .to have_received(:perform_async_in_queue)
-          .with(Email.last.id, an_instance_of(Hash), queue: :delivery_immediate_high)
+          .with(Email.last.id, an_instance_of(Hash), queue: :send_email_immediate_high)
       end
     end
 
@@ -76,7 +76,7 @@ RSpec.describe ImmediateEmailGenerationService do
           .to change { Email.count }.by(1)
         expect(SendEmailWorker)
           .to have_received(:perform_async_in_queue)
-          .with(Email.last.id, an_instance_of(Hash), queue: :delivery_immediate)
+          .with(Email.last.id, an_instance_of(Hash), queue: :send_email_immediate)
       end
 
       it "doesn't set any metrics" do
