@@ -86,7 +86,7 @@ $ bundle exec rake support:unsubscribe_all_subscriptions[<email_address>]
 To send a test email to an email address (doesn't have to be subscribed to anything):
 
 ```bash
-$ bundle exec rake deliver:deliver_to_test_email[<email_address>]
+$ bundle exec rake support:send_test_email[<email_address>]
 ```
 
 ## Resend failed emails

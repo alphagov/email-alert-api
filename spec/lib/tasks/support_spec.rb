@@ -29,11 +29,11 @@ RSpec.describe "support" do
     end
   end
 
-  describe "deliver_to_test_email" do
+  describe "send_test_email" do
     it "queues a test email to a test email address" do
       expect(SendEmailWorker).to receive(:perform_async_in_queue)
 
-      expect { Rake::Task["support:deliver_to_test_email"].invoke("foo@bar.com") }
+      expect { Rake::Task["support:send_test_email"].invoke("foo@bar.com") }
         .to change { Email.count }.by 1
     end
   end

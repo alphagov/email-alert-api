@@ -131,9 +131,9 @@ namespace :support do
   end
 
   desc "Send a test email to an email address"
-  task :deliver_to_test_email, [:test_email_address] => :environment do |_t, args|
+  task :send_test_email, [:email_address] => :environment do |_t, args|
     email = Email.create!(
-      address: args[:test_email_address],
+      address: args[:email_address],
       subject: "Test email",
       body: "This is a test email.",
     )
