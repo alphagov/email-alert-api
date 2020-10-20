@@ -63,12 +63,6 @@ FactoryBot.define do
     end
   end
 
-  factory :delivery_attempt do
-    email
-    status { :sent }
-    provider { :notify }
-  end
-
   factory :digest_run do
     date { 1.day.ago }
     range { Frequency::DAILY }
