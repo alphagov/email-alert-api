@@ -33,12 +33,13 @@ namespace :report do
   task :csv_brexit_subscribers_on_or_before, [:date] => [:environment] do |_task, args|
     raise "Enter a date" if args[:date].empty?
 
-    begin
-      Date.parse(args[:date].to_s)
-    rescue ArgumentError
-      puts 'Invalid date. Please use "yyyy-mm-dd"'
-    end
-    Reports::BrexitSubscribersReport.call(args[:date])
+    date = begin
+             Date.parse(args[:date].to_s)
+           rescue ArgumentError
+             raise 'Invalid date. Please use "yyyy-mm-dd"'
+           end
+
+    Reports::BrexitSubscribersReport.call(date)
   end
 
   desc "Temporary report for subscribers taking action in switching immediate subscribers to daily digest"

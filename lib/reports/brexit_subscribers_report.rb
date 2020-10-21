@@ -8,13 +8,12 @@ class Reports::BrexitSubscribersReport
     @date = date
   end
 
-  def self.call(*args)
-    new(args).call
+  def self.call(...)
+    new(...).call
   end
 
   def call
-    subscriber_lists =
-      date.empty? ? brexit_lists : brexit_lists_before_date
+    subscriber_lists = date ? brexit_lists_before_date : brexit_lists
     CSV.instance($stdout, headers: CSV_HEADERS, write_headers: true) do |csv|
       subscriber_lists.each do |list|
         csv << row_data(list)
@@ -23,12 +22,6 @@ class Reports::BrexitSubscribersReport
   end
 
 private
-
-  def parsed_date
-    unless date.empty?
-      @parsed_date ||= Date.parse(date.to_s)
-    end
-  end
 
   def brexit_lists
     @brexit_lists ||= SubscriberList.where("subscriber_lists.tags->>'brexit_checklist_criteria' IS NOT NULL")
@@ -39,11 +32,9 @@ private
   end
 
   def subscribed_to_before_date(list)
-    subscriptions =
-      list.subscribers.select do |subscriber|
-        subscriber.created_at <= parsed_date
-      end
-    subscriptions.any?
+    list.subscribers.any? do |subscriber|
+      subscriber.created_at <= date
+    end
   end
 
   def row_data(list)
