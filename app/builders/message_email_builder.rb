@@ -3,8 +3,8 @@ class MessageEmailBuilder
     @recipients_and_messages = recipients_and_messages
   end
 
-  def self.call(*args)
-    new(*args).call
+  def self.call(...)
+    new(...).call
   end
 
   def call

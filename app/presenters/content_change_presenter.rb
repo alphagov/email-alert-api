@@ -8,8 +8,8 @@ class ContentChangePresenter
     @frequency = frequency
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
+  def self.call(...)
+    new(...).call
   end
 
   def call

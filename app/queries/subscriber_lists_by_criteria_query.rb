@@ -1,6 +1,6 @@
 class SubscriberListsByCriteriaQuery
-  def self.call(*args)
-    new(*args).call
+  def self.call(...)
+    new(...).call
   end
 
   def initialize(initial_scope, criteria_rules)

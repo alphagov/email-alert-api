@@ -1,6 +1,6 @@
 class SendEmailService::DelayProvider
-  def self.call(**args)
-    new.call(**args)
+  def self.call(...)
+    new.call(...)
   end
 
   def call(**_args)

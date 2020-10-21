@@ -3,8 +3,8 @@ class ContentChangeEmailBuilder
     @recipients_and_content = recipients_and_content
   end
 
-  def self.call(*args)
-    new(*args).call
+  def self.call(...)
+    new(...).call
   end
 
   def call

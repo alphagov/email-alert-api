@@ -3,8 +3,8 @@ class EmailArchivePresenter
 
   # This is expected to be called with a JSON representation of a record
   # returned from EmailArchiveQuery
-  def self.for_s3(*args)
-    new.for_s3(*args)
+  def self.for_s3(...)
+    new.for_s3(...)
   end
 
   def for_s3(record, archived_at)

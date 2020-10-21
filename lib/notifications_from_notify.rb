@@ -4,8 +4,8 @@ class NotificationsFromNotify
     @template_id = config.fetch(:template_id)
   end
 
-  def self.call(*args)
-    new.call(*args)
+  def self.call(...)
+    new.call(...)
   end
 
   def call(reference)
