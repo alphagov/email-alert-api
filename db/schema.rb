@@ -59,6 +59,8 @@ ActiveRecord::Schema.define(version: 2020_10_20_153450) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["digest_run_id", "subscriber_id"], name: "index_digest_run_subscribers_on_digest_run_id_and_subscriber_id", unique: true
+    t.index ["digest_run_id"], name: "index_digest_run_subscribers_on_digest_run_id"
+    t.index ["subscriber_id"], name: "index_digest_run_subscribers_on_subscriber_id"
   end
 
   create_table "digest_runs", force: :cascade do |t|
@@ -88,6 +90,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_153450) do
     t.index ["address"], name: "index_emails_on_address"
     t.index ["archived_at"], name: "index_emails_on_archived_at"
     t.index ["created_at"], name: "index_emails_on_created_at"
+    t.index ["subscriber_id"], name: "index_emails_on_subscriber_id"
   end
 
   create_table "matched_content_changes", force: :cascade do |t|
@@ -169,6 +172,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_153450) do
     t.index ["content_change_id"], name: "index_subscription_contents_on_content_change_id"
     t.index ["digest_run_subscriber_id"], name: "index_subscription_contents_on_digest_run_subscriber_id"
     t.index ["email_id"], name: "index_subscription_contents_on_email_id"
+    t.index ["message_id"], name: "index_subscription_contents_on_message_id"
     t.index ["subscription_id", "content_change_id"], name: "index_subscription_contents_on_subscription_and_content_change", unique: true
     t.index ["subscription_id", "message_id"], name: "index_subscription_contents_on_subscription_id_and_message_id", unique: true
     t.index ["subscription_id"], name: "index_subscription_contents_on_subscription_id"
