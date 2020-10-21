@@ -6,8 +6,7 @@ RSpec.describe EmailDeletionWorker do
 
     context "when there are no emails to delete" do
       before do
-        create(:unarchivable_email)
-        create(:archivable_email)
+        create(:email)
         create(:archived_email)
       end
       it "doesn't change the number of Email records" do

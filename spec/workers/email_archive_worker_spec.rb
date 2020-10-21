@@ -6,7 +6,6 @@ RSpec.describe EmailArchiveWorker do
 
     context "when there are no emails to archive" do
       before do
-        create(:unarchivable_email)
         create(:archived_email)
       end
       it "doesn't change the number of EmailArchive records" do
@@ -16,7 +15,7 @@ RSpec.describe EmailArchiveWorker do
     end
 
     context "when there are emails to archive" do
-      let!(:email) { create(:archivable_email) }
+      let!(:email) { create(:email) }
 
       context "when archiving is disabled" do
         around do |example|
