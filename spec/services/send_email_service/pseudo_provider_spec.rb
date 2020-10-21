@@ -1,4 +1,4 @@
-RSpec.describe DeliveryRequestService::PseudoProvider do
+RSpec.describe SendEmailService::PseudoProvider do
   describe ".call" do
     it "logs to a file" do
       allow(Logger).to receive(:new).and_return(logger = double)

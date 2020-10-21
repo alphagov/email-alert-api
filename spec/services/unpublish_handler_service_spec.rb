@@ -61,10 +61,10 @@ RSpec.describe UnpublishHandlerService do
       courtesy_email = { subject: "Update from GOV.UK – First Subscription",
                          address: Email::COURTESY_EMAIL }
 
-      expect(DeliveryRequestService)
+      expect(SendEmailService)
         .to receive(:call)
         .with(email: having_attributes(subscriber_email), metrics: {})
-      expect(DeliveryRequestService)
+      expect(SendEmailService)
         .to receive(:call)
         .with(email: having_attributes(courtesy_email), metrics: {})
 
@@ -78,7 +78,7 @@ RSpec.describe UnpublishHandlerService do
     end
 
     it "does not send emails" do
-      expect(DeliveryRequestService).to receive(:call).never
+      expect(SendEmailService).to receive(:call).never
     end
   end
 

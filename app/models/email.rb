@@ -3,7 +3,6 @@ class Email < ApplicationRecord
   # creation as this table is populated by the #insert_all bulk method
 
   COURTESY_EMAIL = "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk".freeze
-  has_many :delivery_attempts
 
   enum status: { pending: 0, sent: 1, failed: 2 }
 

@@ -127,25 +127,17 @@ namespace :support do
 
   desc "Query the Notify API for email(s) by email ID"
   task :get_notifications_from_notify_by_email_id, [:id] => :environment do |_t, args|
-    delivery_attempts = DeliveryAttempt.where(email_id: args[:id])
-
-    if delivery_attempts.count.zero?
-      puts "No results returned"
-    else
-      delivery_attempts.each do |delivery_attempt|
-        NotificationsFromNotify.call(delivery_attempt.id)
-      end
-    end
+    NotificationsFromNotify.call(args[:id])
   end
 
   desc "Send a test email to an email address"
-  task :deliver_to_test_email, [:test_email_address] => :environment do |_t, args|
+  task :send_test_email, [:email_address] => :environment do |_t, args|
     email = Email.create!(
-      address: args[:test_email_address],
+      address: args[:email_address],
       subject: "Test email",
       body: "This is a test email.",
     )
-    DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_immediate)
+    SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_immediate)
   end
 
   namespace :resend_failed_emails do
@@ -156,7 +148,7 @@ namespace :support do
       puts "Resending #{ids.length} emails"
 
       ids.each do |id|
-        DeliveryRequestWorker.perform_async_in_queue(id, queue: :delivery_immediate_high)
+        SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate_high)
       end
     end
 
@@ -169,7 +161,7 @@ namespace :support do
       puts "Resending #{ids.length} emails"
 
       ids.each do |id|
-        DeliveryRequestWorker.perform_async_in_queue(id, queue: :delivery_immediate_high)
+        SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate_high)
       end
     end
   end

@@ -9,7 +9,6 @@ class NotificationsFromNotify
   end
 
   def call(reference)
-    # reference is the DeliveryAttempt.id
     puts "Query Notify for emails with the reference #{reference}"
 
     response = @client.get_notifications(

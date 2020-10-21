@@ -67,7 +67,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
     end
 
     it "sends the email" do
-      expect(DeliveryRequestWorker).to receive(:perform_async_in_queue)
+      expect(SendEmailWorker).to receive(:perform_async_in_queue)
       post path, params: params
     end
 

@@ -7,7 +7,7 @@ RSpec.describe SubscriberListMover do
     list_2.subscriptions << create_list(:subscription, 1)
 
     allow($stdout).to receive(:puts)
-    allow(DeliveryRequestWorker).to receive(:perform_async_in_queue)
+    allow(SendEmailWorker).to receive(:perform_async_in_queue)
   end
 
   describe "#with_send_email_false" do
@@ -58,13 +58,13 @@ RSpec.describe SubscriberListMover do
             body: anything,
             subscriber_lists: source_subscriber_list)
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
-        .with(1, queue: :delivery_immediate)
+        .with(1, queue: :send_email_immediate)
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
-        .with(2, queue: :delivery_immediate)
+        .with(2, queue: :send_email_immediate)
 
       described_class.new(from_slug: list_1.slug, to_slug: list_2.slug, send_email: true).call
     end

@@ -9,7 +9,7 @@ class ImmediateEmailGenerationService < ApplicationService
     subscriber_batches.each do |batch|
       email_ids = batch.generate_emails
       email_ids.each do |id|
-        DeliveryRequestWorker.perform_async_in_queue(
+        SendEmailWorker.perform_async_in_queue(
           id,
           worker_metrics,
           queue: content.queue,

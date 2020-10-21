@@ -6,7 +6,7 @@ class EmailsController < ApplicationController
       body: params.require(:body),
     )
 
-    DeliveryRequestWorker.perform_async_in_queue(email.id, queue: :delivery_immediate)
+    SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_immediate)
 
     render json: { message: "Email has been queued for sending" }, status: :accepted
   end

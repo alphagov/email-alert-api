@@ -64,9 +64,9 @@ private
     email_ids = UnpublishEmailBuilder.call(email_parameters, template)
 
     email_ids.zip(subscriptions) do |email_id, subscription|
-      DeliveryRequestWorker.perform_async_in_queue(
+      SendEmailWorker.perform_async_in_queue(
         email_id,
-        queue: :delivery_immediate,
+        queue: :send_email_immediate,
       )
 
       subscription.update!(
@@ -100,9 +100,9 @@ private
     email_ids = UnpublishEmailBuilder.call(email_parameters, template)
 
     email_ids.each do |email_id|
-      DeliveryRequestWorker.perform_async_in_queue(
+      SendEmailWorker.perform_async_in_queue(
         email_id,
-        queue: :delivery_immediate,
+        queue: :send_email_immediate,
       )
     end
   end

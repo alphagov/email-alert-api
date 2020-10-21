@@ -1,4 +1,4 @@
-class DeliveryRequestService::EmailAddressOverrider
+class SendEmailService::EmailAddressOverrider
   attr_reader :override_address, :whitelist_addresses, :whitelist_only
 
   def initialize(config)

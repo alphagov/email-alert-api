@@ -31,10 +31,6 @@ notification services. Currently supports only [GOV.UK Notify](https://www.notif
 - **Email**:
   * An email generated from content changes or messages to be sent to subscribers
 
-- **Delivery attempt**:
-  * An attempt to send a generated email to a subscriber using the external email notification services
-  * Can be multiple attempts per email if there are errors
-
 ## Technical documentation
 
 ### Dependencies

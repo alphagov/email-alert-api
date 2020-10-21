@@ -34,9 +34,9 @@ RSpec.describe ProcessContentChangeWorker do
         .with([hash_including(address: Email::COURTESY_EMAIL)])
         .and_return([email.id])
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
-        .with(email.id, queue: :delivery_immediate)
+        .with(email.id, queue: :send_email_immediate)
 
       described_class.new.perform(content_change.id)
     end
@@ -53,7 +53,7 @@ RSpec.describe ProcessContentChangeWorker do
       processed_content = create(:content_change, processed_at: Time.zone.now)
 
       expect(ImmediateEmailGenerationService).not_to receive(:call)
-      expect(DeliveryRequestWorker).not_to receive(:perform_async_in_queue)
+      expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
 
       described_class.new.perform(processed_content.id)
     end

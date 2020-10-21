@@ -13,8 +13,7 @@ RSpec.describe "Delivering an email successfully via Notify", type: :request do
 
     reference = email_data.fetch(:reference)
 
-    send_status_update(reference, "delivered", expected_status: 204)
-    send_status_update("missing", "delivered", expected_status: 404)
-    send_status_update(nil,       "delivered", expected_status: 400)
+    send_status_update(reference: reference, expected_status: 204)
+    send_status_update(reference: nil, expected_status: 400)
   end
 end

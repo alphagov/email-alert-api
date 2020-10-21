@@ -28,13 +28,13 @@ RSpec.describe "bulk_email" do
       allow(BulkSubscriberListEmailBuilder).to receive(:call)
         .and_return([1, 2])
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
-        .with(1, queue: :delivery_immediate)
+        .with(1, queue: :send_email_immediate)
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
-        .with(2, queue: :delivery_immediate)
+        .with(2, queue: :send_email_immediate)
 
       Rake::Task["bulk_email:brexit_subscribers"].invoke
     end
@@ -70,13 +70,13 @@ RSpec.describe "bulk_email" do
       allow(BulkSubscriberListEmailBuilder).to receive(:call)
         .and_return([1, 2])
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
-        .with(1, queue: :delivery_immediate)
+        .with(1, queue: :send_email_immediate)
 
-      expect(DeliveryRequestWorker)
+      expect(SendEmailWorker)
         .to receive(:perform_async_in_queue)
-        .with(2, queue: :delivery_immediate)
+        .with(2, queue: :send_email_immediate)
 
       Rake::Task["bulk_email:for_lists"].invoke(subscriber_list.id)
     end

@@ -1,4 +1,4 @@
-RSpec.describe DeliveryRequestService::EmailAddressOverrider do
+RSpec.describe SendEmailService::EmailAddressOverrider do
   let(:config) { EmailAlertAPI.config.email_service }
 
   describe "#destination_address" do

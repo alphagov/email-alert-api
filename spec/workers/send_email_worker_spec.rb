@@ -1,26 +1,26 @@
-RSpec.describe DeliveryRequestWorker do
+RSpec.describe SendEmailWorker do
   let(:rate_limiter) do
     instance_double(Ratelimit, exceeded?: false, add: nil)
   end
 
   before do
-    allow(Services).to receive(:rate_limiter).and_return(rate_limiter)
+    allow(Ratelimit).to receive(:new).and_return(rate_limiter)
   end
 
   describe "#perform" do
     let(:email) { create(:email) }
     let(:queue) { "default" }
 
-    it "delegates sending the email to DeliveryRequestService" do
-      expect(DeliveryRequestService)
+    it "delegates sending the email to SendEmailService" do
+      expect(SendEmailService)
         .to receive(:call)
         .with(email: email, metrics: {})
       described_class.new.perform(email.id, {}, queue)
     end
 
-    it "parses scalar metrics and passes them to DeliveryRequestService" do
+    it "parses scalar metrics and passes them to SendEmailService" do
       freeze_time do
-        expect(DeliveryRequestService)
+        expect(SendEmailService)
           .to receive(:call)
           .with(email: email, metrics: { content_change_created_at: Time.zone.now })
 
@@ -33,7 +33,7 @@ RSpec.describe DeliveryRequestWorker do
     end
 
     it "increments the rate limiter" do
-      expect(rate_limiter).to receive(:add).with("delivery_request")
+      expect(rate_limiter).to receive(:add).with("requests")
       described_class.new.perform(email.id, {}, queue)
     end
 
@@ -55,7 +55,7 @@ RSpec.describe DeliveryRequestWorker do
       end
 
       it "doesn't attempt to send the email" do
-        expect(DeliveryRequestService).not_to receive(:call)
+        expect(SendEmailService).not_to receive(:call)
         described_class.new.perform(email.id, {}, queue)
       end
     end
@@ -66,7 +66,7 @@ RSpec.describe DeliveryRequestWorker do
     let(:sidekiq_message) do
       {
         "args" => [email.id, {}],
-        "queue" => "delivery_immediate_high",
+        "queue" => "send_email_immediate_high",
         "class" => described_class.name,
       }
     end
@@ -87,26 +87,13 @@ RSpec.describe DeliveryRequestWorker do
   describe ".perform_async_in_queue" do
     let(:email) { double(id: 0) }
 
-    before do
-      Sidekiq::Testing.fake! do
-        described_class.perform_async_in_queue(email.id, queue: queue)
-      end
+    around do |example|
+      Sidekiq::Testing.fake! { example.run }
     end
 
-    context "with a delivery digest queue" do
-      let(:queue) { "delivery_digest" }
-
-      it "adds a worker to the correct queue" do
-        expect(Sidekiq::Queues["delivery_digest"].size).to eq(1)
-      end
-    end
-
-    context "with a delivery immediate queue" do
-      let(:queue) { "delivery_immediate" }
-
-      it "adds a worker to the correct queue" do
-        expect(Sidekiq::Queues["delivery_immediate"].size).to eq(1)
-      end
+    it "can add a job to a specific queue" do
+      described_class.perform_async_in_queue(email.id, queue: "send_email_immediate")
+      expect(Sidekiq::Queues["send_email_immediate"].size).to eq(1)
     end
   end
 end
