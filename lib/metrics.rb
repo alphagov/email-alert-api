@@ -48,8 +48,6 @@ class Metrics
     def content_change_created_until_email_sent(created_time, sent_time)
       difference = (sent_time - created_time) * 1000
       timing("content_change_created_until_email_sent", difference)
-      # legacy - to be removed once dashboard is updated
-      timing("content_change_created_to_first_delivery_attempt", difference)
     end
 
   private

@@ -57,6 +57,3 @@ private
     end
   end
 end
-
-# For backwards compatibility
-DeliveryRequestWorker = SendEmailWorker
