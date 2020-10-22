@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_20_153450) do
+ActiveRecord::Schema.define(version: 2020_10_21_153802) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,18 +38,6 @@ ActiveRecord::Schema.define(version: 2020_10_20_153450) do
     t.text "footnote", default: "", null: false
     t.index ["created_at"], name: "index_content_changes_on_created_at"
     t.index ["processed_at"], name: "index_content_changes_on_processed_at"
-  end
-
-  create_table "delivery_attempts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.integer "status", null: false
-    t.integer "provider", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "signon_user_uid"
-    t.uuid "email_id", null: false
-    t.index ["created_at"], name: "index_delivery_attempts_on_created_at"
-    t.index ["email_id", "updated_at"], name: "index_delivery_attempts_on_email_id_and_updated_at"
-    t.index ["email_id"], name: "index_delivery_attempts_on_email_id"
   end
 
   create_table "digest_run_subscribers", force: :cascade do |t|
@@ -207,7 +195,6 @@ ActiveRecord::Schema.define(version: 2020_10_20_153450) do
     t.boolean "disabled", default: false
   end
 
-  add_foreign_key "delivery_attempts", "emails", on_delete: :cascade
   add_foreign_key "digest_run_subscribers", "digest_runs", on_delete: :cascade
   add_foreign_key "digest_run_subscribers", "subscribers", on_delete: :cascade
   add_foreign_key "emails", "subscribers", on_delete: :restrict
