@@ -43,12 +43,14 @@ RSpec.describe SendEmailService::NotifyProvider do
         .to be(:provider_communication_failure)
     end
 
-    it "returns a provider_communication_failure status for a Notify Timeout" do
+    it "returns a provider_communication_failure status for Notify timeouts" do
       allow(Notifications::Client).to receive(:new).and_return(notify_client)
-      allow(notify_client).to receive(:send_email).and_raise(Net::OpenTimeout)
 
-      expect(described_class.call(**arguments))
-        .to be(:provider_communication_failure)
+      allow(notify_client).to receive(:send_email).and_raise(Net::OpenTimeout)
+      expect(described_class.call(**arguments)).to be(:provider_communication_failure)
+
+      allow(notify_client).to receive(:send_email).and_raise(Net::ReadTimeout)
+      expect(described_class.call(**arguments)).to be(:provider_communication_failure)
     end
 
     it "returns a provider_communication_failure status for a Notify rejecting an email address" do
