@@ -28,4 +28,19 @@ RSpec.describe Reports::SubscriberListsReport do
 
     expect { described_class.new("2020-05-01").call }.to output(empty_csv).to_stdout
   end
+
+  it "raises an error if the date is invalid" do
+    expect { described_class.new("blahhh").call }
+      .to raise_error("Invalid date")
+  end
+
+  it "raises an error if the date isn't in the past" do
+    expect { described_class.new(Time.zone.today.to_s).call }
+      .to raise_error("Date must be in the past")
+  end
+
+  it "raises an error if the date isn't within a year old" do
+    expect { described_class.new("2019-05-01").call }
+      .to raise_error("Date must be within a year old")
+  end
 end

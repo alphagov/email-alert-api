@@ -17,6 +17,8 @@ class Reports::SubscriberListsReport
   end
 
   def call
+    validate_date
+
     CSV do |csv|
       csv << CSV_HEADERS
 
@@ -27,6 +29,12 @@ class Reports::SubscriberListsReport
   end
 
 private
+
+  def validate_date
+    raise "Invalid date" if date.blank?
+    raise "Date must be in the past" if date >= Time.zone.today
+    raise "Date must be within a year old" if date <= 1.year.ago
+  end
 
   def export_list_row(list)
     unsubscriptions_count = list.subscriptions.where("ended_at <= ?", date.end_of_day).count
