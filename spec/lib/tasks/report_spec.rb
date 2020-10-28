@@ -44,4 +44,11 @@ RSpec.describe "report" do
         .to output.to_stdout
     end
   end
+
+  describe "csv_subscriber_lists" do
+    it "outputs a report of data concerning subscriber lists for a given date" do
+      expect { Rake::Task["report:csv_subscriber_lists"].invoke(6.months.ago.to_s) }
+        .to output.to_stdout
+    end
+  end
 end

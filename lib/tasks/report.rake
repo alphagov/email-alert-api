@@ -40,4 +40,9 @@ namespace :report do
     end
     Reports::BrexitSubscribersReport.call(args[:date])
   end
+
+  desc "Outputs a CSV of information for each subscriber list within a year for a past date, format: 'yyyy-mm-dd'"
+  task :csv_subscriber_lists, [:date] => :environment do |_t, args|
+    Reports::SubscriberListsReport.new(args[:date]).call
+  end
 end
