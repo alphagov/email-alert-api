@@ -1,35 +1,5 @@
 require "csv"
 
-# Example input:
-# [{ status: "Inactive (unsubscribed)", subscriber_list: "Test foo (slug: test-foo)", frequency: "daily", ... }, {...}]
-#
-# Example output:
-# | Status                  | SubscriberList            | Frequency | Timeline                                                       |
-# | Inactive (unsubscribed) | Test foo (slug: test-foo) | daily     | Subscribed 2020-04-18 15:21:20 +0100, Ended 2020-05-12 11:41:04 +0100 |
-# | Active                  | Bar bar (slug: bar-bar)   | weekly    | Subscribed 2019-06-10 13:48:43 +0100                           |
-def hash_to_table(hash)
-  columns = []
-  hash.first.keys.each do |key|
-    heading = key.to_s.humanize
-    longest_value = hash.map { |row| row[key].to_s.size }.max
-    columns << {
-      id: key,
-      label: heading,
-      width: [longest_value, heading.size].max,
-    }
-  end
-
-  table = "| #{columns.map { |column| column[:label].ljust(column[:width]) }.join(' | ')} |\n"
-  hash.each do |row|
-    padded_values = row.keys.map do |key|
-      column_width = columns.find { |c| c[:id] == key }[:width]
-      row[key].to_s.ljust(column_width)
-    end
-    table += "| #{padded_values.join(' | ')} |\n"
-  end
-  table
-end
-
 namespace :support do
   desc "View all subscriptions for a subscriber"
   task :view_subscriptions, [:email_address] => :environment do |_t, args|
@@ -46,7 +16,7 @@ namespace :support do
         timeline: "Subscribed #{subscription.created_at}#{subscription.ended_at.present? ? ", Ended #{subscription.ended_at}" : ''}",
       }
     end
-    puts hash_to_table(results)
+    pp results
   end
 
   desc "View most recent email emails for a subscriber"
@@ -71,7 +41,7 @@ namespace :support do
         subscription_slug: SubscriptionContent.find_by(email_id: email.id)&.subscription&.subscriber_list&.slug,
       }
     end
-    puts hash_to_table(results)
+    pp results
   end
 
   desc "Change the email address of a subscriber"
