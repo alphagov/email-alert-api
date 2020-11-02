@@ -14,7 +14,7 @@ RSpec.describe "Subscriptions", type: :request do
       expect(response.status).to eq(400)
     end
 
-    it "fails with an invalid subscriber_list" do
+    it "returns status code 404 if the subscriber list doesn't exist" do
       post "/subscriptions", params: { subscriber_list_id: 10, address: "test@example.com" }
       expect(response.status).to eq(404)
     end

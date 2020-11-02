@@ -56,7 +56,7 @@ RSpec.describe HistoricalDataDeletionWorker do
 
     context "when deleting subscriber lists" do
       it "should remove all old subscriber lists which have no subscriptions" do
-        create(:subscriber_list, created_at: historic_date)
+        create(:subscriber_list, created_at: 8.days.ago)
         expect { perform }.to change(SubscriberList, :count).by(-1)
       end
 
