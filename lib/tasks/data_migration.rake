@@ -9,18 +9,23 @@ namespace :data_migration do
     raise "One or more lists were not found" if lists.size != list_count
 
     subscriber_and_subscription_ids = lists.each_with_object({}) do |list, memo|
-      subscription_scope = Subscription.active
-                                       .immediately
-                                       .joins(:subscriber_list)
+      subscription_scope = Subscription.joins(:subscriber_list)
                                        .where("subscriber_lists.slug": list.fetch("slug"))
-                                       .pluck(:id, :subscriber_id)
 
-      subscription_scope.each do |(subscription_id, subscriber_id)|
+      migrated_subscribers = subscription_scope.where(source: :bulk_immediate_to_digest)
+                                               .pluck(:subscriber_id)
+
+      to_migrate = subscription_scope.active
+                                     .immediately
+                                     .where.not(subscriber_id: migrated_subscribers)
+                                     .pluck(:id, :subscriber_id)
+
+      to_migrate.each do |(subscription_id, subscriber_id)|
         memo[subscriber_id] ||= []
         memo[subscriber_id] << subscription_id
       end
 
-      puts "Migrating #{subscription_scope.size} immediate subscribers of #{list.fetch('slug')}"
+      puts "Migrating #{to_migrate.size} immediate subscribers of #{list.fetch('slug')}"
     end
 
     subscribers = Subscriber.where(id: subscriber_and_subscription_ids.keys)

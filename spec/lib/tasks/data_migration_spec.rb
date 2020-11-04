@@ -43,6 +43,19 @@ RSpec.describe "data_migration" do
       expect(non_list.reload).not_to be_ended
     end
 
+    it "respects any reverted subscriptions" do
+      subscriber = create :subscriber
+      create :subscription, :ended, subscriber_list: list1, frequency: :daily, source: :bulk_immediate_to_digest, subscriber: subscriber
+      reverted_subscription = create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
+      other_subscription = create :subscription, subscriber_list: list2, frequency: :immediately, subscriber: subscriber
+
+      expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
+        .to output.to_stdout
+
+      expect(reverted_subscription.reload).not_to be_ended
+      expect(other_subscription.reload).to be_ended
+    end
+
     it "sends a summary email to affected subscribers" do
       subscriber = create :subscriber
       create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
