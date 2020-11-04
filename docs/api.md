@@ -129,8 +129,7 @@ Gets a subscriber's subscriptions, in the form:
     "address": "test@example.com",
     "created_at": "Wed, 07 Mar 2018 17:04:28 UTC +00:00",
     "updated_at": "Wed, 07 Mar 2018 17:04:28 UTC +00:00",
-    "signon_user_uid": null,
-    "deactivated_at": null
+    "signon_user_uid": null
   },
   "subscriptions": [
     {
@@ -187,14 +186,12 @@ new email address.
 }
 ```
 
-It will create a new subscription between the email address and the
-subscriber list. It will respond with a `201 Created` if it's a new
-subscription or a `200 OK` if the subscription already exists. If a
-subscription already exists but the frequency is different, the
-current subscription is ended and a new one with the updated frequency
-is created. A confirmation email will be sent if a new subscription is
-created or if the subscriber is reactivated and the subscription already
-exists.
+It will create a new subscription between the email address and the subscriber
+list. It will respond with a `201 Created` if it's a new subscription or a `200
+OK` if the subscription already exists. If a subscription already exists but
+the frequency is different, the current subscription is ended and a new one
+with the updated frequency is created. A confirmation email will be sent if a
+new subscription is created or if the subscription already exists.
 
 > Note: using any email address that ends with `@notifications.service.gov.uk`
 will not create a subscriber or a subscription, however will return a `201 Created` response.
