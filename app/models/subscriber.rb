@@ -4,8 +4,6 @@ class Subscriber < ApplicationRecord
     validates :address, uniqueness: { case_sensitive: false }
   end
 
-  validate :not_nullified_and_activated
-
   has_many :subscriptions
   has_many :active_subscriptions, -> { active }, class_name: "Subscription"
   has_many :ended_subscriptions, -> { ended }, class_name: "Subscription"
@@ -68,23 +66,8 @@ class Subscriber < ApplicationRecord
     address.nil?
   end
 
-  def nullify
-    raise "Already nullified." if nullified?
-    raise "Must be deactivated first." unless deactivated?
-
-    update!(address: nil)
-  end
-
   def as_json(options = {})
     options[:except] ||= %i[signon_user_uid]
     super(options)
-  end
-
-private
-
-  def not_nullified_and_activated
-    if nullified? && !deactivated?
-      errors.add(:deactivated_at, "should be set to the deactivation date")
-    end
   end
 end

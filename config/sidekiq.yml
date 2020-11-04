@@ -23,9 +23,9 @@
   historical_data_deletion:
     cron: '0 12 * * * Europe/London' # every day at midday
     class: HistoricalDataDeletionWorker
-  nullify_deactivated_subscribers:
+  nullify_subscribers:
     every: '1h'
-    class: NullifyDeactivatedSubscribersWorker
+    class: NullifySubscribersWorker
   email_archiver:
     every: '1h'
     class: EmailArchiveWorker

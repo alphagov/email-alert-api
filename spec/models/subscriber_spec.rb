@@ -34,11 +34,6 @@ RSpec.describe Subscriber, type: :model do
       expect(subject).to be_valid
     end
 
-    it "is invalid for a nil email address when not deactivated" do
-      subject.address = nil
-      expect(subject).to be_invalid
-    end
-
     it "is invalid for an empty string email address" do
       subject.address = ""
       expect(subject).to be_invalid
@@ -103,14 +98,6 @@ RSpec.describe Subscriber, type: :model do
       expect {
         subject.save!(validate: false)
       }.to raise_error(ActiveRecord::RecordNotUnique)
-    end
-
-    it "is valid to have more than one nullified subscriber" do
-      create(:subscriber, :nullified)
-
-      subject.deactivate
-      subject.nullify
-      expect(subject).to be_valid
     end
   end
 
@@ -316,37 +303,6 @@ RSpec.describe Subscriber, type: :model do
 
       it "refuses to deactivate" do
         expect { subscriber.deactivate }.to raise_error(/Already deactivated/)
-      end
-    end
-  end
-
-  describe "#nullify" do
-    subject(:subscriber) { create(:subscriber, :deactivated, address: "foo@bar.com") }
-
-    it "sets the address to nil and saves the record" do
-      expect { subscriber.nullify }
-        .to change { subscriber.reload.address }
-        .from("foo@bar.com")
-        .to(nil)
-
-      expect(subscriber.reload.nullified?).to be true
-    end
-
-    it "appears in the nullified scope" do
-      subscriber.nullify
-      expect(Subscriber.nullified.count).to eq(1)
-    end
-
-    it "doesn't appear in the activated scope" do
-      subscriber.nullify
-      expect(Subscriber.activated.count).to eq(0)
-    end
-
-    context "already nullified" do
-      it "refuses to nullify again" do
-        subscriber.nullify
-
-        expect { subscriber.nullify }.to raise_error(/Already nullified/)
       end
     end
   end
