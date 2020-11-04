@@ -42,7 +42,7 @@ private
   end
 
   def manage_subscriptions_link
-    utm_campaign = "govuk-notifications-switch-to-daily-experiment-3"
+    utm_campaign = "govuk-notifications-switch-to-daily-covid-transition"
     utm_medium = "email"
     utm_source = "gov.uk"
     utm_content = "manage-subscriptions"
