@@ -76,10 +76,6 @@ private
       )
     end
 
-    SubscriberDeactivationWorker.perform_async(
-      subscriptions.map(&:subscriber_id),
-    )
-
     true
   end
 
