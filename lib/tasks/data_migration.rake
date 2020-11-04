@@ -3,7 +3,7 @@ require "csv"
 namespace :data_migration do
   desc "Experiment 3 in switching immediate subscribers to daily digest"
   task switch_to_daily_digest_experiment: :environment do
-    lists = CSV.read(Rails.root.join("config/experiment_3_lists.csv"), headers: true)
+    lists = CSV.read(Rails.root.join("config/daily_digest_migration_lists.csv"), headers: true)
 
     list_count = SubscriberList.where(slug: lists.map { |l| l.fetch("slug") }).count
     raise "One or more lists were not found" if lists.size != list_count
@@ -13,19 +13,14 @@ namespace :data_migration do
                                        .immediately
                                        .joins(:subscriber_list)
                                        .where("subscriber_lists.slug": list.fetch("slug"))
+                                       .pluck(:id, :subscriber_id)
 
-      total = subscription_scope.count
-      to_migrate = (total * list.fetch("proportion").to_f).round
-      random_subscriptions = subscription_scope.limit(to_migrate)
-                                               .order("RANDOM()")
-                                               .pluck(:id, :subscriber_id)
-
-      random_subscriptions.each do |(subscription_id, subscriber_id)|
+      subscription_scope.each do |(subscription_id, subscriber_id)|
         memo[subscriber_id] ||= []
         memo[subscriber_id] << subscription_id
       end
 
-      puts "Migrating #{random_subscriptions.size} of #{total} immediate subscribers of #{list.fetch('slug')}"
+      puts "Migrating #{subscription_scope.size} immediate subscribers of #{list.fetch('slug')}"
     end
 
     subscribers = Subscriber.where(id: subscriber_and_subscription_ids.keys)
@@ -60,7 +55,7 @@ namespace :data_migration do
         )
       end
 
-      DeliveryRequestWorker.perform_async_in_queue(email_id, queue: :default)
+      SendEmailWorker.perform_async_in_queue(email_id, queue: :default)
 
       progress = index + 1
       total = subscriber_and_subscription_ids.size

@@ -6,8 +6,8 @@ RSpec.describe "data_migration" do
     let!(:list2) { create :subscriber_list }
     let(:list_data) do
       [
-        { "slug" => list1.slug, "proportion" => "1" },
-        { "slug" => list2.slug, "proportion" => "0.5" },
+        { "slug" => list1.slug },
+        { "slug" => list2.slug },
       ]
     end
 
@@ -43,16 +43,6 @@ RSpec.describe "data_migration" do
       expect(non_list.reload).not_to be_ended
     end
 
-    it "can change a proportion of subscriptions" do
-      create_list :subscription, 4, subscriber_list: list2, frequency: :immediately
-
-      expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
-        .to output.to_stdout
-        .and change { Subscription.active.immediately.where(subscriber_list: list2).count }
-        .from(4)
-        .to(2)
-    end
-
     it "sends a summary email to affected subscribers" do
       subscriber = create :subscriber
       create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
@@ -70,7 +60,7 @@ RSpec.describe "data_migration" do
 
     context "when a list is not found" do
       let(:list_data) do
-        [{ "slug" => "missing-list", "proportion" => "1" }]
+        [{ "slug" => "missing-list" }]
       end
 
       it "raises an error" do
