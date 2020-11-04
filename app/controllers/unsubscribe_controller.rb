@@ -5,7 +5,7 @@ class UnsubscribeController < ApplicationController
   end
 
   def unsubscribe_all
-    subscriber = Subscriber.activated.find(id)
+    subscriber = Subscriber.find(id)
     UnsubscribeAllService.call(subscriber, :unsubscribed)
   end
 

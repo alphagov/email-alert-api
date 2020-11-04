@@ -33,15 +33,6 @@ RSpec.describe BulkSubscriberListEmailBuilder do
       end
     end
 
-    context "with a deactivated subscriber" do
-      let(:subscriber) { create(:subscriber, :deactivated) }
-      let(:subscriber_lists) { [create(:subscription, subscriber: subscriber).subscriber_list] }
-
-      it "imports no emails" do
-        expect(email_import.count).to eq(0)
-      end
-    end
-
     context "with many subscribers" do
       let(:subscriber_1) { create(:subscriber) }
       let(:subscriber_2) { create(:subscriber) }

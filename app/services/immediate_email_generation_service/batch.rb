@@ -48,7 +48,10 @@ class ImmediateEmailGenerationService
     end
 
     def subscriptions_to_fulfill_by_subscriber
-      all_subscribers = activated_subscribers(subscription_ids_by_subscriber_id.keys)
+      all_subscribers = Subscriber
+        .where(id: subscription_ids_by_subscriber_id.keys)
+        .index_by(&:id)
+
       all_subscriptions = unfulfilled_active_subscriptions(
         subscription_ids_by_subscriber_id.values.flatten,
       )
@@ -59,12 +62,6 @@ class ImmediateEmailGenerationService
           subscriptions = all_subscriptions.values_at(*subscription_ids).compact
           memo[subscriber] = subscriptions if subscriber && subscriptions.any?
         end
-    end
-
-    def activated_subscribers(subscriber_ids)
-      Subscriber.activated
-                .where(id: subscriber_ids)
-                .index_by(&:id)
     end
 
     def unfulfilled_active_subscriptions(subscription_ids)

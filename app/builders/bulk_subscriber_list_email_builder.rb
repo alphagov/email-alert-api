@@ -37,7 +37,6 @@ private
 
   def subscribers
     Subscriber
-      .activated
       .not_nullified
       .joins(:subscriptions)
       .where(subscriptions: { ended_at: nil, subscriber_list: subscriber_lists })
