@@ -6,9 +6,6 @@ class SubscriptionsController < ApplicationController
     )
 
     subscription, email, status = subscriber.with_lock do
-      deactivated_subscriber = subscriber.deactivated?
-      subscriber.activate if deactivated_subscriber
-
       existing_subscription = Subscription.active.find_by(
         subscriber: subscriber,
         subscriber_list: subscriber_list,
@@ -28,7 +25,7 @@ class SubscriptionsController < ApplicationController
       end
 
       subscription = new_subscription || existing_subscription
-      email = if create_new_subscription || deactivated_subscriber
+      email = if create_new_subscription
                 SubscriptionConfirmationEmailBuilder.call(subscription: subscription)
               end
 

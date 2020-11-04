@@ -85,16 +85,6 @@ RSpec.describe "Subscriptions", type: :request do
           create_subscription
           expect(a_request(:post, /fake-notify/)).to_not have_been_made
         end
-
-        context "with a deactivated subscriber" do
-          before { subscriber.deactivate }
-
-          it "sends a confirmation email" do
-            stub_notify
-            create_subscription
-            expect(a_request(:post, /fake-notify/)).to have_been_made
-          end
-        end
       end
 
       context "with an ended subscription" do
@@ -147,21 +137,6 @@ RSpec.describe "Subscriptions", type: :request do
 
           it "does not create another subscriber" do
             expect { create_subscription }.not_to change(Subscriber, :count)
-          end
-        end
-
-        context "with a deactivated subscriber" do
-          before do
-            @subscriber = create(:subscriber, address: "test@example.com", deactivated_at: 2.days.ago)
-          end
-
-          it "does not create another subscriber" do
-            expect { create_subscription }.not_to change(Subscriber, :count)
-          end
-
-          it "activates the subscriber" do
-            create_subscription
-            expect(@subscriber.reload).to be_activated
           end
         end
 
