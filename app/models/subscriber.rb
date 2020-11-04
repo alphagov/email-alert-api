@@ -11,8 +11,6 @@ class Subscriber < ApplicationRecord
   has_many :digest_run_subscribers, dependent: :destroy
   has_many :digest_runs, through: :digest_run_subscribers
 
-  scope :activated, -> { where(deactivated_at: nil) }
-  scope :deactivated, -> { where.not(deactivated_at: nil) }
   scope :nullified, -> { where(address: nil) }
   scope :not_nullified, -> { where.not(address: nil) }
 
@@ -39,27 +37,6 @@ class Subscriber < ApplicationRecord
     # ActiveRecord::RecordNotUnique error is raised with the expectation
     # that this occurring more than once is a bigger problem.
     (retries += 1) == 1 ? retry : raise
-  end
-
-  def activated?
-    deactivated_at.nil?
-  end
-
-  def activate
-    raise "Cannot activate if nullified." if nullified?
-    raise "Already activated." if activated?
-
-    update!(deactivated_at: nil)
-  end
-
-  def deactivated?
-    deactivated_at.present?
-  end
-
-  def deactivate(datetime: nil)
-    raise "Already deactivated." if deactivated?
-
-    update!(deactivated_at: datetime || Time.zone.now)
   end
 
   def nullified?
