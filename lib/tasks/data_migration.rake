@@ -1,8 +1,8 @@
 require "csv"
 
 namespace :data_migration do
-  desc "Experiment 3 in switching immediate subscribers to daily digest"
-  task switch_to_daily_digest_experiment: :environment do
+  desc "Switch immediate subscribers to daily digest"
+  task switch_to_daily_digest: :environment do
     lists = CSV.read(Rails.root.join("config/daily_digest_migration_lists.csv"), headers: true)
 
     list_count = SubscriberList.where(slug: lists.map { |l| l.fetch("slug") }).count

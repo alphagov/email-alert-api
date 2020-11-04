@@ -1,7 +1,7 @@
 RSpec.describe "data_migration" do
   include NotifyRequestHelpers
 
-  describe "switch_to_daily_digest_experiment" do
+  describe "switch_to_daily_digest" do
     let!(:list1) { create :subscriber_list }
     let!(:list2) { create :subscriber_list }
     let(:list_data) do
@@ -13,14 +13,14 @@ RSpec.describe "data_migration" do
 
     before do
       allow(CSV).to receive(:open).and_return(list_data)
-      Rake::Task["data_migration:switch_to_daily_digest_experiment"].reenable
+      Rake::Task["data_migration:switch_to_daily_digest"].reenable
       stub_notify
     end
 
     it "switches immediate subscriptions to daily" do
       subscription = create :subscription, subscriber_list: list1, frequency: :immediately
 
-      expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
+      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
         .to output.to_stdout
 
       new_subscription = subscription.subscriber.subscriptions.active.first
@@ -36,7 +36,7 @@ RSpec.describe "data_migration" do
       digest = create :subscription, subscriber_list: list1, frequency: :daily
       non_list = create :subscription, frequency: :immediately
 
-      expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
+      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
         .to output.to_stdout
 
       expect(digest.reload).not_to be_ended
@@ -49,7 +49,7 @@ RSpec.describe "data_migration" do
       reverted_subscription = create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
       other_subscription = create :subscription, subscriber_list: list2, frequency: :immediately, subscriber: subscriber
 
-      expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
+      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
         .to output.to_stdout
 
       expect(reverted_subscription.reload).not_to be_ended
@@ -61,7 +61,7 @@ RSpec.describe "data_migration" do
       create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
       create :subscription, subscriber_list: list2, frequency: :immediately, subscriber: subscriber
 
-      expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
+      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
         .to output.to_stdout
 
       email_data = expect_an_email_was_sent
@@ -77,7 +77,7 @@ RSpec.describe "data_migration" do
       end
 
       it "raises an error" do
-        expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
+        expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
           .to raise_error("One or more lists were not found")
       end
     end
@@ -96,13 +96,13 @@ RSpec.describe "data_migration" do
       end
 
       it "only sends an email to switched subscribers" do
-        expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
+        expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
           .to output.to_stdout
           .and change { Email.count }.by(1)
       end
 
       it "persists changes for other subscribers" do
-        expect { Rake::Task["data_migration:switch_to_daily_digest_experiment"].invoke }
+        expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
           .to output.to_stdout
           .and change { Subscription.count }.by(1)
 
