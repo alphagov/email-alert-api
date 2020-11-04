@@ -12,16 +12,6 @@ class UnsubscribeService < ApplicationService
       subscriptions.each do |subscription|
         subscription.end(reason: reason)
       end
-
-      if !subscriber.deactivated? && no_other_subscriptions?(subscriber, subscriptions)
-        subscriber.deactivate
-      end
     end
-  end
-
-private
-
-  def no_other_subscriptions?(subscriber, subscriptions)
-    (subscriber.subscriptions - subscriptions).empty?
   end
 end
