@@ -1,11 +1,15 @@
 class SubscriptionsController < ApplicationController
   def create
-    subscriber = Subscriber.resilient_find_or_create(
-      address,
-      signon_user_uid: current_user.uid,
-    )
+    subscription, email, status = nil
 
-    subscription, email, status = subscriber.with_lock do
+    ActiveRecord::Base.transaction do
+      subscriber = Subscriber.resilient_find_or_create(
+        address,
+        signon_user_uid: current_user.uid,
+      )
+
+      subscriber.lock!
+
       existing_subscription = Subscription.active.find_by(
         subscriber: subscriber,
         subscriber_list: subscriber_list,
@@ -29,7 +33,7 @@ class SubscriptionsController < ApplicationController
                 SubscriptionConfirmationEmailBuilder.call(subscription: subscription)
               end
 
-      [subscription, email, existing_subscription ? :ok : :created]
+      status = existing_subscription ? :ok : :created
     end
 
     if email
