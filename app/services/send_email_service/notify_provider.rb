@@ -21,7 +21,7 @@ class SendEmailService::NotifyProvider
 
     Metrics.sent_to_notify_successfully
     :sent
-  rescue Notifications::Client::RequestError, Net::OpenTimeout, Net::ReadTimeout => e
+  rescue Notifications::Client::RequestError, Net::OpenTimeout, Net::ReadTimeout, SocketError => e
     Metrics.failed_to_send_to_notify
 
     Rails.logger.warn(

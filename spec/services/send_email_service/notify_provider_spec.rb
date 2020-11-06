@@ -53,6 +53,13 @@ RSpec.describe SendEmailService::NotifyProvider do
       expect(described_class.call(**arguments)).to be(:provider_communication_failure)
     end
 
+    it "returns a provider_communication_failure status for temporary DNS errors" do
+      allow(Notifications::Client).to receive(:new).and_return(notify_client)
+
+      allow(notify_client).to receive(:send_email).and_raise(SocketError)
+      expect(described_class.call(**arguments)).to be(:provider_communication_failure)
+    end
+
     it "returns a provider_communication_failure status for a Notify rejecting an email address" do
       error_response = double(
         code: 400,
