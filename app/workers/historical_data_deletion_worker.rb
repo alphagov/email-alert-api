@@ -12,10 +12,10 @@ class HistoricalDataDeletionWorker < ApplicationWorker
     # deleting subscriptions must be done before deleting subscriber lists or subscribers
     delete_and_log("subscriptions") { Subscription.where("ended_at < ?", max_retention_period) }
 
-    delete_and_log("subscriber lists") { empty_subscriber_lists }
+    delete_and_log("subscriber lists") { historic_subscriber_lists }
 
     # restricts deletion if emails are present
-    delete_and_log("subscribers") { Subscriber.where("deactivated_at < ?", max_retention_period) }
+    delete_and_log("subscribers") { historic_subscribers }
   end
 
 private
@@ -37,9 +37,23 @@ private
     logger.info(message)
   end
 
-  def empty_subscriber_lists
-    SubscriberList.left_outer_joins(:subscriptions)
-                  .where("subscriber_lists.created_at < ?", empty_list_retention_period)
-                  .where("subscriptions.id": nil)
+  def historic_subscriber_lists
+    subscriptions_exist = Subscription.where(
+      "subscriber_lists.id = subscriptions.subscriber_list_id",
+    ).arel.exists
+
+    SubscriberList
+      .where("created_at < ?", empty_list_retention_period)
+      .where.not(subscriptions_exist)
+  end
+
+  def historic_subscribers
+    subscriptions_exist = Subscription.where(
+      "subscribers.id = subscriptions.subscriber_id",
+    ).arel.exists
+
+    Subscriber
+      .where("created_at < ?", max_retention_period)
+      .where.not(subscriptions_exist)
   end
 end
