@@ -190,8 +190,7 @@ It will create a new subscription between the email address and the subscriber
 list. It will respond with a `201 Created` if it's a new subscription or a `200
 OK` if the subscription already exists. If a subscription already exists but
 the frequency is different, the current subscription is ended and a new one
-with the updated frequency is created. A confirmation email will be sent if a
-new subscription is created or if the subscription already exists.
+with the updated frequency is created.
 
 > Note: using any email address that ends with `@notifications.service.gov.uk`
 will not create a subscriber or a subscription, however will return a `201 Created` response.
