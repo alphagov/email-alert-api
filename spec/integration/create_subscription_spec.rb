@@ -70,20 +70,6 @@ RSpec.describe "Creating a subscription", type: :request do
             expect(response.status).to eq(200)
           end
         end
-
-        context "with a deactivated subscriber" do
-          before do
-            create(:subscriber, :deactivated, address: "deactivated@example.com")
-          end
-
-          it "activates the subscriber" do
-            params = JSON.dump(address: "deactivated@example.com", subscriber_list_id: subscriber_list.id)
-            post "/subscriptions", params: params, headers: json_headers
-
-            expect(Subscriber.first.deactivated?).to be false
-            expect(Subscriber.first.activated?).to be true
-          end
-        end
       end
     end
   end

@@ -109,10 +109,6 @@ RSpec.describe "Subscriptions", type: :request do
           expect(Subscription.active.count).to eq(0)
         end
 
-        it "deactivates the subscriber" do
-          expect(Subscriber.activated.count).to eq(0)
-        end
-
         it "responds with a 204 status" do
           expect(response.status).to eq(204)
         end

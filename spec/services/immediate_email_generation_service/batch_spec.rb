@@ -101,15 +101,6 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
       end
     end
 
-    context "when a subscriber was deactivated after determining who to email" do
-      let(:subscriber1) { create(:subscriber, :deactivated) }
-
-      it "doesn't email them" do
-        expect { instance.generate_emails }
-          .not_to(change { Email.where(address: subscriber1.address).count })
-      end
-    end
-
     context "when a subscription was ended after determining which lists to email" do
       let(:subscriber1_subscriptions) do
         create_list(:subscription, 2, :immediately, :ended, subscriber: subscriber1)

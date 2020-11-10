@@ -17,7 +17,7 @@ class SubscriberListMover
     destination_subscriber_list = SubscriberList.find_by(slug: to_slug)
     raise "Destination subscriber list #{to_slug} does not exist" if destination_subscriber_list.nil?
 
-    subscribers = source_subscriber_list.subscribers.activated
+    subscribers = source_subscriber_list.subscribers
     sub_count = source_subscriber_list.subscriptions.active.count
     puts "#{sub_count} active subscribers moving from #{from_slug} to #{to_slug}"
 

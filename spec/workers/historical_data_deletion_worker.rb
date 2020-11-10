@@ -79,13 +79,25 @@ RSpec.describe HistoricalDataDeletionWorker do
     end
 
     context "when deleting subscribers" do
-      it "should remove all old deactivated subscribers" do
-        create(:subscriber, deactivated_at: historic_date)
+      it "should remove all old subscribers which have no subscriptions" do
+        create(:subscriber, created_at: historic_date)
         expect { perform }.to change(Subscriber, :count).by(-1)
       end
 
-      it "shouldn't remove active subscribers" do
+      it "should remove all old subscribers that have historic subscriptions" do
+        subscriber = create(:subscriber, created_at: historic_date)
+        create(:subscription, :ended, ended_at: historic_date, subscriber: subscriber)
+        expect { perform }.to change(Subscriber, :count).by(-1)
+      end
+
+      it "shouldn't remove recently created subscribers" do
         create(:subscriber)
+        expect { perform }.to_not change(Subscriber, :count)
+      end
+
+      it "shouldn't remove old subscribers with active subscriptions" do
+        subscriber = create(:subscriber, created_at: historic_date)
+        create(:subscription, subscriber: subscriber)
         expect { perform }.to_not change(Subscriber, :count)
       end
     end

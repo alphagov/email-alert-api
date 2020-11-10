@@ -28,17 +28,6 @@ RSpec.describe Subscriber, type: :model do
       end
     end
 
-    it "is valid for a nil email address when deactivated" do
-      subject.deactivate
-      subject.address = nil
-      expect(subject).to be_valid
-    end
-
-    it "is invalid for a nil email address when not deactivated" do
-      subject.address = nil
-      expect(subject).to be_invalid
-    end
-
     it "is invalid for an empty string email address" do
       subject.address = ""
       expect(subject).to be_invalid
@@ -103,14 +92,6 @@ RSpec.describe Subscriber, type: :model do
       expect {
         subject.save!(validate: false)
       }.to raise_error(ActiveRecord::RecordNotUnique)
-    end
-
-    it "is valid to have more than one nullified subscriber" do
-      create(:subscriber, :nullified)
-
-      subject.deactivate
-      subject.nullify
-      expect(subject).to be_valid
     end
   end
 
@@ -240,114 +221,6 @@ RSpec.describe Subscriber, type: :model do
 
     it "returns ended subscriptions" do
       expect(subscriber.ended_subscriptions.count).to eq 1
-    end
-  end
-  describe "#activate" do
-    context "when activated" do
-      subject(:subscriber) { create(:subscriber, :activated) }
-
-      it "refuses to activate again" do
-        expect { subscriber.activate }.to raise_error(/Already activated/)
-      end
-    end
-
-    context "when deactivated" do
-      let(:deactivated_at) { Time.zone.parse("1/1/2017") }
-
-      subject(:subscriber) { create(:subscriber, :deactivated, deactivated_at: deactivated_at) }
-
-      it "activates the subscriber" do
-        expect { subscriber.activate }
-          .to change { subscriber.reload.deactivated_at }
-          .from(deactivated_at)
-          .to(nil)
-
-        expect(subscriber.reload.activated?).to be true
-      end
-
-      it "appears in the activated scope" do
-        subscriber.activate
-        expect(Subscriber.activated.count).to eq(1)
-      end
-
-      it "doesn't appear in the deactivated scope" do
-        subscriber.activate
-        expect(Subscriber.deactivated.count).to eq(0)
-      end
-    end
-
-    context "when nullified" do
-      subject(:subscriber) { create(:subscriber, :nullified) }
-
-      it "refuses to activate" do
-        expect { subscriber.activate }.to raise_error(/Cannot activate/)
-      end
-    end
-  end
-
-  describe "#deactivate" do
-    context "when activated" do
-      subject(:subscriber) { create(:subscriber, :activated) }
-
-      it "deactivates the subscriber" do
-        freeze_time do
-          expect { subscriber.deactivate }
-            .to change { subscriber.reload.deactivated_at }
-            .from(nil)
-            .to(Time.zone.now)
-
-          expect(subscriber.reload.deactivated?).to be true
-        end
-      end
-
-      it "appears in the deactivated scope" do
-        subscriber.deactivate
-        expect(Subscriber.deactivated.count).to eq(1)
-      end
-
-      it "doesn't appear in the activated scope" do
-        subscriber.deactivate
-        expect(Subscriber.activated.count).to eq(0)
-      end
-    end
-
-    context "when deactivated" do
-      subject(:subscriber) { create(:subscriber, :deactivated) }
-
-      it "refuses to deactivate" do
-        expect { subscriber.deactivate }.to raise_error(/Already deactivated/)
-      end
-    end
-  end
-
-  describe "#nullify" do
-    subject(:subscriber) { create(:subscriber, :deactivated, address: "foo@bar.com") }
-
-    it "sets the address to nil and saves the record" do
-      expect { subscriber.nullify }
-        .to change { subscriber.reload.address }
-        .from("foo@bar.com")
-        .to(nil)
-
-      expect(subscriber.reload.nullified?).to be true
-    end
-
-    it "appears in the nullified scope" do
-      subscriber.nullify
-      expect(Subscriber.nullified.count).to eq(1)
-    end
-
-    it "doesn't appear in the activated scope" do
-      subscriber.nullify
-      expect(Subscriber.activated.count).to eq(0)
-    end
-
-    context "already nullified" do
-      it "refuses to nullify again" do
-        subscriber.nullify
-
-        expect { subscriber.nullify }.to raise_error(/Already nullified/)
-      end
     end
   end
 end

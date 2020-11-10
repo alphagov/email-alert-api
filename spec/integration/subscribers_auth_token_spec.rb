@@ -51,17 +51,6 @@ RSpec.describe "Subscribers auth token", type: :request do
       end
     end
 
-    context "when we have a deactivated user" do
-      before { subscriber.deactivate }
-
-      it "re-activates the subscriber" do
-        expect { post path, params: params }
-          .to change { subscriber.reload.activated? }
-          .from(false)
-          .to(true)
-      end
-    end
-
     context "when we're provided with a bad email address" do
       let(:address) { "bad-address" }
 

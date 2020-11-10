@@ -5,8 +5,8 @@ class Metrics
       count("content_change_emails.document_type.#{content_change.document_type}.immediate", count)
     end
 
-    def unsubscribed(reason)
-      increment("unsubscribed.reason.#{reason}")
+    def unsubscribed(reason, value = 1)
+      count("unsubscribed.reason.#{reason}", value)
     end
 
     def sent_to_notify_successfully

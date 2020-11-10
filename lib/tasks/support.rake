@@ -73,12 +73,12 @@ namespace :support do
     elsif !(subscriber.subscriptions.pluck(:subscriber_list_id).include? subscriber_list.id)
       puts "Subscriber #{email_address} does not appear to be signed up for #{subscriber_list_slug}"
     else
-      active_subscriptions = Subscription.active.where(subscriber_list: subscriber_list, subscriber: subscriber)
-      if active_subscriptions.empty?
-        puts "Subscriber #{email_address} already unsubscribed from #{subscriber_list_slug}"
-      else
-        UnsubscribeService.call(subscriber, [active_subscriptions.last], :unsubscribed)
+      active_subscription = Subscription.active.find_by(subscriber_list: subscriber_list, subscriber: subscriber)
+      if active_subscription
+        active_subscription.end(:unsubscribed)
         puts "Unsubscribing from #{email_address} from #{subscriber_list_slug}"
+      else
+        puts "Subscriber #{email_address} already unsubscribed from #{subscriber_list_slug}"
       end
     end
   end
