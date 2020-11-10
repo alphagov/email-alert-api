@@ -1,7 +1,5 @@
 class SubscriptionsController < ApplicationController
   def create
-    subscription, status = nil
-
     ActiveRecord::Base.transaction do
       subscriber = Subscriber.resilient_find_or_create(
         address,
@@ -30,9 +28,8 @@ class SubscriptionsController < ApplicationController
 
       subscription = new_subscription || existing_subscription
       status = existing_subscription ? :ok : :created
+      render json: { id: subscription.id }, status: status
     end
-
-    render json: { id: subscription.id }, status: status
   end
 
   def show
