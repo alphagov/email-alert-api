@@ -1,6 +1,6 @@
 class SubscriptionsController < ApplicationController
   def create
-    subscription, email, status = nil
+    subscription, status = nil
 
     ActiveRecord::Base.transaction do
       subscriber = Subscriber.resilient_find_or_create(
@@ -29,15 +29,7 @@ class SubscriptionsController < ApplicationController
       end
 
       subscription = new_subscription || existing_subscription
-      email = if create_new_subscription
-                SubscriptionConfirmationEmailBuilder.call(subscription: subscription)
-              end
-
       status = existing_subscription ? :ok : :created
-    end
-
-    if email
-      SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_transactional)
     end
 
     render json: { id: subscription.id }, status: status

@@ -50,12 +50,6 @@ RSpec.describe "Subscriptions", type: :request do
           create_subscription
           expect(subscription.reload.ended?).to be true
         end
-
-        it "sends a confirmation email" do
-          stub_notify
-          create_subscription
-          expect(a_request(:post, /fake-notify/)).to have_been_made.at_least_once
-        end
       end
 
       context "with an existing subscription with identical frequency" do
@@ -78,12 +72,6 @@ RSpec.describe "Subscriptions", type: :request do
         it "does not mark the existing subscription as ended" do
           create_subscription
           expect(subscription.reload.ended?).to be false
-        end
-
-        it "does not send a confirmation email" do
-          stub_notify
-          create_subscription
-          expect(a_request(:post, /fake-notify/)).to_not have_been_made
         end
       end
 
