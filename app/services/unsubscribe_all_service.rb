@@ -7,8 +7,10 @@ class UnsubscribeAllService < ApplicationService
   end
 
   def call
+    ended_time = Time.zone.now
     ended_count = subscriber.active_subscriptions
-                            .update_all(ended_at: Time.zone.now,
+                            .update_all(ended_at: ended_time,
+                                        updated_at: ended_time,
                                         ended_reason: reason)
 
     Metrics.unsubscribed(reason, ended_count)
