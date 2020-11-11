@@ -35,7 +35,7 @@ private
   end
 
   def mark_emails_as_archived(ids, archived_at)
-    Email.where(id: ids).update_all(archived_at: archived_at)
+    Email.where(id: ids).update_all(archived_at: archived_at, updated_at: archived_at)
   end
 
   def log_complete(archived, start_time, end_time)
