@@ -10,16 +10,6 @@ RSpec.describe Subscription, type: :model do
       expect(subject.ended_reason).to be_nil
     end
 
-    it "must be unique between subscriber and subscriber lists" do
-      new_subscription = build(
-        :subscription,
-        subscriber: subject.subscriber,
-        subscriber_list: subject.subscriber_list,
-      )
-
-      expect(new_subscription).to be_invalid
-    end
-
     it "is an immediate email" do
       expect(subject.immediately?).to be_truthy
     end
