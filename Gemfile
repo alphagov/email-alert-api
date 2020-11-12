@@ -6,7 +6,7 @@ gem "aws-sdk-s3"
 gem "bootsnap", require: false
 gem "faraday"
 gem "gds-api-adapters"
-gem "gds-sso"
+gem "gds-sso", git: "https://github.com/alphagov/gds-sso", branch: "prefix-env-vars"
 gem "govuk_app_config"
 gem "govuk_document_types"
 gem "govuk_sidekiq"

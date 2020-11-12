@@ -1,3 +1,18 @@
+GIT
+  remote: https://github.com/alphagov/gds-sso
+  revision: 7dc9f716f855aac1dde7b4345c86e673198c068a
+  branch: prefix-env-vars
+  specs:
+    gds-sso (15.1.0)
+      multi_json (~> 1.0)
+      oauth2 (~> 1.0)
+      omniauth (~> 1.2)
+      omniauth-gds (~> 3.2)
+      plek (~> 4.0)
+      rails (>= 5)
+      warden (~> 1.2)
+      warden-oauth2 (~> 0.0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -114,15 +129,6 @@ GEM
       null_logger
       plek (>= 1.9.0)
       rest-client (~> 2.0)
-    gds-sso (15.1.0)
-      multi_json (~> 1.0)
-      oauth2 (~> 1.0)
-      omniauth (~> 1.2)
-      omniauth-gds (~> 3.2)
-      plek (~> 4.0)
-      rails (>= 5)
-      warden (~> 1.2)
-      warden-oauth2 (~> 0.0.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     govuk_app_config (2.7.0)
@@ -384,7 +390,7 @@ DEPENDENCIES
   factory_bot_rails
   faraday
   gds-api-adapters
-  gds-sso
+  gds-sso!
   govuk_app_config
   govuk_document_types
   govuk_sidekiq
