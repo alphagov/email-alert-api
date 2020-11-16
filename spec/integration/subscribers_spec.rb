@@ -86,6 +86,12 @@ RSpec.describe "Subscriptions", type: :request do
           patch "/subscribers/#{subscriber.id}", params: { new_address: "invalid" }
           expect(response.status).to eq(422)
         end
+
+        it "returns an error message if the new email address is not unique" do
+          create :subscriber, address: "new-test@example.com"
+          patch "/subscribers/#{subscriber.id}", params: { new_address: "new-test@example.com" }
+          expect(response.status).to eq(422)
+        end
       end
 
       context "without an existing subscriber" do

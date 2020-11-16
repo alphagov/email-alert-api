@@ -1,7 +1,10 @@
 class Subscriber < ApplicationRecord
   self.ignored_columns = %w[deactivated_at]
 
-  validates :address, email_address: true, allow_nil: true
+  with_options allow_nil: true do
+    validates :address, email_address: true
+    validates :address, uniqueness: { case_sensitive: false }
+  end
 
   has_many :subscriptions
   has_many :active_subscriptions, -> { active }, class_name: "Subscription"

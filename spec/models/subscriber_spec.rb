@@ -71,6 +71,28 @@ RSpec.describe Subscriber, type: :model do
 
       expect(subject).to be_invalid
     end
+
+    it "is invalid if an email address is already taken" do
+      create(:subscriber, address: "foo@bar.com")
+
+      subject.address = "foo@bar.com"
+      expect(subject).to be_invalid
+
+      expect {
+        subject.save!(validate: false)
+      }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it "is invalid if an email address is already taken but with a different case" do
+      create(:subscriber, address: "FOO@BAR.com")
+
+      subject.address = "foo@bar.com"
+      expect(subject).to be_invalid
+
+      expect {
+        subject.save!(validate: false)
+      }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
   end
 
   context "with a subscription" do
@@ -171,7 +193,7 @@ RSpec.describe Subscriber, type: :model do
 
         allow(described_class).to receive(:find_by_address).and_return(nil)
         expect { described_class.resilient_find_or_create(subscriber.address) }
-          .to raise_error(ActiveRecord::RecordNotUnique)
+          .to raise_error(ActiveRecord::RecordInvalid)
       end
     end
   end
