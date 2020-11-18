@@ -1,4 +1,4 @@
-# 7. Monitoring and alerting
+# 8. Monitoring and alerting
 
 Date: 2020-11-13
 
@@ -28,10 +28,10 @@ application is busy, yet fully operational. These alerts are unactionable for
 support engineers as the alerts resolve themselves once the work is completed
 and there is little an engineer can do to speed this process up. For example,
 if the application has accumulated 1,000,000 emails to send it raises a
-critical alert even if it is sending these at the fastest rate Notify
-would allow. These alerts, therefore, waste the time of support engineers and
-create a risk that a support engineer might miss an alert that requires their
-intervention.
+critical alert even if it is sending these at the [fastest rate Notify
+would allow][rate-limit]. These alerts, therefore, waste the time of support
+engineers and create a risk that a support engineer might miss an alert that
+requires their intervention.
 
 Since these alerts can't be relied upon to reliably suggest the
 application is broken, they aren't used for any out-of-hours alerts. Therefore,
@@ -59,6 +59,7 @@ the system was broken or not. We felt there was room for improvement.
 [monitor-time-frame]: https://github.com/alphagov/email-alert-api/blob/c70fcd7e5d64393074a3eebd83b3467fd8cc03b3/app/workers/digest_run_worker.rb#L6-L9
 [monitor-workload]: https://github.com/alphagov/govuk-puppet/blob/fac4b5163f10736bb19aa51a8eb7bc276dd2cb40/modules/govuk/manifests/apps/email_alert_api/sidekiq_queue_check.pp#L33-L44
 [email-alert-monitoring]: https://github.com/alphagov/email-alert-monitoring
+[rate-limit]: https://github.com/alphagov/email-alert-api/blob/b92f9136230f9217e7877c6dbd6a049473ce7b35/app/workers/send_email_worker.rb#L4
 [Travel Advice Publisher]: https://github.com/alphagov/travel-advice-publisher
 
 ## Decision
@@ -72,16 +73,15 @@ Unpacking this, we consider the email alert system to be comprised of 3
 applications: Email Alert API,
 [Email Alert Frontend](https://github.com/alphagov/email-alert-frontend) and
 [Email Alert Service](https://github.com/alphagov/email-alert-service); this
-excludes the monitoring of whether GOV.UK publishing is working and whether
-Notify is working as they are independently monitored. The use of
-"if and only if" reflects a condition we've formed that the system will not
-raise critical alerts unless we're highly confident it is broken, whereas
-warnings are appropriate for other situations. We decided that for the email
-alert system to be "broken" it represents a failing that will lead to a user
-noticeable issue unless an engineer intervenes. Since these alerts should
-represent a broken system requiring intervention, it should be suitable to
-contact engineers out-of-hours for them as otherwise users will be
-experiencing issues.
+excludes the monitoring of whether GOV.UK publishing and Notify are working
+as they are independently monitored. The use of "if and only if"
+reflects a condition we've formed that the system will not raise critical
+alerts unless we're highly confident it is broken, whereas warnings are
+appropriate for other situations. We decided that for the email alert system
+to be "broken" it represents a failing that will lead to a user noticeable
+issue unless an engineer intervenes. Since these alerts should represent
+a broken system requiring intervention, it should be suitable to contact
+engineers out-of-hours for them as otherwise users will be experiencing issues.
 
 We decided that we will re-approach our alerting with this mindset and look to
 replace alerts that are vulnerable to reflecting a busy status, or which
@@ -112,10 +112,11 @@ individual Sidekiq jobs fail multiple times for the following workers:
 
 These workers will use the database to store the number of times we have
 attempted to perform an action. An alert will be raised if the quantity of
-failed attempts reaches a threshold (the suggestion is 5). To ensure that these
-jobs actually run we will configure the [RecoverLostJobsWorker][] to identify
-any of these that need to run and attempt them, this protects from lost work
-problems such as [Sidekiq crashing][sidekiq-reliability].
+failed attempts reaches a threshold (the suggestion is 5 - based on this being
+evidence of consistent failure). To ensure that these jobs actually run we
+will configure the [RecoverLostJobsWorker][] to identify any of these that
+need to run and attempt them, this protects from lost work problems such
+as [Sidekiq crashing][sidekiq-reliability].
 
 We expect [SendEmailWorker][] and [DigestEmailGenerationWorker][] jobs to run
 quickly (durations of up to a few seconds) and know that there can be high
@@ -126,11 +127,11 @@ for an alert to be raised (as each retry is placed at the back of the queue).
 To reflect this concern we will contact engineers if either of these workers
 has not completed one successful run within a time period despite work
 existing (suggested time period is 30 minutes). The [Sidekiq retry
-cadence][sidekiq-retry] for these jobs will need to be updated to ensure they
-always retry within the time period, this is to ensure we don't alert while
-work isn't being attempted.
+cadence][sidekiq-retry] and [recovery window][] for these jobs will need to be
+updated to ensure the jobs are always attempted within the time period, this
+is to ensure we don't alert while work isn't being attempted.
 
-Similarly, we will contact engineers out-of-hours if we determine that
+We will contact engineers out-of-hours if we determine that
 [DigestRuns][DigestRun] are not created within a reasonable time frame
 (suggestion is 2 hours). Creating these is a [trivial][digest-run-creation],
 but essential, operation for producing a digest and the lack of these suggests
@@ -220,7 +221,7 @@ end-to-end check that monitors whether travel advice and medical safety content
 changes result in an email received by a Gmail inbox. We intend to retire this
 check as we believe the new approach to monitoring the email alert system will
 cover the aspects of this check that are within scope of the email alert system.
-Broadly the Email Alert Monitoring verifies that:
+Broadly Email Alert Monitoring verifies that:
 
 - content was published (out-of-scope for email alert system, this is a
   Publishing API concern);
@@ -250,6 +251,7 @@ we will remove Email Alert Monitoring from the GOV.UK stack.
 [sidekiq-reliability]: https://github.com/mperham/sidekiq/wiki/Reliability#using-super_fetch
 [DigestRun]: https://github.com/alphagov/email-alert-api/blame/b92f9136230f9217e7877c6dbd6a049473ce7b35/README.md#L28-L29
 [sidekiq-retry]: https://github.com/mperham/sidekiq/wiki/Error-Handling#automatic-job-retry
+[recovery window]: https://github.com/alphagov/email-alert-api/blob/1711885b4df9c80aed5d8d2333e4e007c778badd/app/workers/recover_lost_jobs_worker/unprocessed_check.rb#L13
 [digest-run-creation]: https://github.com/alphagov/email-alert-api/blob/b92f9136230f9217e7877c6dbd6a049473ce7b35/app/services/digest_initiator_service.rb#L8
 [MetricsCollectionWorker]: https://github.com/alphagov/email-alert-api/blob/b92f9136230f9217e7877c6dbd6a049473ce7b35/app/workers/metrics_collection_worker.rb
 [EmailDeletionWorker]: https://github.com/alphagov/email-alert-api/blob/b92f9136230f9217e7877c6dbd6a049473ce7b35/app/workers/email_deletion_worker.rb
