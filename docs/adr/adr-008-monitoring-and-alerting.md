@@ -30,8 +30,9 @@ and there is little an engineer can do to speed this process up. For example,
 if the application has accumulated 1,000,000 emails to send it raises a
 critical alert even if it is sending these at the [fastest rate Notify
 would allow][rate-limit]. These alerts, therefore, waste the time of support
-engineers and create a risk that a support engineer might miss an alert that
-requires their intervention.
+engineers as most instances of them occurring represent a problem that
+doesn't require intervention - this then increases a risk that an engineer
+wouldn't act if an alert did actually represent the application being broken.
 
 Since these alerts can't be relied upon to reliably suggest the
 application is broken, they aren't used for any out-of-hours alerts. Therefore,
@@ -41,15 +42,16 @@ of monitoring approach: the end-to-end checks. These alert when content
 published through [Travel Advice Publisher][] does not arrive in
 a particular Gmail inbox within a specified time period.
 
-Monitoring an inbox for a limited set of emails has its own distinct flaws.
+Monitoring an inbox for a limited set of emails has its own flaws.
 If Email Alert API breaks outside of office hours then engineers would not be
 notified unless travel advice content was published. This alert also monitors
 beyond the boundaries of the email alert system - considering whether
 GOV.UK publishing, Notify and Gmail are all working - leading to alerts
-representing problems outside the control of GOV.UK engineers (such as Gmail
-identifying an email as spam). Finally, by nature of being time based, these
-alerts are also vulnerable to the system being busy - where a sufficiently
-high volume of travel advice publishings guarantees that an alert will trigger.
+representing problems that are irrelevant to the system, or outside the
+control of GOV.UK engineers (such as Gmail identifying an email as spam).
+Finally, by nature of being time based, these alerts are also vulnerable to
+the system being busy - where a sufficiently high volume of travel advice
+publishings guarantees that an alert will trigger.
 
 Reviewing this monitoring approach helped us understand the reputation for
 unactionable alerts and reviewing the GOV.UK incidents for Email Alert API
@@ -113,17 +115,22 @@ individual Sidekiq jobs fail multiple times for the following workers:
 These workers will use the database to store the number of times we have
 attempted to perform an action. An alert will be raised if the quantity of
 failed attempts reaches a threshold (the suggestion is 5 - based on this being
-evidence of consistent failure). To ensure that these jobs actually run we
-will configure the [RecoverLostJobsWorker][] to identify any of these that
-need to run and attempt them, this protects from lost work problems such
-as [Sidekiq crashing][sidekiq-reliability].
+evidence of consistent failure). We expect that we can use the same threshold
+for all of these workers even though `SendEmailWorker` speaks to an external
+service (Notify) that may be more likely to fail, this is because the
+failure rate is low (< 0.1%), which makes consecutive failures unlikely. To
+ensure that the jobs of all the mentioned workers actually run we will
+configure the [RecoverLostJobsWorker][] to identify any of these that need to
+run and attempt them, this protects from lost work problems such as
+[Sidekiq crashing][sidekiq-reliability].
 
 We expect [SendEmailWorker][] and [DigestEmailGenerationWorker][] jobs to run
-quickly (durations of up to a few seconds) and know that there can be high
+quickly (durations of up to a few seconds) and we know that there can be high
 volumes of them to run (both can regularly reach volumes of > 100,000).
-Therefore, we are concerned about a scenario where these consistently fail
+We are concerned about a scenario where these consistently fail
+and it takes a long time for an engineer to be informed, this could occur
 because it could take a long time for sufficient retries to occur
-for an alert to be raised (as each retry is placed at the back of the queue).
+before an alert is raised (as each retry is placed at the back of the queue).
 To reflect this concern we will contact engineers if either of these workers
 has not completed one successful run within a time period despite work
 existing (suggested time period is 30 minutes). The [Sidekiq retry
@@ -131,11 +138,12 @@ cadence][sidekiq-retry] and [recovery window][] for these jobs will need to be
 updated to ensure the jobs are always attempted within the time period, this
 is to ensure we don't alert while work isn't being attempted.
 
-We will contact engineers out-of-hours if we determine that
-[DigestRuns][DigestRun] are not created within a reasonable time frame
+We will contact engineers out-of-hours if we determine that a
+[DigestRun][DigestRun] record is not created within a reasonable time frame
 (suggestion is 2 hours). Creating these is a [trivial][digest-run-creation],
-but essential, operation for producing a digest and the lack of these suggests
-the system is broken whether it is busy or not.
+but essential, operation that relies on a schedule. The lack of this record
+suggests that either the schedule is broken or that the code running at the
+scheduled time failed.
 
 We will also monitor that runs of [RecoverLostJobsWorker][] and
 [MetricsCollectionWorker][] are succeeding at least once within a time frame
@@ -200,7 +208,7 @@ We will remove the following alerts that will become superseded:
 
 Email Alert Service listens for [Publishing API][] events and communicates
 these to Email Alert API. We currently [only have alerts][rabbitmq-alert] that
-occur in-hours if this system fails, so there is no visibility for any
+are monitored in-hours if this system fails, so there is no visibility for any
 out-of-hours problems.
 
 We intend to improve and consolidate the existing alerts, and contact an
