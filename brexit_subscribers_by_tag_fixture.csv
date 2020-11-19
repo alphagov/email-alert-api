@@ -1,0 +1,3 @@
+title,slug,tags,subscribed,unsubscribed,immediately,daily,weekly
+brexit-1,/brexit-1,"{:brexit_checklist_criteria=>{:any=>[""visiting-eu""]}}",1,0,0,1,0
+brexit-1,/brexit-1,"{:brexit_checklist_criteria=>{:any=>[""eu-uk-funding""]}}",1,0,0,1,0
