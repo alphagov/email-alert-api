@@ -1,5 +1,10 @@
 # Decision Record: Initial Data Retention Strategy
 
+> **Note**
+> The data retention strategy was revisited in [ADR-7] which supersedes this decision.
+
+[ADR-7]: https://github.com/alphagov/email-alert-api/blob/master/docs/adr/adr-007-retain-data-for-up-to-one-year.md
+
 ## Introduction
 
 In February 2018, prior to switching from Govdelivery to Notify we wished to
