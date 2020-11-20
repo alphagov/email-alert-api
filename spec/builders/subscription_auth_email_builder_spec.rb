@@ -3,13 +3,13 @@ RSpec.describe SubscriptionAuthEmailBuilder do
     let(:address) { "test@gov.uk" }
     let(:token) { "secret" }
     let(:frequency) { "weekly" }
-    let(:topic_id) { "business-tax-corporation-tax" }
+    let(:subscriber_list) { create :subscriber_list, slug: "business-tax-corporation-tax" }
 
     subject(:call) do
       described_class.call(
         address: address,
         token: token,
-        topic_id: topic_id,
+        subscriber_list: subscriber_list,
         frequency: frequency,
       )
     end

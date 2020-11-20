@@ -5,9 +5,16 @@ class SubscriptionsAuthTokenController < ApplicationController
     address = params.fetch(:address)
     topic_id = params.fetch(:topic_id)
     frequency = params.fetch(:frequency)
+    subscriber_list = SubscriberList.find_by!(slug: topic_id)
 
-    token = AuthTokenGeneratorService.call(address: address, topic_id: topic_id, frequency: frequency)
-    email = SubscriptionAuthEmailBuilder.call(address: address, token: token, topic_id: topic_id, frequency: frequency)
+    token = AuthTokenGeneratorService.call(address: address,
+                                           topic_id: topic_id,
+                                           frequency: frequency)
+
+    email = SubscriptionAuthEmailBuilder.call(address: address,
+                                              token: token,
+                                              subscriber_list: subscriber_list,
+                                              frequency: frequency)
 
     do_send email
     render json: {}, status: :ok

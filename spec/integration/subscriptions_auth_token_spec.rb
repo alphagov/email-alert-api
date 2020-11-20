@@ -6,8 +6,12 @@ RSpec.describe "Subscriptions auth token", type: :request do
   describe "creating an auth token" do
     let(:path) { "/subscriptions/auth-token" }
     let(:address) { "test@example.com" }
-    let(:topic_id) { "business-tax-corporation-tax" }
     let(:frequency) { "daily" }
+
+    let(:topic_id) do
+      create(:subscriber_list, slug: "business-tax-corporation-tax").slug
+    end
+
     let(:params) do
       {
         address: address,
@@ -29,6 +33,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
         expect(response.status).to eq(422)
       end
     end
+
     context "when we're provided with a badly formatted email address" do
       let(:address) { "wrong.bad" }
 
@@ -37,6 +42,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
         expect(response.status).to eq(422)
       end
     end
+
     context "when we're provided with no topic_id" do
       let(:topic_id) { nil }
 
@@ -45,6 +51,16 @@ RSpec.describe "Subscriptions auth token", type: :request do
         expect(response.status).to eq(422)
       end
     end
+
+    context "when the subscriber list does not exist" do
+      let(:topic_id) { "does-not-exist" }
+
+      it "returns a 404" do
+        post path, params: params
+        expect(response.status).to eq(404)
+      end
+    end
+
     context "when we're provided with no frequency" do
       let(:frequency) { nil }
 
@@ -53,6 +69,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
         expect(response.status).to eq(422)
       end
     end
+
     context "when we're provided with a bad frequency" do
       let(:frequency) { "something_else" }
 
