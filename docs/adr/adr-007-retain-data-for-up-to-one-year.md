@@ -1,4 +1,4 @@
-# 7. Data Retention
+# 7. Retain data for up to one year
 
 Date: 2020-11-19
 
