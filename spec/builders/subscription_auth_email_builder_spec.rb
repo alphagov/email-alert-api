@@ -20,6 +20,29 @@ RSpec.describe SubscriptionAuthEmailBuilder do
       expect { call }.to change(Email, :count).by(1)
     end
 
+    it "has content for weekly subscriptions" do
+      email = call
+      expect(email.body).to include(I18n.t!("emails.subscription_auth.frequency.weekly"))
+    end
+
+    context "for daily subscriptions" do
+      let(:frequency) { "daily" }
+
+      it "has relevant content" do
+        email = call
+        expect(email.body).to include(I18n.t!("emails.subscription_auth.frequency.daily"))
+      end
+    end
+
+    context "for immediate subscriptions" do
+      let(:frequency) { "immediately" }
+
+      it "has relevant content" do
+        email = call
+        expect(email.body).to include(I18n.t!("emails.subscription_auth.frequency.immediately"))
+      end
+    end
+
     it "has a link to authenticate" do
       link = "http://www.dev.gov.uk/email/subscriptions/authenticate?token=#{token}&topic_id=business-tax-corporation-tax&frequency=weekly"
       email = call
