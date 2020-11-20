@@ -2,27 +2,27 @@ class SubscriptionsAuthTokenController < ApplicationController
   before_action :validate_params
 
   def auth_token
-    address = params.fetch(:address)
-    topic_id = params.fetch(:topic_id)
-    frequency = params.fetch(:frequency)
-    subscriber_list = SubscriberList.find_by!(slug: topic_id)
+    subscriber_list = SubscriberList.find_by!(slug: expected_params[:topic_id])
+    token = generate_token
+    email = build_email(token, subscriber_list)
 
-    token = AuthTokenGeneratorService.call(address: address,
-                                           topic_id: topic_id,
-                                           frequency: frequency)
+    SendEmailWorker
+      .perform_async_in_queue(email.id, queue: :send_email_transactional)
 
-    email = SubscriptionAuthEmailBuilder.call(address: address,
-                                              token: token,
-                                              subscriber_list: subscriber_list,
-                                              frequency: frequency)
-
-    do_send email
     render json: {}, status: :ok
   end
 
-  def do_send(email)
-    SendEmailWorker
-      .perform_async_in_queue(email.id, queue: :send_email_transactional)
+  def generate_token
+    AuthTokenGeneratorService.call(expected_params.to_h.symbolize_keys)
+  end
+
+  def build_email(token, subscriber_list)
+    SubscriptionAuthEmailBuilder.call(
+      address: expected_params[:address],
+      token: token,
+      subscriber_list: subscriber_list,
+      frequency: expected_params[:frequency],
+    )
   end
 
   def validate_params
