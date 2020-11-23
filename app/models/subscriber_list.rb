@@ -63,14 +63,6 @@ class SubscriberList < ApplicationRecord
     super(options)
   end
 
-  def is_travel_advice?
-    self[:links].include?("countries")
-  end
-
-  def is_medical_safety_alert?
-    self[:tags].fetch("format", []).include?("medical_safety_alert")
-  end
-
 private
 
   def link_values_are_valid

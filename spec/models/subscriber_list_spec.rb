@@ -74,14 +74,6 @@ RSpec.describe SubscriberList, type: :model do
       expect(subject.errors[:links]).to include("All link values must be sent as Arrays")
     end
 
-    it "is not recognised as travel advice" do
-      expect(subject.is_travel_advice?).to be false
-    end
-
-    it "is not recognised as medical safety alert" do
-      expect(subject.is_medical_safety_alert?).to be false
-    end
-
     describe "url" do
       it "is valid when url is nil" do
         expect(build(:subscriber_list, url: nil)).to be_valid
@@ -145,22 +137,6 @@ RSpec.describe SubscriberList, type: :model do
 
     it "can access the subscribers" do
       expect(subject.subscribers.size).to eq(1)
-    end
-  end
-
-  context "with a travel advice subscriber list" do
-    subject { build(:subscriber_list, :travel_advice) }
-
-    it "is recognised as travel advice" do
-      expect(subject.is_travel_advice?).to be true
-    end
-  end
-
-  context "with a medical safety alert subscriber list" do
-    subject { build(:subscriber_list, :medical_safety_alert) }
-
-    it "is recognised as a medical safety alert" do
-      expect(subject.is_medical_safety_alert?).to be true
     end
   end
 
