@@ -25,7 +25,7 @@ private
   attr_reader :address, :token, :frequency, :subscriber_list
 
   def subject
-    "Confirm your subscription"
+    "Confirm that you want to get emails from GOV.UK"
   end
 
   def body
