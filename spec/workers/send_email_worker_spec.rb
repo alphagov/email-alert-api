@@ -75,13 +75,6 @@ RSpec.describe SendEmailWorker do
       expect { described_class.sidekiq_retries_exhausted_block.call(sidekiq_message) }
         .to change { email.reload.status }.to("failed")
     end
-
-    context "when there isn't a delivery attempt" do
-      it "marks the email as failed" do
-        described_class.sidekiq_retries_exhausted_block.call(sidekiq_message)
-        expect(email.reload.status).to eq("failed")
-      end
-    end
   end
 
   describe ".perform_async_in_queue" do
