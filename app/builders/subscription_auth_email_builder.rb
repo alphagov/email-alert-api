@@ -1,8 +1,8 @@
 class SubscriptionAuthEmailBuilder
-  def initialize(address:, token:, topic_id:, frequency:)
+  def initialize(address:, token:, subscriber_list:, frequency:)
     @address = address
     @token = token
-    @topic_id = topic_id
+    @subscriber_list = subscriber_list
     @frequency = frequency
   end
 
@@ -22,7 +22,7 @@ class SubscriptionAuthEmailBuilder
 
 private
 
-  attr_reader :address, :token, :frequency, :topic_id
+  attr_reader :address, :token, :frequency, :subscriber_list
 
   def subject
     "Confirm your subscription"
@@ -30,26 +30,26 @@ private
 
   def body
     <<~BODY
-      # Click the link to confirm your subscription
+      # Click the link to confirm that you want to get emails from GOV.UK
 
-      ^ [Confirm your subscription](#{link})
+      # [Yes, I want emails about #{subscriber_list.title}](#{link})
 
-      This link will stop working in 7 days.
+      This link will stop working after 7 days.
 
-      # Didn’t request this email?
+      #{I18n.t!("emails.subscription_auth.frequency.#{frequency}")}. You can change this at any time.
 
-      Ignore or delete this email if you didn’t request it.
+      If you did not request this email, you can ignore it.
 
-      [Read our privacy policy (opens in a new tab)](https://www.gov.uk/help/privacy-notice) to find out how we use and protect your data.
-
-      [Contact GOV.UK](https://www.gov.uk/contact/govuk) if you have any problems with your email subscriptions.
+      Thanks 
+      GOV.UK emails 
+      [https://www.gov.uk/help/update-email-notifications](https://www.gov.uk/help/update-email-notifications)
     BODY
   end
 
   def link
     Plek.new.website_uri.tap do |uri|
       uri.path = "/email/subscriptions/authenticate"
-      uri.query = "token=#{token}&topic_id=#{topic_id}&frequency=#{frequency}"
+      uri.query = "token=#{token}&topic_id=#{subscriber_list.slug}&frequency=#{frequency}"
     end
   end
 end

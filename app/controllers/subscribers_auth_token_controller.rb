@@ -2,7 +2,7 @@ class SubscribersAuthTokenController < ApplicationController
   before_action :validate_params
 
   def auth_token
-    subscriber = Subscriber.find_by_address!(expected_params.require(:address))
+    subscriber = Subscriber.find_by_address!(expected_params[:address])
     token = generate_token(subscriber)
     email = build_email(subscriber, token)
 
@@ -24,7 +24,7 @@ private
   def build_email(subscriber, token)
     SubscriberAuthEmailBuilder.call(
       subscriber: subscriber,
-      destination: expected_params.require(:destination),
+      destination: expected_params[:destination],
       token: token,
     )
   end

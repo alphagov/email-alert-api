@@ -1,5 +1,10 @@
 en:
   emails:
+    subscription_auth:
+      frequency:
+        daily: You’ll get one email a day
+        weekly: You’ll get one email a week
+        immediately: You’ll get an email each time we add or update a page
     message:
       subject: "Update from GOV.UK – %{title}"
       opening_line: Update on GOV.UK.
