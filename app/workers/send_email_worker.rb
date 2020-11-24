@@ -7,7 +7,8 @@ class SendEmailWorker < ApplicationWorker
   sidekiq_options retry: 9
 
   sidekiq_retries_exhausted do |msg|
-    Email.find(msg["args"].first).update!(status: :failed)
+    Email.find_by(id: msg["args"].first, status: :pending)
+         &.update!(status: :failed)
   end
 
   def perform(email_id, metrics, queue)
