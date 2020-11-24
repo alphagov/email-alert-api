@@ -18,6 +18,8 @@ RSpec.describe "support" do
   end
 
   describe "resend_failed_emails:by_id" do
+    before { Rake::Task["support:resend_failed_emails:by_id"].reenable }
+
     it "queues specified failed emails to resend" do
       email = create :email, status: :failed
 
@@ -27,19 +29,48 @@ RSpec.describe "support" do
       expect { Rake::Task["support:resend_failed_emails:by_id"].invoke(email.id.to_s) }
         .to output.to_stdout
     end
+
+    it "updates the failed emails' status to pending" do
+      allow(SendEmailWorker).to receive(:perform_async_in_queue)
+
+      email = create :email, status: :failed
+
+      freeze_time do
+        expect { Rake::Task["support:resend_failed_emails:by_id"].invoke(email.id.to_s) }
+          .to output.to_stdout
+          .and change { email.reload.status }.to("pending")
+          .and change { email.reload.updated_at }.to(Time.zone.now)
+      end
+    end
   end
 
   describe "resend_failed_emails:by_date" do
+    before { Rake::Task["support:resend_failed_emails:by_date"].reenable }
+
+    let(:from) { 1.day.ago.iso8601 }
+    let(:to) { 1.day.from_now.iso8601 }
+
     it "queues specified failed emails to resend" do
       email = create :email, status: :failed
 
       expect(SendEmailWorker).to receive(:perform_async_in_queue)
         .with(email.id, queue: :send_email_immediate_high)
 
-      from = (email.created_at - 1.day).iso8601
-      to = (email.created_at + 1.day).iso8601
       expect { Rake::Task["support:resend_failed_emails:by_date"].invoke(from, to) }
         .to output.to_stdout
+    end
+
+    it "updates the failed emails' status to pending" do
+      allow(SendEmailWorker).to receive(:perform_async_in_queue)
+
+      email = create :email, status: :failed
+
+      freeze_time do
+        expect { Rake::Task["support:resend_failed_emails:by_date"].invoke(from, to) }
+          .to output.to_stdout
+          .and change { email.reload.status }.to("pending")
+          .and change { email.reload.updated_at }.to(Time.zone.now)
+      end
     end
   end
 end
