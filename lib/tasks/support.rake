@@ -113,8 +113,9 @@ namespace :support do
   namespace :resend_failed_emails do
     desc "Re-send failed emails by email ids"
     task by_id: [:environment] do |_, args|
-      scope = Email.where(id: args.to_a)
-      ids = scope.where(status: :failed).pluck(:id)
+      ids = Email.where(id: args.to_a, status: :failed).pluck(:id)
+      Email.where(id: ids).update_all(status: :pending, updated_at: Time.zone.now)
+
       puts "Resending #{ids.length} emails"
 
       ids.each do |id|
@@ -126,8 +127,9 @@ namespace :support do
     task :by_date, %i[from to] => [:environment] do |_, args|
       from = Time.iso8601(args.fetch(:from))
       to = Time.iso8601(args.fetch(:to))
-      scope = Email.where(created_at: from..to)
-      ids = scope.where(status: :failed).pluck(:id)
+      ids = Email.where(created_at: from..to, status: :failed).pluck(:id)
+      Email.where(id: ids).update_all(status: :pending, updated_at: Time.zone.now)
+
       puts "Resending #{ids.length} emails"
 
       ids.each do |id|
