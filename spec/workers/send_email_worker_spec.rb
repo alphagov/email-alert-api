@@ -37,6 +37,12 @@ RSpec.describe SendEmailWorker do
       described_class.new.perform(email.id, {}, queue)
     end
 
+    it "exits early when there isn't a pending email for the id" do
+      non_pending_email = create(:email, status: :failed)
+      expect(SendEmailService).not_to receive(:call)
+      described_class.new.perform(non_pending_email.id, {}, queue)
+    end
+
     context "when rate limit is exceeded" do
       around { |example| Sidekiq::Testing.fake! { example.run } }
       before { allow(rate_limiter).to receive(:exceeded?).and_return(true) }

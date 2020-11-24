@@ -18,12 +18,13 @@ class SendEmailWorker < ApplicationWorker
       return
     end
 
-    increment_rate_limiter
+    ActiveRecord::Base.transaction do
+      email = Email.lock.find_by(id: email_id, status: :pending)
+      return unless email
 
-    SendEmailService.call(
-      email: Email.find(email_id),
-      metrics: parsed_metrics(metrics),
-    )
+      increment_rate_limiter
+      SendEmailService.call(email: email, metrics: parsed_metrics(metrics))
+    end
   end
 
   def self.perform_async_in_queue(email_id, metrics = {}, queue:)
