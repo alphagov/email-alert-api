@@ -1,6 +1,7 @@
 RSpec.describe Reports::SubscriberListsReport do
+  let(:created_at) { Time.zone.parse("2020-06-15").midday }
+
   before do
-    created_at = Time.zone.parse("2020-06-15").midday
     list = create(:subscriber_list, created_at: created_at, title: "list 1", slug: "list-1")
 
     create(:subscription, :immediately, subscriber_list: list, created_at: created_at)
@@ -13,12 +14,15 @@ RSpec.describe Reports::SubscriberListsReport do
   end
 
   it "returns data around active lists for the given date" do
-    csv = <<~CSV
-      #{Reports::SubscriberListsReport::CSV_HEADERS.join(',')}
-      list 1,list-1,"{""document_type"":"""",""tags"":{""topics"":{""any"":[""motoring/road_rage""]}},""links"":{},""email_document_supertype"":"""",""government_document_supertype"":""""}",2020-06-15 12:00:00 +0100,1,1,1,1,1,1
-    CSV
+    expected_criteria_bits = '{"document_type":"","tags":{"topics":{"any":["motoring/road_rage"]}},' \
+      '"links":{},"email_document_supertype":"","government_document_supertype":""}'
 
-    expect { described_class.new("2020-06-15").call }.to output(csv).to_stdout
+    expected = CSV.generate do |csv|
+      csv << Reports::SubscriberListsReport::CSV_HEADERS
+      csv << ["list 1", "list-1", expected_criteria_bits, created_at, 1, 1, 1, 1, 1, 1]
+    end
+
+    expect { described_class.new("2020-06-15").call }.to output(expected).to_stdout
   end
 
   it "raises an error if the date is invalid" do
