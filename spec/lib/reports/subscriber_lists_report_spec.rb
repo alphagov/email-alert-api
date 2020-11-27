@@ -35,6 +35,16 @@ RSpec.describe Reports::SubscriberListsReport do
     expect(output.lines.count).to eq 2
   end
 
+  it "can filter based on list tags (as a string)" do
+    create(:subscriber_list, tags: {})
+
+    output = described_class.new("2020-06-15", tags_pattern: "road").call
+    expect(output.lines.count).to eq 2
+
+    output = described_class.new("2020-06-15", tags_pattern: "nothing").call
+    expect(output.lines.count).to eq 1
+  end
+
   it "raises an error if a specified slug is not found" do
     expect { described_class.new("2020-06-15", slugs: "other-list,list").call }
       .to raise_error("Lists not found for slugs: other-list,list")

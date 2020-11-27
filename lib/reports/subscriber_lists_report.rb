@@ -1,5 +1,5 @@
 class Reports::SubscriberListsReport
-  attr_reader :date, :slugs
+  attr_reader :date, :slugs, :tags_pattern
 
   CSV_HEADERS = %i[title
                    slug
@@ -12,9 +12,10 @@ class Reports::SubscriberListsReport
                    matched_content_changes_for_date
                    matched_messages_for_date].freeze
 
-  def initialize(date, slugs: "")
+  def initialize(date, slugs: "", tags_pattern: nil)
     @date = Time.zone.parse(date)
     @slugs = slugs.split(",")
+    @tags_pattern = tags_pattern
   end
 
   def call
@@ -32,6 +33,7 @@ private
   def lists_to_report
     scope = SubscriberList.where("created_at < ?", date.end_of_day)
     scope = scope.where(slug: slugs) if slugs.any?
+    scope = scope.where("tags::text like ?", "%#{tags_pattern}%") if tags_pattern
     scope
   end
 
