@@ -45,9 +45,4 @@ namespace :report do
   task :csv_subscriber_lists, [:date] => :environment do |_t, args|
     Reports::SubscriberListsReport.new(args[:date]).call
   end
-
-  desc "Temporary report for subscribers taking action in switching immediate subscribers to daily digest"
-  task subscription_changes_after_switch_to_daily_digest: :environment do
-    Reports::SubscriptionChangesAfterSwitchToDailyDigestReport.call
-  end
 end
