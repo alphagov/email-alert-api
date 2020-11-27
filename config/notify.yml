@@ -1,18 +1,14 @@
 <% fake_api_key = "fake_api_key-00000000-0000-0000-0000-000000000000-00000000-0000-0000-0000-000000000000" %>
 <% fake_base_url = "http://fake-notify.com" %>
-<% template_id = "cb633abc-6ae6-4843-ae6f-82ca500b6de2" %>
 
 development:
   api_key: <%= ENV.fetch('GOVUK_NOTIFY_API_KEY', fake_api_key) %>
   base_url: <%= ENV.fetch('GOVUK_NOTIFY_BASE_URL', fake_base_url) %>
-  template_id: <%= ENV.fetch('GOVUK_NOTIFY_TEMPLATE_ID', template_id) %>
 
 test:
   api_key: <%= ENV.fetch('GOVUK_NOTIFY_API_KEY', fake_api_key) %>
   base_url: <%= ENV.fetch('GOVUK_NOTIFY_BASE_URL', fake_base_url) %>
-  template_id: <%= ENV.fetch('GOVUK_NOTIFY_TEMPLATE_ID', template_id) %>
 
 production:
   api_key: <%= ENV.fetch('GOVUK_NOTIFY_API_KEY', nil) %>
   base_url: <%= ENV.fetch('GOVUK_NOTIFY_BASE_URL', nil) %>
-  template_id: <%= ENV.fetch('GOVUK_NOTIFY_TEMPLATE_ID', template_id) %>

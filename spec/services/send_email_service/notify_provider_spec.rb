@@ -1,6 +1,5 @@
 RSpec.describe SendEmailService::NotifyProvider do
   describe ".call" do
-    let(:template_id) { EmailAlertAPI.config.notify.fetch(:template_id) }
     let(:arguments) do
       {
         address: "email@address.com",
@@ -11,8 +10,12 @@ RSpec.describe SendEmailService::NotifyProvider do
     end
     let(:notify_client) { instance_double("Notifications::Client") }
 
-    it "calls the Notifications client" do
+    it "calls the Notifications client with the configured template id" do
       allow(Notifications::Client).to receive(:new).and_return(notify_client)
+
+      template_id = SecureRandom.uuid
+      allow(Rails.application.config).to receive(:notify_template_id).and_return(template_id)
+
       expect(notify_client).to receive(:send_email)
         .with(
           email_address: "email@address.com",

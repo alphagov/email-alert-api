@@ -26,6 +26,8 @@ module EmailAlertAPI
 
     config.action_dispatch.rescue_responses["ActiveModel::ValidationError"] = :unprocessable_entity
 
+    config.notify_template_id = ENV["GOVUK_NOTIFY_TEMPLATE_ID"]
+
     unless Rails.application.secrets.email_alert_auth_token
       raise "Email Alert Auth Token is not configured. See config/secrets.yml"
     end
