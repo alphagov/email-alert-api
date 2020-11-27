@@ -1,7 +1,7 @@
 class SendEmailService::NotifyProvider
   def initialize
     @client = EmailAlertAPI.config.notify_client
-    @template_id = EmailAlertAPI.config.notify.fetch(:template_id)
+    @template_id = Rails.application.config.notify_template_id
   end
 
   def self.call(**args)
