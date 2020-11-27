@@ -11,14 +11,8 @@ module EmailAlertAPI
       Rails.root
     end
 
-    def notify
-      @notify ||= notify_environment_config.symbolize_keys.freeze
-    end
-
     def notify_client
-      api_key = Rails.application.secrets.notify_api_key
-      base_url = notify[:base_url]
-      Notifications::Client.new(api_key, base_url)
+      Notifications::Client.new(Rails.application.secrets.notify_api_key)
     end
 
     def email_service
@@ -31,14 +25,6 @@ module EmailAlertAPI
       YAML.safe_load(
         ERB.new(File.read(path)).result, [], [], true
       ).fetch(@environment)
-    end
-
-    def notify_config_path
-      File.join(app_root, "config", "notify.yml")
-    end
-
-    def notify_environment_config
-      environment_config(path: notify_config_path)
     end
 
     def email_service_config_path

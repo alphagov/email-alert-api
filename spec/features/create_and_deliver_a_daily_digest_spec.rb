@@ -152,7 +152,7 @@ RSpec.describe "create and deliver a daily digest", type: :request do
       ),
     )
 
-    stub_request(:post, "http://fake-notify.com/v2/notifications/email")
+    stub_request(:post, "https://api.notifications.service.gov.uk/v2/notifications/email")
       .with(body: body)
       .to_return(body: {}.to_json)
   end
