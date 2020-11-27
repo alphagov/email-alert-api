@@ -43,7 +43,8 @@ namespace :report do
 
   desc "Outputs a CSV of information for each subscriber list within a year for a past date, format: 'yyyy-mm-dd'"
   task :csv_subscriber_lists, [:date] => :environment do |_t, args|
-    puts Reports::SubscriberListsReport.new(args[:date]).call
+    options = { slugs: ENV.fetch("SLUGS", "") }
+    puts Reports::SubscriberListsReport.new(args[:date], **options).call
   end
 
   desc "Temporary report for subscribers taking action in switching immediate subscribers to daily digest"

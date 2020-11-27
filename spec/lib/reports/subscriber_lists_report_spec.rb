@@ -25,6 +25,21 @@ RSpec.describe Reports::SubscriberListsReport do
     expect(described_class.new("2020-06-15").call).to eq expected
   end
 
+  it "can filter based on comma separated list slugs" do
+    create(:subscriber_list, slug: "other-list")
+
+    output = described_class.new("2020-06-15", slugs: "list-1,other-list").call
+    expect(output.lines.count).to eq 3
+
+    output = described_class.new("2020-06-15", slugs: "list-1").call
+    expect(output.lines.count).to eq 2
+  end
+
+  it "raises an error if a specified slug is not found" do
+    expect { described_class.new("2020-06-15", slugs: "other-list,list").call }
+      .to raise_error("Lists not found for slugs: other-list,list")
+  end
+
   it "raises an error if the date is invalid" do
     expect { described_class.new("blahhh").call }
       .to raise_error("Invalid date")

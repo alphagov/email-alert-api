@@ -1,5 +1,5 @@
 class Reports::SubscriberListsReport
-  attr_reader :date
+  attr_reader :date, :slugs
 
   CSV_HEADERS = %i[title
                    slug
@@ -12,28 +12,38 @@ class Reports::SubscriberListsReport
                    matched_content_changes_for_date
                    matched_messages_for_date].freeze
 
-  def initialize(date)
+  def initialize(date, slugs: "")
     @date = Time.zone.parse(date)
+    @slugs = slugs.split(",")
   end
 
   def call
     validate_date
+    validate_slugs
 
     CSV.generate do |csv|
       csv << CSV_HEADERS
-
-      SubscriberList.where("created_at < ?", date.end_of_day).find_each do |list|
-        csv << export_list_row(list)
-      end
+      lists_to_report.find_each { |list| csv << export_list_row(list) }
     end
   end
 
 private
 
+  def lists_to_report
+    scope = SubscriberList.where("created_at < ?", date.end_of_day)
+    scope = scope.where(slug: slugs) if slugs.any?
+    scope
+  end
+
   def validate_date
     raise "Invalid date" if date.blank?
     raise "Date must be in the past" if date >= Time.zone.today
     raise "Date must be within a year old" if date <= 1.year.ago
+  end
+
+  def validate_slugs
+    not_found = slugs - lists_to_report.pluck(:slug)
+    raise "Lists not found for slugs: #{not_found.join(',')}" if not_found.any?
   end
 
   def export_list_row(list)
