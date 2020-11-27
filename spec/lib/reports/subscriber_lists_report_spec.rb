@@ -21,14 +21,6 @@ RSpec.describe Reports::SubscriberListsReport do
     expect { described_class.new("2020-06-15").call }.to output(csv).to_stdout
   end
 
-  it "returns empty csv if there are no active subscriber lists for the given date" do
-    empty_csv = <<~CSV
-      #{Reports::SubscriberListsReport::CSV_HEADERS.join(',')}
-    CSV
-
-    expect { described_class.new("2020-05-01").call }.to output(empty_csv).to_stdout
-  end
-
   it "raises an error if the date is invalid" do
     expect { described_class.new("blahhh").call }
       .to raise_error("Invalid date")
