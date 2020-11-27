@@ -31,7 +31,7 @@ RSpec.describe SendEmailService::NotifyProvider do
     end
 
     it "returns a sent status for a successful request" do
-      stub_request(:post, /fake-notify/).to_return(body: {}.to_json)
+      stub_request(:post, /notifications\.service\.gov\.uk/).to_return(body: {}.to_json)
       return_value = described_class.call(**arguments)
       expect(return_value).to be(:sent)
     end

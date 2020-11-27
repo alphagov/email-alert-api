@@ -7,7 +7,7 @@ RSpec.describe NotificationsFromNotify do
       before do
         stub_request(
           :get,
-          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}",
+          "https://api.notifications.service.gov.uk/v2/notifications?template_type=email&reference=#{reference}",
         ).to_return(body: mocked_response.to_json)
       end
 
@@ -46,7 +46,7 @@ RSpec.describe NotificationsFromNotify do
       before do
         stub_request(
           :get,
-          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}",
+          "https://api.notifications.service.gov.uk/v2/notifications?template_type=email&reference=#{reference}",
         ).to_return(body: empty_response.to_json)
       end
 
@@ -75,7 +75,7 @@ RSpec.describe NotificationsFromNotify do
       before do
         stub_request(
           :get,
-          "http://fake-notify.com/v2/notifications?template_type=email&reference=#{reference}",
+          "https://api.notifications.service.gov.uk/v2/notifications?template_type=email&reference=#{reference}",
         ).to_return(
           status: 400,
           body: error_response.to_json,

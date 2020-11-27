@@ -1,5 +1,5 @@
 class NotificationsFromNotify
-  def initialize(config: EmailAlertAPI.config.notify, notify_client: EmailAlertAPI.config.notify_client)
+  def initialize(notify_client: EmailAlertAPI.config.notify_client)
     @client = notify_client
   end
 

@@ -35,7 +35,7 @@ RSpec.describe "Create an auth token", type: :request do
   end
 
   def notify_email(subscriber, destination, redirect)
-    stub_request(:post, "http://fake-notify.com/v2/notifications/email")
+    stub_request(:post, "https://api.notifications.service.gov.uk/v2/notifications/email")
       .with(
         "body" => hash_including(
           "email_address" => subscriber.address,

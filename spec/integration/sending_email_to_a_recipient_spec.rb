@@ -12,12 +12,12 @@ RSpec.describe "Sending an email to a recipient" do
   let(:email_address_override_whitelist) { nil }
 
   def expect_notify_request_for(email_address:)
-    request = a_request(:post, /fake-notify/)
+    request = a_request(:post, /notifications\.service\.gov\.uk/)
         .with(body: hash_including(email_address: email_address))
     expect(request).to have_been_made
   end
 
-  before { stub_request(:post, /fake-notify/).to_return(body: {}.to_json) }
+  before { stub_request(:post, /notifications\.service\.gov\.uk/).to_return(body: {}.to_json) }
 
   around do |example|
     config = EmailAlertAPI.config
