@@ -43,7 +43,7 @@ namespace :report do
 
   desc "Outputs a CSV of information for each subscriber list within a year for a past date, format: 'yyyy-mm-dd'"
   task :csv_subscriber_lists, [:date] => :environment do |_t, args|
-    Reports::SubscriberListsReport.new(args[:date]).call
+    puts Reports::SubscriberListsReport.new(args[:date]).call
   end
 
   desc "Temporary report for subscribers taking action in switching immediate subscribers to daily digest"

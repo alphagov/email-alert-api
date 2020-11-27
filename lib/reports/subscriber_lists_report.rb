@@ -19,7 +19,7 @@ class Reports::SubscriberListsReport
   def call
     validate_date
 
-    CSV do |csv|
+    CSV.generate do |csv|
       csv << CSV_HEADERS
 
       SubscriberList.where("created_at < ?", date.end_of_day).find_each do |list|

@@ -22,7 +22,7 @@ RSpec.describe Reports::SubscriberListsReport do
       csv << ["list 1", "list-1", expected_criteria_bits, created_at, 1, 1, 1, 1, 1, 1]
     end
 
-    expect { described_class.new("2020-06-15").call }.to output(expected).to_stdout
+    expect(described_class.new("2020-06-15").call).to eq expected
   end
 
   it "raises an error if the date is invalid" do
