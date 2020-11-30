@@ -32,33 +32,17 @@ The [NullifySubscribersWorker] runs [every hour].
 [sub bug]: https://github.com/alphagov/email-alert-api/pull/1462/commits/053859c5962eef104256661f28727b08a43e3d31
 [sub bug two]: https://github.com/alphagov/email-alert-api/pull/1462/commits/a4b3e82801d79abd3989b1dd60ffd499e7ce82ba
 
-## Archiving and deleting emails
+## Deleting emails
 
-**Note**
-> Archiving emails is deprecated and will be removed in the near future, you
-> can read more about this in [ADR-7]. In the process of removing archiving we
-> will update the email deletion policy so emails are deleted 7 days after
-> creation. We will also combine the [EmailDeletionWorker] into the
-> [HistoricalDataDeletionWorker] as both workers will soon have similar
-> responsibilities.
+The [EmailDeletionWorker] deletes emails after 7 days. These recently archived
+emails get deleted regularly to keep the database performant as we produce a
+large quantity which the system only uses for a short period of time. In deleting
+these emails we also delete their associated subscription contents through a
+[db cascade]. As of 05/11/2020 we generate around ~3 million emails per day.
 
-We archive emails to S3 using the [EmailArchiveWorker]. This is done to support
-long term analytics as we can query the S3 bucket through [Athena]. Emails are
-eligible for archiving immediately after creation as long as they haven't
-already been archived (based on `archived_at` value).
+The [deletion worker] runs every hour.
 
-The [EmailDeletionWorker] deletes emails after they've been archived for over
-7 days. These recently archived emails get deleted regularly to keep the
-database performant as we produce a large quantity which the system only uses
-for a short period of time. In deleting these emails we also delete their
-associated subscription contents through a [db cascade]. As of 05/11/2020 we
-generate around ~3 million emails per day.
-
-The [archive and deletion workers] run every hour.
-
-[archive and deletion workers]: https://github.com/alphagov/email-alert-api/blob/ec075c7198b965d3771726946dcd37783b9de9c5/config/sidekiq.yml#L29-L34.
-[Athena]: https://aws.amazon.com/athena
-[EmailArchiveWorker]: https://github.com/alphagov/email-alert-api/blob/master/app/workers/email_archive_worker.rb
+[deletion worker]: https://github.com/alphagov/email-alert-api/blob/b850dc646202aaa9e2fac88986a6f3d0c738be78/config/sidekiq.yml#L33
 [EmailDeletionWorker]: https://github.com/alphagov/email-alert-api/blob/a62abc85453b723d683c2dc13f3bf0065fb86d5f/app/workers/email_deletion_worker.rb
 [db cascade]: https://github.com/alphagov/email-alert-api/blob/11fb84542e6c7f3995f419e4affaf56aa759ec6c/db/schema.rb#L206
 
