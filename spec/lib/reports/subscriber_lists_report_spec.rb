@@ -7,7 +7,8 @@ RSpec.describe Reports::SubscriberListsReport do
     create(:subscription, :immediately, subscriber_list: list, created_at: created_at)
     create(:subscription, :daily, subscriber_list: list, created_at: created_at)
     create(:subscription, :weekly, subscriber_list: list, created_at: created_at)
-    create(:subscription, :ended, ended_at: created_at, subscriber_list: list, created_at: created_at)
+    create(:subscription, :ended, ended_at: created_at, subscriber_list: list)
+    create(:subscription, :ended, ended_at: created_at, ended_reason: :frequency_changed, subscriber_list: list)
 
     create(:matched_content_change, subscriber_list: list, created_at: created_at)
     create(:matched_message, subscriber_list: list, created_at: created_at)

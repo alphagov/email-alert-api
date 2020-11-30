@@ -51,7 +51,9 @@ private
   end
 
   def export_list_row(list)
-    unsubscriptions_count = list.subscriptions.where("ended_at <= ?", date.end_of_day).count
+    unsubscriptions_count = list.subscriptions.where(ended_reason: :unsubscribed)
+      .where("ended_at <= ?", date.end_of_day).count
+
     scope = list.subscriptions.active_on(date.end_of_day)
 
     [list.title,
