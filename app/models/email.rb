@@ -1,6 +1,8 @@
 # Any validations added this to this model won't be applied on record
 # creation as this table is populated by the #insert_all bulk method
 class Email < ApplicationRecord
+  self.ignored_columns = %w[archived_at]
+
   COURTESY_EMAIL = "govuk-email-courtesy-copies@digital.cabinet-office.gov.uk".freeze
 
   enum status: { pending: 0, sent: 1, failed: 2 }
