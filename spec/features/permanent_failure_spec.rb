@@ -1,8 +1,4 @@
 RSpec.describe "Failing to deliver an email via Notify (permanent failure)", type: :request do
-  before do
-    stub_notify
-  end
-
   scenario "automatically unsubscribing a user if delivery permanently failed" do
     login_with(%w[internal_app status_updates])
 

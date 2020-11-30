@@ -1,8 +1,4 @@
 RSpec.describe "Sending an email", type: :request do
-  before do
-    stub_notify
-  end
-
   scenario do
     params = {
       body: "Description",

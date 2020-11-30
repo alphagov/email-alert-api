@@ -1,13 +1,6 @@
 RSpec.describe "create and delive a weekly digest", type: :request do
   include UTMHelpers
 
-  before do
-    allow_any_instance_of(SendEmailService)
-      .to receive(:provider_name).and_return("notify")
-
-    stub_notify
-  end
-
   scenario do
     login_with_internal_app
 

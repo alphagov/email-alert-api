@@ -35,6 +35,14 @@ RSpec.configure do |config|
   config.after type: :request do
     logout
   end
+
+  # configuring sending all emails to Notify for request tests
+  config.around type: :request do |example|
+    ClimateControl.modify(GOVUK_NOTIFY_RECIPIENTS: "*") do
+      stub_notify
+      example.run
+    end
+  end
 end
 
 WebMock.disable_net_connect!(allow_localhost: true)

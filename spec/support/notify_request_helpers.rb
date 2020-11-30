@@ -1,8 +1,5 @@
 module NotifyRequestHelpers
   def stub_notify
-    allow_any_instance_of(SendEmailService)
-      .to receive(:provider_name).and_return("notify")
-
     body = {}.to_json
     stub_request(:post, /notifications\.service\.gov\.uk/).to_return(body: body)
   end

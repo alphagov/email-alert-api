@@ -1,8 +1,4 @@
 RSpec.describe "Unsubscribing from a subscriber_list", type: :request do
-  before do
-    stub_notify
-  end
-
   scenario "unsubscribing from an email uuid, then no longer receiving emails" do
     login_with_internal_app
     subscriber_list_id = create_subscriber_list

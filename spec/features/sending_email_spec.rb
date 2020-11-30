@@ -1,8 +1,4 @@
 RSpec.describe "Sending an email", type: :request do
-  before do
-    stub_notify
-  end
-
   scenario "sending an email for a content change" do
     login_with_internal_app
 

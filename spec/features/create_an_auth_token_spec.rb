@@ -1,13 +1,6 @@
 RSpec.describe "Create an auth token", type: :request do
   include TokenHelpers
 
-  before do
-    allow_any_instance_of(SendEmailService)
-      .to receive(:provider_name).and_return("notify")
-
-    stub_notify
-  end
-
   around do |example|
     Sidekiq::Testing.inline! do
       freeze_time { example.run }

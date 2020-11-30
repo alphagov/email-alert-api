@@ -1,8 +1,4 @@
 RSpec.describe "Delivering an email successfully via Notify", type: :request do
-  before do
-    stub_notify
-  end
-
   scenario "sending an email and receiving a 'delivered' status update" do
     login_with(%w[internal_app status_updates])
 
