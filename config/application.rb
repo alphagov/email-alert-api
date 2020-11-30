@@ -12,7 +12,7 @@ require "notifications/client"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module EmailAlertAPI
+module EmailAlertApi
   class Application < Rails::Application
     config.time_zone = "London"
     config.api_only = true
@@ -28,9 +28,4 @@ module EmailAlertAPI
 
     config.notify_template_id = ENV["GOVUK_NOTIFY_TEMPLATE_ID"]
   end
-
-  cattr_accessor :config
 end
-
-require_relative "../lib/email_alert_api/config"
-EmailAlertAPI.config = EmailAlertAPI::Config.new(Rails.env)

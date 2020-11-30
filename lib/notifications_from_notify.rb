@@ -1,6 +1,6 @@
 class NotificationsFromNotify
-  def initialize(notify_client: EmailAlertAPI.config.notify_client)
-    @client = notify_client
+  def initialize
+    @client = Notifications::Client.new(Rails.application.secrets.notify_api_key)
   end
 
   def self.call(*args)
@@ -10,7 +10,7 @@ class NotificationsFromNotify
   def call(reference)
     puts "Query Notify for emails with the reference #{reference}"
 
-    response = @client.get_notifications(
+    response = client.get_notifications(
       template_type: "email",
       reference: reference,
     )
