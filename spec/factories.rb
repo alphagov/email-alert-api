@@ -84,12 +84,8 @@ FactoryBot.define do
     subject { "subject" }
     body { "body" }
 
-    factory :archived_email do
-      archived_at { 1.day.ago }
-    end
-
     factory :deleteable_email do
-      archived_at { 8.days.ago }
+      created_at { 8.days.ago }
     end
   end
 

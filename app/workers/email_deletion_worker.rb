@@ -2,7 +2,7 @@ class EmailDeletionWorker < ApplicationWorker
   def perform
     run_with_advisory_lock(Email, "delete") do
       start_time = Time.zone.now
-      deleted_count = Email.where("archived_at < ?", 1.week.ago).delete_all
+      deleted_count = Email.where("created_at < ?", 1.week.ago).delete_all
       log_complete(deleted_count, start_time, Time.zone.now)
     end
   end
