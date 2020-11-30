@@ -1,32 +1,64 @@
 RSpec.describe Reports::SubscriberListsReport do
+  let(:created_at) { Time.zone.parse("2020-06-15").midday }
+
   before do
-    created_at = Time.zone.parse("2020-06-15").midday
     list = create(:subscriber_list, created_at: created_at, title: "list 1", slug: "list-1")
 
     create(:subscription, :immediately, subscriber_list: list, created_at: created_at)
     create(:subscription, :daily, subscriber_list: list, created_at: created_at)
     create(:subscription, :weekly, subscriber_list: list, created_at: created_at)
-    create(:subscription, :ended, ended_at: created_at, subscriber_list: list, created_at: created_at)
+    create(:subscription, :ended, ended_at: created_at, subscriber_list: list)
+    create(:subscription, :ended, ended_at: created_at, ended_reason: :frequency_changed, subscriber_list: list)
 
     create(:matched_content_change, subscriber_list: list, created_at: created_at)
     create(:matched_message, subscriber_list: list, created_at: created_at)
   end
 
   it "returns data around active lists for the given date" do
-    csv = <<~CSV
-      #{Reports::SubscriberListsReport::CSV_HEADERS.join(',')}
-      list 1,list-1,"{""document_type"":"""",""tags"":{""topics"":{""any"":[""motoring/road_rage""]}},""links"":{},""email_document_supertype"":"""",""government_document_supertype"":""""}",2020-06-15 12:00:00 +0100,1,1,1,1,1,1
-    CSV
+    expected_criteria_bits = '{"document_type":"","tags":{"topics":{"any":["motoring/road_rage"]}},' \
+      '"links":{},"email_document_supertype":"","government_document_supertype":""}'
 
-    expect { described_class.new("2020-06-15").call }.to output(csv).to_stdout
+    expected = CSV.generate do |csv|
+      csv << Reports::SubscriberListsReport::CSV_HEADERS
+      csv << ["list 1", "list-1", expected_criteria_bits, created_at, 1, 1, 1, 1, 1, 1]
+    end
+
+    expect(described_class.new("2020-06-15").call).to eq expected
   end
 
-  it "returns empty csv if there are no active subscriber lists for the given date" do
-    empty_csv = <<~CSV
-      #{Reports::SubscriberListsReport::CSV_HEADERS.join(',')}
-    CSV
+  it "can filter based on comma separated list slugs" do
+    create(:subscriber_list, slug: "other-list")
 
-    expect { described_class.new("2020-05-01").call }.to output(empty_csv).to_stdout
+    output = described_class.new("2020-06-15", slugs: "list-1,other-list").call
+    expect(output.lines.count).to eq 3
+
+    output = described_class.new("2020-06-15", slugs: "list-1").call
+    expect(output.lines.count).to eq 2
+  end
+
+  it "can filter based on list tags (as a string)" do
+    create(:subscriber_list, tags: {})
+
+    output = described_class.new("2020-06-15", tags_pattern: "road").call
+    expect(output.lines.count).to eq 2
+
+    output = described_class.new("2020-06-15", tags_pattern: "nothing").call
+    expect(output.lines.count).to eq 1
+  end
+
+  it "can filter based on list links (as a string)" do
+    create(:subscriber_list, :travel_advice)
+
+    output = described_class.new("2020-06-15", links_pattern: "countries").call
+    expect(output.lines.count).to eq 2
+
+    output = described_class.new("2020-06-15", links_pattern: "nothing").call
+    expect(output.lines.count).to eq 1
+  end
+
+  it "raises an error if a specified slug is not found" do
+    expect { described_class.new("2020-06-15", slugs: "other-list,list").call }
+      .to raise_error("Lists not found for slugs: other-list,list")
   end
 
   it "raises an error if the date is invalid" do
