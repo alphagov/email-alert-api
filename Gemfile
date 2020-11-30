@@ -2,7 +2,6 @@ source "https://rubygems.org"
 
 gem "rails", "6.0.3.4"
 
-gem "aws-sdk-s3"
 gem "bootsnap", require: false
 gem "faraday"
 gem "gds-api-adapters"
