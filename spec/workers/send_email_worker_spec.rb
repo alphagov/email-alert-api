@@ -4,7 +4,7 @@ RSpec.describe SendEmailWorker do
   end
 
   before do
-    allow(Ratelimit).to receive(:new).and_return(rate_limiter)
+    allow(Services).to receive(:rate_limiter).and_return(rate_limiter)
   end
 
   describe "#perform" do
