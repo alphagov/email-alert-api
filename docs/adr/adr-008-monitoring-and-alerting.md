@@ -1,6 +1,7 @@
 # 8. Monitoring and alerting
 
 Date: 2020-11-13
+Amended: 2020-12-01 - Status updated to reflect team being paused
 
 ## Context
 
@@ -91,7 +92,8 @@ extend beyond the boundaries of the system.
 
 ## Status
 
-Pending
+Proposed - the team working on this piece of work was paused in December 2020,
+it is unclear whether a future team will be formed to complete this work.
 
 ## Consequences
 
