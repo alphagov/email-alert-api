@@ -67,22 +67,6 @@ RSpec.describe SendEmailWorker do
     end
   end
 
-  describe ".sidekiq_retries_exhausted_block" do
-    let(:email) { create(:email) }
-    let(:sidekiq_message) do
-      {
-        "args" => [email.id, {}],
-        "queue" => "send_email_immediate_high",
-        "class" => described_class.name,
-      }
-    end
-
-    it "marks the job as failed" do
-      expect { described_class.sidekiq_retries_exhausted_block.call(sidekiq_message) }
-        .to change { email.reload.status }.to("failed")
-    end
-  end
-
   describe ".perform_async_in_queue" do
     let(:email) { create(:email) }
     let(:email_two) { create(:email) }

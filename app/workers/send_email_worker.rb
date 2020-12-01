@@ -4,11 +4,6 @@ class SendEmailWorker < ApplicationWorker
   RATE_LIMIT_THRESHOLD = 21_600 # max requests in a minute, equates to 350 a second
   RATE_LIMIT_INTERVAL = 60
 
-  sidekiq_retries_exhausted do |msg|
-    Email.find_by(id: msg["args"].first, status: :pending)
-         &.update!(status: :failed)
-  end
-
   sidekiq_options lock: :until_executing,
                   unique_across_queues: true,
                   unique_args: :uniqueness_with, # in upcoming version 7 of sidekiq-unique-jobs, :unique_args is replaced with :lock_args
