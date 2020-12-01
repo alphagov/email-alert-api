@@ -20,11 +20,18 @@ class SendEmailWorker < ApplicationWorker
     end
 
     ActiveRecord::Base.transaction do
-      email = Email.lock.find_by(id: email_id, status: :pending)
+      email = GovukStatsd.time("send_email_worker.lookup_email") do
+        Email.lock.find_by(id: email_id, status: :pending)
+      end
       return unless email
 
-      increment_rate_limiter
-      SendEmailService.call(email: email, metrics: parsed_metrics(metrics))
+      GovukStatsd.time("send_email_worker.increment_rate_limiter") do
+        increment_rate_limiter
+      end
+
+      GovukStatsd.time("send_email_worker.send_email") do
+        SendEmailService.call(email: email, metrics: parsed_metrics(metrics))
+      end
     end
   end
 
