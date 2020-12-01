@@ -1,35 +1,16 @@
 class SendEmailService < ApplicationService
-  class ProviderCommunicationFailureError < RuntimeError; end
-
-  PROVIDERS = {
-    "notify" => NotifyProvider,
-    "pseudo" => PseudoProvider,
-    "delay" => DelayProvider,
-  }.freeze
+  class NotifyCommunicationFailure < RuntimeError; end
 
   def initialize(email:, metrics: {})
-    config = EmailAlertAPI.config.email_service
     @email = email
     @metrics = metrics
-    @provider_name = config.fetch(:provider).downcase
-    @subject_prefix = config.fetch(:email_subject_prefix)
-    @overrider = EmailAddressOverrider.new(config)
   end
 
   def call
-    return if address.nil?
-
-    status = Metrics.email_send_request(provider_name) { send_email }
-
-    case status
-    when :sent
-      email.update!(status: :sent, sent_at: Time.zone.now)
-    when :delivered
-      email.update!(status: :sent, sent_at: Time.zone.now)
-    when :undeliverable_failure
-      email.update!(status: :failed)
-    when :provider_communication_failure
-      raise ProviderCommunicationFailureError
+    if send_to_notify?
+      Metrics.email_send_request("notify") { SendNotifyEmail.call(email) }
+    else
+      Metrics.email_send_request("pseudo") { SendPseudoEmail.call(email) }
     end
 
     record_sent_metrics
@@ -37,24 +18,13 @@ class SendEmailService < ApplicationService
 
 private
 
-  attr_reader :email, :metrics, :provider_name, :subject_prefix, :overrider
+  attr_reader :email, :metrics
 
-  def address
-    @address ||= overrider.destination_address(email.address)
-  end
+  def send_to_notify?
+    return true if ENV["GOVUK_NOTIFY_RECIPIENTS"] == "*"
 
-  def send_email
-    provider = PROVIDERS.fetch(provider_name)
-
-    provider.call(
-      address: address,
-      subject: subject_prefix + email.subject,
-      body: email.body,
-      reference: email.id,
-    )
-  rescue StandardError => e
-    GovukError.notify(e)
-    raise ProviderCommunicationFailureError
+    notify_recipients = ENV.fetch("GOVUK_NOTIFY_RECIPIENTS", "").split(",").map(&:strip)
+    notify_recipients.include?(email.address)
   end
 
   def record_sent_metrics

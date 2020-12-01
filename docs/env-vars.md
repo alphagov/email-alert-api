@@ -1,25 +1,20 @@
 # ENV vars
 
-### `EMAIL_ADDRESS_OVERRIDE`
+### `GOVUK_NOTIFY_RECIPIENTS`
 
-By setting this environment variable all emails sent will have their address
-overridden by the specified value. This can be useful in test environments
-when you want to test that the email service sends but not send to any users.
+This environment variable determines whether emails will be attempted to be
+sent to Notify. Emails that aren't send to Notify are written to a log file.
+This makes this setting useful in non-production environments where you may
+want to send no, or only a few emails, to Notify.
 
-Based on [Notify docs][notify-docs] we can use
-`simulate-delivered@notifications.service.gov.uk` as a means to send fake
-emails to Notify. Based on [Amazon SES][ses-docs] we can use
-`success@simulator.amazonses.com` to send emails through to SES (the underlying
-service Notify uses at the time of writing.
+When this is set to `*` all emails are sent to Notify, this is the expected
+configuration for a production environment.
 
-[notify-docs]: https://www.notifications.service.gov.uk/integration-testing
-[ses-docs]: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/mailbox-simulator.html
+In other environments this can be set as a comma separated list of email
+addresses to specify the recipients who should have their emails sent to
+Notify. For example, `GOVUK_NOTIFY_RECIPIENTS=test-1@example.com,test-2@example.com`.
+Emails that are sent to other recipients will not be sent and will instead
+be written to the log file.
 
-### `EMAIL_ADDRESS_OVERRIDE_WHITELIST`
-
-This environment variable takes a comma separated list of email addresses which
-can be used to send emails to a whitelist of recipients despite the above
-described override existing.
-
-This can be used to send emails to a select group of testers while the rest of
-the emails are sent to a smoke test address.
+If this environment variable is not set then no emails will be sent to Notify
+and all will be written to the log file.

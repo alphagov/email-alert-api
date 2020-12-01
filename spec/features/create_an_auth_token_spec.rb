@@ -1,13 +1,6 @@
 RSpec.describe "Create an auth token", type: :request do
   include TokenHelpers
 
-  before do
-    allow_any_instance_of(SendEmailService)
-      .to receive(:provider_name).and_return("notify")
-
-    stub_notify
-  end
-
   around do |example|
     Sidekiq::Testing.inline! do
       freeze_time { example.run }
@@ -35,7 +28,7 @@ RSpec.describe "Create an auth token", type: :request do
   end
 
   def notify_email(subscriber, destination, redirect)
-    stub_request(:post, "http://fake-notify.com/v2/notifications/email")
+    stub_request(:post, "https://api.notifications.service.gov.uk/v2/notifications/email")
       .with(
         "body" => hash_including(
           "email_address" => subscriber.address,

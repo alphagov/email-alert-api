@@ -1,13 +1,6 @@
 RSpec.describe "create and delive a weekly digest", type: :request do
   include UTMHelpers
 
-  before do
-    allow_any_instance_of(SendEmailService)
-      .to receive(:provider_name).and_return("notify")
-
-    stub_notify
-  end
-
   scenario do
     login_with_internal_app
 
@@ -162,7 +155,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       ),
     )
 
-    stub_request(:post, "http://fake-notify.com/v2/notifications/email")
+    stub_request(:post, "https://api.notifications.service.gov.uk/v2/notifications/email")
       .with(body: body)
       .to_return(body: {}.to_json)
   end
