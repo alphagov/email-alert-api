@@ -35,9 +35,9 @@ class SendEmailWorker < ApplicationWorker
 private
 
   def rate_limit_exceeded?
-    rate_limiter.exceeded?("requests",
-                           threshold: RATE_LIMIT_THRESHOLD,
-                           interval: RATE_LIMIT_INTERVAL)
+    Services.rate_limiter.exceeded?("requests",
+                                    threshold: RATE_LIMIT_THRESHOLD,
+                                    interval: RATE_LIMIT_INTERVAL)
   end
 
   # Sidekiq uses JSON for a workers arguments, so richer objects are not
@@ -50,10 +50,6 @@ private
   end
 
   def increment_rate_limiter
-    rate_limiter.add("requests")
-  end
-
-  def rate_limiter
-    Services.rate_limiter
+    Services.rate_limiter.add("requests")
   end
 end
