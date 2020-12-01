@@ -61,8 +61,6 @@ private
   end
 
   def rate_limiter
-    @rate_limiter ||= Sidekiq.redis do |redis|
-      Ratelimit.new("send_email", redis: redis)
-    end
+    Services.rate_limiter
   end
 end
