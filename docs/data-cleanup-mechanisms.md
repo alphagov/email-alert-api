@@ -40,7 +40,10 @@ large quantity which the system only uses for a short period of time. In deletin
 these emails we also delete their associated subscription contents through a
 [db cascade]. As of 05/11/2020 we generate around ~3 million emails per day.
 
-The [deletion worker] runs every hour.
+The [deletion worker] runs every hour. Every hour was chosen to limit the worst
+case backlog (and potential performance impact) if a run of the job fails for
+transient reasons. Note that it often takes 10-30 minutes just to delete an hour's
+worth of email, so it's not feasible to run this job more frequently.
 
 [deletion worker]: https://github.com/alphagov/email-alert-api/blob/b850dc646202aaa9e2fac88986a6f3d0c738be78/config/sidekiq.yml#L33
 [EmailDeletionWorker]: https://github.com/alphagov/email-alert-api/blob/a62abc85453b723d683c2dc13f3bf0065fb86d5f/app/workers/email_deletion_worker.rb
