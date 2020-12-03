@@ -7,8 +7,7 @@ class SendEmailWorker < ApplicationWorker
   sidekiq_options lock: :until_executing,
                   unique_across_queues: true,
                   unique_args: :uniqueness_with, # in upcoming version 7 of sidekiq-unique-jobs, :unique_args is replaced with :lock_args
-                  on_conflict: :log,
-                  retry_count: 9
+                  on_conflict: :log
 
   def self.uniqueness_with(args)
     [args.first]
