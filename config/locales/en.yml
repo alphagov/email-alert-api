@@ -13,19 +13,15 @@ en:
       subject: "Update from GOV.UK – %{title}"
       opening_line: Update on GOV.UK.
       permission_reminder: "^You’re getting this email because you subscribed to immediate updates to ‘%{topic}’ on GOV.UK."
-      survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=immediate
     digests:
       daily:
         subject: "Daily update from GOV.UK"
         opening_line: Daily update from GOV.UK.
         permission_reminder: "^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK."
-        survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
       weekly:
         subject: "Weekly update from GOV.UK"
         opening_line: Updates on GOV.UK this week.
         permission_reminder: "^You’re getting this email because you subscribed to weekly updates on these topics on GOV.UK."
-        survey_link: https://www.smartsurvey.co.uk/s/govuk-email/?f=digests
     description_header: "Page summary"
     change_note_header: "Change made"
     public_updated_at_header: "Time updated"
-    feedback_link: "Is this email useful? [Answer some questions to tell us more](%{survey_link})."

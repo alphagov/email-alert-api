@@ -64,14 +64,12 @@ private
   end
 
   def footer(subscriptions, address)
-    return feedback_link if subscriptions.empty?
+    return "" if subscriptions.empty?
 
     <<~BODY
       #{permission_reminder(subscriptions.first.subscriber_list)}
 
       #{ManageSubscriptionsLinkPresenter.call(address)}
-
-      #{feedback_link}
     BODY
   end
 
@@ -83,13 +81,5 @@ private
             end
 
     I18n.t!("emails.content_change.permission_reminder", topic: topic)
-  end
-
-  def feedback_link
-    I18n.t!(
-      "emails.feedback_link",
-      survey_link: I18n.t!("emails.content_change.survey_link"),
-      feedback_link: "#{Plek.new.website_root}/contact",
-    )
   end
 end
