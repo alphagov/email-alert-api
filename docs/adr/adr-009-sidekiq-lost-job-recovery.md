@@ -10,29 +10,29 @@ We use [Sidekiq](https://github.com/mperham/sidekiq) to do background processing
 
 2. If a worker process quits ungracefully, while processing a job.
 
-The second issue has occurred frequently due to workers being [forcibly restarted][icinga-memory] when they consume too much memory. A memorable example was the loss of a Travel Advice content change, which was detected by the [alert][travel-advice-alert] for travel advice emails, and lead to an incident. Conversely, we don't think the first issue does not occur frequently.
+The second issue has occurred frequently due to workers being [forcibly restarted][icinga-memory] when they consume too much memory. A memorable example was the loss of a Travel Advice content change, which was detected by the [alert][travel-advice-alert] for travel advice emails, and lead to an incident. Conversely, we don't think the first issue occurs frequently.
 
-It's an effortful task to recover lost jobs, due to the complexity of how we generate and send email in the system. The job will no longer exist in Redis, but a record of it will exist in the database, with a flag to indicate its completion. For example, we can check the [`status` field][email-status] of an Email to see if the [job][send-email-worker] to send it has completed. By analysing these and similar flags and timestamps in other tables, we can work out which work has not been completed in good time.
+To help support engineers cope with certain kinds of lost work, we had [manual steps][old-recovery-steps] to recover it. We had this for the jobs to process content changes and [messages][old-recovery-steps-messages]. The manual steps involved checking the state of the database, as an indication of whether jobs might have been lost. However, it's possible checking the database will turn up false positives e.g. if the system is running slowly. Both workers would [double check][content-change-psuedo-idempotent] to prevent accidentally duplicating work.
 
 Ideally these issues wouldn't exist in the first place. Previously we considered upgrading to Sidekiq Pro, which [persists][sidekiq-reliability] jobs in Redis while they are being processed. Using Sidekiq Pro would therefore prevent the second issue, but not the first, which is unrelated to Sidekiq. It's also worth noting that we previously had [concerns][sidekiq-pro-issue] about switching to Sidekiq Pro, thinking it would be hard to use in practice. Still, it's possible the benefits could outweigh the drawbacks.
 
+[content-change-psuedo-idempotent]: https://github.com/alphagov/email-alert-api/commit/e4a8fedcaf2ce504f238ef53ee9fdf2e3319e30a#diff-ccd4e2b91347f03e81b4ccfae7983d17c508c7cce216a51596ccaf7093848a2cR6
+[old-recovery-steps]: https://github.com/alphagov/govuk-developer-docs/blob/7feaedc9bd9f786662055bba45327ddc8b318525/source/manual/alerts/email-alert-api-unprocessed-content-changes.html.md
+[old-recovery-steps-messages]: https://github.com/alphagov/govuk-developer-docs/blob/7feaedc9bd9f786662055bba45327ddc8b318525/source/manual/alerts/email-alert-api-unprocessed-messages.html.md
 [sidekiq-reliability]: https://github.com/mperham/sidekiq/wiki/Reliability#using-super_fetch
-[send-email-worker]: https://github.com/alphagov/email-alert-api/blob/101f813d97c3838199e40643e681f1aca6adf67b/app/workers/send_email_worker.rb
 [icinga-memory]: https://github.com/alphagov/govuk-puppet/blob/1258fc65da264191d01b4280cd4422f90085c371/modules/monitoring/files/usr/local/bin/event_handlers/govuk_app_high_memory.sh#L22
 [travel-advice-alert]: https://github.com/alphagov/govuk-puppet/blob/be2e3733d9cad619d9cf57e19b190cd5d6116342/modules/govuk_jenkins/manifests/jobs/email_alert_check.pp
-[email-status]: https://github.com/alphagov/email-alert-api/blob/101f813d97c3838199e40643e681f1aca6adf67b/app/services/send_email_service/send_notify_email.rb#L23
 [sidekiq-pro-issue]: https://github.com/mperham/sidekiq/issues/4612
 
 ## Decision
 
-We decided to implement a new [worker][recovery-worker] to find lost work and recreate the jobs to process it. This resolves both of the above issues with lost work, and [codifies][old-recovery-steps] previously manual recovery steps.
+We decided to implement a new [worker][recovery-worker] to automatically recover all work associated with generating and sending email. This resolves both of the above issues with lost work, and [codifies][old-recovery-steps] the previously manual recovery steps. Since there is little urgency around sending email, we decided to run the worker only infrequently (currently [every half hour][recovery-schedule]), for work that's [over an hour old][recovery-threshold] - we expect most work to have been processed within an hour.
 
-Since there is little urgency around sending email, we decided to run the worker only infrequently (currently [every half hour][recovery-schedule]), for work that's [over an hour old][recovery-threshold] - we expect most work to have been processed within an hour.
+An edge case for recovery is the initiation of the [daily][daily-init] and [weekly][weekly-init] digest runs. If one of these scheduled jobs is lost before it can [create][digest-run-create] a DigestRun record, our normal strategy of checking the database won't work. For this scenario, we decided to have a [separate][digest-init-recovery] recovery strategy that's coupled to the [schedule][digest-schedule] for the initiator jobs. The strategy involves looking back over the previous week to see if any DigestRun records are missing for that period.
 
-An edge case for recovery is the initiation of the [daily][daily-init] and [weekly][weekly-init] digest runs. If one of these scheduled jobs is lost before it can [create][digest-run-create] a DigestRun record, our normal recovery strategy won't work. For this scenario, we decided to have a [separate][digest-init-recovery] recovery strategy that's coupled to the [schedule][digest-schedule] for the initiator jobs. The strategy involves looking back over the previous week to see if any DigestRun records are missing for that period.
+We decided to pursue recovering lost work instead of acquiring Sidekiq Pro, which would help avoid the loss in the first place. We had the impression that the process to pay for, acquire and integrate Sidekiq Pro into Email Alert API would take longer to complete than implementing our own solution.
 
 [recovery-worker]: https://github.com/alphagov/email-alert-api/blob/101f813d97c3838199e40643e681f1aca6adf67b/app/workers/recover_lost_jobs_worker.rb
-[old-recovery-steps]: https://github.com/alphagov/govuk-developer-docs/pull/2655/files#diff-5c45975421e97303862e304bf6be30e36fb0384a3d469f15e4fb3f8b71f75f52L47
 [recovery-schedule]: https://github.com/alphagov/email-alert-api/blob/59c37a1571d1564d1c63fd913274c810b0742ee6/config/sidekiq.yml#L39
 [recovery-threshold]: https://github.com/alphagov/email-alert-api/blob/ea21e7cfd4f6131e2db55e45b923dee3895b081a/app/workers/recover_lost_jobs_worker/unprocessed_check.rb#L13
 [daily-init]: https://github.com/alphagov/email-alert-api/blob/bae78a3cb7e970d290d4a95613149c1d5d34e4f1/app/workers/daily_digest_initiator_worker.rb
@@ -49,15 +49,19 @@ Accepted
 
 ### Potential for duplicate work
 
-It's possible we may recreate jobs that still exist in the system. For example, a job that's over an hour old may simply be delayed due to an unusually high backlog in its Sidekiq queue. Although we could check the state of Sidekiq as part of finding lost work, it's still possible to have race conditions where we falsely requeue work that's not lost. To cope with this, we modified each job so that it's idempotent. We used two approaches for this:
+As mentioned in the context, it's possible we may recover work that still exists in the system. For example, a job that's over an hour old may simply be delayed due to an unusually high backlog in its Sidekiq queue. Although we could check the state of Sidekiq as part of finding lost work, it's still possible to have race conditions where we falsely requeue work that's not lost. To cope with this, we modified each worker so that it's [idempotent][wiki-idempotent].
+
+Each worker will [double check][email-double-check] if it has previously completed. However, this could still be a false positive if duplicate jobs end up running concurrently. We had two approaches to cope with this:
 
 - For slow jobs, like processing a content change, we used non-blocking [advisory locks][advisory-lock]. This means any in-progress work that's been incorrectly recovered will be processed quickly as a [no-op][advisory-timeout].
 
-- For fast, high volume jobs, like sending an email, we use a blocking, [row-level lock][email-lock] inside a transaction. Using a row-level lock is faster because the lock is part of the `SELECT` (... `FOR UPDATE`) statement we already execute to fetch the Email record. This is better for the common case, where there is no duplicate work. Even if duplicate work exists, it will only occupy a worker for a short time, until the original job completes and the lock is released.
+- For fast, high volume jobs, like sending an email, we used a blocking, [row-level lock][email-lock] inside a transaction. Using a row-level lock is faster because the lock is part of the `SELECT` (... `FOR UPDATE`) statement we already execute to fetch the Email record. This is better for the common case, where there is no duplicate work. Even if duplicate work exists, it will only occupy a worker for a short time, until the original job completes and the lock is released.
 
 
 While making jobs idempotent means the system will behave correctly in the long term, in the short term it's still possible for the recovery to generate an alarming amount of "no-op" work on a queue e.g. if the system is running slowly. This is a particular concern for jobs to send email, where the queue latency can exceed one hour, with many thousands of fresh jobs in the queue. We used [SidekiqUniqueJobs][sidekiq-unique-jobs] to [prevent][email-unique-jobs] a snowball effect in this scenario.
 
+[wiki-idempotent]: https://en.wikipedia.org/wiki/Idempotence
+[email-double-check]: https://github.com/alphagov/email-alert-api/commit/09a1474f8e075fdd442ced4a3bb723542fb09fea#diff-7f6369872e4b9658537b003a9c0fc119ac5f05745be3f7dad991d488e1b37ff1R23
 [email-lock]: https://github.com/alphagov/email-alert-api/blob/ea21e7cfd4f6131e2db55e45b923dee3895b081a/app/workers/send_email_worker.rb#L26
 [advisory-lock]: https://github.com/alphagov/email-alert-api/blob/59c37a1571d1564d1c63fd913274c810b0742ee6/app/workers/process_content_change_worker.rb#L5
 [sidekiq-unique-jobs]: https://github.com/mhenrixon/sidekiq-unique-jobs
