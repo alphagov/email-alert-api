@@ -217,8 +217,6 @@ RSpec.describe "create and deliver a daily digest", type: :request do
       ^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK.
 
       [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/manage/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
-
-      Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY
   end
 
@@ -252,8 +250,6 @@ RSpec.describe "create and deliver a daily digest", type: :request do
       ^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK.
 
       [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/manage/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
-
-      Is this email useful? [Answer some questions to tell us more](https://www.smartsurvey.co.uk/s/govuk-email/?f=digests).
     BODY
   end
 end

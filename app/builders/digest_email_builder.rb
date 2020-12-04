@@ -33,8 +33,6 @@ private
       #{I18n.t!("emails.digests.#{digest_run.range}.permission_reminder")}
 
       #{ManageSubscriptionsLinkPresenter.call(address)}
-
-      #{feedback_link.strip}
     BODY
   end
 
@@ -85,13 +83,5 @@ private
     end
 
     changes.join("\n---\n\n")
-  end
-
-  def feedback_link
-    I18n.t!(
-      "emails.feedback_link",
-      survey_link: I18n.t!("emails.digests.#{digest_run.range}.survey_link"),
-      feedback_link: "#{Plek.new.website_root}/contact",
-    )
   end
 end
