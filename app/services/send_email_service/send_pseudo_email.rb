@@ -11,8 +11,6 @@ class SendEmailService::SendPseudoEmail
     Rails.logger.info <<~INFO
       Logging email (#{email.id}) we'd have attempted to send to #{email.address}
       Subject: #{email.subject}
-      Body:
-      #{email.body}
     INFO
 
     Metrics.sent_to_pseudo_successfully
