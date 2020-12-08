@@ -15,10 +15,7 @@ class SubscribersAuthTokenController < ApplicationController
 private
 
   def generate_token(subscriber)
-    AuthTokenGeneratorService.call(
-      "subscriber_id" => subscriber.id,
-      "redirect" => expected_params[:redirect],
-    )
+    AuthTokenGeneratorService.call("subscriber_id" => subscriber.id)
   end
 
   def build_email(subscriber, token)
@@ -30,7 +27,7 @@ private
   end
 
   def expected_params
-    params.permit(:address, :destination, :redirect)
+    params.permit(:address, :destination)
   end
 
   def validate_params
@@ -45,6 +42,5 @@ private
 
     validates :destination, presence: true
     validates :destination, root_relative_url: true, allow_blank: true
-    validates :redirect, root_relative_url: true, allow_blank: true
   end
 end

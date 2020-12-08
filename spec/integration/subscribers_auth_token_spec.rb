@@ -7,12 +7,10 @@ RSpec.describe "Subscribers auth token", type: :request do
     let(:path) { "/subscribers/auth-token" }
     let(:address) { "test@example.com" }
     let(:destination) { "/test" }
-    let(:redirect) { nil }
     let(:params) do
       {
         address: address,
         destination: destination,
-        redirect: redirect,
       }
     end
     let!(:subscriber) { create(:subscriber, address: "test@example.com") }
@@ -36,9 +34,9 @@ RSpec.describe "Subscribers auth token", type: :request do
       post path, params: params
       expect(Email.count).to be 1
       token = Email.last.body.match(/token=([^&\n]+)/)[1]
+
       expect(decrypt_and_verify_token(token)).to eq(
         "subscriber_id" => subscriber.id,
-        "redirect" => redirect,
       )
     end
 
@@ -80,24 +78,6 @@ RSpec.describe "Subscribers auth token", type: :request do
 
     context "when we're given a bad destination" do
       let(:destination) { "http://example.com/test" }
-
-      it "returns a 422" do
-        post path, params: params
-        expect(response.status).to eq(422)
-      end
-    end
-
-    context "when we're given a path redirect" do
-      let(:redirect) { "/test" }
-
-      it "returns a 201" do
-        post path, params: params
-        expect(response.status).to eq(201)
-      end
-    end
-
-    context "when we're given a bad redirect" do
-      let(:redirect) { "http://example.com/test" }
 
       it "returns a 422" do
         post path, params: params

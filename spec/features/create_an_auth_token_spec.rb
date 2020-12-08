@@ -10,7 +10,6 @@ RSpec.describe "Create an auth token", type: :request do
   let(:address) { "test@example.com" }
   let!(:subscriber) { create(:subscriber, address: address) }
   let(:destination) { "/authenticate" }
-  let(:redirect) { "/logged-in-page" }
 
   scenario "successful auth token" do
     login_with_internal_app
@@ -19,15 +18,14 @@ RSpec.describe "Create an auth token", type: :request do
          params: {
            address: address,
            destination: destination,
-           redirect: redirect,
          }
 
-    notify_email_stub = notify_email(subscriber, destination, redirect)
+    notify_email_stub = notify_email(subscriber, destination)
     expect(response.status).to be 201
     expect(notify_email_stub).to have_been_requested
   end
 
-  def notify_email(subscriber, destination, redirect)
+  def notify_email(subscriber, destination)
     stub_request(:post, "https://api.notifications.service.gov.uk/v2/notifications/email")
       .with(
         "body" => hash_including(
@@ -43,7 +41,6 @@ RSpec.describe "Create an auth token", type: :request do
 
         expect(decrypt_and_verify_token(token)).to eq(
           "subscriber_id" => subscriber.id,
-          "redirect" => redirect,
         )
       end
   end
