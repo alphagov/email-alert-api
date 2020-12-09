@@ -70,6 +70,11 @@ RSpec.describe "Subscriptions", type: :request do
           create_subscription(extra_params: { skip_confirmation_email: true })
           expect(a_request(:post, /notifications/)).to_not have_been_made
         end
+
+        it "returns status code 200" do
+          create_subscription(extra_params: { skip_confirmation_email: true })
+          expect(response.status).to eq(200)
+        end
       end
 
       context "with an existing subscription with identical frequency" do

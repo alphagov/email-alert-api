@@ -28,8 +28,9 @@ class SubscriptionsController < ApplicationController
         )
       end
 
+      subscription = new_subscription || existing_subscription
+
       unless params[:skip_confirmation_email]
-        subscription = new_subscription || existing_subscription
         email = SubscriptionConfirmationEmailBuilder.call(subscription: subscription)
       end
 
