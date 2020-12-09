@@ -183,14 +183,17 @@ new email address.
   "address": "email@address.com",
   "subscriber_list_id": "The id of a subscriber list",
   "frequency": "weekly"
+  "skip_confirmation_email": true (optional)
 }
 ```
 
 It will create a new subscription between the email address and the subscriber
-list. It will respond with a `201 Created` if it's a new subscription or a `200
-OK` if the subscription already exists. If a subscription already exists but
-the frequency is different, the current subscription is ended and a new one
-with the updated frequency is created. A confirmation email will be sent.
+list. If a subscription already exists but the frequency is different, the
+current subscription is ended and a new one with the updated frequency is created.
+It will respond with the details of the subscription.
+
+A confirmation email will be sent unless the "skip_confirmation_email" flag is
+set (e.g. if the calling app is going to send it's own confirmation email).
 
 > Note: using any email address that ends with `@notifications.service.gov.uk`
 will not create a subscriber or a subscription, however will return a `201 Created` response.
