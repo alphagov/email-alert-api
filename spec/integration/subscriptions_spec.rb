@@ -25,8 +25,14 @@ RSpec.describe "Subscriptions", type: :request do
       let!(:subscription) { create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber, frequency: :immediately) }
       let(:frequency) { "daily" }
 
-      def create_subscription
-        post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: subscriber.address, frequency: frequency }
+      def create_subscription(extra_params: {})
+        params = {
+          subscriber_list_id: subscriber_list.id,
+          address: subscriber.address,
+          frequency: frequency,
+        }
+
+        post "/subscriptions", params: params.merge(extra_params)
       end
 
       context "with an existing subscription with different frequency" do
@@ -50,6 +56,20 @@ RSpec.describe "Subscriptions", type: :request do
           create_subscription
           expect(subscription.reload.ended?).to be true
         end
+
+        it "sends a confirmation email" do
+          stub_notify
+          create_subscription
+          expect(a_request(:post, /notifications/)).to have_been_made.at_least_once
+        end
+      end
+
+      context "with a parameter to skip sending the confirmation email" do
+        it "does not a confirmation email" do
+          stub_notify
+          create_subscription(extra_params: { skip_confirmation_email: true })
+          expect(a_request(:post, /notifications/)).to_not have_been_made
+        end
       end
 
       context "with an existing subscription with identical frequency" do
@@ -72,6 +92,12 @@ RSpec.describe "Subscriptions", type: :request do
         it "does not mark the existing subscription as ended" do
           create_subscription
           expect(subscription.reload.ended?).to be false
+        end
+
+        it "sends a confirmation email" do
+          stub_notify
+          create_subscription
+          expect(a_request(:post, /notifications/)).to have_been_made.at_least_once
         end
       end
 
