@@ -40,9 +40,10 @@ RSpec.describe "Creating a subscription", type: :request do
         expect(response.status).to eq(200)
       end
 
-      it "returns the ID of the new subscription" do
+      it "returns the new subscription" do
         create_subscription
         expect(data[:id]).to_not eq(subscription.id)
+        expect(data[:subscription][:frequency]).to eq frequency
       end
 
       it "marks the existing subscription as ended" do
@@ -86,9 +87,10 @@ RSpec.describe "Creating a subscription", type: :request do
         expect(response.status).to eq(200)
       end
 
-      it "returns the ID of the existing subscription" do
+      it "returns the existing subscription" do
         create_subscription
         expect(data[:id]).to eq(subscription.id)
+        expect(data[:subscription][:frequency]).to eq frequency
       end
 
       it "does not mark the existing subscription as ended" do
@@ -131,9 +133,10 @@ RSpec.describe "Creating a subscription", type: :request do
         expect(Subscription.first.subscriber_list).to eq(subscriber_list)
       end
 
-      it "returns the ID of the new subscription" do
+      it "returns the new subscription" do
         create_subscription
         expect(data[:id]).to_not be_nil
+        expect(data[:subscription][:frequency]).to eq frequency
       end
 
       it "sends a confirmation email" do
