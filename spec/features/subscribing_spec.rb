@@ -4,7 +4,7 @@ RSpec.describe "Subscribing to a subscriber_list", type: :request do
 
     subscriber_list_id = create_subscriber_list
 
-    subscribe_to_subscriber_list(subscriber_list_id, expected_status: 201)
+    subscribe_to_subscriber_list(subscriber_list_id, expected_status: 200)
     expect_a_subscription_confirmation_email_was_sent
 
     subscribe_to_subscriber_list(subscriber_list_id, expected_status: 200)

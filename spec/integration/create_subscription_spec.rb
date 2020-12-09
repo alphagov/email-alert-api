@@ -7,11 +7,11 @@ RSpec.describe "Creating a subscription", type: :request do
     context "with a subscriber_list" do
       let(:subscriber_list) { create(:subscriber_list) }
 
-      it "returns a 201" do
+      it "returns a 200" do
         params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id)
         post "/subscriptions", params: params, headers: json_headers
 
-        expect(response.status).to eq(201)
+        expect(response.status).to eq(200)
       end
 
       it "sets the source to a user signup" do
@@ -22,11 +22,11 @@ RSpec.describe "Creating a subscription", type: :request do
       end
 
       context "with a frequency setting" do
-        it "returns a 201 and sets the frequency" do
+        it "returns a 200 and sets the frequency" do
           params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "daily")
           post "/subscriptions", params: params, headers: json_headers
 
-          expect(response.status).to eq(201)
+          expect(response.status).to eq(200)
 
           expect(Subscription.first.daily?).to be_truthy
           expect(Subscription.first.source_user_signed_up?).to be true
@@ -37,7 +37,7 @@ RSpec.describe "Creating a subscription", type: :request do
             params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "daily")
             post "/subscriptions", params: params, headers: json_headers
 
-            expect(response.status).to eq(201)
+            expect(response.status).to eq(200)
 
             params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "weekly")
             post "/subscriptions", params: params, headers: json_headers
@@ -62,7 +62,7 @@ RSpec.describe "Creating a subscription", type: :request do
             params = JSON.dump(address: "Test@example.com", subscriber_list_id: subscriber_list.id, frequency: "daily")
             post "/subscriptions", params: params, headers: json_headers
 
-            expect(response.status).to eq(201)
+            expect(response.status).to eq(200)
 
             params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id, frequency: "weekly")
             post "/subscriptions", params: params, headers: json_headers

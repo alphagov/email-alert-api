@@ -171,11 +171,6 @@ RSpec.describe "Subscriptions", type: :request do
           expect(Subscription.first.subscriber_list).to eq(subscriber_list)
         end
 
-        it "returns status code 201" do
-          create_subscription
-          expect(response.status).to eq(201)
-        end
-
         it "returns JSON" do
           create_subscription
           expect(response.media_type).to eq("application/json")

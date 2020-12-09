@@ -1,47 +1,23 @@
 class SubscriptionsController < ApplicationController
   def create
-    email, status, subscription = nil
+    subscriber = Subscriber.resilient_find_or_create(
+      address,
+      signon_user_uid: current_user.uid,
+    )
 
-    ActiveRecord::Base.transaction do
-      subscriber = Subscriber.resilient_find_or_create(
-        address,
-        signon_user_uid: current_user.uid,
-      )
+    subscription = CreateSubscriptionService.call(
+      subscriber_list,
+      subscriber,
+      frequency,
+      current_user,
+    )
 
-      subscriber.lock!
-
-      existing_subscription = Subscription.active.find_by(
-        subscriber: subscriber,
-        subscriber_list: subscriber_list,
-      )
-
-      create_new_subscription = frequency != existing_subscription&.frequency
-
-      if create_new_subscription
-        existing_subscription&.end(reason: :frequency_changed)
-        new_subscription = Subscription.create!(
-          subscriber: subscriber,
-          subscriber_list: subscriber_list,
-          frequency: frequency,
-          signon_user_uid: current_user.uid,
-          source: existing_subscription ? :frequency_changed : :user_signed_up,
-        )
-      end
-
-      subscription = new_subscription || existing_subscription
-
-      unless params[:skip_confirmation_email]
-        email = SubscriptionConfirmationEmailBuilder.call(subscription: subscription)
-      end
-
-      status = existing_subscription ? :ok : :created
-    end
-
-    if email
+    unless params[:skip_confirmation_email]
+      email = SubscriptionConfirmationEmailBuilder.call(subscription: subscription)
       SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_transactional)
     end
 
-    render json: { id: subscription.id }, status: status
+    render json: { id: subscription.id }
   end
 
   def show
@@ -54,26 +30,12 @@ class SubscriptionsController < ApplicationController
       subscription_params.require(:id),
     )
 
-    if frequency == existing_subscription.frequency
-      render json: { subscription: existing_subscription }
-      return
-    end
-
-    new_subscription = existing_subscription.subscriber.with_lock do
-      existing_subscription.end(reason: :frequency_changed)
-
-      Subscription.create!(
-        subscriber: existing_subscription.subscriber,
-        subscriber_list: existing_subscription.subscriber_list,
-        frequency: frequency,
-        signon_user_uid: current_user.uid,
-        source: :frequency_changed,
-      )
-    rescue ArgumentError
-      # This happens if a frequency is provided that isn't included
-      # in the enum which is in the Subscription model
-      raise ActiveRecord::RecordInvalid
-    end
+    new_subscription = CreateSubscriptionService.call(
+      existing_subscription.subscriber_list,
+      existing_subscription.subscriber,
+      frequency,
+      current_user,
+    )
 
     render json: { subscription: new_subscription }
   end
