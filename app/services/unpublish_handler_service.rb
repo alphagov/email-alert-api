@@ -28,9 +28,7 @@ class UnpublishHandlerService < ApplicationService
     return unless template
 
     subscriber_lists.each do |subscriber_list|
-      any_emails_sent = process_subscriber_list(subscriber_list, redirect, template)
-
-      send_courtesy_emails(subscriber_list, redirect, template) if any_emails_sent
+      process_subscriber_list(subscriber_list, redirect, template)
     end
   end
 
@@ -77,30 +75,6 @@ private
     end
 
     true
-  end
-
-  def send_courtesy_emails(subscriber_list, redirect, template)
-    email_parameters = Subscriber.where(
-      address: Email::COURTESY_EMAIL,
-    ).map do |subscriber|
-      EmailParameters.new(
-        subject: subscriber_list.title,
-        subscriber: subscriber,
-        template_data: {
-          redirect: redirect,
-          utm_parameters: {},
-        },
-      )
-    end
-
-    email_ids = UnpublishEmailBuilder.call(email_parameters, template)
-
-    email_ids.each do |email_id|
-      SendEmailWorker.perform_async_in_queue(
-        email_id,
-        queue: :send_email_immediate,
-      )
-    end
   end
 
   def find_type(subscriber_lists, content_id)

@@ -25,22 +25,6 @@ RSpec.describe ProcessContentChangeWorker do
       described_class.new.perform(content_change.id)
     end
 
-    it "can send a courtesy copy email" do
-      create(:subscriber, address: Email::COURTESY_EMAIL)
-      email = create(:email)
-
-      expect(ContentChangeEmailBuilder)
-        .to receive(:call)
-        .with([hash_including(address: Email::COURTESY_EMAIL)])
-        .and_return([email.id])
-
-      expect(SendEmailWorker)
-        .to receive(:perform_async_in_queue)
-        .with(email.id, queue: :send_email_immediate)
-
-      described_class.new.perform(content_change.id)
-    end
-
     it "marks a content change as processed" do
       freeze_time do
         expect { described_class.new.perform(content_change.id) }
