@@ -27,7 +27,7 @@ private
         {
           address: address,
           subject: subject(recipient_and_content.fetch(:content_change)),
-          body: body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions), address),
+          body: body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions).first, address),
           subscriber_id: recipient_and_content.fetch(:subscriber_id),
           created_at: now,
           updated_at: now,
@@ -40,21 +40,21 @@ private
     I18n.t!("emails.content_change.subject", title: content_change.title)
   end
 
-  def body(content_change, subscriptions, address)
+  def body(content_change, subscription, address)
     <<~BODY
       #{I18n.t!('emails.content_change.opening_line')}
 
       ---
-      #{presented_content_change(content_change, subscriptions)}
+      #{presented_content_change(content_change, subscription)}
       ---
-      #{footer(subscriptions, address).strip}
+      #{footer(subscription, address).strip}
     BODY
   end
 
-  def presented_content_change(content_change, subscriptions)
+  def presented_content_change(content_change, subscription)
     copy = ContentChangePresenter.call(content_change)
 
-    subscriber_list = subscriptions.first.subscriber_list
+    subscriber_list = subscription.subscriber_list
     if subscriber_list.description.present?
       copy += "\n#{subscriber_list.description}\n"
     end
@@ -62,9 +62,9 @@ private
     copy
   end
 
-  def footer(subscriptions, address)
+  def footer(subscription, address)
     <<~BODY
-      #{permission_reminder(subscriptions.first.subscriber_list)}
+      #{permission_reminder(subscription.subscriber_list)}
 
       #{ManageSubscriptionsLinkPresenter.call(address)}
     BODY

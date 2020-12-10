@@ -26,7 +26,7 @@ private
         {
           address: x[:address],
           subject: subject(x[:message]),
-          body: body(x[:message], x[:subscriptions], x[:address]),
+          body: body(x[:message], x[:subscriptions].first, x[:address]),
           subscriber_id: x[:subscriber_id],
           created_at: now,
           updated_at: now,
@@ -39,7 +39,7 @@ private
     I18n.t!("emails.message.subject", title: message.title)
   end
 
-  def body(message, subscriptions, address)
+  def body(message, subscription, address)
     copy = <<~BODY
       #{I18n.t!('emails.message.opening_line')}
 
@@ -47,7 +47,7 @@ private
       #{MessagePresenter.call(message)}
     BODY
 
-    subscriber_list = subscriptions.first.subscriber_list
+    subscriber_list = subscription.subscriber_list
 
     if subscriber_list.description.present?
       copy += "#{subscriber_list.description}\n"
