@@ -53,7 +53,6 @@ private
 
   def presented_content_change(content_change, subscriptions)
     copy = ContentChangePresenter.call(content_change)
-    return copy if subscriptions.empty?
 
     subscriber_list = subscriptions.first.subscriber_list
     if subscriber_list.description.present?
@@ -64,8 +63,6 @@ private
   end
 
   def footer(subscriptions, address)
-    return "" if subscriptions.empty?
-
     <<~BODY
       #{permission_reminder(subscriptions.first.subscriber_list)}
 

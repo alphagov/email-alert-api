@@ -47,20 +47,18 @@ private
       #{MessagePresenter.call(message)}
     BODY
 
-    if subscriptions.any?
-      subscriber_list = subscriptions.first.subscriber_list
+    subscriber_list = subscriptions.first.subscriber_list
 
-      if subscriber_list.description.present?
-        copy += "#{subscriber_list.description}\n"
-      end
-
-      copy += <<~BODY
-        ---
-        #{permission_reminder(subscriber_list)}
-
-        #{ManageSubscriptionsLinkPresenter.call(address)}
-      BODY
+    if subscriber_list.description.present?
+      copy += "#{subscriber_list.description}\n"
     end
+
+    copy += <<~BODY
+      ---
+      #{permission_reminder(subscriber_list)}
+
+      #{ManageSubscriptionsLinkPresenter.call(address)}
+    BODY
 
     copy
   end
