@@ -12,11 +12,6 @@ RSpec.describe "Sending an unpublish message", type: :request do
         address: "test@example.com",
       )
 
-      create(
-        :subscriber,
-        address: Email::COURTESY_EMAIL,
-      )
-
       subscriber_list = create(
         :subscriber_list,
         links: { taxon_tree: { any: [content_id] } },
@@ -49,10 +44,6 @@ RSpec.describe "Sending an unpublish message", type: :request do
 
     it "returns status 202" do
       expect(response.status).to eq(202)
-    end
-
-    it "creates an Email and a courtesy email" do
-      expect(Email.count).to eq(2)
     end
 
     it "sends an email" do

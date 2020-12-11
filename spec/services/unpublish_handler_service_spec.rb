@@ -1,9 +1,5 @@
 RSpec.describe UnpublishHandlerService do
   before :each do
-    create(
-      :subscriber,
-      address: Email::COURTESY_EMAIL,
-    )
     @content_id = SecureRandom.uuid
     @redirect = double(ContentItem, path: "to/somewhere", title: "redirect_title", url: "http://host/to/somewhere")
   end
@@ -33,8 +29,8 @@ RSpec.describe UnpublishHandlerService do
   end
 
   shared_examples_for "it_sends_an_email_with_body_including" do |body|
-    it "creates an email and a courtesy email" do
-      expect { described_class.call(@content_id, @redirect) }.to change { Email.count }.by(2)
+    it "creates an email" do
+      expect { described_class.call(@content_id, @redirect) }.to change { Email.count }.by(1)
     end
 
     it "uses the redirection in the body of the email" do
@@ -46,29 +42,11 @@ RSpec.describe UnpublishHandlerService do
       described_class.call(@content_id, @redirect)
       expect(Email.where(address: "test@example.com").last)
         .to have_attributes(body: include("address=test%40example.com"))
-      expect(Email.where(address: Email::COURTESY_EMAIL).last)
-        .to have_attributes(body: include("address=govuk-email-courtesy-copies%40digital.cabinet-office.gov.uk"))
     end
 
     it "sends an email with some specified text" do
       described_class.call(@content_id, @redirect)
       expect(Email.last).to have_attributes(body: include(body))
-    end
-
-    it "sends the email and a courtesy email to the DeliverRequestWorker" do
-      subscriber_email = { subject: "Update from GOV.UK – First Subscription",
-                           address: "test@example.com" }
-      courtesy_email = { subject: "Update from GOV.UK – First Subscription",
-                         address: Email::COURTESY_EMAIL }
-
-      expect(SendEmailService)
-        .to receive(:call)
-        .with(email: having_attributes(subscriber_email), metrics: {})
-      expect(SendEmailService)
-        .to receive(:call)
-        .with(email: having_attributes(courtesy_email), metrics: {})
-
-      described_class.call(@content_id, @redirect)
     end
   end
 

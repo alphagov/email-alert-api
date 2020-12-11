@@ -9,26 +9,7 @@ class ProcessMessageWorker < ApplicationWorker
       MatchedMessageGenerationService.call(message)
       ImmediateEmailGenerationService.call(message)
 
-      queue_courtesy_email(message)
       message.update!(processed_at: Time.zone.now)
     end
-  end
-
-private
-
-  def queue_courtesy_email(message)
-    subscriber = Subscriber.find_by(address: Email::COURTESY_EMAIL)
-    return unless subscriber
-
-    id = MessageEmailBuilder.call([
-      {
-        address: subscriber.address,
-        subscriptions: [],
-        message: message,
-        subscriber_id: subscriber.id,
-      },
-    ]).first
-
-    SendEmailWorker.perform_async_in_queue(id, queue: message.queue)
   end
 end
