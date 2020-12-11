@@ -161,7 +161,7 @@ RSpec.describe "create and deliver a daily digest", type: :request do
 
       # Subscriber list one &nbsp;
 
-      [Title one](#{url}#{utm_params(content_change_one.id, 'daily')})
+      # [Title one](#{url}#{utm_params(content_change_one.id, 'daily')})
 
       Page summary:
       Description one
@@ -186,7 +186,7 @@ RSpec.describe "create and deliver a daily digest", type: :request do
 
       # Subscriber list two &nbsp;
 
-      [Title three](#{url}#{utm_params(content_change_two.id, 'daily')})
+      # [Title three](#{url}#{utm_params(content_change_two.id, 'daily')})
 
       Page summary:
       Description three
@@ -199,7 +199,7 @@ RSpec.describe "create and deliver a daily digest", type: :request do
 
       ---
 
-      [Title four](#{url}#{utm_params(content_change_three.id, 'daily')})
+      # [Title four](#{url}#{utm_params(content_change_three.id, 'daily')})
 
       Page summary:
       Description four
@@ -226,7 +226,7 @@ RSpec.describe "create and deliver a daily digest", type: :request do
 
       # Subscriber list one &nbsp;
 
-      [Title one](#{url}#{utm_params(content_change_one.id, 'daily')})
+      # [Title one](#{url}#{utm_params(content_change_one.id, 'daily')})
 
       Page summary:
       Description one

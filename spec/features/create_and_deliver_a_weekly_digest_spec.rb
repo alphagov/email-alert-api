@@ -172,7 +172,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
 
       # Subscriber list one &nbsp;
 
-      [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
+      # [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
 
       Page summary:
       Description one
@@ -197,7 +197,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
 
       # Subscriber list two &nbsp;
 
-      [Title three](#{url}#{utm_params(content_change_two.id, 'weekly')})
+      # [Title three](#{url}#{utm_params(content_change_two.id, 'weekly')})
 
       Page summary:
       Description three
@@ -210,7 +210,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
 
       ---
 
-      [Title four](#{url}#{utm_params(content_change_three.id, 'weekly')})
+      # [Title four](#{url}#{utm_params(content_change_three.id, 'weekly')})
 
       Page summary:
       Description four
@@ -240,7 +240,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
 
       # Subscriber list one &nbsp;
 
-      [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
+      # [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
 
       Page summary:
       Description one

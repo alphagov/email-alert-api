@@ -1,25 +1,8 @@
 RSpec.describe ContentChangeEmailBuilder do
-  let(:subscriber) { build(:subscriber, address: "test@example.com") }
-
-  let(:subscription) do
-    build(
-      :subscription,
-      id: "bef9b608-05ba-46ce-abb7-8567f4180a25",
-      subscriber: subscriber,
-      subscriber_list: build(:subscriber_list, title: "First Subscription"),
-    )
-  end
-
-  let(:content_change) do
-    build(
-      :content_change,
-      title: "Title",
-      public_updated_at: Time.zone.parse("1/1/2017"),
-      description: "Description",
-      change_note: "Change note",
-      base_path: "/base_path",
-    )
-  end
+  let(:content_change) { build(:content_change, title: "Title") }
+  let(:subscriber_list) { build(:subscriber_list, title: "My List") }
+  let(:subscription) { build(:subscription, subscriber_list: subscriber_list) }
+  let(:subscriber) { subscription.subscriber }
 
   describe ".call" do
     let(:params) do
@@ -37,31 +20,51 @@ RSpec.describe ContentChangeEmailBuilder do
 
     let(:email) { Email.find(email_import.first) }
 
+    before do
+      allow(ContentChangePresenter).to receive(:call)
+        .with(content_change)
+        .and_return("presented_content_change\n")
+
+      allow(PublicUrls).to receive(:unsubscribe)
+        .with(subscription)
+        .and_return("unsubscribe_url")
+
+      allow(PublicUrls).to receive(:authenticate_url)
+        .with(address: subscriber.address)
+        .and_return("manage_url")
+    end
+
     it "returns an email import" do
       expect(email_import.count).to eq(1)
     end
 
     it "sets the subject" do
-      expect(email.subject).to eq("Update from GOV.UK – Title")
+      expect(email.subject).to eq("Update from GOV.UK for: Title")
     end
 
     it "sets the body" do
-      expect(ContentChangePresenter).to receive(:call)
-        .and_return("presented_content_change\n")
-
-      expect(email.status).to eq "pending"
-
       expect(email.body).to eq(
         <<~BODY,
-          Update on GOV.UK.
+          Update from GOV.UK for:
+
+          # My List
 
           ---
+
           presented_content_change
 
-          ---
-          ^You’re getting this email because you subscribed to immediate updates to ‘#{subscription.subscriber_list.title}’ on GOV.UK.
 
-          [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/manage/authenticate?address=test%40example.com)
+          ---
+
+          # Why am I getting this email?
+
+          You asked GOV.UK to send you an email each time we add or update a page about:
+
+          My List
+
+          # [Unsubscribe](unsubscribe_url)
+
+          [Manage your email preferences](manage_url)
         BODY
       )
     end
@@ -74,35 +77,19 @@ RSpec.describe ContentChangeEmailBuilder do
       expect { described_class.call([]) }.to raise_error(ArgumentError)
     end
 
-    context "with a URL and a description" do
-      let(:subscription) do
-        build(
-          :subscription,
-          id: "69ca6fce-34f5-4ebd-943c-83bd1b2e70fb",
-          subscriber: subscriber,
-          subscriber_list: build(:subscriber_list, title: "Second Subscription", url: "/subscription", description: "subscriber_list_description"),
-        )
-      end
+    context "with a description" do
+      let(:subscriber_list) { create(:subscriber_list, description: "description") }
 
       it "sets the body" do
-        expect(ContentChangePresenter).to receive(:call)
-          .and_return("presented_content_change\n")
-
-        expect(email.status).to eq "pending"
-
-        expect(email.body).to eq(
+        expect(email.body).to include(
           <<~BODY,
-            Update on GOV.UK.
-
             ---
+
             presented_content_change
 
-            subscriber_list_description
+            description
 
             ---
-            ^You’re getting this email because you subscribed to immediate updates to ‘[#{subscription.subscriber_list.title}](#{Plek.new.website_root}#{subscription.subscriber_list.url})’ on GOV.UK.
-
-            [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/manage/authenticate?address=test%40example.com)
           BODY
         )
       end

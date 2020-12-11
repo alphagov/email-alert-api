@@ -41,42 +41,34 @@ private
   end
 
   def body(content_change, subscription, address)
+    list = subscription.subscriber_list
+
     <<~BODY
       #{I18n.t!('emails.content_change.opening_line')}
 
+      # #{list.title}
+
       ---
-      #{presented_content_change(content_change, subscription)}
+
+      #{middle_section(list, content_change)}
+
       ---
-      #{footer(subscription, address).strip}
+
+      # #{I18n.t!('emails.content_change.footer_header')}
+
+      #{I18n.t!('emails.content_change.footer_explanation')}
+
+      #{list.title}
+
+      # [Unsubscribe](#{PublicUrls.unsubscribe(subscription)})
+
+      [#{I18n.t!('emails.content_change.footer_manage')}](#{PublicUrls.authenticate_url(address: address)})
     BODY
   end
 
-  def presented_content_change(content_change, subscription)
-    copy = ContentChangePresenter.call(content_change)
-
-    subscriber_list = subscription.subscriber_list
-    if subscriber_list.description.present?
-      copy += "\n#{subscriber_list.description}\n"
-    end
-
-    copy
-  end
-
-  def footer(subscription, address)
-    <<~BODY
-      #{permission_reminder(subscription.subscriber_list)}
-
-      #{ManageSubscriptionsLinkPresenter.call(address)}
-    BODY
-  end
-
-  def permission_reminder(subscriber_list)
-    topic = if subscriber_list.url
-              "[#{subscriber_list.title}](#{Plek.new.website_root}#{subscriber_list.url})"
-            else
-              subscriber_list.title
-            end
-
-    I18n.t!("emails.content_change.permission_reminder", topic: topic)
+  def middle_section(list, content_change)
+    section = ContentChangePresenter.call(content_change)
+    section += "\n" + list.description if list.description.present?
+    section
   end
 end

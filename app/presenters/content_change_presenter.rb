@@ -55,7 +55,7 @@ private
   end
 
   def title_markdown
-    "[#{title}](#{content_url})"
+    "# [#{title}](#{content_url})"
   end
 
   def description_header
