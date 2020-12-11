@@ -12,7 +12,7 @@ class CreateSubscriptionService < ApplicationService
     ApplicationRecord.transaction do
       subscriber.lock!
 
-      subscription = Subscription.find_by(
+      subscription = Subscription.active.find_by(
         subscriber_list: subscriber_list,
         subscriber: subscriber,
       )
