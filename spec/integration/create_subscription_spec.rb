@@ -4,8 +4,14 @@ RSpec.describe "Creating a subscription", type: :request do
   let(:address) { subscriber.address }
   let(:frequency) { "daily" }
 
-  def create_subscription
-    post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: address, frequency: frequency }
+  def create_subscription(extra_params: {})
+    default_params = {
+      subscriber_list_id: subscriber_list.id,
+      address: address,
+      frequency: frequency,
+    }
+
+    post "/subscriptions", params: default_params.merge(extra_params)
   end
 
   context "with authentication and authorisation" do
@@ -59,18 +65,14 @@ RSpec.describe "Creating a subscription", type: :request do
     end
 
     context "with a parameter to skip sending the confirmation email" do
-      def create_subscription
-        post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: subscriber.address, frequency: frequency, skip_confirmation_email: true }
-      end
-
       it "does not send a confirmation email" do
         stub_notify
-        create_subscription
+        create_subscription(extra_params: { skip_confirmation_email: true })
         expect(a_request(:post, /notifications/)).to_not have_been_made
       end
 
       it "returns status code 200" do
-        create_subscription
+        create_subscription(extra_params: { skip_confirmation_email: true })
         expect(response.status).to eq(200)
       end
     end
