@@ -45,6 +45,21 @@ RSpec.describe CreateSubscriptionService do
       expect(new_subscription).to eq subscription
     end
 
+    it "ignores subscriptions that were previously ended" do
+      create(
+        :subscription,
+        :ended,
+        subscriber_list: subscriber_list,
+        subscriber: subscriber,
+        frequency: frequency,
+      )
+
+      new_subscription = described_class.call(*args)
+      expect(new_subscription).to_not be_ended
+      expect(new_subscription.frequency).to eq frequency
+      expect(new_subscription.source).to eq "user_signed_up"
+    end
+
     it "raises a RecordInvalid error if the frequency is invalid" do
       expect { described_class.call(subscriber_list, subscriber, "foo", user) }
         .to raise_error ActiveRecord::RecordInvalid
