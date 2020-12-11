@@ -21,6 +21,11 @@ module PublicUrls
       File.join(website_root, path)
     end
 
+    def unsubscribe(subscription)
+      token = AuthTokenGeneratorService.call(subscriber_id: subscription.subscriber_id)
+      "#{website_root}/email/unsubscribe/#{subscription.id}?token=#{token}"
+    end
+
   private
 
     def website_root
