@@ -55,7 +55,6 @@ RSpec.describe ImmediateEmailBuilder do
 
             presented_content_change
 
-
             ---
 
             # Why am I getting this email?
@@ -64,7 +63,7 @@ RSpec.describe ImmediateEmailBuilder do
 
             My List
 
-            # [Unsubscribe](unsubscribe_url)
+            [Unsubscribe](unsubscribe_url)
 
             [Manage your email preferences](manage_url)
           BODY
@@ -101,7 +100,6 @@ RSpec.describe ImmediateEmailBuilder do
 
             presented_message
 
-
             ---
 
             # Why am I getting this email?
@@ -110,7 +108,7 @@ RSpec.describe ImmediateEmailBuilder do
 
             My List
 
-            # [Unsubscribe](unsubscribe_url)
+            [Unsubscribe](unsubscribe_url)
 
             [Manage your email preferences](manage_url)
           BODY

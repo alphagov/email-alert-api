@@ -62,7 +62,7 @@ private
 
       #{list.title}
 
-      # [Unsubscribe](#{PublicUrls.unsubscribe(subscription)})
+      [Unsubscribe](#{PublicUrls.unsubscribe(subscription)})
 
       [#{I18n.t!('emails.immediate.footer_manage')}](#{PublicUrls.authenticate_url(address: address)})
     BODY
@@ -70,9 +70,9 @@ private
 
   def middle_section(list, content)
     presenter = "#{content.class.name}Presenter".constantize
-    section = presenter.call(content)
+    section = presenter.call(content).strip
 
-    section += "\n" + list.description if list.description.present?
+    section += "\n\n" + list.description if list.description.present?
     section
   end
 end
