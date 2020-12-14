@@ -6,9 +6,11 @@ en:
         weekly: You’ll get one email a week
         immediately: You’ll get an email each time we add or update a page
     message:
-      subject: "Update from GOV.UK – %{title}"
-      opening_line: Update on GOV.UK.
-      permission_reminder: "^You’re getting this email because you subscribed to immediate updates to ‘%{topic}’ on GOV.UK."
+      subject: "Update from GOV.UK for: %{title}"
+      opening_line: "Update from GOV.UK for:"
+      footer_header: "Why am I getting this email?"
+      footer_explanation: "You asked GOV.UK to send you an email each time we add or update a page about:"
+      footer_manage: "Manage your email preferences"
     content_change:
       subject: "Update from GOV.UK for: %{title}"
       opening_line: "Update from GOV.UK for:"

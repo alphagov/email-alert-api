@@ -40,36 +40,34 @@ private
   end
 
   def body(message, subscription, address)
-    copy = <<~BODY
+    list = subscription.subscriber_list
+
+    <<~BODY
       #{I18n.t!('emails.message.opening_line')}
 
+      # #{list.title}
+
       ---
-      #{MessagePresenter.call(message)}
-    BODY
 
-    subscriber_list = subscription.subscriber_list
+      #{middle_section(list, message)}
 
-    if subscriber_list.description.present?
-      copy += "#{subscriber_list.description}\n"
-    end
-
-    copy += <<~BODY
       ---
-      #{permission_reminder(subscriber_list)}
 
-      #{ManageSubscriptionsLinkPresenter.call(address)}
+      # #{I18n.t!('emails.message.footer_header')}
+
+      #{I18n.t!('emails.message.footer_explanation')}
+
+      #{list.title}
+
+      # [Unsubscribe](#{PublicUrls.unsubscribe(subscription)})
+
+      [#{I18n.t!('emails.message.footer_manage')}](#{PublicUrls.authenticate_url(address: address)})
     BODY
-
-    copy
   end
 
-  def permission_reminder(subscriber_list)
-    topic = if subscriber_list.url
-              "[#{subscriber_list.title}](#{Plek.new.website_root}#{subscriber_list.url})"
-            else
-              subscriber_list.title
-            end
-
-    I18n.t!("emails.message.permission_reminder", topic: topic)
+  def middle_section(list, message)
+    section = MessagePresenter.call(message)
+    section += "\n" + list.description if list.description.present?
+    section
   end
 end

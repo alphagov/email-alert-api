@@ -39,10 +39,10 @@ RSpec.describe "Sending an email", type: :request do
     body = email_data.dig(:personalisation, :body)
 
     expect(address).to eq("test@test.com")
-    expect(subject).to eq("Update from GOV.UK – Title")
+    expect(subject).to eq("Update from GOV.UK for: Title")
 
     expect(body).to include("Body")
-    expect(body).to include("View, unsubscribe or change the frequency of your subscriptions")
+    expect(body).to include("[Unsubscribe](http://www.dev.gov.uk/email/unsubscribe")
     expect(body).to include("gov.uk/email/manage/authenticate?address=")
   end
 end

@@ -1,15 +1,8 @@
 RSpec.describe MessageEmailBuilder do
-  let(:subscriber) { create(:subscriber, address: "test@example.com") }
-
-  let(:subscription) do
-    create(
-      :subscription,
-      subscriber: subscriber,
-      subscriber_list: build(:subscriber_list, title: "First Subscription"),
-    )
-  end
-
-  let(:message) { create(:message, title: "Title", body: "Some content") }
+  let(:message) { build(:message, title: "Title") }
+  let(:subscriber_list) { build(:subscriber_list, title: "My List") }
+  let(:subscription) { build(:subscription, subscriber_list: subscriber_list) }
+  let(:subscriber) { subscription.subscriber }
 
   describe ".call" do
     let(:params) do
@@ -27,30 +20,51 @@ RSpec.describe MessageEmailBuilder do
 
     let(:email) { Email.find(email_import.first) }
 
+    before do
+      allow(MessagePresenter).to receive(:call)
+        .with(message)
+        .and_return("presented_message\n")
+
+      allow(PublicUrls).to receive(:unsubscribe)
+        .with(subscription)
+        .and_return("unsubscribe_url")
+
+      allow(PublicUrls).to receive(:authenticate_url)
+        .with(address: subscriber.address)
+        .and_return("manage_url")
+    end
+
     it "returns an email import" do
       expect(email_import.count).to eq(1)
     end
 
     it "sets the subject" do
-      expect(email.subject).to eq("Update from GOV.UK – Title")
+      expect(email.subject).to eq("Update from GOV.UK for: Title")
     end
 
     it "sets the body" do
-      email = Email.find(email_import.first)
-
       expect(email.body).to eq(
         <<~BODY,
-          Update on GOV.UK.
+          Update from GOV.UK for:
+
+          # My List
 
           ---
-          Title
 
-          Some content
+          presented_message
+
 
           ---
-          ^You’re getting this email because you subscribed to immediate updates to ‘#{subscription.subscriber_list.title}’ on GOV.UK.
 
-          [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/manage/authenticate?address=test%40example.com)
+          # Why am I getting this email?
+
+          You asked GOV.UK to send you an email each time we add or update a page about:
+
+          My List
+
+          # [Unsubscribe](unsubscribe_url)
+
+          [Manage your email preferences](manage_url)
         BODY
       )
     end
@@ -63,32 +77,19 @@ RSpec.describe MessageEmailBuilder do
       expect { described_class.call([]) }.to raise_error(ArgumentError)
     end
 
-    context "with a URL and a description" do
-      let(:subscription) do
-        create(
-          :subscription,
-          subscriber: subscriber,
-          subscriber_list: build(:subscriber_list, title: "Second Subscription", url: "/subscription", description: "subscriber_list_description"),
-        )
-      end
+    context "with a description" do
+      let(:subscriber_list) { create(:subscriber_list, description: "description") }
 
       it "sets the body" do
-        email = Email.find(email_import.first)
-
-        expect(email.body).to eq(
+        expect(email.body).to include(
           <<~BODY,
-            Update on GOV.UK.
+            ---
+
+            presented_message
+
+            description
 
             ---
-            Title
-
-            Some content
-
-            subscriber_list_description
-            ---
-            ^You’re getting this email because you subscribed to immediate updates to ‘[#{subscription.subscriber_list.title}](#{Plek.new.website_root}#{subscription.subscriber_list.url})’ on GOV.UK.
-
-            [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/manage/authenticate?address=test%40example.com)
           BODY
         )
       end
