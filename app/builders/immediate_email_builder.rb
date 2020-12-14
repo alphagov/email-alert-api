@@ -23,7 +23,7 @@ private
       now = Time.zone.now
       recipients_and_content.map do |recipient_and_content|
         address = recipient_and_content.fetch(:address)
-        content = recipient_and_content[:content_change] || recipient_and_content[:message]
+        content = recipient_and_content.fetch(:content)
         subscriptions = recipient_and_content.fetch(:subscriptions)
 
         {

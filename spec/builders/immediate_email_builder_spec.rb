@@ -30,7 +30,7 @@ RSpec.describe ImmediateEmailBuilder do
       let(:content_change) { build(:content_change, title: "Title") }
 
       subject(:email) do
-        params.merge!(content_change: content_change)
+        params.merge!(content: content_change)
         import = described_class.call([params])
         Email.find(import.first)
       end
@@ -76,7 +76,7 @@ RSpec.describe ImmediateEmailBuilder do
       let(:message) { build(:message, title: "Title") }
 
       subject(:email) do
-        params.merge!(message: message)
+        params.merge!(content: message)
         import = described_class.call([params])
         Email.find(import.first)
       end
@@ -123,7 +123,7 @@ RSpec.describe ImmediateEmailBuilder do
       let(:content_change) { build(:content_change, title: "Title") }
 
       subject(:email) do
-        params.merge!(content_change: content_change)
+        params.merge!(content: content_change)
         import = described_class.call([params])
         Email.find(import.first)
       end
