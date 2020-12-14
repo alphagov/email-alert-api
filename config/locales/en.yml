@@ -22,6 +22,6 @@ en:
         subject: "Weekly update from GOV.UK"
         opening_line: Updates on GOV.UK this week.
         permission_reminder: "^You’re getting this email because you subscribed to weekly updates on these topics on GOV.UK."
-    description_header: "Page summary"
-    change_note_header: "Change made"
-    public_updated_at_header: "Time updated"
+    description_header: "Page summary:"
+    change_note_header: "Change made:"
+    public_updated_at_header: "Time updated:"
