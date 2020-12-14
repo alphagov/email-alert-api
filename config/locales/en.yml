@@ -5,13 +5,7 @@ en:
         daily: You’ll get one email a day
         weekly: You’ll get one email a week
         immediately: You’ll get an email each time we add or update a page
-    message:
-      subject: "Update from GOV.UK for: %{title}"
-      opening_line: "Update from GOV.UK for:"
-      footer_header: "Why am I getting this email?"
-      footer_explanation: "You asked GOV.UK to send you an email each time we add or update a page about:"
-      footer_manage: "Manage your email preferences"
-    content_change:
+    immediate:
       subject: "Update from GOV.UK for: %{title}"
       opening_line: "Update from GOV.UK for:"
       footer_header: "Why am I getting this email?"

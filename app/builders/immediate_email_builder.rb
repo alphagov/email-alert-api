@@ -1,4 +1,4 @@
-class ContentChangeEmailBuilder
+class ImmediateEmailBuilder
   def initialize(recipients_and_content)
     @recipients_and_content = recipients_and_content
   end
@@ -23,11 +23,13 @@ private
       now = Time.zone.now
       recipients_and_content.map do |recipient_and_content|
         address = recipient_and_content.fetch(:address)
+        content = recipient_and_content[:content_change] || recipient_and_content[:message]
+        subscriptions = recipient_and_content.fetch(:subscriptions)
 
         {
           address: address,
-          subject: subject(recipient_and_content.fetch(:content_change)),
-          body: body(recipient_and_content.fetch(:content_change), recipient_and_content.fetch(:subscriptions).first, address),
+          subject: subject(content),
+          body: body(content, subscriptions.first, address),
           subscriber_id: recipient_and_content.fetch(:subscriber_id),
           created_at: now,
           updated_at: now,
@@ -36,38 +38,40 @@ private
     end
   end
 
-  def subject(content_change)
-    I18n.t!("emails.content_change.subject", title: content_change.title)
+  def subject(content)
+    I18n.t!("emails.immediate.subject", title: content.title)
   end
 
-  def body(content_change, subscription, address)
+  def body(content, subscription, address)
     list = subscription.subscriber_list
 
     <<~BODY
-      #{I18n.t!('emails.content_change.opening_line')}
+      #{I18n.t!('emails.immediate.opening_line')}
 
       # #{list.title}
 
       ---
 
-      #{middle_section(list, content_change)}
+      #{middle_section(list, content)}
 
       ---
 
-      # #{I18n.t!('emails.content_change.footer_header')}
+      # #{I18n.t!('emails.immediate.footer_header')}
 
-      #{I18n.t!('emails.content_change.footer_explanation')}
+      #{I18n.t!('emails.immediate.footer_explanation')}
 
       #{list.title}
 
       # [Unsubscribe](#{PublicUrls.unsubscribe(subscription)})
 
-      [#{I18n.t!('emails.content_change.footer_manage')}](#{PublicUrls.authenticate_url(address: address)})
+      [#{I18n.t!('emails.immediate.footer_manage')}](#{PublicUrls.authenticate_url(address: address)})
     BODY
   end
 
-  def middle_section(list, content_change)
-    section = ContentChangePresenter.call(content_change)
+  def middle_section(list, content)
+    presenter = "#{content.class.name}Presenter".constantize
+    section = presenter.call(content)
+
     section += "\n" + list.description if list.description.present?
     section
   end

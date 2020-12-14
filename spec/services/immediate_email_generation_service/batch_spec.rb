@@ -56,13 +56,13 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
     context "when content is a content_change" do
       let(:instance) { described_class.new(content_change, subscription_ids_by_subscriber) }
 
-      it "uses ContentChangeEmailBuilder to build emails" do
+      it "uses ImmediateEmailBuilder to build emails" do
         emails_params = [
           email_parameters(content_change, subscriber1, subscriber1_subscriptions),
           email_parameters(content_change, subscriber2, subscriber2_subscriptions),
         ]
 
-        expect(ContentChangeEmailBuilder).to receive(:call)
+        expect(ImmediateEmailBuilder).to receive(:call)
                                          .with(emails_params)
                                          .and_call_original
         instance.generate_emails
@@ -73,30 +73,20 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
                               .with(content_change, 2)
         instance.generate_emails
       end
-
-      it "doesn't use MessageEmailBuilder" do
-        expect(MessageEmailBuilder).not_to receive(:call)
-        instance.generate_emails
-      end
     end
 
     context "when content is a message" do
       let(:instance) { described_class.new(message, subscription_ids_by_subscriber) }
 
-      it "uses MessageEmailBuilder to build emails" do
+      it "uses ImmediateEmailBuilder to build emails" do
         emails_params = [
           email_parameters(message, subscriber1, subscriber1_subscriptions),
           email_parameters(message, subscriber2, subscriber2_subscriptions),
         ]
 
-        expect(MessageEmailBuilder).to receive(:call)
+        expect(ImmediateEmailBuilder).to receive(:call)
                                    .with(emails_params)
                                    .and_call_original
-        instance.generate_emails
-      end
-
-      it "doesn't use ContentChangeEmailBuilder" do
-        expect(ContentChangeEmailBuilder).not_to receive(:call)
         instance.generate_emails
       end
     end
@@ -127,7 +117,7 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
                                         subscriber2,
                                         [subscriber2_active_subscription])
 
-        expect(ContentChangeEmailBuilder).to receive(:call)
+        expect(ImmediateEmailBuilder).to receive(:call)
                                          .with([email_params])
                                          .and_call_original
         instance.generate_emails
@@ -155,7 +145,7 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
                                         subscriber2,
                                         [subscriber2_immediate_subscription])
 
-        expect(ContentChangeEmailBuilder).to receive(:call)
+        expect(ImmediateEmailBuilder).to receive(:call)
                                          .with([email_params])
                                          .and_call_original
         instance.generate_emails
