@@ -58,7 +58,7 @@ private
 
       [Unsubscribe](#{PublicUrls.unsubscribe(subscription)})
 
-      [Manage your email preferences](#{PublicUrls.authenticate_url(address: address)})
+      [#{I18n.t!('emails.footer_manage')}](#{PublicUrls.authenticate_url(address: address)})
     BODY
   end
 

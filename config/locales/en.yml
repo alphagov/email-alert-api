@@ -1,5 +1,11 @@
 en:
   emails:
+    subscription_confirmation:
+      subject: "You’ve subscribed to: %{title}"
+      frequency:
+        daily: "You’ll get one email a day from GOV.UK about:"
+        weekly: "You’ll get one email a week from GOV.UK about:"
+        immediately: "You’ll get an email from GOV.UK each time we add or update a page about:"
     subscription_auth:
       frequency:
         daily: You’ll get one email a day
@@ -17,3 +23,4 @@ en:
     description_header: "Page summary:"
     change_note_header: "Change made:"
     public_updated_at_header: "Time updated:"
+    footer_manage: "Manage your email preferences"

@@ -16,46 +16,40 @@ private
 
   attr_reader :subscription
 
+  def subject
+    "You’ve subscribed to: #{subscriber_list.title}"
+  end
+
+  def body
+    <<~BODY
+      # You’ve subscribed to GOV.UK emails
+
+      #{I18n.t("emails.subscription_confirmation.frequency.#{subscription.frequency}")}
+
+      #{title_and_description}
+
+      Thanks
+      GOV.UK emails
+      https://www.gov.uk/help/update-email-notifications
+
+      [Unsubscribe](#{PublicUrls.unsubscribe(subscription)})
+
+      [#{I18n.t!('emails.footer_manage')}](#{PublicUrls.authenticate_url(address: subscriber.address)})
+    BODY
+  end
+
+  def title_and_description
+    title = subscriber_list.title
+    return title if subscriber_list.description.blank?
+
+    title + "\n\n" + subscriber_list.description
+  end
+
   def subscriber
     @subscriber ||= subscription.subscriber
   end
 
   def subscriber_list
     @subscriber_list ||= subscription.subscriber_list
-  end
-
-  def subject
-    "You've subscribed to #{subscriber_list.title}"
-  end
-
-  def body
-    <<~BODY
-      You’ll get an email each time there are changes to #{title}.
-
-      #{subscriber_list.description}
-
-      ---
-
-      #{ManageSubscriptionsLinkPresenter.call(subscriber.address)}
-    BODY
-  end
-
-  def title
-    return subscriber_list.title unless subscriber_list.url
-
-    "[#{subscriber_list.title}](#{title_url})"
-  end
-
-  def title_url
-    query = {
-      utm_source: subscriber_list.slug,
-      utm_medium: "email",
-      utm_campaign: "govuk-notifications-subscription-confirmation",
-    }.to_query
-
-    url = subscriber_list.url
-    tracked_url = url + (url.include?("?") ? "&" : "?") + query
-
-    PublicUrls.url_for(base_path: tracked_url)
   end
 end

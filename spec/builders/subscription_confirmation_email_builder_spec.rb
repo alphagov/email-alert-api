@@ -1,49 +1,82 @@
 RSpec.describe SubscriptionConfirmationEmailBuilder do
   describe ".call" do
     let(:subscriber_list) { create(:subscriber_list, title: "Example") }
-    let(:subscription) { create(:subscription, subscriber_list: subscriber_list) }
+    let(:subscriber) { create(:subscriber) }
+    let(:frequency) { "immediately" }
 
-    subject(:call) do
+    let(:subscription) do
+      create(
+        :subscription,
+        frequency: frequency,
+        subscriber_list: subscriber_list,
+        subscriber: subscriber,
+      )
+    end
+
+    before do
+      allow(PublicUrls).to receive(:unsubscribe)
+        .with(subscription)
+        .and_return("unsubscribe_url")
+
+      allow(PublicUrls).to receive(:authenticate_url)
+        .with(address: subscriber.address)
+        .and_return("manage_url")
+    end
+
+    subject(:email) do
       described_class.call(subscription: subscription)
     end
 
-    it { is_expected.to be_instance_of(Email) }
+    context "for immediate subscriptions" do
+      it "creates an email" do
+        expect(email.subject).to eq "You’ve subscribed to: Example"
 
-    it "creates an email" do
-      expect { call }.to change(Email, :count).by(1)
-    end
+        expect(email.body).to eq <<~BODY
+          # You’ve subscribed to GOV.UK emails
 
-    it "includes the title of the subscriber list" do
-      title = "Example"
-      email = call
-      expect(email.subject).to include(title)
-      expect(email.body).to include(title)
-      expect(email.body).to match(/You’ll get an email each time there are changes to/)
-    end
+          You’ll get an email from GOV.UK each time we add or update a page about:
 
-    it "includes a link to manage subscriptions" do
-      text = "View, unsubscribe or change the frequency of your subscriptions"
-      email = call
-      expect(email.body).to include(text)
-    end
+          Example
 
-    context "when the subscriber list has a URL" do
-      let(:subscriber_list) { create(:subscriber_list, url: "/example") }
+          Thanks
+          GOV.UK emails
+          https://www.gov.uk/help/update-email-notifications
 
-      it "includes a link to the subscriber list" do
-        link = "http://www.dev.gov.uk/example?utm_campaign=govuk-notifications-subscription-confirmation&utm_medium=email&utm_source=#{subscriber_list.slug}"
-        email = call
-        expect(email.body).to include(link)
+          [Unsubscribe](unsubscribe_url)
+
+          [Manage your email preferences](manage_url)
+        BODY
       end
     end
 
-    context "when the subscriber list has a description" do
-      let(:subscriber_list) { create(:subscriber_list, description: "Example description") }
+    context "for digest subscriptions" do
+      let(:frequency) { "daily" }
 
-      it "includes the description of the subscriber list" do
-        description = "Example description"
-        email = call
-        expect(email.body).to include(description)
+      it "creates an email" do
+        expect(email.body).to include <<~BODY
+          # You’ve subscribed to GOV.UK emails
+
+          You’ll get one email a day from GOV.UK about:
+
+          Example
+        BODY
+      end
+    end
+
+    context "when the list has a description" do
+      let(:subscriber_list) do
+        create(:subscriber_list, title: "Example", description: "A description")
+      end
+
+      it "includes the description" do
+        expect(email.body).to include <<~BODY
+          Example
+
+          A description
+
+          Thanks
+          GOV.UK emails
+        BODY
       end
     end
   end
