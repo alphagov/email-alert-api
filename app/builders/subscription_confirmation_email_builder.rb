@@ -26,7 +26,7 @@ private
 
       #{I18n.t("emails.subscription_confirmation.frequency.#{subscription.frequency}")}
 
-      #{title_and_description}
+      #{title_and_source_url}
 
       Thanks
       GOV.UK emails
@@ -38,11 +38,12 @@ private
     BODY
   end
 
-  def title_and_description
-    title = subscriber_list.title
-    return title if subscriber_list.description.blank?
+  def title_and_source_url
+    source_url = SourceUrlPresenter.call(subscriber_list.url)
+    result = subscriber_list.title
 
-    title + "\n\n" + subscriber_list.description
+    result += "\n\n" + source_url if source_url
+    result
   end
 
   def subscriber

@@ -63,16 +63,16 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
       end
     end
 
-    context "when the list has a description" do
-      let(:subscriber_list) do
-        create(:subscriber_list, title: "Example", description: "A description")
+    context "when the list has a source URL" do
+      before do
+        allow(SourceUrlPresenter).to receive(:call).and_return("Presented URL")
       end
 
       it "includes the description" do
         expect(email.body).to include <<~BODY
           Example
 
-          A description
+          Presented URL
 
           Thanks
           GOV.UK emails

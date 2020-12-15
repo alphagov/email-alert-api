@@ -37,6 +37,15 @@ RSpec.describe DigestEmailBuilder do
     )
   end
 
+  before do
+    allow(SourceUrlPresenter).to receive(:call)
+      .and_return(nil)
+
+    allow(SourceUrlPresenter).to receive(:call)
+      .with("/test-title-2")
+      .and_return("Presented URL")
+  end
+
   it "returns an Email" do
     expect(email).to be_a(Email)
   end
@@ -80,7 +89,7 @@ RSpec.describe DigestEmailBuilder do
 
         # [Test title 2](http://www.dev.gov.uk/test-title-2) &nbsp;
 
-        Test description
+        Presented URL
 
         presented_message
 

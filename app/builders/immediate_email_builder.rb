@@ -66,7 +66,8 @@ private
     presenter = "#{content.class.name}Presenter".constantize
     section = presenter.call(content).strip
 
-    section += "\n\n" + list.description if list.description.present?
+    source_url = SourceUrlPresenter.call(list.url)
+    section += "\n\n" + source_url if source_url
     section
   end
 end

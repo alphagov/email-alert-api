@@ -48,11 +48,9 @@ private
 
   def presented_header(segment)
     copy = "# #{presented_title(segment)} &nbsp;"
+    source_url = SourceUrlPresenter.call(segment.subscriber_list_url)
 
-    if segment.subscriber_list_description.present?
-      copy += "\n\n#{segment.subscriber_list_description}"
-    end
-
+    copy += "\n\n" + source_url if source_url
     copy
   end
 
