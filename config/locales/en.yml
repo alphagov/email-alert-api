@@ -5,14 +5,12 @@ en:
         daily: You’ll get one email a day
         weekly: You’ll get one email a week
         immediately: You’ll get an email each time we add or update a page
-    message:
-      subject: "Update from GOV.UK – %{title}"
-      opening_line: Update on GOV.UK.
-      permission_reminder: "^You’re getting this email because you subscribed to immediate updates to ‘%{topic}’ on GOV.UK."
-    content_change:
-      subject: "Update from GOV.UK – %{title}"
-      opening_line: Update on GOV.UK.
-      permission_reminder: "^You’re getting this email because you subscribed to immediate updates to ‘%{topic}’ on GOV.UK."
+    immediate:
+      subject: "Update from GOV.UK for: %{title}"
+      opening_line: "Update from GOV.UK for:"
+      footer_header: "Why am I getting this email?"
+      footer_explanation: "You asked GOV.UK to send you an email each time we add or update a page about:"
+      footer_manage: "Manage your email preferences"
     digests:
       daily:
         subject: "Daily update from GOV.UK"
@@ -22,6 +20,6 @@ en:
         subject: "Weekly update from GOV.UK"
         opening_line: Updates on GOV.UK this week.
         permission_reminder: "^You’re getting this email because you subscribed to weekly updates on these topics on GOV.UK."
-    description_header: "Page summary"
-    change_note_header: "Change made"
-    public_updated_at_header: "Time updated"
+    description_header: "Page summary:"
+    change_note_header: "Change made:"
+    public_updated_at_header: "Time updated:"

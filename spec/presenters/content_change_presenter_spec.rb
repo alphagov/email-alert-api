@@ -15,15 +15,15 @@ RSpec.describe ContentChangePresenter do
   describe ".call" do
     it "returns a presenter content change" do
       expected = <<~CONTENT_CHANGE
-        [Change title](http://www.dev.gov.uk/government/test-slug?#{utm_params(content_change.id, 'immediate')})
+        # [Change title](http://www.dev.gov.uk/government/test-slug?#{utm_params(content_change.id, 'immediate')})
 
-        Page summary
+        Page summary:
         Test description
 
-        Change made
+        Change made:
         Test change note
 
-        Time updated
+        Time updated:
         11:00am, 28 March 2018
       CONTENT_CHANGE
 
@@ -44,15 +44,15 @@ RSpec.describe ContentChangePresenter do
 
       it "strips markdown" do
         expected = <<~CONTENT_CHANGE
-          [Change title](http://www.dev.gov.uk/government/test-slug?#{utm_params(content_change.id, 'immediate')})
+          # [Change title](http://www.dev.gov.uk/government/test-slug?#{utm_params(content_change.id, 'immediate')})
 
-          Page summary
+          Page summary:
           more markdown
 
-          Change made
+          Change made:
           Test change note markdown test (https://gov.uk)
 
-          Time updated
+          Time updated:
           10:30am, 28 March 2018
         CONTENT_CHANGE
 
@@ -71,12 +71,12 @@ RSpec.describe ContentChangePresenter do
 
       it "doesn't leave an empty gap" do
         expected = <<~CONTENT_CHANGE
-          [title](http://www.dev.gov.uk/government/base_path?#{utm_params(content_change.id, 'immediate')})
+          # [title](http://www.dev.gov.uk/government/base_path?#{utm_params(content_change.id, 'immediate')})
 
-          Change made
+          Change made:
           change note
 
-          Time updated
+          Time updated:
           10:00am, 1 January 2018
         CONTENT_CHANGE
 
@@ -95,15 +95,15 @@ RSpec.describe ContentChangePresenter do
 
       it "includes the footnote at the bottom" do
         expected = <<~CONTENT_CHANGE
-          [title](http://www.dev.gov.uk/government/base_path?#{utm_params(content_change.id, 'immediate')})
+          # [title](http://www.dev.gov.uk/government/base_path?#{utm_params(content_change.id, 'immediate')})
 
-          Page summary
+          Page summary:
           description
 
-          Change made
+          Change made:
           change note
 
-          Time updated
+          Time updated:
           10:00am, 1 January 2018
 
           footnote

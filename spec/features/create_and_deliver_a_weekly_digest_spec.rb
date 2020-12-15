@@ -172,15 +172,15 @@ RSpec.describe "create and delive a weekly digest", type: :request do
 
       # Subscriber list one &nbsp;
 
-      [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
+      # [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
 
-      Page summary
+      Page summary:
       Description one
 
-      Change made
+      Change made:
       Change note one
 
-      Time updated
+      Time updated:
       10:00am, 1 January 2017
 
       ---
@@ -197,28 +197,28 @@ RSpec.describe "create and delive a weekly digest", type: :request do
 
       # Subscriber list two &nbsp;
 
-      [Title three](#{url}#{utm_params(content_change_two.id, 'weekly')})
+      # [Title three](#{url}#{utm_params(content_change_two.id, 'weekly')})
 
-      Page summary
+      Page summary:
       Description three
 
-      Change made
+      Change made:
       Change note three
 
-      Time updated
+      Time updated:
       9:00am, 4 January 2017
 
       ---
 
-      [Title four](#{url}#{utm_params(content_change_three.id, 'weekly')})
+      # [Title four](#{url}#{utm_params(content_change_three.id, 'weekly')})
 
-      Page summary
+      Page summary:
       Description four
 
-      Change made
+      Change made:
       Change note four
 
-      Time updated
+      Time updated:
       9:30am, 6 January 2017
 
       ---
@@ -240,15 +240,15 @@ RSpec.describe "create and delive a weekly digest", type: :request do
 
       # Subscriber list one &nbsp;
 
-      [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
+      # [Title one](#{url}#{utm_params(content_change_one.id, 'weekly')})
 
-      Page summary
+      Page summary:
       Description one
 
-      Change made
+      Change made:
       Change note one
 
-      Time updated
+      Time updated:
       10:00am, 1 January 2017
 
       ---
