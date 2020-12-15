@@ -17,6 +17,13 @@ RSpec.describe "support" do
     end
   end
 
+  describe "view_emails" do
+    it "outputs the latest emails sent to an email address" do
+      expect { Rake::Task["support:view_emails"].invoke("foo@example.org") }
+        .to output.to_stdout
+    end
+  end
+
   describe "resend_failed_emails:by_id" do
     before { Rake::Task["support:resend_failed_emails:by_id"].reenable }
 
