@@ -1,13 +1,9 @@
-class DigestEmailBuilder
+class DigestEmailBuilder < ApplicationBuilder
   def initialize(address:, digest_items:, digest_run:, subscriber_id:)
     @address = address
     @digest_items = digest_items
     @digest_run = digest_run
     @subscriber_id = subscriber_id
-  end
-
-  def self.call(**args)
-    new(**args).call
   end
 
   def call
@@ -18,8 +14,6 @@ class DigestEmailBuilder
       subscriber_id: subscriber_id,
     )
   end
-
-  private_class_method :new
 
 private
 

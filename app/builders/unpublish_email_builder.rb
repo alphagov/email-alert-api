@@ -1,16 +1,18 @@
-class UnpublishEmailBuilder
-  def self.call(*args)
-    new.call(*args)
+class UnpublishEmailBuilder < ApplicationBuilder
+  def initialize(email_parameters, template)
+    @email_parameters = email_parameters
+    @template = template
   end
 
-  def call(emails, template)
-    records = email_records(emails, template)
-    Email.insert_all!(records).pluck("id")
+  def call
+    Email.insert_all!(email_records).pluck("id")
   end
 
 private
 
-  def email_records(email_parameters, template)
+  attr_reader :email_parameters, :template
+
+  def email_records
     now = Time.zone.now
     email_parameters.map do |email|
       {

@@ -1,13 +1,9 @@
-class SubscriptionAuthEmailBuilder
+class SubscriptionAuthEmailBuilder < ApplicationBuilder
   def initialize(address:, token:, subscriber_list:, frequency:)
     @address = address
     @token = token
     @subscriber_list = subscriber_list
     @frequency = frequency
-  end
-
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
   end
 
   def call
@@ -17,8 +13,6 @@ class SubscriptionAuthEmailBuilder
       address: address,
     )
   end
-
-  private_class_method :new
 
 private
 
