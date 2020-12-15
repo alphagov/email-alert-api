@@ -23,17 +23,13 @@ namespace :support do
   task :view_emails, %i[email_address limit] => :environment do |_t, args|
     email_address = args[:email_address]
     limit = args[:limit].to_i || 10
-    subscriber = Subscriber.find_by_address(email_address)
-    abort("Cannot find any subscriber with email address #{email_address}.") if subscriber.nil?
+    raise ArgumentError, "Provide an email!" if email_address.blank?
 
-    subscription_ids = subscriber.subscriptions.pluck(:id)
-    subscriptions_contents = SubscriptionContent.where(subscription_id: subscription_ids).last(limit)
-    confirmation_emails = Email.where(subject: "Confirm your subscription", address: email_address).last(limit)
-    all_emails = (subscriptions_contents.map(&:email) + confirmation_emails).sort_by(&:created_at).last(limit)
-
-    results = all_emails.map do |email|
+    query = Email.where(address: email_address)
+    puts "#{query.count} emails sent to #{email_address}:"
+    results = query.limit(limit).map do |email|
       {
-        created_at: email.created_at,
+        created_at: email.created_at.strftime("%l:%M%P, %-d %B %Y"),
         status: email.status,
         email_subject: email.subject,
         email_uuid: email.id,
