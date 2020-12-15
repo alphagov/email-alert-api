@@ -1,4 +1,6 @@
 class SubscriberList < ApplicationRecord
+  self.ignored_columns = %w[description]
+
   include SymbolizeJSON
   include ActiveModel::Validations
 

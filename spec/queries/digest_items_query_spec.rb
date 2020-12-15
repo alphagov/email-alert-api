@@ -41,7 +41,6 @@ RSpec.describe DigestItemsQuery do
             subscription_id: subscription.id,
             subscriber_list_title: subscriber_list.title,
             subscriber_list_url: subscriber_list.url,
-            subscriber_list_description: subscriber_list.description,
             content: [content_change, message],
           )
       end
@@ -98,7 +97,7 @@ RSpec.describe DigestItemsQuery do
 
     context "with multiple subscriber lists" do
       let(:subscriber_list1) { create(:subscriber_list, title: "Subscriber List A") }
-      let(:subscriber_list2) { create(:subscriber_list, title: "Subscriber List B", url: "/example", description: "Description") }
+      let(:subscriber_list2) { create(:subscriber_list, title: "Subscriber List B", url: "/example") }
 
       let!(:subscription1) do
         create(
@@ -139,7 +138,6 @@ RSpec.describe DigestItemsQuery do
             subscription_id: subscription1.id,
             subscriber_list_title: subscriber_list1.title,
             subscriber_list_url: subscriber_list1.url,
-            subscriber_list_description: subscriber_list1.description,
             content: [content_change1],
           )
 
@@ -148,7 +146,6 @@ RSpec.describe DigestItemsQuery do
             subscription_id: subscription2.id,
             subscriber_list_title: subscriber_list2.title,
             subscriber_list_url: subscriber_list2.url,
-            subscriber_list_description: subscriber_list2.description,
             content: [content_change2],
           )
       end
@@ -164,7 +161,6 @@ RSpec.describe DigestItemsQuery do
             subscription_id: subscription1.id,
             subscriber_list_title: subscriber_list1.title,
             subscriber_list_url: subscriber_list1.url,
-            subscriber_list_description: subscriber_list1.description,
             content: [message],
           )
       end

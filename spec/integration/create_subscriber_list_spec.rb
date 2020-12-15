@@ -33,7 +33,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
           id
           title
           slug
-          description
           document_type
           created_at
           updated_at
@@ -246,29 +245,9 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
     end
 
-    context "creating subscriber list with a description" do
-      it "returns a 201" do
-        post "/subscriber-lists",
-             params: {
-               title: "General title",
-               description: "Some description",
-             }
-
-        expect(response.status).to eq(201)
-
-        subscriber_list = JSON.parse(response.body)["subscriber_list"]
-        expect(subscriber_list["description"]).to eq("Some description")
-      end
-    end
-
     context "an invalid subscriber list" do
       it "returns 422" do
-        post "/subscriber-lists",
-             params: {
-               title: "",
-               description: "Some description",
-             }
-
+        post "/subscriber-lists", params: { title: "" }
         expect(response.status).to eq(422)
 
         expect(JSON.parse(response.body)).to match(
