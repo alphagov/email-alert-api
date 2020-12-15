@@ -116,8 +116,7 @@ RSpec.describe ImmediateEmailBuilder do
       end
     end
 
-    context "when the list has a description" do
-      let(:subscriber_list) { create(:subscriber_list, description: "description") }
+    context "when the list has a source URL" do
       let(:content_change) { build(:content_change, title: "Title") }
 
       subject(:email) do
@@ -130,6 +129,8 @@ RSpec.describe ImmediateEmailBuilder do
         allow(ContentChangePresenter).to receive(:call)
           .with(content_change)
           .and_return("presented_content_change\n")
+
+        allow(SourceUrlPresenter).to receive(:call).and_return("Presented URL")
       end
 
       it "includes it in the body" do
@@ -139,7 +140,7 @@ RSpec.describe ImmediateEmailBuilder do
 
             presented_content_change
 
-            description
+            Presented URL
 
             ---
           BODY

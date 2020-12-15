@@ -35,6 +35,9 @@ RSpec.describe DigestEmailBuilder do
       .with(address: subscriber.address)
       .and_return("manage_url")
 
+    allow(SourceUrlPresenter).to receive(:call)
+      .and_return(nil)
+
     expect(ContentChangePresenter).to receive(:call)
       .and_return("presented_content_change\n")
 
@@ -107,10 +110,10 @@ RSpec.describe DigestEmailBuilder do
       end
     end
 
-    context "when the list has a description" do
+    context "when the list has a source URL" do
       before do
-        allow(digest_item).to receive(:subscriber_list_description)
-          .and_return("A description")
+        allow(SourceUrlPresenter).to receive(:call)
+          .and_return("Presented URL")
       end
 
       it "includes it in the body" do
@@ -120,7 +123,7 @@ RSpec.describe DigestEmailBuilder do
 
             # Test title 1
 
-            A description
+            Presented URL
 
             ---
           BODY
