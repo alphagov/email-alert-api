@@ -43,7 +43,6 @@ It will respond with the JSON response for the `GET` call above.
 The following fields are accepted:
 
 - title: The title of this particular list, which will be shown to the user;
-- description: Markdown text that will be used as copy in the confirmation
   email sent to a user;
 - url: A url to a page that reflects what the user signed up to and can be
   linked to with their list;
