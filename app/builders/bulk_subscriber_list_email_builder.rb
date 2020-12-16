@@ -1,19 +1,13 @@
-class BulkSubscriberListEmailBuilder
+class BulkSubscriberListEmailBuilder < ApplicationBuilder
   def initialize(subject:, body:, subscriber_lists:)
     @subject = subject
     @body = body
     @subscriber_lists = subscriber_lists
   end
 
-  def self.call(**args)
-    new(**args).call
-  end
-
   def call
     records.any? ? Email.insert_all!(records).pluck("id") : []
   end
-
-  private_class_method :new
 
 private
 

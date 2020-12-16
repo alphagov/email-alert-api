@@ -1,15 +1,11 @@
 require "redcarpet/render_strip"
 
-class ContentChangePresenter
+class ContentChangePresenter < ApplicationPresenter
   EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze
 
   def initialize(content_change, frequency: "immediate")
     @content_change = content_change
     @frequency = frequency
-  end
-
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
   end
 
   def call
@@ -20,8 +16,6 @@ class ContentChangePresenter
       footnote_markdown,
     ].compact.join("\n\n") + "\n"
   end
-
-  private_class_method :new
 
 private
 

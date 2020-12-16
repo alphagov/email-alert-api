@@ -1,10 +1,6 @@
-class SubscriptionConfirmationEmailBuilder
+class SubscriptionConfirmationEmailBuilder < ApplicationBuilder
   def initialize(subscription:)
     @subscription = subscription
-  end
-
-  def self.call(**args)
-    new(**args).call
   end
 
   def call
@@ -15,8 +11,6 @@ class SubscriptionConfirmationEmailBuilder
       subscriber_id: subscriber.id,
     )
   end
-
-  private_class_method :new
 
 private
 

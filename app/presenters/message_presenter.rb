@@ -1,11 +1,7 @@
-class MessagePresenter
+class MessagePresenter < ApplicationPresenter
   def initialize(message, frequency: "immediate")
     @message = message
     @frequency = frequency
-  end
-
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
   end
 
   def call
@@ -14,8 +10,6 @@ class MessagePresenter
       body,
     ].compact.join("\n\n") + "\n"
   end
-
-  private_class_method :new
 
 private
 

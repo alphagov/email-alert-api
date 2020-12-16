@@ -1,18 +1,12 @@
-class ImmediateEmailBuilder
+class ImmediateEmailBuilder < ApplicationBuilder
   def initialize(recipients_and_content)
     @recipients_and_content = recipients_and_content
-  end
-
-  def self.call(*args)
-    new(*args).call
   end
 
   def call
     Email.timed_bulk_insert(records, ImmediateEmailGenerationService::BATCH_SIZE)
          .pluck("id")
   end
-
-  private_class_method :new
 
 private
 

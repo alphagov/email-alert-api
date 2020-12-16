@@ -1,18 +1,12 @@
-class UnsubscribeLinkPresenter
+class UnsubscribeLinkPresenter < ApplicationPresenter
   def initialize(id, title)
     @id = id
     @title = title
   end
 
-  def self.call(*args)
-    new(*args).call
-  end
-
   def call
     "[Unsubscribe from ‘#{title}’](#{url})"
   end
-
-  private_class_method :new
 
 private
 
