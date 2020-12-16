@@ -42,6 +42,9 @@ private
   def undeliverable_failure?(error)
     return false unless error.is_a?(Notifications::Client::BadRequestError)
 
-    error.message.end_with?("Not a valid email address")
+    return true if error.message.end_with?("Not a valid email address")
+
+    # We have a hard limit in notify that cannot be bypassed here.
+    error.message.start_with?("BadRequestError: Your message is too long")
   end
 end

@@ -50,6 +50,25 @@ RSpec.describe SendEmailService::SendNotifyEmail do
         .to change { email.reload.status }.to("failed")
     end
 
+    it "marks an email as failed when it is too long" do
+      error_response = double(
+        code: 400,
+        body: {
+          errors: [
+            {
+              error: "BadRequestError",
+              message: "Your message is too long. Emails cannot be longer than 1000000 bytes.",
+            },
+          ],
+        }.to_json,
+      )
+      allow(notify_client).to receive(:send_email)
+        .and_raise(Notifications::Client::BadRequestError.new(error_response))
+
+      expect { described_class.call(email) }
+        .to change { email.reload.status }.to("failed")
+    end
+
     it "raises a SendEmailService::NotifyCommunicationFailure error for transient Notify failings" do
       expected_errors = [
         Notifications::Client::RequestError.new(double(code: 404, body: "not found")),
