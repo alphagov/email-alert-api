@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_17_084600) do
+ActiveRecord::Schema.define(version: 2020_12_18_095119) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,7 +126,6 @@ ActiveRecord::Schema.define(version: 2020_12_17_084600) do
     t.string "signon_user_uid"
     t.string "slug", null: false
     t.string "url"
-    t.string "description", default: "", null: false
     t.string "tags_digest"
     t.string "links_digest"
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
