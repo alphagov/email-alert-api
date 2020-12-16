@@ -33,14 +33,14 @@ private
   end
 
   def subject(content)
-    I18n.t!("emails.immediate.subject", title: content.title)
+    "Update from GOV.UK for: #{content.title}"
   end
 
   def body(content, subscription, address)
     list = subscription.subscriber_list
 
     <<~BODY
-      #{I18n.t!('emails.immediate.opening_line')}
+      Update from GOV.UK for:
 
       # #{list.title}
 
@@ -50,15 +50,15 @@ private
 
       ---
 
-      # #{I18n.t!('emails.immediate.footer_header')}
+      # Why am I getting this email?
 
-      #{I18n.t!('emails.immediate.footer_explanation')}
+      You asked GOV.UK to send you an email each time we add or update a page about:
 
       #{list.title}
 
       [Unsubscribe](#{PublicUrls.unsubscribe(subscription)})
 
-      [#{I18n.t!('emails.immediate.footer_manage')}](#{PublicUrls.authenticate_url(address: address)})
+      [Manage your email preferences](#{PublicUrls.authenticate_url(address: address)})
     BODY
   end
 
