@@ -45,17 +45,13 @@ class SubscriberList < ApplicationRecord
           SubscriberListsByCriteriaQuery.call(self, criteria_rules)
         }
 
-  def subscription_url
-    PublicUrls.subscription_url(slug: slug)
-  end
-
   def active_subscriptions_count
     subscriptions.active.count
   end
 
   def to_json(options = {})
     options[:except] ||= %i[signon_user_uid]
-    options[:methods] ||= %i[subscription_url active_subscriptions_count]
+    options[:methods] ||= %i[active_subscriptions_count]
     super(options)
   end
 

@@ -72,7 +72,6 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           tags: database_subscriber_list.tags,
           document_type: database_subscriber_list.document_type,
           slug: database_subscriber_list.slug,
-          subscription_url: database_subscriber_list.subscription_url,
           title: database_subscriber_list.title,
         )
       end

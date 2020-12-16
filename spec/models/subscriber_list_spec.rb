@@ -149,16 +149,6 @@ RSpec.describe SubscriberList, type: :model do
     end
   end
 
-  describe "#subscription_url" do
-    subject { SubscriberList.new(slug: "UKGOVUK_4567") }
-
-    it "returns the correct subscription URL" do
-      expect(subject.subscription_url).to eq(
-        "http://www.dev.gov.uk/email/subscriptions/new?topic_id=UKGOVUK_4567",
-      )
-    end
-  end
-
   describe "matching_criteria_rules scope" do
     it "can look up subscriber lists that match criteria rules" do
       list = create(:subscriber_list, tags: { format: { any: %w[match] } })
