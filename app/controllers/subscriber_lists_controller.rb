@@ -56,7 +56,6 @@ private
       document_type: params.fetch(:document_type, ""),
       email_document_supertype: params.fetch(:email_document_supertype, ""),
       government_document_supertype: params.fetch(:government_document_supertype, ""),
-      slug: params.fetch(:gov_delivery_id, nil),
     }
   end
 

@@ -14,9 +14,6 @@ RSpec.describe "Creating subscriber lists", type: :request do
 
     lookup_subscriber_list(params, expected_status: 200)
     expect(data.fetch(:subscriber_list)).to include(params)
-
-    gov_delivery_id = data.dig(:subscriber_list, :gov_delivery_id)
-    expect(gov_delivery_id).to eq("example")
   end
 
   scenario "creating and looking up legacy subscriber lists" do
@@ -38,9 +35,6 @@ RSpec.describe "Creating subscriber lists", type: :request do
 
     lookup_subscriber_list(legacy_params, expected_status: 200)
     expect(data.fetch(:subscriber_list)).to include(new_params)
-
-    gov_delivery_id = data.dig(:subscriber_list, :gov_delivery_id)
-    expect(gov_delivery_id).to eq("example")
   end
 
   def lookup_subscriber_list_by_slug(slug, expected_status: 200)

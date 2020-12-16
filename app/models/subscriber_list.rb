@@ -49,17 +49,13 @@ class SubscriberList < ApplicationRecord
     PublicUrls.subscription_url(slug: slug)
   end
 
-  def gov_delivery_id
-    slug
-  end
-
   def active_subscriptions_count
     subscriptions.active.count
   end
 
   def to_json(options = {})
     options[:except] ||= %i[signon_user_uid]
-    options[:methods] ||= %i[subscription_url gov_delivery_id active_subscriptions_count]
+    options[:methods] ||= %i[subscription_url active_subscriptions_count]
     super(options)
   end
 

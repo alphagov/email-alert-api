@@ -71,7 +71,6 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           links: database_subscriber_list.links,
           tags: database_subscriber_list.tags,
           document_type: database_subscriber_list.document_type,
-          gov_delivery_id: database_subscriber_list.slug,
           slug: database_subscriber_list.slug,
           subscription_url: database_subscriber_list.subscription_url,
           title: database_subscriber_list.title,
@@ -162,32 +161,6 @@ RSpec.describe "Browsing subscriber lists", type: :request do
       it "does not find subscriber lists when no query keys are provided" do
         get_subscriber_list({})
         expect(response.status).to eq(404)
-      end
-
-      context "when passing in gov_delivery_id" do
-        it "does not find a subscriber list of the gov_delivery_id does not match" do
-          get_subscriber_list(
-            tags: { topics: { any: %w[vat-rates] } },
-            document_type: "tax",
-            gov_delivery_id: "NEW-TOPIC",
-          )
-          expect(response.status).to eq(404)
-        end
-
-        it "finds the subscriber list if the gov_delivery_id matches" do
-          _alpha = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] } }, slug: "alpha")
-          beta = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] } }, slug: "beta")
-          _gamma = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] } }, slug: "gamma")
-
-          get_subscriber_list(
-            tags: { topics: { any: %w[vat-rates] } },
-            gov_delivery_id: "beta",
-          )
-          expect(response.status).to eq(200)
-
-          subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-          expect(subscriber_list.fetch("id")).to eq(beta.id)
-        end
       end
 
       context "when passing in content_purpose_supergroup" do
