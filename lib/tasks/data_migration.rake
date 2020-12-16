@@ -10,6 +10,22 @@ namespace :data_migration do
     SubscriberListMover.new(**args).call
   end
 
+  desc "Rename an alert type and all combinations of subscriptions to it"
+  task :rename_alert_subscription_lists, %i[from_slug to_slug] => :environment do |_t, args|
+    SubscriberList.where("tags->'alert_type' IS NOT NULL").find_each do |list|
+      next unless list.tags[:alert_type][:any].include? args[:from_slug]
+
+      new_tags = (list.tags[:alert_type][:any] - [args[:from_slug]] + [args[:to_slug]]).uniq
+
+      if (new_list = SubscriberList.where("tags->'alert_type' IS NOT NULL").find_all { |l| l.tags[:alert_type][:any].sort == new_tags.sort }.first) && list != new_list
+        SubscriberListMover(from_slug: list.slug, to_slug: new_list.slug)
+      else
+        list.tags = new_tags
+        list.save!
+      end
+    end
+  end
+
   desc "Find subscriber lists by title match"
   task :find_subscriber_list_by_title, %i[title] => :environment do |_t, args|
     title = args[:title]
