@@ -13,7 +13,6 @@ Gets a stored subscriber list that's relevant to just the `cabinet-office` organ
     "title": "Title of topic",
     "subscription_url": "https://public-url/subscribe-here?topic_id=123",
     "gov_delivery_id": "123",
-    "group_id": "f513e107-b2c6-44a6-8d8a-9e6a3ea37b9d",
     "document_type": "",
     "created_at": "20141010T12:00:00",
     "updated_at": "20141010T12:00:00",
@@ -31,7 +30,6 @@ Gets a stored subscriber list that's relevant to just the `cabinet-office` organ
 ```json
 {
   "title": "My title",
-  "group_id": "f513e107-b2c6-44a6-8d8a-9e6a3ea37b9d",
   "tags": {
     "any": {
       "organisations": ["my-org"],
@@ -49,8 +47,6 @@ The following fields are accepted:
   email sent to a user;
 - url: A url to a page that reflects what the user signed up to and can be
   linked to with their list;
-- group_id: A UUID that can be provided by an application to group together
-  lists for the same resource with different criteria;
 - links: An object where keys are a link type and the value is an object
   containing a key of "any" or "all" associated with an array of link values,
   this is used to match content changes and messages to the list;
