@@ -4,20 +4,11 @@ class SendEmailWorker < ApplicationWorker
   RATE_LIMIT_THRESHOLD = 21_600 # max requests in a minute, equates to 350 a second
   RATE_LIMIT_INTERVAL = 60
 
-  sidekiq_options lock: :until_executing,
-                  unique_across_queues: true,
-                  unique_args: :uniqueness_with, # in upcoming version 7 of sidekiq-unique-jobs, :unique_args is replaced with :lock_args
-                  on_conflict: :log
-
-  def self.uniqueness_with(args)
-    [args.first]
-  end
-
   def perform(email_id, metrics, queue)
     if rate_limit_exceeded?
       logger.warn("Rescheduling email #{email_id} due to exceeding rate limit")
       SendEmailWorker.set(queue: queue || "send_email_immediate")
-                           .perform_in(5.minutes, email_id, metrics, queue)
+        .perform_in(5.minutes, email_id, metrics, queue)
       return
     end
 
@@ -26,6 +17,7 @@ class SendEmailWorker < ApplicationWorker
       return unless email
 
       increment_rate_limiter
+
       SendEmailService.call(email: email, metrics: parsed_metrics(metrics))
     end
   end
