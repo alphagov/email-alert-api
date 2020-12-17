@@ -19,4 +19,11 @@ RSpec.describe AuthTokenGeneratorService do
       end
     end
   end
+
+  describe ".crypt" do
+    it "caches the encryptor for performance" do
+      expect(described_class.crypt).to be_a ActiveSupport::MessageEncryptor
+      expect(described_class.crypt).to equal(described_class.crypt)
+    end
+  end
 end

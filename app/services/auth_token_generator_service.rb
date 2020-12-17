@@ -14,16 +14,16 @@ class AuthTokenGeneratorService < ApplicationService
   end
 
   def call
-    len = ActiveSupport::MessageEncryptor.key_len(CIPHER)
-    key = ActiveSupport::KeyGenerator.new(secret).generate_key("", len)
-    crypt = ActiveSupport::MessageEncryptor.new(key, **OPTIONS)
-    token = crypt.encrypt_and_sign(data, expires_in: expiry)
+    token = self.class.crypt.encrypt_and_sign(data, expires_in: expiry)
     CGI.escape(token)
   end
 
-private
-
-  def secret
-    Rails.application.secrets.email_alert_auth_token
+  def self.crypt
+    @crypt ||= begin
+                 secret = Rails.application.secrets.email_alert_auth_token
+                 len = ActiveSupport::MessageEncryptor.key_len(CIPHER)
+                 key = ActiveSupport::KeyGenerator.new(secret).generate_key("", len)
+                 ActiveSupport::MessageEncryptor.new(key, **OPTIONS)
+               end
   end
 end
