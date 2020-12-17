@@ -1,7 +1,7 @@
 class DigestEmailBuilder < ApplicationBuilder
-  def initialize(address:, digest_items:, digest_run:, subscriber_id:)
+  def initialize(address:, digest_item:, digest_run:, subscriber_id:)
     @address = address
-    @digest_items = digest_items
+    @digest_item = digest_item
     @digest_run = digest_run
     @subscriber_id = subscriber_id
   end
@@ -9,7 +9,10 @@ class DigestEmailBuilder < ApplicationBuilder
   def call
     Email.create!(
       address: address,
-      subject: I18n.t!("emails.digests.#{digest_run.range}.subject"),
+      subject: I18n.t!(
+        "emails.digests.#{digest_run.range}.subject",
+        title: digest_item.subscriber_list_title,
+      ),
       body: body,
       subscriber_id: subscriber_id,
     )
@@ -17,65 +20,55 @@ class DigestEmailBuilder < ApplicationBuilder
 
 private
 
-  attr_reader :address, :digest_items, :digest_run, :subscriber_id
+  attr_reader :address, :digest_item, :digest_run, :subscriber_id
 
   def body
     <<~BODY
-      #{I18n.t!("emails.digests.#{digest_run.range}.opening_line")}
+      #{I18n.t("emails.digests.#{digest_run.range}.opening_line")}
+
+      #{title_and_optional_description}
+
+      ---
 
       #{presented_results}
-      #{I18n.t!("emails.digests.#{digest_run.range}.permission_reminder")}
 
-      #{ManageSubscriptionsLinkPresenter.call(address)}
+      ---
+
+      # Why am I getting this email?
+
+      #{I18n.t("emails.digests.#{digest_run.range}.footer_explanation")}
+
+      #{digest_item.subscriber_list_title}
+
+      [Unsubscribe](#{unsubscribe_url})
+
+      [#{I18n.t!('emails.digests.footer_manage')}](#{PublicUrls.authenticate_url(address: address)})
     BODY
   end
 
   def presented_results
-    digest_items.map { |result| presented_segment(result) }
-                .join("\n&nbsp;\n\n")
-  end
-
-  def presented_segment(segment)
-    <<~RESULT
-      #{presented_header(segment)}
-
-      #{presented_content(segment.content)}
-      ---
-
-      #{UnsubscribeLinkPresenter.call(segment.subscription_id, segment.subscriber_list_title)}
-    RESULT
-  end
-
-  def presented_header(segment)
-    copy = "# #{presented_title(segment)} &nbsp;"
-
-    if segment.subscriber_list_description.present?
-      copy += "\n\n#{segment.subscriber_list_description}"
+    changes = digest_item.content.map do |item|
+      presenter = "#{item.class.name}Presenter".constantize
+      presenter.call(item, frequency: digest_run.range)
     end
 
-    copy
+    changes.join("\n---\n\n").strip
   end
 
-  def presented_title(segment)
-    if segment.subscriber_list_url
-      "[#{segment.subscriber_list_title}](#{Plek.new.website_root}#{segment.subscriber_list_url})"
-    else
-      segment.subscriber_list_title
+  def title_and_optional_description
+    result = "# " + digest_item.subscriber_list_title
+
+    if digest_item.subscriber_list_description.present?
+      result += "\n\n" + digest_item.subscriber_list_description
     end
+
+    result
   end
 
-  def presented_content(content)
-    changes = content.map do |item|
-      case item
-      when ContentChange
-        ContentChangePresenter.call(item, frequency: digest_run.range)
-      when Message
-        MessagePresenter.call(item, frequency: digest_run.range)
-      else
-        raise "Unexpected content type: #{item.class}"
-      end
-    end
-
-    changes.join("\n---\n\n")
+  def unsubscribe_url
+    PublicUrls.unsubscribe(
+      subscription_id: digest_item.subscription_id,
+      subscriber_id: subscriber_id,
+    )
   end
 end

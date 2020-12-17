@@ -98,29 +98,31 @@ RSpec.describe "create and deliver a daily digest", type: :request do
       )
     end
 
-    subscriptions = Subscription.all
     content_changes = ContentChange.order(:created_at)
-    subscribers = Subscriber.all
 
     first_digest_stub = stub_notify_request(
       subscriber_one_address,
       first_expected_email_body(
-        subscriptions[0],
-        subscriptions[1],
         content_changes[0],
-        content_changes[1],
-        content_changes[2],
-        subscribers[0],
       ),
+      "Subscriber list one",
     )
 
     second_digest_stub = stub_notify_request(
-      subscriber_two_address,
+      subscriber_one_address,
       second_expected_email_body(
-        subscriptions[2],
-        content_changes[0],
-        subscribers[1],
+        content_changes[1],
+        content_changes[2],
       ),
+      "Subscriber list two",
+    )
+
+    third_digest_stub = stub_notify_request(
+      subscriber_two_address,
+      third_expected_email_body(
+        content_changes[0],
+      ),
+      "Subscriber list one",
     )
 
     travel_to(Time.zone.parse("2017-01-02 10:00")) do
@@ -130,18 +132,19 @@ RSpec.describe "create and deliver a daily digest", type: :request do
 
     expect(first_digest_stub).to have_been_requested
     expect(second_digest_stub).to have_been_requested
+    expect(third_digest_stub).to have_been_requested
   end
 
   def url
     "http://www.dev.gov.uk/base-path?"
   end
 
-  def stub_notify_request(email_address, email_body)
+  def stub_notify_request(email_address, email_body, title)
     body = hash_including(
       email_address: email_address,
       personalisation: hash_including(
-        "subject" => "Daily update from GOV.UK",
-        "body" => email_body,
+        "subject" => "Daily update from GOV.UK for: #{title}",
+        "body" => include(email_body),
       ),
     )
 
@@ -150,16 +153,13 @@ RSpec.describe "create and deliver a daily digest", type: :request do
       .to_return(body: {}.to_json)
   end
 
-  def first_expected_email_body(subscription_one,
-                                subscription_two,
-                                content_change_one,
-                                content_change_two,
-                                content_change_three,
-                                subscriber)
+  def first_expected_email_body(content_change_one)
     <<~BODY
-      Daily update from GOV.UK.
+      Daily update from GOV.UK for:
 
-      # Subscriber list one &nbsp;
+      # Subscriber list one
+
+      ---
 
       # [Title one](#{url}#{utm_params(content_change_one.id, 'daily')})
 
@@ -180,11 +180,21 @@ RSpec.describe "create and deliver a daily digest", type: :request do
 
       ---
 
-      [Unsubscribe from ‘Subscriber list one’](http://www.dev.gov.uk/email/unsubscribe/#{subscription_one.id})
+      # Why am I getting this email?
 
-      &nbsp;
+      You asked GOV.UK to send you one email a day about:
 
-      # Subscriber list two &nbsp;
+      Subscriber list one
+    BODY
+  end
+
+  def second_expected_email_body(content_change_two, content_change_three)
+    <<~BODY
+      Daily update from GOV.UK for:
+
+      # Subscriber list two
+
+      ---
 
       # [Title three](#{url}#{utm_params(content_change_two.id, 'daily')})
 
@@ -212,19 +222,21 @@ RSpec.describe "create and deliver a daily digest", type: :request do
 
       ---
 
-      [Unsubscribe from ‘Subscriber list two’](http://www.dev.gov.uk/email/unsubscribe/#{subscription_two.id})
+      # Why am I getting this email?
 
-      ^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK.
+      You asked GOV.UK to send you one email a day about:
 
-      [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/manage/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
+      Subscriber list two
     BODY
   end
 
-  def second_expected_email_body(subscription, content_change_one, subscriber)
+  def third_expected_email_body(content_change_one)
     <<~BODY
-      Daily update from GOV.UK.
+      Daily update from GOV.UK for:
 
-      # Subscriber list one &nbsp;
+      # Subscriber list one
+
+      ---
 
       # [Title one](#{url}#{utm_params(content_change_one.id, 'daily')})
 
@@ -245,11 +257,11 @@ RSpec.describe "create and deliver a daily digest", type: :request do
 
       ---
 
-      [Unsubscribe from ‘Subscriber list one’](http://www.dev.gov.uk/email/unsubscribe/#{subscription.id})
+      # Why am I getting this email?
 
-      ^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK.
+      You asked GOV.UK to send you one email a day about:
 
-      [View, unsubscribe or change the frequency of your subscriptions](http://www.dev.gov.uk/email/manage/authenticate?address=#{ERB::Util.url_encode(subscriber.address)})
+      Subscriber list one
     BODY
   end
 end
