@@ -1,7 +1,7 @@
 class RecoverLostJobsWorker::OldPendingEmailsCheck
   def call
     old_pending_emails = Email.where(status: :pending)
-                              .where("created_at <= ?", 1.hour.ago)
+                              .where("created_at <= ?", 3.hours.ago)
 
     recover(old_pending_emails)
   end
