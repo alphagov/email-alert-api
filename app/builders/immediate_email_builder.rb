@@ -56,7 +56,7 @@ private
 
       #{list.title}
 
-      [Unsubscribe](#{PublicUrls.unsubscribe(subscription)})
+      [Unsubscribe](#{unsubscribe_url(subscription)})
 
       [#{I18n.t!('emails.immediate.footer_manage')}](#{PublicUrls.authenticate_url(address: address)})
     BODY
@@ -68,5 +68,12 @@ private
 
     section += "\n\n" + list.description if list.description.present?
     section
+  end
+
+  def unsubscribe_url(subscription)
+    PublicUrls.unsubscribe(
+      subscription_id: subscription.id,
+      subscriber_id: subscription.subscriber_id,
+    )
   end
 end
