@@ -66,29 +66,4 @@ RSpec.describe SendEmailWorker do
       end
     end
   end
-
-  describe ".perform_async_in_queue" do
-    let(:email) { create(:email) }
-    let(:email_two) { create(:email) }
-
-    around do |example|
-      Sidekiq::Testing.fake! { example.run }
-    end
-
-    it "can add jobs to specific queues" do
-      described_class.perform_async_in_queue(email.id, queue: "send_email_immediate")
-      described_class.perform_async_in_queue(email_two.id, queue: "send_email_immediate_high")
-
-      expect(Sidekiq::Queues["send_email_immediate"].size).to eq(1)
-      expect(Sidekiq::Queues["send_email_immediate_high"].size).to eq(1)
-    end
-
-    it "doesn't add a job to any queue if the email is already queued" do
-      described_class.perform_async_in_queue(email.id, queue: "send_email_immediate")
-      described_class.perform_async_in_queue(email.id, queue: "send_email_immediate_high")
-
-      expect(Sidekiq::Queues["send_email_immediate"].size).to eq(1)
-      expect(Sidekiq::Queues["send_email_immediate_high"].size).to eq(0)
-    end
-  end
 end
