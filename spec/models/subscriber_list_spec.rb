@@ -87,20 +87,6 @@ RSpec.describe SubscriberList, type: :model do
         expect(build(:subscriber_list, url: "https://example.com/test")).to be_invalid
       end
     end
-
-    describe "group_id" do
-      it "is valid when group_id is a valid UUID" do
-        expect(build(:subscriber_list, group_id: SecureRandom.uuid)).to be_valid
-      end
-
-      it "is valid when group_id is nil" do
-        expect(build(:subscriber_list, group_id: nil)).to be_valid
-      end
-
-      it "is invalid when group_id is not a valid UUID" do
-        expect(build(:subscriber_list, group_id: "notavaliduuid")).to be_invalid
-      end
-    end
   end
 
   context "when a subscriber_list is deleted" do
