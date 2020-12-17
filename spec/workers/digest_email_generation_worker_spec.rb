@@ -51,22 +51,25 @@ RSpec.describe DigestEmailGenerationWorker do
       allow(DigestItemsQuery).to receive(:call).and_return(digest_items)
     end
 
-    it "delegates creating an email to DigestEmailBuilder" do
-      expect(DigestEmailBuilder)
-        .to receive(:call)
-        .with(address: subscriber.address,
-              digest_items: instance_of(Array),
-              digest_run: digest_run,
-              subscriber_id: subscriber.id)
-        .and_call_original
+    it "delegates creating emails to DigestEmailBuilder" do
+      digest_items.each do |digest_item|
+        expect(DigestEmailBuilder)
+          .to receive(:call)
+          .with(address: subscriber.address,
+                digest_item: digest_item,
+                digest_run: digest_run,
+                subscriber_id: subscriber.id)
+          .and_call_original
+      end
 
       expect { subject.perform(digest_run_subscriber.id) }
-        .to change { Email.count }.by(1)
+        .to change { Email.count }.by(2)
     end
 
     it "enqueues delivery" do
       expect(SendEmailWorker).to receive(:perform_async_in_queue)
         .with(instance_of(String), queue: :send_email_digest)
+        .exactly(2).times
 
       subject.perform(digest_run_subscriber.id)
     end
@@ -74,6 +77,7 @@ RSpec.describe DigestEmailGenerationWorker do
     it "records a metric for the delivery attempt" do
       expect(Metrics).to receive(:digest_email_generation)
         .with("daily")
+        .exactly(2).times
 
       subject.perform(digest_run_subscriber.id)
     end

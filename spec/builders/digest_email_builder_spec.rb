@@ -3,35 +3,24 @@ RSpec.describe DigestEmailBuilder do
   let(:subscriber) { build(:subscriber) }
   let(:address) { subscriber.address }
   let(:subscriber_id) { subscriber.id }
-  let(:digest_items) do
-    [
-      double(
-        subscription_id: "ABC1",
-        subscriber_list_title: "Test title 1",
-        subscriber_list_url: nil,
-        subscriber_list_description: "",
-        content: [
-          build(:content_change),
-          build(:message),
-        ],
-      ),
-      double(
-        subscription_id: "ABC2",
-        subscriber_list_title: "Test title 2",
-        subscriber_list_url: "/test-title-2",
-        subscriber_list_description: "Test description",
-        content: [
-          build(:message),
-          build(:content_change),
-        ],
-      ),
-    ]
+
+  let(:digest_item) do
+    double(
+      subscription_id: "ABC1",
+      subscriber_list_title: "Test title 1",
+      subscriber_list_url: nil,
+      subscriber_list_description: "",
+      content: [
+        build(:content_change),
+        build(:message),
+      ],
+    )
   end
 
   let(:email) do
     described_class.call(
       address: address,
-      digest_items: digest_items,
+      digest_item: digest_item,
       digest_run: digest_run,
       subscriber_id: subscriber_id,
     )
@@ -50,14 +39,10 @@ RSpec.describe DigestEmailBuilder do
       .to receive(:call).with("ABC1", "Test title 1")
       .and_return("unsubscribe_link_1")
 
-    expect(UnsubscribeLinkPresenter)
-      .to receive(:call).with("ABC2", "Test title 2")
-      .and_return("unsubscribe_link_2")
-
-    expect(ContentChangePresenter).to receive(:call).exactly(2).times
+    expect(ContentChangePresenter).to receive(:call)
       .and_return("presented_content_change\n")
 
-    expect(MessagePresenter).to receive(:call).exactly(2).times
+    expect(MessagePresenter).to receive(:call)
       .and_return("presented_message\n")
 
     expect(email.body).to eq(
@@ -75,22 +60,6 @@ RSpec.describe DigestEmailBuilder do
         ---
 
         unsubscribe_link_1
-
-        &nbsp;
-
-        # [Test title 2](http://www.dev.gov.uk/test-title-2) &nbsp;
-
-        Test description
-
-        presented_message
-
-        ---
-
-        presented_content_change
-
-        ---
-
-        unsubscribe_link_2
 
         ^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK.
 
