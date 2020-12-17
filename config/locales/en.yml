@@ -13,13 +13,14 @@ en:
       footer_manage: "Manage your email preferences"
     digests:
       daily:
-        subject: "Daily update from GOV.UK"
-        opening_line: Daily update from GOV.UK.
-        permission_reminder: "^You’re getting this email because you subscribed to daily updates on these topics on GOV.UK."
+        subject: "Daily update from GOV.UK for: %{title}"
+        opening_line: "Daily update from GOV.UK for:"
+        footer_explanation: "You asked GOV.UK to send you one email a day about:"
       weekly:
-        subject: "Weekly update from GOV.UK"
-        opening_line: Updates on GOV.UK this week.
-        permission_reminder: "^You’re getting this email because you subscribed to weekly updates on these topics on GOV.UK."
+        subject: "Weekly update from GOV.UK for: %{title}"
+        opening_line: "Weekly update from GOV.UK for:"
+        footer_explanation: "You asked GOV.UK to send you one email a week about:"
+      footer_manage: "Manage your email preferences"
     description_header: "Page summary:"
     change_note_header: "Change made:"
     public_updated_at_header: "Time updated:"
