@@ -4,6 +4,8 @@ RSpec.describe "data_migration" do
   describe "switch_to_daily_digest" do
     let!(:list1) { create :subscriber_list }
     let!(:list2) { create :subscriber_list }
+    let(:cutoff_date) { "2020-11-04" }
+
     let(:list_data) do
       [
         { "slug" => list1.slug },
@@ -25,7 +27,7 @@ RSpec.describe "data_migration" do
     end
 
     it "switches immediate subscriptions to daily" do
-      subscription = create :subscription, subscriber_list: list1, frequency: :immediately
+      subscription = create :subscription, subscriber_list: list1, frequency: :immediately, created_at: cutoff_date
 
       expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
         .to output.to_stdout
@@ -40,7 +42,7 @@ RSpec.describe "data_migration" do
     end
 
     it "does not change other subscriptions" do
-      digest = create :subscription, subscriber_list: list1, frequency: :daily
+      digest = create :subscription, subscriber_list: list1, frequency: :daily, created_at: cutoff_date
       non_list = create :subscription, frequency: :immediately
 
       expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
@@ -52,9 +54,9 @@ RSpec.describe "data_migration" do
 
     it "respects any reverted subscriptions" do
       subscriber = create :subscriber
-      create :subscription, :ended, subscriber_list: list1, frequency: :daily, source: :bulk_immediate_to_digest, subscriber: subscriber
-      reverted_subscription = create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
-      other_subscription = create :subscription, subscriber_list: list2, frequency: :immediately, subscriber: subscriber
+      create :subscription, :ended, subscriber_list: list1, frequency: :daily, source: :bulk_immediate_to_digest, subscriber: subscriber, created_at: cutoff_date
+      reverted_subscription = create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber, created_at: cutoff_date
+      other_subscription = create :subscription, subscriber_list: list2, frequency: :immediately, subscriber: subscriber, created_at: cutoff_date
 
       expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
         .to output.to_stdout
@@ -65,8 +67,8 @@ RSpec.describe "data_migration" do
 
     it "sends a summary email to affected subscribers" do
       subscriber = create :subscriber
-      create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
-      create :subscription, subscriber_list: list2, frequency: :immediately, subscriber: subscriber
+      create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber, created_at: "2020-05-05"
+      create :subscription, subscriber_list: list2, frequency: :immediately, subscriber: subscriber, created_at: cutoff_date
 
       expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
         .to output.to_stdout
@@ -76,6 +78,16 @@ RSpec.describe "data_migration" do
       expect(email_data[:personalisation][:subject]).to eq("Your GOV.UK email subscriptions")
       expect(email_data[:personalisation][:body]).to include(list1.title)
       expect(email_data[:personalisation][:body]).to include(list2.title)
+    end
+
+    it "does not change subscriptions where the intent was clear" do
+      subscriber = create :subscriber
+      newer_subscription = create :subscription, subscriber_list: list1, frequency: :immediately, subscriber: subscriber
+
+      expect { Rake::Task["data_migration:switch_to_daily_digest"].invoke }
+        .to output.to_stdout
+
+      expect(newer_subscription.reload).not_to be_ended
     end
 
     context "when a list is not found" do
@@ -90,8 +102,8 @@ RSpec.describe "data_migration" do
     end
 
     context "when the change fails for a subscriber" do
-      let!(:subscription1) { create :subscription, subscriber_list: list1, frequency: :immediately }
-      let!(:subscription2) { create :subscription, subscriber_list: list1, frequency: :immediately }
+      let!(:subscription1) { create :subscription, subscriber_list: list1, frequency: :immediately, created_at: cutoff_date }
+      let!(:subscription2) { create :subscription, subscriber_list: list1, frequency: :immediately, created_at: cutoff_date }
 
       before do
         allow(Subscription).to receive(:insert_all!).and_call_original

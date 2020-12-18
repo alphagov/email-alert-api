@@ -17,6 +17,7 @@ namespace :data_migration do
 
       to_migrate = subscription_scope.active
                                      .immediately
+                                     .where("subscriptions.created_at < ?", "2020-11-05")
                                      .where.not(subscriber_id: migrated_subscribers)
                                      .pluck(:id, :subscriber_id)
 
