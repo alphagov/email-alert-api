@@ -12,4 +12,11 @@ RSpec.describe "report" do
         .to output.to_stdout
     end
   end
+
+  describe "subscription_changes_after_switch_to_daily_digest" do
+    it "outputs a report" do
+      expect { Rake::Task["report:subscription_changes_after_switch_to_daily_digest"].invoke }
+        .to output.to_stdout
+    end
+  end
 end

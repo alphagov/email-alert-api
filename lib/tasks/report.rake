@@ -10,4 +10,9 @@ namespace :report do
     options = { slugs: ENV.fetch("SLUGS", ""), tags_pattern: ENV["TAGS_PATTERN"], links_pattern: ENV["LINKS_PATTERN"] }
     puts Reports::SubscriberListsReport.new(args[:date], **options).call
   end
+
+  desc "Temporary report for subscribers taking action in switching immediate subscribers to daily digest"
+  task subscription_changes_after_switch_to_daily_digest: :environment do
+    Reports::SubscriptionChangesAfterSwitchToDailyDigestReport.call
+  end
 end
