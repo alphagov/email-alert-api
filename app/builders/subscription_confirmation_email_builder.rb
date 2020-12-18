@@ -25,14 +25,12 @@ private
   end
 
   def subject
-    "You've subscribed to #{subscriber_list.title}"
+    "You’ve subscribed to #{subscriber_list.title}"
   end
 
   def body
     <<~BODY
-      You’ll get an email each time there are changes to #{title}.
-
-      #{subscriber_list.description}
+      #{title_and_optional_url}
 
       ---
 
@@ -40,22 +38,11 @@ private
     BODY
   end
 
-  def title
-    return subscriber_list.title unless subscriber_list.url
+  def title_and_optional_url
+    result = "You’ll get an email each time there are changes to #{subscriber_list.title}"
+    source_url = SourceUrlPresenter.call(subscriber_list.url)
 
-    "[#{subscriber_list.title}](#{title_url})"
-  end
-
-  def title_url
-    query = {
-      utm_source: subscriber_list.slug,
-      utm_medium: "email",
-      utm_campaign: "govuk-notifications-subscription-confirmation",
-    }.to_query
-
-    url = subscriber_list.url
-    tracked_url = url + (url.include?("?") ? "&" : "?") + query
-
-    PublicUrls.url_for(base_path: tracked_url)
+    result += "\n\n" + source_url if source_url
+    result
   end
 end

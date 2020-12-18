@@ -14,6 +14,6 @@ RSpec.describe "Subscribing to a subscriber_list", type: :request do
   def expect_a_subscription_confirmation_email_was_sent
     email_data = expect_an_email_was_sent
     subject = email_data.fetch(:personalisation).fetch(:subject)
-    expect(subject).to match(/You've subscribed to/)
+    expect(subject).to match(/You’ve subscribed to/)
   end
 end
