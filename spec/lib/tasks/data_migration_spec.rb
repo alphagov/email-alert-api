@@ -17,6 +17,13 @@ RSpec.describe "data_migration" do
       stub_notify
     end
 
+    around do |example|
+      ClimateControl.modify(GOVUK_NOTIFY_RECIPIENTS: "*") do
+        stub_notify
+        example.run
+      end
+    end
+
     it "switches immediate subscriptions to daily" do
       subscription = create :subscription, subscriber_list: list1, frequency: :immediately
 
