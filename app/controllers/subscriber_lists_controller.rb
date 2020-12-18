@@ -37,7 +37,6 @@ private
       title: title,
       slug: slugify(title),
       url: params[:url],
-      description: (params[:description] || ""),
       signon_user_uid: current_user.uid,
     )
   end

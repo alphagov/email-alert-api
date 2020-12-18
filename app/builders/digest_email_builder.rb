@@ -26,7 +26,7 @@ private
     <<~BODY
       #{I18n.t("emails.digests.#{digest_run.range}.opening_line")}
 
-      #{title_and_optional_description}
+      #{title_and_optional_url}
 
       ---
 
@@ -55,13 +55,11 @@ private
     changes.join("\n---\n\n").strip
   end
 
-  def title_and_optional_description
+  def title_and_optional_url
     result = "# " + digest_item.subscriber_list_title
+    source_url = SourceUrlPresenter.call(digest_item.subscriber_list_url)
 
-    if digest_item.subscriber_list_description.present?
-      result += "\n\n" + digest_item.subscriber_list_description
-    end
-
+    result += "\n\n" + source_url if source_url
     result
   end
 
