@@ -1,4 +1,4 @@
-RSpec.describe "create and deliver a daily digest", type: :request do
+RSpec.describe "Daily digests", type: :request do
   let(:list_one_topic_id) { "0eb5d0f0-d384-4f27-9da8-3f9e9b22a820" }
   let(:list_two_taxon_id) { "6416e4e0-c0c1-457a-8337-4bf8ed9d5f80" }
 
@@ -55,7 +55,7 @@ RSpec.describe "create and deliver a daily digest", type: :request do
     end
 
     email_data = expect_an_email_was_sent(
-      subject: "Daily update from GOV.UK for: Subscriber list one"
+      subject: "Daily update from GOV.UK for: Subscriber list one",
     )
 
     body = email_data.dig(:personalisation, :body)
@@ -94,11 +94,11 @@ RSpec.describe "create and deliver a daily digest", type: :request do
     end
 
     expect_an_email_was_sent(
-      subject: "Daily update from GOV.UK for: Subscriber list one"
+      subject: "Daily update from GOV.UK for: Subscriber list one",
     )
 
     expect_an_email_was_sent(
-      subject: "Daily update from GOV.UK for: Subscriber list two"
+      subject: "Daily update from GOV.UK for: Subscriber list two",
     )
   end
 end
