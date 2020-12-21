@@ -27,8 +27,6 @@ RSpec.describe "create and delive a weekly digest", type: :request do
     subscriber_one_address = "test-one@example.com"
     subscriber_two_address = "test-two@example.com"
 
-    non_weekly_digest_subscriber_address = "test-three@example.com"
-
     subscribe_to_subscriber_list(
       subscriber_list_one_id,
       address: subscriber_one_address,
@@ -45,12 +43,6 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       subscriber_list_one_id,
       address: subscriber_two_address,
       frequency: Frequency::WEEKLY,
-    )
-
-    subscribe_to_subscriber_list(
-      subscriber_list_two_id,
-      address: non_weekly_digest_subscriber_address,
-      frequency: Frequency::DAILY,
     )
 
     # publish two items to each list
