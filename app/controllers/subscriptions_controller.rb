@@ -17,7 +17,7 @@ class SubscriptionsController < ApplicationController
       SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_transactional)
     end
 
-    render json: { id: subscription.id, subscription: subscription }
+    render json: { subscription: subscription }
   end
 
   def show

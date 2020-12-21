@@ -91,7 +91,7 @@ RSpec.describe "Creating a subscription", type: :request do
 
       it "returns the existing subscription" do
         create_subscription
-        expect(data[:id]).to eq(subscription.id)
+        expect(data[:subscription][:id]).to eq(subscription.id)
         expect(data[:subscription][:frequency]).to eq frequency
       end
 
@@ -137,7 +137,7 @@ RSpec.describe "Creating a subscription", type: :request do
 
       it "returns the new subscription" do
         create_subscription
-        expect(data[:id]).to_not be_nil
+        expect(data[:subscription][:id]).to_not be_nil
         expect(data[:subscription][:frequency]).to eq frequency
       end
 
