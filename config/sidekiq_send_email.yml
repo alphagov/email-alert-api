@@ -1,6 +1,6 @@
 ---
 :verbose: false
-:concurrency: 32
+:concurrency: 22
 :logfile: ./log/sidekiq_send_email.json.log
 :timeout: 4
 :max_retries: 9
