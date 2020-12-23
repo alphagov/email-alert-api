@@ -1,0 +1,10 @@
+---
+:verbose: false
+:concurrency: 32
+:logfile: ./log/sidekiq_send_email.json.log
+:timeout: 4
+:max_retries: 9
+:queues:
+  # See here to understand priorities: https://github.com/mperham/sidekiq/wiki/Advanced-Options#queues
+  # Use powers of 2: higher priority groups are checked twice as often.
+  # @TODO
