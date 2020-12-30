@@ -56,4 +56,11 @@ namespace :data_migration do
       puts "Updated #{args[:key]} in #{list.title} to #{new_criteria}"
     end
   end
+
+  desc "Temporary task to update all existing Brexit checker list titles"
+  task temp_update_all_brexit_list_titles: :environment do
+    SubscriberList
+      .where("tags->'brexit_checklist_criteria' IS NOT NULL")
+      .update_all(title: "Brexit checker results")
+  end
 end
