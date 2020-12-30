@@ -174,8 +174,6 @@ RSpec.describe "create and deliver a daily digest", type: :request do
 
       ---
 
-      Title two
-
       Body
 
       ---
@@ -250,8 +248,6 @@ RSpec.describe "create and deliver a daily digest", type: :request do
       10:00am, 1 January 2017
 
       ---
-
-      Title two
 
       Body
 
