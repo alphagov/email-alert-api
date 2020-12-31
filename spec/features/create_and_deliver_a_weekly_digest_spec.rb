@@ -106,13 +106,11 @@ RSpec.describe "create and delive a weekly digest", type: :request do
     end
 
     content_changes = ContentChange.order(:created_at)
-    messages = Message.order(:created_at)
 
     first_digest_stub = stub_notify_request(
       subscriber_one_address,
       first_expected_email_body(
         content_changes[0],
-        messages[0],
       ),
       "Subscriber list one",
     )
@@ -130,7 +128,6 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       subscriber_two_address,
       third_expected_email_body(
         content_changes[0],
-        messages[0],
       ),
       "Subscriber list one",
     )
@@ -163,7 +160,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       .to_return(body: {}.to_json)
   end
 
-  def first_expected_email_body(content_change_one, message_one)
+  def first_expected_email_body(content_change_one)
     <<~BODY
       Weekly update from GOV.UK for:
 
@@ -183,8 +180,6 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       10:00am, 1 January 2017
 
       ---
-
-      [Title two](#{url}#{message_utm_params(message_one.id, 'weekly')})
 
       Body
 
@@ -240,7 +235,7 @@ RSpec.describe "create and delive a weekly digest", type: :request do
     BODY
   end
 
-  def third_expected_email_body(content_change_one, message_one)
+  def third_expected_email_body(content_change_one)
     <<~BODY
       Weekly update from GOV.UK for:
 
@@ -260,8 +255,6 @@ RSpec.describe "create and delive a weekly digest", type: :request do
       10:00am, 1 January 2017
 
       ---
-
-      [Title two](#{url}#{message_utm_params(message_one.id, 'weekly')})
 
       Body
 
