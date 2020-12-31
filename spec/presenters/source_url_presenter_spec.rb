@@ -14,6 +14,12 @@ RSpec.describe SourceUrlPresenter do
       expect(described_class.call(url)).to eq(
         "[You can view a copy of your results on GOV.UK](#{Plek.new.website_root + url})",
       )
+
+      url = "/get-ready-brexit-check/results?foo=bar"
+
+      expect(described_class.call(url)).to eq(
+        "[You can view a copy of your results on GOV.UK](#{Plek.new.website_root + url})",
+      )
     end
   end
 end
