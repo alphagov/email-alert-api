@@ -19,7 +19,6 @@ private
     params.permit(
       :sender_message_id,
       :title,
-      :url,
       :body,
       :priority,
     ).merge(

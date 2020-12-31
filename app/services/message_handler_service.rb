@@ -17,7 +17,7 @@ private
 
   def message_params
     params
-      .slice(:title, :url, :body, :sender_message_id)
+      .slice(:title, :body, :sender_message_id)
       .merge(
         criteria_rules: params[:criteria_rules].presence,
         priority: params.fetch(:priority, "normal"),

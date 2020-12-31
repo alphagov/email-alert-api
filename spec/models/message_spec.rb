@@ -1,34 +1,4 @@
 RSpec.describe Message do
-  describe "url validation" do
-    it "is valid when url is nil" do
-      expect(build(:message, url: nil)).to be_valid
-    end
-
-    it "is invalid when url is incorrectly formatted" do
-      expect(build(:message, url: "bad url")).to be_invalid
-    end
-
-    it "is valid when url is root-relative" do
-      expect(build(:message, url: "/test?query=this#anchor")).to be_valid
-    end
-
-    it "is invalid when url is relative but not a root path" do
-      expect(build(:message, url: "test")).to be_invalid
-    end
-
-    it "is valid when url is absolute and uses a https scheme" do
-      expect(build(:message, url: "https://example.com/test")).to be_valid
-    end
-
-    it "is invalid when url lacks a scheme" do
-      expect(build(:message, url: "//example.com/test")).to be_invalid
-    end
-
-    it "is invalid when url doesn't use https" do
-      expect(build(:message, url: "http://example.com/test")).to be_invalid
-    end
-  end
-
   describe "criteria_rules validation" do
     it "is valid with criteria_rules are valid" do
       message = build(
