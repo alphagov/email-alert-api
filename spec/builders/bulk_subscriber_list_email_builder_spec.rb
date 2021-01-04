@@ -1,6 +1,7 @@
 RSpec.describe BulkSubscriberListEmailBuilder do
   describe ".call" do
     let(:subscriber) { create(:subscriber) }
+    let(:body) { "email body" }
 
     let(:subscriber_lists) do
       [create(:subscriber_list, title: "My List"), create(:subscriber_list)]
@@ -9,7 +10,7 @@ RSpec.describe BulkSubscriberListEmailBuilder do
     let(:email) do
       email_ids = described_class.call(
         subject: "email subject",
-        body: "email body",
+        body: body,
         subscriber_lists: subscriber_lists,
       )
 
@@ -49,6 +50,23 @@ RSpec.describe BulkSubscriberListEmailBuilder do
 
           [Manage your email preferences](manage_url)
         BODY
+      end
+
+      context "when the list has a URL" do
+        let(:subscriber_lists) { [create(:subscriber_list, url: "/url")] }
+        let(:body) { "something [link](%LISTURL%)." }
+
+        it "is substituted in the body" do
+          expect(email.body).to include("something [link](/url).")
+        end
+      end
+
+      context "when the body requires a URL" do
+        let(:body) { "something [link](%LISTURL%)." }
+
+        it "is empty if the list has none" do
+          expect(email.body).to include("something [link]().")
+        end
       end
     end
 

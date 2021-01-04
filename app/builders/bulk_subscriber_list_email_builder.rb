@@ -35,7 +35,7 @@ private
       {
         address: subscriber.address,
         subject: subject,
-        body: body + footer(subscriber, subscription),
+        body: email_body(subscriber, subscription),
         subscriber_id: subscriber_id,
         created_at: now,
         updated_at: now,
@@ -43,7 +43,7 @@ private
     end
   end
 
-  def footer(subscriber, subscription)
+  def email_body(subscriber, subscription)
     list = subscription.subscriber_list
 
     unsubscribe_url = PublicUrls.unsubscribe(
@@ -55,7 +55,9 @@ private
       address: subscriber.address,
     )
 
-    "\n\n" + <<~FOOTER
+    <<~BODY
+      #{body.gsub('%LISTURL%', list.url.to_s)}
+
       ---
 
       # Why am I getting this email?
@@ -67,7 +69,7 @@ private
       [Unsubscribe](#{unsubscribe_url})
 
       [Manage your email preferences](#{manage_url})
-    FOOTER
+    BODY
   end
 
   def batches
