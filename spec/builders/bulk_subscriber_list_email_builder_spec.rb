@@ -25,7 +25,7 @@ RSpec.describe BulkSubscriberListEmailBuilder do
       end
     end
 
-    context "with an ended subscriptions" do
+    context "with an ended subscription" do
       let(:subscriber_lists) { [create(:subscription, :ended).subscriber_list] }
 
       it "imports no emails" do
@@ -33,23 +33,18 @@ RSpec.describe BulkSubscriberListEmailBuilder do
       end
     end
 
-    context "with many subscribers" do
+    context "with many subscriptions" do
       let(:subscriber_1) { create(:subscriber) }
-      let(:subscriber_2) { create(:subscriber) }
-      let(:subscriber_3) { create(:subscriber) }
 
       let(:subscriber_lists) do
         [
           create(:subscription, subscriber: subscriber_1).subscriber_list,
-          create(:subscription, subscriber: subscriber_2).subscriber_list,
-          create(:subscription, subscriber: subscriber_3).subscriber_list,
           create(:subscription, subscriber: subscriber_1).subscriber_list,
-          create(:subscription, subscriber: subscriber_2).subscriber_list,
         ]
       end
 
       it "should only create one email per subscriber" do
-        expect(email_import.count).to eq(3)
+        expect(email_import.count).to eq(1)
       end
     end
   end
