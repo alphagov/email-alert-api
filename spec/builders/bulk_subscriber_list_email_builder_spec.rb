@@ -18,6 +18,9 @@ RSpec.describe BulkSubscriberListEmailBuilder do
     end
 
     before do
+      allow(PublicUrls).to receive(:url_for)
+        .and_return("/url")
+
       allow(PublicUrls).to receive(:unsubscribe)
         .with(subscription_id: subscription.id, subscriber_id: subscriber.id)
         .and_return("unsubscribe_url")
@@ -58,14 +61,6 @@ RSpec.describe BulkSubscriberListEmailBuilder do
 
         it "is substituted in the body" do
           expect(email.body).to include("something [link](/url).")
-        end
-      end
-
-      context "when the body requires a URL" do
-        let(:body) { "something [link](%LISTURL%)." }
-
-        it "is empty if the list has none" do
-          expect(email.body).to include("something [link]().")
         end
       end
     end
