@@ -1,6 +1,4 @@
 class Message < ApplicationRecord
-  self.ignored_columns = %w[url]
-
   include SymbolizeJSON
 
   has_many :matched_messages
