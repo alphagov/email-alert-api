@@ -14,14 +14,10 @@ class DigestEmailGenerationWorker < ApplicationWorker
       )
 
       email_ids = digest_items.map do |digest_item|
-        create_email(digest_run_subscriber, digest_item)
+        email_id = create_email(digest_run_subscriber, digest_item)
+        fill_subscription_content(email_id, digest_item, digest_run_subscriber)
+        email_id
       end
-
-      fill_subscription_content(
-        email_ids,
-        digest_items,
-        digest_run_subscriber,
-      )
 
       digest_run_subscriber.update!(processed_at: Time.zone.now)
     end
@@ -46,21 +42,19 @@ private
     end
   end
 
-  def fill_subscription_content(email_ids, digest_items, digest_run_subscriber)
+  def fill_subscription_content(email_id, digest_item, digest_run_subscriber)
     now = Time.zone.now
 
-    records = digest_items.zip(email_ids).flat_map do |digest_item, email_id|
-      digest_item.content.map do |content|
-        {
-          email_id: email_id,
-          subscription_id: digest_item.subscription_id,
-          content_change_id: content.is_a?(ContentChange) ? content.id : nil,
-          message_id: content.is_a?(Message) ? content.id : nil,
-          digest_run_subscriber_id: digest_run_subscriber.id,
-          created_at: now,
-          updated_at: now,
-        }
-      end
+    records = digest_item.content.map do |content|
+      {
+        email_id: email_id,
+        subscription_id: digest_item.subscription_id,
+        content_change_id: content.is_a?(ContentChange) ? content.id : nil,
+        message_id: content.is_a?(Message) ? content.id : nil,
+        digest_run_subscriber_id: digest_run_subscriber.id,
+        created_at: now,
+        updated_at: now,
+      }
     end
 
     SubscriptionContent.insert_all!(records) if records.any?
