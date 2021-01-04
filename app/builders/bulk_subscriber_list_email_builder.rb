@@ -1,40 +1,49 @@
 class BulkSubscriberListEmailBuilder < ApplicationBuilder
+  BATCH_SIZE = 5000
+
   def initialize(subject:, body:, subscriber_lists:)
     @subject = subject
     @body = body
     @subscriber_lists = subscriber_lists
+    @now = Time.zone.now
   end
 
   def call
-    records.any? ? Email.insert_all!(records).pluck("id") : []
+    batches.flat_map do |batch|
+      records = records_for_batch(batch)
+      Email.insert_all!(records).pluck("id")
+    end
   end
 
 private
 
-  attr_reader :subject, :body, :subscriber_lists
+  attr_reader :subject, :body, :subscriber_lists, :now
 
-  def records
-    @records ||= begin
-      now = Time.zone.now
-      subscribers.map do |address, subscriber_id|
-        {
-          address: address,
-          subject: subject,
-          body: body,
-          subscriber_id: subscriber_id,
-          created_at: now,
-          updated_at: now,
-        }
-      end
+  def records_for_batch(subscriber_ids)
+    subscribers = Subscriber
+      .find(subscriber_ids)
+      .index_by(&:id)
+
+    subscriber_ids.map do |subscriber_id|
+      subscriber = subscribers[subscriber_id]
+
+      {
+        address: subscriber.address,
+        subject: subject,
+        body: body,
+        subscriber_id: subscriber_id,
+        created_at: now,
+        updated_at: now,
+      }
     end
   end
 
-  def subscribers
-    Subscriber
-      .not_nullified
-      .joins(:subscriptions)
-      .where(subscriptions: { ended_at: nil, subscriber_list: subscriber_lists })
+  def batches
+    Subscription
+      .active
+      .where(subscriber_list: subscriber_lists)
       .distinct
-      .pluck(:address, :id)
+      .pluck(:subscriber_id)
+      .each_slice(BATCH_SIZE)
   end
 end
