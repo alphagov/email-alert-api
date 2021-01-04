@@ -88,7 +88,6 @@ The following fields are accepted on this endpoint: `subject`, `from_address_id`
 {
   "sender_message_id": "4da7a6a7-c8f7-482e-aeb9-a26cea90780c",
   "title": "Message title",
-  "url": "/path-to-a-govuk-page",
   "body": "Message body",
   "criteria_rules": [
     { "type": "tag", "key": "tag-name", "value": "tag-value" }

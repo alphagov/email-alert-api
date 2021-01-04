@@ -17,12 +17,12 @@ RSpec.describe "Sending a message", type: :request do
   context "with an invalid request" do
     it "returns a 422" do
       post "/messages",
-           params: valid_request_params.merge(url: "invalid").to_json,
+           params: valid_request_params.merge(title: "").to_json,
            headers: json_headers
       expect(response.status).to eq(422)
       expect(JSON.parse(response.body)).to match(
         "error" => "Unprocessable Entity",
-        "details" => { "url" => ["must be a root-relative URL or an absolute URL"] },
+        "details" => { "title" => ["can't be blank"] },
       )
     end
   end
