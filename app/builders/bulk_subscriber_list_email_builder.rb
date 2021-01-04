@@ -9,9 +9,11 @@ class BulkSubscriberListEmailBuilder < ApplicationBuilder
   end
 
   def call
-    batches.flat_map do |batch|
-      records = records_for_batch(batch.to_h)
-      Email.insert_all!(records).pluck("id")
+    ActiveRecord::Base.transaction do
+      batches.flat_map do |batch|
+        records = records_for_batch(batch.to_h)
+        Email.insert_all!(records).pluck("id")
+      end
     end
   end
 
