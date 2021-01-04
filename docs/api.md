@@ -100,18 +100,6 @@ It will respond with `202 Accepted` (the call is queued).
 The following fields are accepted on this endpoint: `sender_message_id`,
 `title`, `url`, `body`, `criteria_rules`, and `priority`.
 
-### `POST /emails`
-
-```json
-{
-  "subject": "This is the subject/title of my bulletin",
-  "body": "Email body here",
-  "address": "recipient-email@address.com"
-}
-```
-
-It will respond with `202 Accepted` (the call is queued).
-
 ### `GET /subscribers/xxx/subscriptions`
 
 Gets a subscriber's subscriptions, in the form:

@@ -10,7 +10,6 @@ Rails.application.routes.draw do
 
     post "/notifications", to: "content_changes#create" # for backwards compaibility
 
-    resources :emails, only: %i[create]
     resources :content_changes, only: %i[create], path: "content-changes"
     resources :messages, only: %i[create]
     resources :spam_reports, path: "spam-reports", only: %i[create]
