@@ -1,55 +1,92 @@
 RSpec.describe BulkSubscriberListEmailBuilder do
-  let(:email_subject) { "email subject" }
-  let(:body) { "email body" }
-
   describe ".call" do
-    subject(:email_import) do
-      described_class.call(subject: email_subject, body: body, subscriber_lists: subscriber_lists)
+    let(:subscriber) { create(:subscriber) }
+    let(:body) { "email body" }
+
+    let(:subscriber_lists) do
+      [create(:subscriber_list, title: "My List"), create(:subscriber_list)]
     end
 
-    context "with one subscriber" do
-      let(:subscriber_lists) { [create(:subscription).subscriber_list] }
+    let(:email) do
+      email_ids = described_class.call(
+        subject: "email subject",
+        body: body,
+        subscriber_lists: subscriber_lists,
+      )
 
-      it "returns an email import" do
-        expect(email_import.count).to eq(1)
+      Email.find(email_ids).first
+    end
+
+    before do
+      allow(PublicUrls).to receive(:url_for)
+        .and_return("/url")
+
+      allow(PublicUrls).to receive(:unsubscribe)
+        .with(subscription_id: subscription.id, subscriber_id: subscriber.id)
+        .and_return("unsubscribe_url")
+
+      allow(PublicUrls).to receive(:authenticate_url)
+        .with(address: subscriber.address)
+        .and_return("manage_url")
+    end
+
+    context "with one subscription" do
+      let(:subscription) do
+        create(:subscription, subscriber: subscriber, subscriber_list: subscriber_lists.first)
       end
 
-      let(:email) { Email.find(email_import.first) }
-
-      it "sets the subject" do
+      it "creates an email" do
         expect(email.subject).to eq("email subject")
+
+        expect(email.body).to eq <<~BODY
+          email body
+
+          ---
+
+          # Why am I getting this email?
+
+          You asked GOV.UK to send you an email each time we add or update a page about:
+
+          My List
+
+          [Unsubscribe](unsubscribe_url)
+
+          [Manage your email preferences](manage_url)
+        BODY
       end
 
-      it "sets the body" do
-        expect(email.body).to eq("email body")
+      context "when the list has a URL" do
+        let(:subscriber_lists) { [create(:subscriber_list, url: "/url")] }
+        let(:body) { "something [link](%LISTURL%)." }
+
+        it "is substituted in the body" do
+          expect(email.body).to include("something [link](/url).")
+        end
       end
     end
 
-    context "with an ended subscriptions" do
-      let(:subscriber_lists) { [create(:subscription, :ended).subscriber_list] }
+    context "with an ended subscription" do
+      let(:subscription) do
+        create(:subscription, :ended, subscriber_list: subscriber_lists.first)
+      end
 
-      it "imports no emails" do
-        expect(email_import.count).to eq(0)
+      it "creates no emails" do
+        expect(email).to be_nil
       end
     end
 
-    context "with many subscribers" do
-      let(:subscriber_1) { create(:subscriber) }
-      let(:subscriber_2) { create(:subscriber) }
-      let(:subscriber_3) { create(:subscriber) }
+    context "with many subscriptions" do
+      let(:subscription) do
+        create(:subscription, subscriber: subscriber, subscriber_list: subscriber_lists.first, created_at: 1.hour.ago)
+      end
 
-      let(:subscriber_lists) do
-        [
-          create(:subscription, subscriber: subscriber_1).subscriber_list,
-          create(:subscription, subscriber: subscriber_2).subscriber_list,
-          create(:subscription, subscriber: subscriber_3).subscriber_list,
-          create(:subscription, subscriber: subscriber_1).subscriber_list,
-          create(:subscription, subscriber: subscriber_2).subscriber_list,
-        ]
+      before do
+        create(:subscription, subscriber: subscriber, subscriber_list: subscriber_lists.second, created_at: 2.days.ago)
       end
 
       it "should only create one email per subscriber" do
-        expect(email_import.count).to eq(3)
+        expect(email).to be_present
+        expect(Email.count).to eq(1)
       end
     end
   end
