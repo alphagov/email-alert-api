@@ -1,7 +1,6 @@
 RSpec.describe BulkSubscriberListEmailBuilder do
   describe ".call" do
     let(:subscriber) { create(:subscriber) }
-    let(:body) { "email body" }
 
     let(:subscriber_lists) do
       [create(:subscriber_list, title: "My List"), create(:subscriber_list)]
@@ -10,7 +9,7 @@ RSpec.describe BulkSubscriberListEmailBuilder do
     let(:email) do
       email_ids = described_class.call(
         subject: "email subject",
-        body: body,
+        body: "email body",
         subscriber_lists: subscriber_lists,
       )
 
@@ -18,8 +17,9 @@ RSpec.describe BulkSubscriberListEmailBuilder do
     end
 
     before do
-      allow(PublicUrls).to receive(:url_for)
-        .and_return("/url")
+      allow(BulkEmailBodyPresenter).to receive(:call)
+        .with("email body", subscriber_lists.first)
+        .and_return("presented body")
 
       allow(PublicUrls).to receive(:unsubscribe)
         .with(subscription_id: subscription.id, subscriber_id: subscriber.id)
@@ -39,7 +39,7 @@ RSpec.describe BulkSubscriberListEmailBuilder do
         expect(email.subject).to eq("email subject")
 
         expect(email.body).to eq <<~BODY
-          email body
+          presented body
 
           ---
 
@@ -53,15 +53,6 @@ RSpec.describe BulkSubscriberListEmailBuilder do
 
           [Manage your email preferences](manage_url)
         BODY
-      end
-
-      context "when the list has a URL" do
-        let(:subscriber_lists) { [create(:subscriber_list, url: "/url")] }
-        let(:body) { "something [link](%LISTURL%)." }
-
-        it "is substituted in the body" do
-          expect(email.body).to include("something [link](/url).")
-        end
       end
     end
 
