@@ -58,7 +58,7 @@ private
     )
 
     <<~BODY
-      #{body.gsub('%LISTURL%', PublicUrls.url_for(base_path: list.url.to_s))}
+      #{BulkEmailBodyPresenter.call(body, list)}
 
       ---
 
