@@ -22,7 +22,7 @@ namespace :support do
   desc "View most recent email emails for a subscriber"
   task :view_emails, %i[email_address limit] => :environment do |_t, args|
     email_address = args[:email_address]
-    limit = args[:limit].to_i || 10
+    limit = args[:limit] ? args[:limit].to_i : 10
     raise ArgumentError, "Provide an email!" if email_address.blank?
 
     query = Email.where(address: email_address)
