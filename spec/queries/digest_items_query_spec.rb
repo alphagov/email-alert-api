@@ -38,10 +38,7 @@ RSpec.describe DigestItemsQuery do
         expect(results.count).to eq(1)
         expect(results.first.to_h)
           .to match(
-            subscription_id: subscription.id,
-            subscriber_list_title: subscriber_list.title,
-            subscriber_list_url: subscriber_list.url,
-            subscriber_list_slug: subscriber_list.slug,
+            subscription: subscription,
             content: [content_change, message],
           )
       end
@@ -136,19 +133,13 @@ RSpec.describe DigestItemsQuery do
         expect(results.count).to eq(2)
         expect(results.first.to_h)
           .to match(
-            subscription_id: subscription1.id,
-            subscriber_list_title: subscriber_list1.title,
-            subscriber_list_url: subscriber_list1.url,
-            subscriber_list_slug: subscriber_list1.slug,
+            subscription: subscription1,
             content: [content_change1],
           )
 
         expect(results.last.to_h)
           .to match(
-            subscription_id: subscription2.id,
-            subscriber_list_title: subscriber_list2.title,
-            subscriber_list_url: subscriber_list2.url,
-            subscriber_list_slug: subscriber_list2.slug,
+            subscription: subscription2,
             content: [content_change2],
           )
       end
@@ -161,10 +152,7 @@ RSpec.describe DigestItemsQuery do
         expect(results.count).to eq(1)
         expect(results.first.to_h)
           .to match(
-            subscription_id: subscription1.id,
-            subscriber_list_title: subscriber_list1.title,
-            subscriber_list_url: subscriber_list1.url,
-            subscriber_list_slug: subscriber_list1.slug,
+            subscription: subscription1,
             content: [message],
           )
       end

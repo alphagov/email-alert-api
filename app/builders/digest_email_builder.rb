@@ -1,30 +1,30 @@
 class DigestEmailBuilder < ApplicationBuilder
-  def initialize(address:, digest_item:, digest_run:, subscriber_id:)
-    @address = address
-    @digest_item = digest_item
-    @digest_run = digest_run
-    @subscriber_id = subscriber_id
+  def initialize(content:, subscription:)
+    @content = content
+    @subscription = subscription
+    @subscriber = subscription.subscriber
+    @subscriber_list = subscription.subscriber_list
   end
 
   def call
     Email.create!(
-      address: address,
+      address: subscriber.address,
       subject: I18n.t!(
-        "emails.digests.#{digest_run.range}.subject",
-        title: digest_item.subscriber_list_title,
+        "emails.digests.#{subscription.frequency}.subject",
+        title: subscriber_list.title,
       ),
       body: body,
-      subscriber_id: subscriber_id,
+      subscriber_id: subscriber.id,
     )
   end
 
 private
 
-  attr_reader :address, :digest_item, :digest_run, :subscriber_id
+  attr_reader :content, :subscription, :subscriber_list, :subscriber
 
   def body
     <<~BODY
-      #{I18n.t("emails.digests.#{digest_run.range}.opening_line")}
+      #{I18n.t("emails.digests.#{subscription.frequency}.opening_line")}
 
       #{title_and_optional_url}
 
@@ -36,32 +36,32 @@ private
 
       # Why am I getting this email?
 
-      #{I18n.t("emails.digests.#{digest_run.range}.footer_explanation")}
+      #{I18n.t("emails.digests.#{subscription.frequency}.footer_explanation")}
 
-      #{digest_item.subscriber_list_title}
+      #{subscriber_list.title}
 
       [Unsubscribe](#{unsubscribe_url})
 
-      [#{I18n.t!('emails.digests.footer_manage')}](#{PublicUrls.authenticate_url(address: address)})
+      [#{I18n.t!('emails.digests.footer_manage')}](#{PublicUrls.authenticate_url(address: subscriber.address)})
     BODY
   end
 
   def presented_results
-    changes = digest_item.content.map do |item|
+    changes = content.map do |item|
       presenter = "#{item.class.name}Presenter".constantize
-      presenter.call(item, frequency: digest_run.range)
+      presenter.call(item, frequency: subscription.frequency)
     end
 
     changes.join("\n---\n\n").strip
   end
 
   def title_and_optional_url
-    result = "# " + digest_item.subscriber_list_title
+    result = "# " + subscriber_list.title
 
     source_url = SourceUrlPresenter.call(
-      digest_item.subscriber_list_url,
-      utm_source: digest_item.subscriber_list_slug,
-      utm_content: digest_run.range,
+      subscriber_list.url,
+      utm_source: subscriber_list.slug,
+      utm_content: subscription.frequency,
     )
 
     result += "\n\n" + source_url if source_url
@@ -70,8 +70,8 @@ private
 
   def unsubscribe_url
     PublicUrls.unsubscribe(
-      subscription_id: digest_item.subscription_id,
-      subscriber_id: subscriber_id,
+      subscription_id: subscription.id,
+      subscriber_id: subscriber.id,
     )
   end
 end

@@ -15,11 +15,11 @@ RSpec.describe DigestEmailGenerationWorker do
     let(:subscriber) { create(:subscriber) }
 
     let(:subscription_one) do
-      create(:subscription, subscriber: subscriber)
+      create(:subscription, subscriber: subscriber, frequency: "daily")
     end
 
     let(:subscription_two) do
-      create(:subscription, subscriber: subscriber)
+      create(:subscription, subscriber: subscriber, frequency: "daily")
     end
 
     let(:digest_run) { create(:digest_run) }
@@ -31,19 +31,11 @@ RSpec.describe DigestEmailGenerationWorker do
     let(:digest_items) do
       [
         double(
-          subscription_id: subscription_one.id,
-          subscriber_list_title: "Test title 1",
-          subscriber_list_url: nil,
-          subscriber_list_slug: nil,
-          subscriber_list_description: nil,
+          subscription: subscription_one,
           content: [create(:content_change)],
         ),
         double(
-          subscription_id: subscription_two.id,
-          subscriber_list_title: "Test title 2",
-          subscriber_list_url: "/test-title-2",
-          subscriber_list_slug: "a-slug",
-          subscriber_list_description: "Test description",
+          subscription: subscription_two,
           content: [create(:message)],
         ),
       ]
@@ -57,10 +49,8 @@ RSpec.describe DigestEmailGenerationWorker do
       digest_items.each do |digest_item|
         expect(DigestEmailBuilder)
           .to receive(:call)
-          .with(address: subscriber.address,
-                digest_item: digest_item,
-                digest_run: digest_run,
-                subscriber_id: subscriber.id)
+          .with(content: digest_item.content,
+                subscription: digest_item.subscription)
           .and_call_original
       end
 
