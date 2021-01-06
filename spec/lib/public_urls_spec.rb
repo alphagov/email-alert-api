@@ -6,20 +6,6 @@ RSpec.describe PublicUrls do
     end
   end
 
-  describe ".subscription_url" do
-    it "returns the GOV.UK url for the new subscription page" do
-      result = subject.subscription_url(slug: "foo_bar")
-      expect(result).to eq("http://www.dev.gov.uk/email/subscriptions/new?topic_id=foo_bar")
-    end
-  end
-
-  describe ".absolute_url" do
-    it "returns the absolute url given a base_path" do
-      expect(subject.absolute_url(path: "redirect/to/path")).to eq("http://www.dev.gov.uk/redirect/to/path")
-      expect(subject.absolute_url(path: "/redirect/to/path")).to eq("http://www.dev.gov.uk/redirect/to/path")
-    end
-  end
-
   describe ".unsubscribe" do
     it "returns the GOV.UK url for a one-click unsubscribe" do
       subscription = create :subscription
