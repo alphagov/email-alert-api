@@ -4,9 +4,10 @@ module PublicUrls
       uri = URI.join(website_root, base_path)
       query = Hash[URI.decode_www_form(uri.query.to_s)]
 
+      query = query.merge(default_utm_params) if params.key?(:utm_source)
       query = query.merge(params).compact
-      uri.query = URI.encode_www_form(query).presence
 
+      uri.query = URI.encode_www_form(query).presence
       uri.to_s
     end
 
@@ -23,6 +24,10 @@ module PublicUrls
 
     def website_root
       Plek.new.website_root
+    end
+
+    def default_utm_params
+      { utm_medium: "email", utm_campaign: "govuk-notifications" }
     end
   end
 end

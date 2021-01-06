@@ -28,8 +28,6 @@ private
       base_path: content_change.base_path,
       utm_source: content_change.id,
       utm_content: frequency,
-      utm_campaign: "govuk-notifications",
-      utm_medium: "email",
     )
   end
 

@@ -9,7 +9,6 @@ RSpec.describe BulkEmailBodyPresenter do
           base_path: "/url",
           utm_campaign: "govuk-notifications-bulk",
           utm_source: subscriber_list.slug,
-          utm_medium: "email",
         )
         .and_return("domain/url")
 

@@ -9,6 +9,19 @@ RSpec.describe PublicUrls do
       result = subject.url_for(base_path: "/foo/bar?foo=bar", other: "param")
       expect(result).to eq("http://www.dev.gov.uk/foo/bar?foo=bar&other=param")
     end
+
+    it "adds default UTM params if applicable" do
+      result = subject.url_for(base_path: "/foo/bar?foo=bar", utm_source: "source")
+      expect(result).to include("utm_source=source")
+      expect(result).to include("utm_medium=email")
+      expect(result).to include("utm_campaign=govuk-notifications")
+    end
+
+    it "allows default UTM params to be overridden" do
+      result = subject.url_for(base_path: "/foo/bar?foo=bar", utm_source: "source", utm_campaign: "other")
+      expect(result).to include("utm_campaign=other")
+      expect(result).to_not include("utm_campaign=govuk-notifications")
+    end
   end
 
   describe ".unsubscribe" do

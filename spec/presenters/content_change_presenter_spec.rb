@@ -16,8 +16,6 @@ RSpec.describe ContentChangePresenter do
         base_path: content_change.base_path,
         utm_source: content_change.id,
         utm_content: "immediate",
-        utm_campaign: "govuk-notifications",
-        utm_medium: "email",
       )
       .and_return("public_url")
   end

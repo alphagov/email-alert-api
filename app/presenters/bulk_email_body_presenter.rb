@@ -19,7 +19,6 @@ private
       base_path: subscriber_list.url,
       utm_source: subscriber_list.slug,
       utm_campaign: "govuk-notifications-bulk",
-      utm_medium: "email",
     )
   end
 end
