@@ -20,28 +20,19 @@ RSpec.describe "Create an auth token", type: :request do
            destination: destination,
          }
 
-    notify_email_stub = notify_email(subscriber, destination)
+    email_data = expect_an_email_was_sent(
+      address: "test@example.com",
+      subject: "Manage your GOV.UK email subscriptions",
+    )
+
     expect(response.status).to be 201
-    expect(notify_email_stub).to have_been_requested
-  end
 
-  def notify_email(subscriber, destination)
-    stub_request(:post, "https://api.notifications.service.gov.uk/v2/notifications/email")
-      .with(
-        "body" => hash_including(
-          "email_address" => subscriber.address,
-          "personalisation" => hash_including(
-            "subject" => "Manage your GOV.UK email subscriptions",
-            "body" => include("http://www.dev.gov.uk#{destination}?token="),
-          ),
-        ),
-      )
-      .with do |request|
-        token = request.body.match(/token=([^&\\]+)/)[1]
+    body = email_data.dig(:personalisation, :body)
+    expect(body).to include("http://www.dev.gov.uk#{destination}?token=")
+    token = body.match(/token=([^&\n]+)$/)[1]
 
-        expect(decrypt_and_verify_token(token)).to eq(
-          "subscriber_id" => subscriber.id,
-        )
-      end
+    expect(decrypt_and_verify_token(token)).to eq(
+      "subscriber_id" => subscriber.id,
+    )
   end
 end
