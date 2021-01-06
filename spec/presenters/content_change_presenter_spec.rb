@@ -1,6 +1,4 @@
 RSpec.describe ContentChangePresenter do
-  include UTMHelpers
-
   let(:content_change) do
     build(
       :content_change,
