@@ -13,16 +13,13 @@ private
   attr_reader :body, :subscriber_list
 
   def list_url
-    tracking_params = [
-      "utm_source=#{subscriber_list.slug}",
-      "utm_medium=email",
-      "utm_campaign=govuk-notifications-bulk",
-    ]
+    return "" unless subscriber_list.url
 
-    uri = URI.parse(subscriber_list.url)
-    uri.query = ([uri.query] + tracking_params).compact.join("&")
-    PublicUrls.url_for(base_path: uri.to_s)
-  rescue URI::InvalidURIError
-    ""
+    PublicUrls.url_for(
+      base_path: subscriber_list.url,
+      utm_source: subscriber_list.slug,
+      utm_campaign: "govuk-notifications-bulk",
+      utm_medium: "email",
+    )
   end
 end
