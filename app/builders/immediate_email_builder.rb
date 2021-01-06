@@ -66,7 +66,12 @@ private
     presenter = "#{content.class.name}Presenter".constantize
     section = presenter.call(content).strip
 
-    source_url = SourceUrlPresenter.call(list.url)
+    source_url = SourceUrlPresenter.call(
+      list.url,
+      utm_source: list.slug,
+      utm_content: "immediate",
+    )
+
     section += "\n\n" + source_url if source_url
     section
   end

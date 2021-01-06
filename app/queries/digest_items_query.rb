@@ -1,5 +1,5 @@
 class DigestItemsQuery
-  Result = Struct.new(:subscription_id, :subscriber_list_title, :subscriber_list_url, :content)
+  Result = Struct.new(:subscription_id, :subscriber_list_title, :subscriber_list_url, :subscriber_list_slug, :content)
 
   def initialize(subscriber, digest_run)
     @subscriber = subscriber
@@ -26,6 +26,7 @@ private
       memo[id] ||= {
         subscriber_list_title: record[:subscriber_list_title],
         subscriber_list_url: record[:subscriber_list_url],
+        subscriber_list_slug: record[:subscriber_list_slug],
       }
       memo[id][:content_changes] = Array(memo[id][:content_changes]) << record
     end
@@ -35,19 +36,20 @@ private
       memo[id] ||= {
         subscriber_list_title: record[:subscriber_list_title],
         subscriber_list_url: record[:subscriber_list_url],
+        subscriber_list_slug: record[:subscriber_list_slug],
       }
       memo[id][:messages] = Array(memo[id][:messages]) << record
     end
 
     result_data.map do |key, value|
       content = value.fetch(:content_changes, []) + value.fetch(:messages, [])
-      Result.new(key, value[:subscriber_list_title], value[:subscriber_list_url], content.sort_by(&:created_at))
+      Result.new(key, value[:subscriber_list_title], value[:subscriber_list_url], value[:subscriber_list_slug], content.sort_by(&:created_at))
     end
   end
 
   def fetch_content_changes
     ContentChange
-      .select("content_changes.*", "subscriptions.id AS subscription_id", "subscriber_lists.title AS subscriber_list_title", "subscriber_lists.url AS subscriber_list_url")
+      .select("content_changes.*", "subscriptions.id AS subscription_id", "subscriber_lists.title AS subscriber_list_title", "subscriber_lists.url AS subscriber_list_url", "subscriber_lists.slug AS subscriber_list_slug")
       .joins(matched_content_changes: { subscriber_list: { subscriptions: :subscriber } })
       .where(subscribers: { id: subscriber.id })
       .where(subscriptions: { frequency: Subscription.frequencies[digest_run.range] })
@@ -60,7 +62,7 @@ private
 
   def fetch_messages
     Message
-      .select("messages.*", "subscriptions.id AS subscription_id", "subscriber_lists.title AS subscriber_list_title", "subscriber_lists.url AS subscriber_list_url")
+      .select("messages.*", "subscriptions.id AS subscription_id", "subscriber_lists.title AS subscriber_list_title", "subscriber_lists.url AS subscriber_list_url", "subscriber_lists.slug AS subscriber_list_slug")
       .joins(matched_messages: { subscriber_list: { subscriptions: :subscriber } })
       .where(subscribers: { id: subscriber.id })
       .where(subscriptions: { frequency: Subscription.frequencies[digest_run.range] })
