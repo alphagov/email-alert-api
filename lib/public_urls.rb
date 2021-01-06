@@ -15,9 +15,10 @@ module PublicUrls
       url_for(base_path: "/email/manage/authenticate", address: address)
     end
 
-    def unsubscribe(subscription_id:, subscriber_id:)
+    def unsubscribe(subscription)
+      subscriber_id = subscription.subscriber_id
       token = AuthTokenGeneratorService.call(subscriber_id: subscriber_id)
-      url_for(base_path: "/email/unsubscribe/#{subscription_id}", token: token)
+      url_for(base_path: "/email/unsubscribe/#{subscription.id}", token: token)
     end
 
   private

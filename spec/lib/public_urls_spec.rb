@@ -33,7 +33,7 @@ RSpec.describe PublicUrls do
         .with(subscriber_id: subscription.subscriber_id)
         .and_return("token")
 
-      url = subject.unsubscribe(subscription_id: subscription.id, subscriber_id: subscription.subscriber_id)
+      url = subject.unsubscribe(subscription)
       expect(url).to eq("http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?token=token")
     end
   end

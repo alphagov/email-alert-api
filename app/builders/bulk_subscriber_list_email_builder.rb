@@ -47,11 +47,7 @@ private
 
   def email_body(subscriber, subscription)
     list = subscription.subscriber_list
-
-    unsubscribe_url = PublicUrls.unsubscribe(
-      subscription_id: subscription.id,
-      subscriber_id: subscriber.id,
-    )
+    unsubscribe_url = PublicUrls.unsubscribe(subscription)
 
     manage_url = PublicUrls.authenticate_url(
       address: subscriber.address,

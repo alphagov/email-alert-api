@@ -77,9 +77,6 @@ private
   end
 
   def unsubscribe_url(subscription)
-    PublicUrls.unsubscribe(
-      subscription_id: subscription.id,
-      subscriber_id: subscription.subscriber_id,
-    )
+    PublicUrls.unsubscribe(subscription)
   end
 end

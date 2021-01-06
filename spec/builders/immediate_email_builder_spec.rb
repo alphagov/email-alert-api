@@ -14,7 +14,7 @@ RSpec.describe ImmediateEmailBuilder do
 
     before do
       allow(PublicUrls).to receive(:unsubscribe)
-        .with(subscription_id: subscription.id, subscriber_id: subscriber.id)
+        .with(subscription)
         .and_return("unsubscribe_url")
 
       allow(PublicUrls).to receive(:authenticate_url)
