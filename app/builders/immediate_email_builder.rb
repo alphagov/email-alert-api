@@ -50,15 +50,7 @@ private
 
       ---
 
-      # Why am I getting this email?
-
-      You asked GOV.UK to send you an email each time we add or update a page about:
-
-      #{list.title}
-
-      [Unsubscribe](#{unsubscribe_url(subscription)})
-
-      [Manage your email preferences](#{PublicUrls.authenticate_url(address: subscriber.address)})
+      #{FooterPresenter.call(subscriber, subscription)}
     BODY
   end
 
@@ -74,9 +66,5 @@ private
 
     section += "\n\n" + source_url if source_url
     section
-  end
-
-  def unsubscribe_url(subscription)
-    PublicUrls.unsubscribe(subscription)
   end
 end

@@ -21,13 +21,9 @@ RSpec.describe DigestEmailBuilder do
   end
 
   before do
-    allow(PublicUrls).to receive(:unsubscribe)
-      .with(subscription)
-      .and_return("unsubscribe_url")
-
-    allow(PublicUrls).to receive(:authenticate_url)
-      .with(address: subscriber.address)
-      .and_return("manage_url")
+    allow(FooterPresenter).to receive(:call)
+      .with(subscriber, subscription)
+      .and_return("presented_footer")
 
     allow(SourceUrlPresenter).to receive(:call)
       .and_return(nil)
@@ -61,15 +57,7 @@ RSpec.describe DigestEmailBuilder do
 
             ---
 
-            # Why am I getting this email?
-
-            You asked GOV.UK to send you one email a day about:
-
-            Test title 1
-
-            [Unsubscribe](unsubscribe_url)
-
-            [Manage your email preferences](manage_url)
+            presented_footer
           BODY
         )
       end
@@ -89,16 +77,6 @@ RSpec.describe DigestEmailBuilder do
             # Test title 1
 
             ---
-          BODY
-        )
-
-        expect(email.body).to include(
-          <<~BODY,
-            # Why am I getting this email?
-
-            You asked GOV.UK to send you one email a week about:
-
-            Test title 1
           BODY
         )
       end

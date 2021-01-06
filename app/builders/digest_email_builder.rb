@@ -34,15 +34,7 @@ private
 
       ---
 
-      # Why am I getting this email?
-
-      #{I18n.t("emails.digests.#{subscription.frequency}.footer_explanation")}
-
-      #{subscriber_list.title}
-
-      [Unsubscribe](#{unsubscribe_url})
-
-      [#{I18n.t!('emails.digests.footer_manage')}](#{PublicUrls.authenticate_url(address: subscriber.address)})
+      #{FooterPresenter.call(subscriber, subscription)}
     BODY
   end
 
@@ -66,9 +58,5 @@ private
 
     result += "\n\n" + source_url if source_url
     result
-  end
-
-  def unsubscribe_url
-    PublicUrls.unsubscribe(subscription)
   end
 end
