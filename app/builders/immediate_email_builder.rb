@@ -16,15 +16,15 @@ private
     @records ||= begin
       now = Time.zone.now
       recipients_and_content.map do |recipient_and_content|
-        address = recipient_and_content.fetch(:address)
+        subscriber = recipient_and_content.fetch(:subscriber)
         content = recipient_and_content.fetch(:content)
         subscriptions = recipient_and_content.fetch(:subscriptions)
 
         {
-          address: address,
+          address: subscriber.address,
           subject: subject(content),
-          body: body(content, subscriptions.first, address),
-          subscriber_id: recipient_and_content.fetch(:subscriber_id),
+          body: body(content, subscriptions.first, subscriber),
+          subscriber_id: subscriber.id,
           created_at: now,
           updated_at: now,
         }
@@ -36,7 +36,7 @@ private
     "Update from GOV.UK for: #{content.title}"
   end
 
-  def body(content, subscription, address)
+  def body(content, subscription, subscriber)
     list = subscription.subscriber_list
 
     <<~BODY
@@ -58,7 +58,7 @@ private
 
       [Unsubscribe](#{unsubscribe_url(subscription)})
 
-      [Manage your email preferences](#{PublicUrls.authenticate_url(address: address)})
+      [Manage your email preferences](#{PublicUrls.authenticate_url(address: subscriber.address)})
     BODY
   end
 

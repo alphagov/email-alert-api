@@ -21,10 +21,9 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
 
   def email_parameters(content, subscriber, subscriptions)
     {
-      address: subscriber.address,
       content: content,
       subscriptions: subscriptions,
-      subscriber_id: subscriber.id,
+      subscriber: subscriber,
     }.compact
   end
 

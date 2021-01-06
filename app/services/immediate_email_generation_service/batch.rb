@@ -27,10 +27,9 @@ class ImmediateEmailGenerationService
       @email_parameters ||= begin
         subscriptions_to_fulfill_by_subscriber.map do |(subscriber, subscriptions)|
           {
-            address: subscriber.address,
+            subscriber: subscriber,
             content: content_change || message,
             subscriptions: subscriptions,
-            subscriber_id: subscriber.id,
           }.compact
         end
       end

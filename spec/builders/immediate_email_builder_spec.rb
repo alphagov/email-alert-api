@@ -6,9 +6,8 @@ RSpec.describe ImmediateEmailBuilder do
 
     let(:params) do
       {
-        address: subscriber.address,
         subscriptions: [subscription, "other_subscription"],
-        subscriber_id: subscriber.id,
+        subscriber: subscriber,
       }
     end
 
