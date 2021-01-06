@@ -8,18 +8,30 @@ RSpec.describe SourceUrlPresenter do
       expect(described_class.call("/a-url")).to be_nil
     end
 
-    it "returns a markdown URL to view Brexit Checker results" do
-      url = "/transition-check/results?foo=bar"
+    context "for new-style Brexit Checker results" do
+      it "returns a markdown URL to the results" do
+        url = "/transition-check/results?foo=bar"
 
-      expect(described_class.call(url)).to eq(
-        "[You can view a copy of your results on GOV.UK](#{Plek.new.website_root + url})",
-      )
+        allow(PublicUrls).to receive(:url_for)
+          .with(base_path: url).and_return("public_url")
 
-      url = "/get-ready-brexit-check/results?foo=bar"
+        expect(described_class.call(url)).to eq(
+          "[You can view a copy of your results on GOV.UK](public_url)",
+        )
+      end
+    end
 
-      expect(described_class.call(url)).to eq(
-        "[You can view a copy of your results on GOV.UK](#{Plek.new.website_root + url})",
-      )
+    context "for old-style Brexit Checker results" do
+      it "returns a markdown URL to the results" do
+        url = "/get-ready-brexit-check/results?foo=bar"
+
+        allow(PublicUrls).to receive(:url_for)
+          .with(base_path: url).and_return("public_url")
+
+        expect(described_class.call(url)).to eq(
+          "[You can view a copy of your results on GOV.UK](public_url)",
+        )
+      end
     end
   end
 end
