@@ -11,7 +11,6 @@ Gets a stored subscriber list that's relevant to just the `cabinet-office` organ
   "subscriber_list": {
     "id": "an id",
     "title": "Title of topic",
-    "subscription_url": "https://public-url/subscribe-here?topic_id=123",
     "gov_delivery_id": "123",
     "document_type": "",
     "created_at": "20141010T12:00:00",
