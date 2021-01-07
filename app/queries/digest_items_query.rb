@@ -35,7 +35,6 @@ private
       .where(subscriptions: { id: subscriptions })
       .where("content_changes.created_at >= ?", digest_run.starts_at)
       .where("content_changes.created_at < ?", digest_run.ends_at)
-      .order("subscriber_lists.title ASC", "content_changes.created_at ASC")
       .uniq(&:content_id)
       .group_by(&:subscription_id)
   end
@@ -47,7 +46,6 @@ private
       .where(subscriptions: { id: subscriptions })
       .where("messages.created_at >= ?", digest_run.starts_at)
       .where("messages.created_at < ?", digest_run.ends_at)
-      .order("subscriber_lists.title ASC", "messages.created_at ASC")
       .uniq(&:id)
       .group_by(&:subscription_id)
   end

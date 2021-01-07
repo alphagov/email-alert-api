@@ -74,7 +74,7 @@ RSpec.describe DigestItemsQuery do
 
       it "returns only one content change if there are multiple with same content_id" do
         content_id = SecureRandom.uuid
-        content_change1 = create(
+        create(
           :content_change,
           :matched,
           content_id: content_id,
@@ -89,7 +89,7 @@ RSpec.describe DigestItemsQuery do
           created_at: digest_run.starts_at + 20.minutes,
         )
 
-        expect(results.first.content).to match([content_change1])
+        expect(results.first.content.count).to eq(1)
       end
     end
 
