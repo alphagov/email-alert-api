@@ -29,10 +29,10 @@ RSpec.describe DigestEmailBuilder do
       .and_return(nil)
 
     expect(ContentChangePresenter).to receive(:call)
-      .and_return("presented_content_change\n")
+      .and_return("presented_content_change")
 
     expect(MessagePresenter).to receive(:call)
-      .and_return("presented_message\n")
+      .and_return("presented_message")
   end
 
   describe ".call" do

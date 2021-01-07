@@ -33,7 +33,7 @@ RSpec.describe ImmediateEmailBuilder do
       before do
         allow(ContentChangePresenter).to receive(:call)
           .with(content_change)
-          .and_return("presented_content_change\n")
+          .and_return("presented_content_change")
       end
 
       it "creates an email" do
@@ -70,7 +70,7 @@ RSpec.describe ImmediateEmailBuilder do
       before do
         allow(MessagePresenter).to receive(:call)
           .with(message)
-          .and_return("presented_message\n")
+          .and_return("presented_message")
       end
 
       it "creates an email" do
@@ -107,7 +107,7 @@ RSpec.describe ImmediateEmailBuilder do
       before do
         allow(ContentChangePresenter).to receive(:call)
           .with(content_change)
-          .and_return("presented_content_change\n")
+          .and_return("presented_content_change")
 
         allow(SourceUrlPresenter).to receive(:call).and_return("Presented URL")
       end

@@ -56,7 +56,7 @@ private
 
   def middle_section(list, content)
     presenter = "#{content.class.name}Presenter".constantize
-    section = presenter.call(content).strip
+    section = presenter.call(content)
 
     source_url = SourceUrlPresenter.call(
       list.url,

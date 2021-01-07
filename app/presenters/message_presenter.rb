@@ -5,7 +5,7 @@ class MessagePresenter < ApplicationPresenter
   end
 
   def call
-    message.body + "\n"
+    message.body
   end
 
 private

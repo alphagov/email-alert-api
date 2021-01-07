@@ -44,7 +44,7 @@ private
       presenter.call(item, frequency: subscription.frequency)
     end
 
-    changes.join("\n---\n\n").strip
+    changes.join("\n\n---\n\n").strip
   end
 
   def title_and_optional_url
