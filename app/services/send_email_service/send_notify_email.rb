@@ -44,7 +44,11 @@ private
 
     return true if error.message.end_with?("Not a valid email address")
 
-    # We have a hard limit in notify that cannot be bypassed here.
+    # This is a stop-gap fix for an issue where this system can produce emails
+    # that are so long they exceed Notify's limit of 2MB. As emails of this
+    # size will never succeed we mark them as failures. Ideally this will
+    # eventually be resolved by some product thinking that only allows the
+    # system to create emails within a reasonable length.
     error.message.start_with?("BadRequestError: Your message is too long")
   end
 end
