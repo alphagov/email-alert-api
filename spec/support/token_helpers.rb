@@ -8,6 +8,6 @@ module TokenHelpers
 
     options = AuthTokenGeneratorService::OPTIONS
     crypt = ActiveSupport::MessageEncryptor.new(key, **options)
-    crypt.decrypt_and_verify(CGI.unescape(data))
+    crypt.decrypt_and_verify(data)
   end
 end
