@@ -57,7 +57,12 @@ private
 
   def title_and_optional_url
     result = "# " + digest_item.subscriber_list_title
-    source_url = SourceUrlPresenter.call(digest_item.subscriber_list_url)
+
+    source_url = SourceUrlPresenter.call(
+      digest_item.subscriber_list_url,
+      utm_source: digest_item.subscriber_list_slug,
+      utm_content: digest_run.range,
+    )
 
     result += "\n\n" + source_url if source_url
     result

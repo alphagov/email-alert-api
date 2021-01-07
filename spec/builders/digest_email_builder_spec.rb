@@ -9,6 +9,7 @@ RSpec.describe DigestEmailBuilder do
       subscription_id: "ABC1",
       subscriber_list_title: "Test title 1",
       subscriber_list_url: nil,
+      subscriber_list_slug: nil,
       subscriber_list_description: "",
       content: [
         build(:content_change),

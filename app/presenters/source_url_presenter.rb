@@ -1,6 +1,8 @@
 class SourceUrlPresenter < ApplicationPresenter
-  def initialize(url)
+  def initialize(url, utm_source:, utm_content:)
     @url = url
+    @utm_source = utm_source
+    @utm_content = utm_content
   end
 
   def call
@@ -9,10 +11,15 @@ class SourceUrlPresenter < ApplicationPresenter
 
 private
 
-  attr_reader :url
+  attr_reader :url, :utm_source, :utm_content
 
   def url_for_brexit_checker_results
-    absolute_url = PublicUrls.url_for(base_path: url)
+    absolute_url = PublicUrls.url_for(
+      base_path: url,
+      utm_source: utm_source,
+      utm_content: utm_content,
+    )
+
     "[You can view a copy of your results on GOV.UK](#{absolute_url})"
   end
 

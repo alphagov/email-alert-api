@@ -1,29 +1,23 @@
 module PublicUrls
   class << self
-    def url_for(base_path:)
-      URI.join(website_root, base_path).to_s
-    end
+    def url_for(base_path:, **params)
+      uri = URI.join(website_root, base_path)
+      query = Hash[URI.decode_www_form(uri.query.to_s)]
 
-    # This url is for the page mid-way through the signup journey where the user
-    # enters their email address. At present, multiple frontends start the
-    # journey, e.g. collections, but eventually all these will be consolidated
-    # into email-alert-frontend and this URL will no longer be needed.
-    def subscription_url(slug:)
-      params = param(:topic_id, slug)
-      "#{website_root}/email/subscriptions/new?#{params}"
+      query = query.merge(default_utm_params) if params.key?(:utm_source)
+      query = query.merge(params).compact
+
+      uri.query = URI.encode_www_form(query).presence
+      uri.to_s
     end
 
     def authenticate_url(address:)
-      "#{website_root}/email/manage/authenticate?#{param('address', address)}"
-    end
-
-    def absolute_url(path:)
-      File.join(website_root, path)
+      url_for(base_path: "/email/manage/authenticate", address: address)
     end
 
     def unsubscribe(subscription_id:, subscriber_id:)
       token = AuthTokenGeneratorService.call(subscriber_id: subscriber_id)
-      "#{website_root}/email/unsubscribe/#{subscription_id}?token=#{token}"
+      url_for(base_path: "/email/unsubscribe/#{subscription_id}", token: token)
     end
 
   private
@@ -32,8 +26,8 @@ module PublicUrls
       Plek.new.website_root
     end
 
-    def param(key, value)
-      "#{key}=#{ERB::Util.url_encode(value)}"
+    def default_utm_params
+      { utm_medium: "email", utm_campaign: "govuk-notifications" }
     end
   end
 end

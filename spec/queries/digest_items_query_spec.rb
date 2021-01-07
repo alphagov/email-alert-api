@@ -41,6 +41,7 @@ RSpec.describe DigestItemsQuery do
             subscription_id: subscription.id,
             subscriber_list_title: subscriber_list.title,
             subscriber_list_url: subscriber_list.url,
+            subscriber_list_slug: subscriber_list.slug,
             content: [content_change, message],
           )
       end
@@ -138,6 +139,7 @@ RSpec.describe DigestItemsQuery do
             subscription_id: subscription1.id,
             subscriber_list_title: subscriber_list1.title,
             subscriber_list_url: subscriber_list1.url,
+            subscriber_list_slug: subscriber_list1.slug,
             content: [content_change1],
           )
 
@@ -146,6 +148,7 @@ RSpec.describe DigestItemsQuery do
             subscription_id: subscription2.id,
             subscriber_list_title: subscriber_list2.title,
             subscriber_list_url: subscriber_list2.url,
+            subscriber_list_slug: subscriber_list2.slug,
             content: [content_change2],
           )
       end
@@ -161,6 +164,7 @@ RSpec.describe DigestItemsQuery do
             subscription_id: subscription1.id,
             subscriber_list_title: subscriber_list1.title,
             subscriber_list_url: subscriber_list1.url,
+            subscriber_list_slug: subscriber_list1.slug,
             content: [message],
           )
       end

@@ -24,12 +24,11 @@ private
   delegate :title, :description, :change_note, :footnote, to: :content_change
 
   def content_url
-    utm_source = content_change.id
-    utm_medium = "email"
-    utm_campaign = "govuk-notifications"
-    utm_content = frequency
-    base_path = "#{content_change.base_path}?utm_source=#{utm_source}&utm_medium=#{utm_medium}&utm_campaign=#{utm_campaign}&utm_content=#{utm_content}"
-    PublicUrls.url_for(base_path: base_path)
+    PublicUrls.url_for(
+      base_path: content_change.base_path,
+      utm_source: content_change.id,
+      utm_content: frequency,
+    )
   end
 
   def public_updated_at_header

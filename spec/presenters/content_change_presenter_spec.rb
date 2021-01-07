@@ -1,6 +1,4 @@
 RSpec.describe ContentChangePresenter do
-  include UTMHelpers
-
   let(:content_change) do
     build(
       :content_change,
@@ -12,10 +10,20 @@ RSpec.describe ContentChangePresenter do
     )
   end
 
+  before do
+    allow(PublicUrls).to receive(:url_for)
+      .with(
+        base_path: content_change.base_path,
+        utm_source: content_change.id,
+        utm_content: "immediate",
+      )
+      .and_return("public_url")
+  end
+
   describe ".call" do
     it "returns a presenter content change" do
       expected = <<~CONTENT_CHANGE
-        # [Change title](http://www.dev.gov.uk/government/test-slug?#{utm_params(content_change.id, 'immediate')})
+        # [Change title](public_url)
 
         Page summary:
         Test description
@@ -44,7 +52,7 @@ RSpec.describe ContentChangePresenter do
 
       it "strips markdown" do
         expected = <<~CONTENT_CHANGE
-          # [Change title](http://www.dev.gov.uk/government/test-slug?#{utm_params(content_change.id, 'immediate')})
+          # [Change title](public_url)
 
           Page summary:
           more markdown
@@ -71,7 +79,7 @@ RSpec.describe ContentChangePresenter do
 
       it "doesn't leave an empty gap" do
         expected = <<~CONTENT_CHANGE
-          # [title](http://www.dev.gov.uk/government/base_path?#{utm_params(content_change.id, 'immediate')})
+          # [title](public_url)
 
           Change made:
           change note
@@ -95,7 +103,7 @@ RSpec.describe ContentChangePresenter do
 
       it "includes the footnote at the bottom" do
         expected = <<~CONTENT_CHANGE
-          # [title](http://www.dev.gov.uk/government/base_path?#{utm_params(content_change.id, 'immediate')})
+          # [title](public_url)
 
           Page summary:
           description

@@ -1,22 +1,26 @@
 RSpec.describe PublicUrls do
   describe ".url_for" do
-    it "returns the GOV.UK url for the content item" do
+    it "returns a GOV.UK URL for a base path" do
       result = subject.url_for(base_path: "/foo/bar")
       expect(result).to eq("http://www.dev.gov.uk/foo/bar")
     end
-  end
 
-  describe ".subscription_url" do
-    it "returns the GOV.UK url for the new subscription page" do
-      result = subject.subscription_url(slug: "foo_bar")
-      expect(result).to eq("http://www.dev.gov.uk/email/subscriptions/new?topic_id=foo_bar")
+    it "extends any query params in the URL" do
+      result = subject.url_for(base_path: "/foo/bar?foo=bar", other: "param")
+      expect(result).to eq("http://www.dev.gov.uk/foo/bar?foo=bar&other=param")
     end
-  end
 
-  describe ".absolute_url" do
-    it "returns the absolute url given a base_path" do
-      expect(subject.absolute_url(path: "redirect/to/path")).to eq("http://www.dev.gov.uk/redirect/to/path")
-      expect(subject.absolute_url(path: "/redirect/to/path")).to eq("http://www.dev.gov.uk/redirect/to/path")
+    it "adds default UTM params if applicable" do
+      result = subject.url_for(base_path: "/foo/bar?foo=bar", utm_source: "source")
+      expect(result).to include("utm_source=source")
+      expect(result).to include("utm_medium=email")
+      expect(result).to include("utm_campaign=govuk-notifications")
+    end
+
+    it "allows default UTM params to be overridden" do
+      result = subject.url_for(base_path: "/foo/bar?foo=bar", utm_source: "source", utm_campaign: "other")
+      expect(result).to include("utm_campaign=other")
+      expect(result).to_not include("utm_campaign=govuk-notifications")
     end
   end
 

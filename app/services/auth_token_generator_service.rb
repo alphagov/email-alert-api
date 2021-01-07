@@ -14,8 +14,7 @@ class AuthTokenGeneratorService < ApplicationService
   end
 
   def call
-    token = self.class.crypt.encrypt_and_sign(data, expires_in: expiry)
-    CGI.escape(token)
+    self.class.crypt.encrypt_and_sign(data, expires_in: expiry)
   end
 
   def self.crypt

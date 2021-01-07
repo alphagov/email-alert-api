@@ -22,7 +22,7 @@ class ContentItem
   end
 
   def url
-    @url ||= PublicUrls.absolute_url(path: @path)
+    @url ||= PublicUrls.url_for(base_path: @path)
   end
 
   def content_store_data
