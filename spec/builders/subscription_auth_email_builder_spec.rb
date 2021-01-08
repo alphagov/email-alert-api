@@ -14,6 +14,15 @@ RSpec.describe SubscriptionAuthEmailBuilder do
       )
     end
 
+    before do
+      allow(PublicUrls).to receive(:url_for)
+        .with(base_path: "/email/subscriptions/authenticate",
+              frequency: frequency,
+              token: "secret",
+              topic_id: subscriber_list.slug)
+        .and_return("auth_url")
+    end
+
     it { is_expected.to be_instance_of(Email) }
 
     it "creates an email" do
@@ -44,9 +53,8 @@ RSpec.describe SubscriptionAuthEmailBuilder do
     end
 
     it "has a link to authenticate" do
-      link = "http://www.dev.gov.uk/email/subscriptions/authenticate?token=#{token}&topic_id=business-tax-corporation-tax&frequency=weekly"
       email = call
-      expect(email.body).to include(link)
+      expect(email.body).to include("auth_url")
     end
   end
 end
