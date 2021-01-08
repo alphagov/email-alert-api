@@ -29,7 +29,10 @@ RSpec.describe "Create an auth token", type: :request do
 
     body = email_data.dig(:personalisation, :body)
     expect(body).to include("http://www.dev.gov.uk#{destination}?token=")
-    token = body.match(/token=([^&\n]+)$/)[1]
+
+    token = URI.decode_www_form_component(
+      body.match(/token=([^&\n]+)/)[1],
+    )
 
     expect(decrypt_and_verify_token(token)).to eq(
       "subscriber_id" => subscriber.id,
