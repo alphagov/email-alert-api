@@ -5,6 +5,11 @@ en:
         daily: You’ll get one email a day
         weekly: You’ll get one email a week
         immediately: You’ll get an email each time we add or update a page
+    confirmation:
+      frequency:
+        daily: "You’ll get one email a day from GOV.UK about:"
+        weekly: "You’ll get one email a week from GOV.UK about:"
+        immediately: "You’ll get an email from GOV.UK each time we add or update a page about:"
     digests:
       daily:
         subject: "Daily update from GOV.UK for: %{title}"
