@@ -1,4 +1,6 @@
 RSpec.describe ContentChangePresenter do
+  let(:subscription) { create(:subscription, frequency: "immediately") }
+
   let(:content_change) do
     build(
       :content_change,
@@ -10,12 +12,16 @@ RSpec.describe ContentChangePresenter do
     )
   end
 
+  let(:result) do
+    described_class.call(content_change, subscription)
+  end
+
   before do
     allow(PublicUrls).to receive(:url_for)
       .with(
         base_path: content_change.base_path,
         utm_source: content_change.id,
-        utm_content: "immediate",
+        utm_content: subscription.frequency,
       )
       .and_return("public_url")
   end
@@ -35,7 +41,7 @@ RSpec.describe ContentChangePresenter do
         11:00am, 28 March 2018
       CONTENT_CHANGE
 
-      expect(described_class.call(content_change)).to eq(expected.strip)
+      expect(result).to eq(expected.strip)
     end
 
     context "when content change contains markdown" do
@@ -64,7 +70,7 @@ RSpec.describe ContentChangePresenter do
           10:30am, 28 March 2018
         CONTENT_CHANGE
 
-        expect(described_class.call(content_change)).to eq(expected.strip)
+        expect(result).to eq(expected.strip)
       end
     end
 
@@ -88,7 +94,7 @@ RSpec.describe ContentChangePresenter do
           10:00am, 1 January 2018
         CONTENT_CHANGE
 
-        expect(described_class.call(content_change)).to eq(expected.strip)
+        expect(result).to eq(expected.strip)
       end
     end
 
@@ -117,7 +123,7 @@ RSpec.describe ContentChangePresenter do
           footnote
         CONTENT_CHANGE
 
-        expect(described_class.call(content_change)).to eq(expected.strip)
+        expect(result).to eq(expected.strip)
       end
     end
   end

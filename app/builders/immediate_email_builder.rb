@@ -46,7 +46,7 @@ private
 
       ---
 
-      #{middle_section(list, content)}
+      #{middle_section(subscription, content)}
 
       ---
 
@@ -54,13 +54,14 @@ private
     BODY
   end
 
-  def middle_section(list, content)
+  def middle_section(subscription, content)
+    subscriber_list = subscription.subscriber_list
     presenter = "#{content.class.name}Presenter".constantize
-    section = presenter.call(content)
+    section = presenter.call(content, subscription)
 
     source_url = SourceUrlPresenter.call(
-      list.url,
-      utm_source: list.slug,
+      subscriber_list.url,
+      utm_source: subscriber_list.slug,
       utm_content: "immediate",
     )
 

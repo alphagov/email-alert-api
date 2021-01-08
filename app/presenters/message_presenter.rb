@@ -1,7 +1,6 @@
 class MessagePresenter < ApplicationPresenter
-  def initialize(message, frequency: "immediate")
+  def initialize(message, _subscription = nil)
     @message = message
-    @frequency = frequency
   end
 
   def call
