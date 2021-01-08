@@ -12,6 +12,12 @@ RSpec.describe SubscriberAuthEmailBuilder do
       )
     end
 
+    before do
+      allow(PublicUrls).to receive(:url_for)
+        .with(base_path: destination, token: token)
+        .and_return("auth_url")
+    end
+
     it { is_expected.to be_instance_of(Email) }
 
     it "creates an email" do
@@ -25,19 +31,8 @@ RSpec.describe SubscriberAuthEmailBuilder do
     end
 
     it "has body content has a link allowing users to authenticate and manage their subscriptions" do
-      link = "http://www.dev.gov.uk/destination?token=secret"
       email = call
-      expect(email.body).to include(link)
-    end
-
-    context "when destination has a query string and fragment" do
-      let(:destination) { "/destination?query#fragment" }
-
-      it "merges the token" do
-        link = "http://www.dev.gov.uk/destination?query&token=secret#fragment"
-        email = call
-        expect(email.body).to include(link)
-      end
+      expect(email.body).to include("auth_url")
     end
   end
 end
