@@ -6,20 +6,15 @@ RSpec.describe ImmediateEmailBuilder do
 
     let(:params) do
       {
-        address: subscriber.address,
         subscriptions: [subscription, "other_subscription"],
-        subscriber_id: subscriber.id,
+        subscriber: subscriber,
       }
     end
 
     before do
-      allow(PublicUrls).to receive(:unsubscribe)
-        .with(subscription_id: subscription.id, subscriber_id: subscriber.id)
-        .and_return("unsubscribe_url")
-
-      allow(PublicUrls).to receive(:authenticate_url)
-        .with(address: subscriber.address)
-        .and_return("manage_url")
+      allow(FooterPresenter).to receive(:call)
+        .with(subscriber, subscription)
+        .and_return("presented_footer")
     end
 
     it "raises an ArgumentError when given an empty collection of parameters" do
@@ -38,7 +33,7 @@ RSpec.describe ImmediateEmailBuilder do
       before do
         allow(ContentChangePresenter).to receive(:call)
           .with(content_change)
-          .and_return("presented_content_change\n")
+          .and_return("presented_content_change")
       end
 
       it "creates an email" do
@@ -57,15 +52,7 @@ RSpec.describe ImmediateEmailBuilder do
 
             ---
 
-            # Why am I getting this email?
-
-            You asked GOV.UK to send you an email each time we add or update a page about:
-
-            My List
-
-            [Unsubscribe](unsubscribe_url)
-
-            [Manage your email preferences](manage_url)
+            presented_footer
           BODY
         )
       end
@@ -83,7 +70,7 @@ RSpec.describe ImmediateEmailBuilder do
       before do
         allow(MessagePresenter).to receive(:call)
           .with(message)
-          .and_return("presented_message\n")
+          .and_return("presented_message")
       end
 
       it "creates an email" do
@@ -102,15 +89,7 @@ RSpec.describe ImmediateEmailBuilder do
 
             ---
 
-            # Why am I getting this email?
-
-            You asked GOV.UK to send you an email each time we add or update a page about:
-
-            My List
-
-            [Unsubscribe](unsubscribe_url)
-
-            [Manage your email preferences](manage_url)
+            presented_footer
           BODY
         )
       end
@@ -128,7 +107,7 @@ RSpec.describe ImmediateEmailBuilder do
       before do
         allow(ContentChangePresenter).to receive(:call)
           .with(content_change)
-          .and_return("presented_content_change\n")
+          .and_return("presented_content_change")
 
         allow(SourceUrlPresenter).to receive(:call).and_return("Presented URL")
       end

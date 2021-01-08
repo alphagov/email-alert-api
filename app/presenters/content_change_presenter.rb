@@ -14,7 +14,7 @@ class ContentChangePresenter < ApplicationPresenter
       description_markdown,
       change_note_markdown.rstrip,
       footnote_markdown,
-    ].compact.join("\n\n") + "\n"
+    ].compact.join("\n\n")
   end
 
 private

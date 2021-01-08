@@ -46,31 +46,12 @@ private
   end
 
   def email_body(subscriber, subscription)
-    list = subscription.subscriber_list
-
-    unsubscribe_url = PublicUrls.unsubscribe(
-      subscription_id: subscription.id,
-      subscriber_id: subscriber.id,
-    )
-
-    manage_url = PublicUrls.authenticate_url(
-      address: subscriber.address,
-    )
-
     <<~BODY
-      #{BulkEmailBodyPresenter.call(body, list)}
+      #{BulkEmailBodyPresenter.call(body, subscription.subscriber_list)}
 
       ---
 
-      # Why am I getting this email?
-
-      You asked GOV.UK to send you an email each time we add or update a page about:
-
-      #{list.title}
-
-      [Unsubscribe](#{unsubscribe_url})
-
-      [Manage your email preferences](#{manage_url})
+      #{FooterPresenter.call(subscriber, subscription)}
     BODY
   end
 

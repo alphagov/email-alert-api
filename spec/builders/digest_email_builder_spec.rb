@@ -1,55 +1,44 @@
 RSpec.describe DigestEmailBuilder do
-  let(:digest_run) { double(range: "daily") }
-  let(:subscriber) { build(:subscriber) }
-  let(:address) { subscriber.address }
-  let(:subscriber_id) { subscriber.id }
+  let(:subscriber_list) { create(:subscriber_list, title: "Test title 1") }
+  let(:subscriber) { create(:subscriber) }
+  let(:frequency) { "daily" }
+  let(:content) { [build(:content_change), build(:message)] }
 
-  let(:digest_item) do
-    double(
-      subscription_id: "ABC1",
-      subscriber_list_title: "Test title 1",
-      subscriber_list_url: nil,
-      subscriber_list_slug: nil,
-      subscriber_list_description: "",
-      content: [
-        build(:content_change),
-        build(:message),
-      ],
+  let(:subscription) do
+    build(
+      :subscription,
+      frequency: frequency,
+      subscriber_list: subscriber_list,
+      subscriber: subscriber,
     )
   end
 
   let(:email) do
     described_class.call(
-      address: address,
-      digest_item: digest_item,
-      digest_run: digest_run,
-      subscriber_id: subscriber_id,
+      content: content,
+      subscription: subscription,
     )
   end
 
   before do
-    allow(PublicUrls).to receive(:unsubscribe)
-      .with(subscription_id: digest_item.subscription_id, subscriber_id: subscriber_id)
-      .and_return("unsubscribe_url")
-
-    allow(PublicUrls).to receive(:authenticate_url)
-      .with(address: subscriber.address)
-      .and_return("manage_url")
+    allow(FooterPresenter).to receive(:call)
+      .with(subscriber, subscription)
+      .and_return("presented_footer")
 
     allow(SourceUrlPresenter).to receive(:call)
       .and_return(nil)
 
     expect(ContentChangePresenter).to receive(:call)
-      .and_return("presented_content_change\n")
+      .and_return("presented_content_change")
 
     expect(MessagePresenter).to receive(:call)
-      .and_return("presented_message\n")
+      .and_return("presented_message")
   end
 
   describe ".call" do
     context "for a daily update" do
       it "creates an Email" do
-        expect(email.subscriber_id).to eq(subscriber_id)
+        expect(email.subscriber_id).to eq(subscriber.id)
         expect(email.subject).to eq "Daily update from GOV.UK for: Test title 1"
 
         expect(email.body).to eq(
@@ -68,25 +57,17 @@ RSpec.describe DigestEmailBuilder do
 
             ---
 
-            # Why am I getting this email?
-
-            You asked GOV.UK to send you one email a day about:
-
-            Test title 1
-
-            [Unsubscribe](unsubscribe_url)
-
-            [Manage your email preferences](manage_url)
+            presented_footer
           BODY
         )
       end
     end
 
     context "for a weekly update" do
-      let(:digest_run) { double(range: "weekly") }
+      let(:frequency) { "weekly" }
 
       it "creates an Email" do
-        expect(email.subscriber_id).to eq(subscriber_id)
+        expect(email.subscriber_id).to eq(subscriber.id)
         expect(email.subject).to eq "Weekly update from GOV.UK for: Test title 1"
 
         expect(email.body).to include(
@@ -96,16 +77,6 @@ RSpec.describe DigestEmailBuilder do
             # Test title 1
 
             ---
-          BODY
-        )
-
-        expect(email.body).to include(
-          <<~BODY,
-            # Why am I getting this email?
-
-            You asked GOV.UK to send you one email a week about:
-
-            Test title 1
           BODY
         )
       end

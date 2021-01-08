@@ -1,5 +1,5 @@
 class DigestItemsQuery
-  Result = Struct.new(:subscription_id, :subscriber_list_title, :subscriber_list_url, :subscriber_list_slug, :content)
+  Result = Struct.new(:subscription, :content)
 
   def initialize(subscriber, digest_run)
     @subscriber = subscriber
@@ -11,7 +11,15 @@ class DigestItemsQuery
   end
 
   def call
-    build_results(fetch_content_changes, fetch_messages)
+    subscriptions.filter_map do |subscription|
+      content = content_changes[subscription.id].to_a
+      content += messages[subscription.id].to_a
+
+      next unless content.any?
+
+      content = content.sort_by(&:created_at)
+      Result.new(subscription, content)
+    end
   end
 
   private_class_method :new
@@ -20,56 +28,33 @@ private
 
   attr_reader :subscriber, :digest_run
 
-  def build_results(content_changes, messages)
-    result_data = content_changes.each_with_object({}) do |record, memo|
-      id = record[:subscription_id]
-      memo[id] ||= {
-        subscriber_list_title: record[:subscriber_list_title],
-        subscriber_list_url: record[:subscriber_list_url],
-        subscriber_list_slug: record[:subscriber_list_slug],
-      }
-      memo[id][:content_changes] = Array(memo[id][:content_changes]) << record
-    end
-
-    result_data = messages.each_with_object(result_data) do |record, memo|
-      id = record[:subscription_id]
-      memo[id] ||= {
-        subscriber_list_title: record[:subscriber_list_title],
-        subscriber_list_url: record[:subscriber_list_url],
-        subscriber_list_slug: record[:subscriber_list_slug],
-      }
-      memo[id][:messages] = Array(memo[id][:messages]) << record
-    end
-
-    result_data.map do |key, value|
-      content = value.fetch(:content_changes, []) + value.fetch(:messages, [])
-      Result.new(key, value[:subscriber_list_title], value[:subscriber_list_url], value[:subscriber_list_slug], content.sort_by(&:created_at))
-    end
-  end
-
-  def fetch_content_changes
-    ContentChange
-      .select("content_changes.*", "subscriptions.id AS subscription_id", "subscriber_lists.title AS subscriber_list_title", "subscriber_lists.url AS subscriber_list_url", "subscriber_lists.slug AS subscriber_list_slug")
-      .joins(matched_content_changes: { subscriber_list: { subscriptions: :subscriber } })
-      .where(subscribers: { id: subscriber.id })
-      .where(subscriptions: { frequency: Subscription.frequencies[digest_run.range] })
+  def content_changes
+    @content_changes ||= ContentChange
+      .select("content_changes.*, subscriptions.id AS subscription_id")
+      .joins(matched_content_changes: { subscriber_list: :subscriptions })
+      .where(subscriptions: { id: subscriptions })
       .where("content_changes.created_at >= ?", digest_run.starts_at)
       .where("content_changes.created_at < ?", digest_run.ends_at)
-      .merge(Subscription.active)
-      .order("subscriber_list_title ASC", "subscriber_list_url ASC", "content_changes.created_at ASC")
       .uniq(&:content_id)
+      .group_by(&:subscription_id)
   end
 
-  def fetch_messages
-    Message
-      .select("messages.*", "subscriptions.id AS subscription_id", "subscriber_lists.title AS subscriber_list_title", "subscriber_lists.url AS subscriber_list_url", "subscriber_lists.slug AS subscriber_list_slug")
-      .joins(matched_messages: { subscriber_list: { subscriptions: :subscriber } })
-      .where(subscribers: { id: subscriber.id })
-      .where(subscriptions: { frequency: Subscription.frequencies[digest_run.range] })
+  def messages
+    @messages ||= Message
+      .select("messages.*, subscriptions.id AS subscription_id")
+      .joins(matched_messages: { subscriber_list: :subscriptions })
+      .where(subscriptions: { id: subscriptions })
       .where("messages.created_at >= ?", digest_run.starts_at)
       .where("messages.created_at < ?", digest_run.ends_at)
-      .merge(Subscription.active)
-      .order("subscriber_list_title ASC", "subscriber_list_url ASC", "messages.created_at ASC")
       .uniq(&:id)
+      .group_by(&:subscription_id)
+  end
+
+  def subscriptions
+    @subscriptions ||= subscriber
+      .subscriptions
+      .active
+      .includes(:subscriber_list)
+      .where(frequency: Subscription.frequencies[digest_run.range])
   end
 end

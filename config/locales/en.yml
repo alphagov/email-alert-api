@@ -9,12 +9,13 @@ en:
       daily:
         subject: "Daily update from GOV.UK for: %{title}"
         opening_line: "Daily update from GOV.UK for:"
-        footer_explanation: "You asked GOV.UK to send you one email a day about:"
       weekly:
         subject: "Weekly update from GOV.UK for: %{title}"
         opening_line: "Weekly update from GOV.UK for:"
-        footer_explanation: "You asked GOV.UK to send you one email a week about:"
-      footer_manage: "Manage your email preferences"
+    footer:
+      immediately: "You asked GOV.UK to send you an email each time we add or update a page about:"
+      daily: "You asked GOV.UK to send you one email a day about:"
+      weekly: "You asked GOV.UK to send you one email a week about:"
     description_header: "Page summary:"
     change_note_header: "Change made:"
     public_updated_at_header: "Time updated:"

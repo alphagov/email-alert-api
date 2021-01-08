@@ -21,13 +21,9 @@ RSpec.describe BulkSubscriberListEmailBuilder do
         .with("email body", subscriber_lists.first)
         .and_return("presented body")
 
-      allow(PublicUrls).to receive(:unsubscribe)
-        .with(subscription_id: subscription.id, subscriber_id: subscriber.id)
-        .and_return("unsubscribe_url")
-
-      allow(PublicUrls).to receive(:authenticate_url)
-        .with(address: subscriber.address)
-        .and_return("manage_url")
+      allow(FooterPresenter).to receive(:call)
+        .with(subscriber, subscription)
+        .and_return("presented_footer")
     end
 
     context "with one subscription" do
@@ -43,15 +39,7 @@ RSpec.describe BulkSubscriberListEmailBuilder do
 
           ---
 
-          # Why am I getting this email?
-
-          You asked GOV.UK to send you an email each time we add or update a page about:
-
-          My List
-
-          [Unsubscribe](unsubscribe_url)
-
-          [Manage your email preferences](manage_url)
+          presented_footer
         BODY
       end
     end

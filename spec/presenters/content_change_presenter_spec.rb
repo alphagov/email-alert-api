@@ -35,7 +35,7 @@ RSpec.describe ContentChangePresenter do
         11:00am, 28 March 2018
       CONTENT_CHANGE
 
-      expect(described_class.call(content_change)).to eq(expected)
+      expect(described_class.call(content_change)).to eq(expected.strip)
     end
 
     context "when content change contains markdown" do
@@ -64,7 +64,7 @@ RSpec.describe ContentChangePresenter do
           10:30am, 28 March 2018
         CONTENT_CHANGE
 
-        expect(described_class.call(content_change)).to eq(expected)
+        expect(described_class.call(content_change)).to eq(expected.strip)
       end
     end
 
@@ -88,7 +88,7 @@ RSpec.describe ContentChangePresenter do
           10:00am, 1 January 2018
         CONTENT_CHANGE
 
-        expect(described_class.call(content_change)).to eq(expected)
+        expect(described_class.call(content_change)).to eq(expected.strip)
       end
     end
 
@@ -117,7 +117,7 @@ RSpec.describe ContentChangePresenter do
           footnote
         CONTENT_CHANGE
 
-        expect(described_class.call(content_change)).to eq(expected)
+        expect(described_class.call(content_change)).to eq(expected.strip)
       end
     end
   end

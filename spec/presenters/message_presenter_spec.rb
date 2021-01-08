@@ -15,7 +15,7 @@ RSpec.describe MessagePresenter do
         for a user
       MESSAGE
 
-      expect(described_class.call(message)).to eq(expected)
+      expect(described_class.call(message)).to eq(expected.strip)
     end
   end
 end
