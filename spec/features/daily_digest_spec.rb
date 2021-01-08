@@ -66,7 +66,7 @@ RSpec.describe "Daily digests", type: :request do
     expect(body).to include("Body")
     expect(body).to include("10:00am, 1 January 2017")
     expect(body).to include("[Unsubscribe](http://www.dev.gov.uk/email/unsubscribe")
-    expect(body).to include("gov.uk/email/manage/authenticate?address=")
+    expect(body).to include("gov.uk/email/manage/authenticate")
   end
 
   scenario "multiple lists" do

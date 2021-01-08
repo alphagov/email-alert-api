@@ -53,10 +53,18 @@ private
   end
 
   def unsubscribe_url
-    PublicUrls.unsubscribe(subscription)
+    PublicUrls.unsubscribe(
+      subscription,
+      utm_source: subscriber_list.slug,
+      utm_content: subscription.frequency,
+    )
   end
 
   def manage_url
-    PublicUrls.manage_url(subscriber)
+    PublicUrls.manage_url(
+      subscriber,
+      utm_source: subscriber_list.slug,
+      utm_content: subscription.frequency,
+    )
   end
 end

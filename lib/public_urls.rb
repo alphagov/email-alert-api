@@ -11,14 +11,17 @@ module PublicUrls
       uri.to_s
     end
 
-    def manage_url(subscriber)
-      url_for(base_path: "/email/manage/authenticate", address: subscriber.address)
+    def manage_url(subscriber, **utm_params)
+      params = utm_params.merge(address: subscriber.address)
+      url_for(base_path: "/email/manage/authenticate", **params)
     end
 
-    def unsubscribe(subscription)
+    def unsubscribe(subscription, **utm_params)
       subscriber_id = subscription.subscriber_id
       token = AuthTokenGeneratorService.call(subscriber_id: subscriber_id)
-      url_for(base_path: "/email/unsubscribe/#{subscription.id}", token: token)
+
+      params = utm_params.merge(token: token)
+      url_for(base_path: "/email/unsubscribe/#{subscription.id}", **params)
     end
 
   private

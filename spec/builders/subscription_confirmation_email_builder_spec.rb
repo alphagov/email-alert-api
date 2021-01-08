@@ -8,12 +8,17 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
     subject(:email) { described_class.call(subscription: subscription) }
 
     before do
+      utm_params = {
+        utm_source: subscription.subscriber_list.slug,
+        utm_content: frequency,
+      }
+
       allow(PublicUrls).to receive(:unsubscribe)
-        .with(subscription)
+        .with(subscription, **utm_params)
         .and_return("unsubscribe_url")
 
       allow(PublicUrls).to receive(:manage_url)
-        .with(subscriber)
+        .with(subscriber, **utm_params)
         .and_return("manage_url")
     end
 
