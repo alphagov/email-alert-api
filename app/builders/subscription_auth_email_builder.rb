@@ -41,9 +41,11 @@ private
   end
 
   def link
-    Plek.new.website_uri.tap do |uri|
-      uri.path = "/email/subscriptions/authenticate"
-      uri.query = "token=#{token}&topic_id=#{subscriber_list.slug}&frequency=#{frequency}"
-    end
+    PublicUrls.url_for(
+      base_path: "/email/subscriptions/authenticate",
+      token: token,
+      topic_id: subscriber_list.slug,
+      frequency: frequency,
+    )
   end
 end
