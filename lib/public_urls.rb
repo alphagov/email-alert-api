@@ -11,8 +11,8 @@ module PublicUrls
       uri.to_s
     end
 
-    def authenticate_url(address:)
-      url_for(base_path: "/email/manage/authenticate", address: address)
+    def manage_url(subscriber)
+      url_for(base_path: "/email/manage/authenticate", address: subscriber.address)
     end
 
     def unsubscribe(subscription)

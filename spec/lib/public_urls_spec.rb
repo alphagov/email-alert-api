@@ -37,4 +37,12 @@ RSpec.describe PublicUrls do
       expect(url).to eq("http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?token=token")
     end
   end
+
+  describe ".manage_url" do
+    it "returns the GOV.UK url to manage subscriptions" do
+      subscriber = create(:subscriber, address: "foo@bar.com")
+      url = subject.manage_url(subscriber)
+      expect(url).to eq("http://www.dev.gov.uk/email/manage/authenticate?address=foo%40bar.com")
+    end
+  end
 end

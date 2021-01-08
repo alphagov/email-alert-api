@@ -29,6 +29,6 @@ private
   end
 
   def manage_url
-    PublicUrls.authenticate_url(address: subscriber.address)
+    PublicUrls.manage_url(subscriber)
   end
 end

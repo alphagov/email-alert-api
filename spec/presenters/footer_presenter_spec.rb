@@ -12,8 +12,8 @@ RSpec.describe FooterPresenter do
         .with(subscription)
         .and_return("unsubscribe_url")
 
-      allow(PublicUrls).to receive(:authenticate_url)
-        .with(address: subscriber.address)
+      allow(PublicUrls).to receive(:manage_url)
+        .with(subscriber)
         .and_return("manage_url")
     end
 
