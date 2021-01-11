@@ -7,15 +7,21 @@ class ImmediateEmailGenerationService
 
     def generate_emails
       email_ids = []
-      return email_ids unless email_parameters.any?
+      return email_ids unless subscriptions_to_fulfill.any?
 
       ActiveRecord::Base.transaction do
-        email_ids = ImmediateEmailBuilder.call(content_change || message, email_parameters)
-        records = subscription_content_records(email_ids)
-        SubscriptionContent.populate_for_content(content, records)
+        email_ids = ImmediateEmailBuilder.call(
+          content_change || message,
+          subscriptions_to_fulfill,
+        )
+
+        SubscriptionContent.populate_for_content(
+          content,
+          subscription_content_records(email_ids),
+        )
       end
 
-      Metrics.content_change_emails(content_change, email_parameters.count) if content_change
+      Metrics.content_change_emails(content_change, email_ids.count) if content_change
       email_ids
     end
 
@@ -23,26 +29,24 @@ class ImmediateEmailGenerationService
 
     attr_reader :subscription_ids, :content
 
-    def email_parameters
-      @email_parameters ||= subscriptions_to_fulfill
-    end
-
     def subscription_content_records(email_ids)
-      email_parameters.flat_map.with_index do |subscription, index|
-        { subscription_id: subscription.id, email_id: email_ids[index] }
+      subscriptions_to_fulfill.zip(email_ids).map do |subscription, email_id|
+        { subscription_id: subscription.id, email_id: email_id }
       end
     end
 
     def subscriptions_to_fulfill
-      criteria = { message: message,
-                   content_change: content_change,
-                   subscription_id: subscription_ids }.compact
-      covered_by_earlier_attempts = SubscriptionContent.where(criteria)
-                                                       .pluck(:subscription_id)
-      Subscription.active
-                  .immediately
-                  .includes(:subscriber_list, :subscriber)
-                  .where(id: subscription_ids - covered_by_earlier_attempts)
+      @subscriptions_to_fulfill ||= begin
+        criteria = { message: message,
+                     content_change: content_change,
+                     subscription_id: subscription_ids }.compact
+        covered_by_earlier_attempts = SubscriptionContent.where(criteria)
+                                                         .pluck(:subscription_id)
+        Subscription.active
+                    .immediately
+                    .includes(:subscriber_list, :subscriber)
+                    .where(id: subscription_ids - covered_by_earlier_attempts)
+      end
     end
 
     def content_change
