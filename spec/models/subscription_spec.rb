@@ -123,6 +123,28 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
+  describe ".dedup_by_subscriber" do
+    it "returns the latest subscription for a subscriber" do
+      subscriber = create(:subscriber)
+      create(:subscription, subscriber: subscriber, created_at: 2.days.ago)
+
+      expected = [
+        create(:subscription, subscriber: subscriber).id,
+        create(:subscription, subscriber: create(:subscriber)).id,
+      ]
+
+      expect(Subscription.dedup_by_subscriber).to match_array(expected)
+    end
+
+    it "respects any previous scopes applied to the model" do
+      create(:subscription, :ended)
+      create(:subscription, frequency: "daily")
+
+      create(:subscription)
+      expect(Subscription.active.immediately.dedup_by_subscriber.count).to eq(1)
+    end
+  end
+
   describe "#end" do
     subject { create(:subscription) }
 

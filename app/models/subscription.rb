@@ -36,6 +36,13 @@ class Subscription < ApplicationRecord
             .to_h
         }
 
+  scope :dedup_by_subscriber,
+        lambda {
+          order("subscriptions.subscriber_id DESC, subscriptions.created_at desc")
+            .pluck(Arel.sql("DISTINCT ON (subscriptions.subscriber_id) subscriber_id, subscriptions.id as id"))
+            .map(&:last)
+        }
+
   def as_json(options = {})
     options[:except] ||= %i[signon_user_uid subscriber_list_id subscriber_id]
     options[:include] ||= %i[subscriber_list subscriber]
