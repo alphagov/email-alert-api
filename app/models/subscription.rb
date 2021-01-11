@@ -29,13 +29,6 @@ class Subscription < ApplicationRecord
             .where(matched_messages: { message_id: message.id })
         }
 
-  scope :subscription_ids_by_subscriber,
-        lambda {
-          group(:subscriber_id)
-            .pluck(:subscriber_id, Arel.sql("ARRAY_AGG(subscriptions.id)"))
-            .to_h
-        }
-
   scope :dedup_by_subscriber,
         lambda {
           order("subscriptions.subscriber_id DESC, subscriptions.created_at desc")

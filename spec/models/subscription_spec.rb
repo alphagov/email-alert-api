@@ -112,17 +112,6 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
-  describe ".subscription_ids_by_subscriber" do
-    it "returns a hash of subscriber id to an array of subscriptions" do
-      subscriber = create(:subscriber)
-      subscription1 = create(:subscription, subscriber: subscriber)
-      subscription2 = create(:subscription, subscriber: subscriber)
-
-      expect(Subscription.subscription_ids_by_subscriber)
-        .to match(subscriber.id => match_array([subscription1.id, subscription2.id]))
-    end
-  end
-
   describe ".dedup_by_subscriber" do
     it "returns the latest subscription for a subscriber" do
       subscriber = create(:subscriber)
