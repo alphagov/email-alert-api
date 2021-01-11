@@ -10,7 +10,7 @@ class ImmediateEmailGenerationService
       return email_ids unless email_parameters.any?
 
       ActiveRecord::Base.transaction do
-        email_ids = ImmediateEmailBuilder.call(email_parameters)
+        email_ids = ImmediateEmailBuilder.call(content_change || message, email_parameters)
         records = subscription_content_records(email_ids)
         SubscriptionContent.populate_for_content(content, records)
       end
@@ -24,19 +24,12 @@ class ImmediateEmailGenerationService
     attr_reader :subscription_ids, :content
 
     def email_parameters
-      @email_parameters ||= begin
-        subscriptions_to_fulfill.map do |subscription|
-          {
-            content: content_change || message,
-            subscription: subscription,
-          }.compact
-        end
-      end
+      @email_parameters ||= subscriptions_to_fulfill
     end
 
     def subscription_content_records(email_ids)
-      email_parameters.flat_map.with_index do |params, index|
-        { subscription_id: params[:subscription].id, email_id: email_ids[index] }
+      email_parameters.flat_map.with_index do |subscription, index|
+        { subscription_id: subscription.id, email_id: email_ids[index] }
       end
     end
 

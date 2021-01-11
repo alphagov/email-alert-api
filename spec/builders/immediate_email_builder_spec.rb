@@ -4,10 +4,6 @@ RSpec.describe ImmediateEmailBuilder do
     let(:subscription) { build(:subscription, subscriber_list: subscriber_list) }
     let(:subscriber) { subscription.subscriber }
 
-    let(:params) do
-      { subscription: subscription }
-    end
-
     before do
       allow(FooterPresenter).to receive(:call)
         .with(subscriber, subscription)
@@ -22,8 +18,7 @@ RSpec.describe ImmediateEmailBuilder do
       let(:content_change) { build(:content_change, title: "Title") }
 
       subject(:email) do
-        params.merge!(content: content_change)
-        import = described_class.call([params])
+        import = described_class.call(content_change, [subscription])
         Email.find(import.first)
       end
 
@@ -59,8 +54,7 @@ RSpec.describe ImmediateEmailBuilder do
       let(:message) { build(:message, title: "Title") }
 
       subject(:email) do
-        params.merge!(content: message)
-        import = described_class.call([params])
+        import = described_class.call(message, [subscription])
         Email.find(import.first)
       end
 
@@ -96,8 +90,7 @@ RSpec.describe ImmediateEmailBuilder do
       let(:content_change) { build(:content_change, title: "Title") }
 
       subject(:email) do
-        params.merge!(content: content_change)
-        import = described_class.call([params])
+        import = described_class.call(content_change, [subscription])
         Email.find(import.first)
       end
 
