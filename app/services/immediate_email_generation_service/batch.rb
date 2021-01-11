@@ -27,9 +27,8 @@ class ImmediateEmailGenerationService
       @email_parameters ||= begin
         subscriptions_to_fulfill.map do |subscription|
           {
-            subscriber: subscription.subscriber,
             content: content_change || message,
-            subscriptions: [subscription],
+            subscription: subscription,
           }.compact
         end
       end
@@ -37,9 +36,7 @@ class ImmediateEmailGenerationService
 
     def subscription_content_records(email_ids)
       email_parameters.flat_map.with_index do |params, index|
-        params[:subscriptions].map do |subscription|
-          { subscription_id: subscription.id, email_id: email_ids[index] }
-        end
+        { subscription_id: params[:subscription].id, email_id: email_ids[index] }
       end
     end
 

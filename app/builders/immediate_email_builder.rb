@@ -16,14 +16,14 @@ private
     @records ||= begin
       now = Time.zone.now
       recipients_and_content.map do |recipient_and_content|
-        subscriber = recipient_and_content.fetch(:subscriber)
         content = recipient_and_content.fetch(:content)
-        subscriptions = recipient_and_content.fetch(:subscriptions)
+        subscription = recipient_and_content.fetch(:subscription)
+        subscriber = subscription.subscriber
 
         {
           address: subscriber.address,
           subject: subject(content),
-          body: body(content, subscriptions.first, subscriber),
+          body: body(content, subscription, subscriber),
           subscriber_id: subscriber.id,
           created_at: now,
           updated_at: now,

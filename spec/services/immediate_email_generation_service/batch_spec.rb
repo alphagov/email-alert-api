@@ -16,11 +16,10 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
     [subscriber1_subscription.id, subscriber2_subscription.id]
   end
 
-  def email_parameters(content, subscriber, subscription)
+  def email_parameters(content, subscription)
     {
       content: content,
-      subscriptions: [subscription],
-      subscriber: subscriber,
+      subscription: subscription,
     }.compact
   end
 
@@ -52,8 +51,8 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
 
       it "uses ImmediateEmailBuilder to build emails" do
         emails_params = [
-          email_parameters(content_change, subscriber1, subscriber1_subscription),
-          email_parameters(content_change, subscriber2, subscriber2_subscription),
+          email_parameters(content_change, subscriber1_subscription),
+          email_parameters(content_change, subscriber2_subscription),
         ]
 
         expect(ImmediateEmailBuilder).to receive(:call)
@@ -74,8 +73,8 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
 
       it "uses ImmediateEmailBuilder to build emails" do
         emails_params = [
-          email_parameters(message, subscriber1, subscriber1_subscription),
-          email_parameters(message, subscriber2, subscriber2_subscription),
+          email_parameters(message, subscriber1_subscription),
+          email_parameters(message, subscriber2_subscription),
         ]
 
         expect(ImmediateEmailBuilder).to receive(:call)
@@ -101,7 +100,6 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
 
       it "only uses active subscriptions to create the email" do
         email_params = email_parameters(content_change,
-                                        subscriber2,
                                         subscriber2_subscription)
 
         expect(ImmediateEmailBuilder).to receive(:call)
@@ -122,7 +120,6 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
 
       it "doesn't use that subscription to create the email" do
         email_params = email_parameters(content_change,
-                                        subscriber2,
                                         subscriber2_subscription)
 
         expect(ImmediateEmailBuilder).to receive(:call)

@@ -5,10 +5,7 @@ RSpec.describe ImmediateEmailBuilder do
     let(:subscriber) { subscription.subscriber }
 
     let(:params) do
-      {
-        subscriptions: [subscription, "other_subscription"],
-        subscriber: subscriber,
-      }
+      { subscription: subscription }
     end
 
     before do
