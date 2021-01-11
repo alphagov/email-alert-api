@@ -122,7 +122,7 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
       end
     end
 
-    context "when a subscriptions frequency was changed after determining which lists to email" do
+    context "when one of the subscription frequencies is not immediate" do
       let(:subscriber1_subscriptions) do
         create_list(:subscription, 2, :daily, :ended, subscriber: subscriber1)
       end
