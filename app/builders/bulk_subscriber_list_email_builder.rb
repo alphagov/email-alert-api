@@ -23,7 +23,7 @@ private
 
   def records_for_batch(subscription_ids)
     subscriptions = Subscription
-      .includes(:subscriber)
+      .includes(:subscriber, :subscriber_list)
       .find(subscription_ids)
 
     subscriptions.map do |subscription|
