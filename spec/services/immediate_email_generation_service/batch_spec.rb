@@ -4,31 +4,28 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
   let(:subscriber1) { create(:subscriber) }
   let(:subscriber2) { create(:subscriber) }
 
-  let(:subscriber1_subscriptions) do
-    create_list(:subscription, 2, :immediately, subscriber: subscriber1)
+  let(:subscriber1_subscription) do
+    create(:subscription, :immediately, subscriber: subscriber1)
   end
 
-  let(:subscriber2_subscriptions) do
-    create_list(:subscription, 3, :immediately, subscriber: subscriber2)
+  let(:subscriber2_subscription) do
+    create(:subscription, :immediately, subscriber: subscriber2)
   end
 
-  let(:subscription_ids_by_subscriber) do
-    {
-      subscriber1.id => subscriber1_subscriptions.map(&:id),
-      subscriber2.id => subscriber2_subscriptions.map(&:id),
-    }
+  let(:subscription_ids) do
+    [subscriber1_subscription.id, subscriber2_subscription.id]
   end
 
-  def email_parameters(content, subscriber, subscriptions)
+  def email_parameters(content, subscriber, subscription)
     {
       content: content,
-      subscriptions: subscriptions,
+      subscriptions: [subscription],
       subscriber: subscriber,
     }.compact
   end
 
   describe "#generate_emails" do
-    let(:instance) { described_class.new(content_change, subscription_ids_by_subscriber) }
+    let(:instance) { described_class.new(content_change, subscription_ids) }
 
     it "creates emails" do
       expect { instance.generate_emails }
@@ -37,7 +34,6 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
     end
 
     it "populates subscription_contents" do
-      subscription_ids = subscription_ids_by_subscriber.values.flatten
       scope = SubscriptionContent.where(content_change: content_change,
                                         subscription_id: subscription_ids)
 
@@ -52,12 +48,12 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
     end
 
     context "when content is a content_change" do
-      let(:instance) { described_class.new(content_change, subscription_ids_by_subscriber) }
+      let(:instance) { described_class.new(content_change, subscription_ids) }
 
       it "uses ImmediateEmailBuilder to build emails" do
         emails_params = [
-          email_parameters(content_change, subscriber1, subscriber1_subscriptions),
-          email_parameters(content_change, subscriber2, subscriber2_subscriptions),
+          email_parameters(content_change, subscriber1, subscriber1_subscription),
+          email_parameters(content_change, subscriber2, subscriber2_subscription),
         ]
 
         expect(ImmediateEmailBuilder).to receive(:call)
@@ -74,12 +70,12 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
     end
 
     context "when content is a message" do
-      let(:instance) { described_class.new(message, subscription_ids_by_subscriber) }
+      let(:instance) { described_class.new(message, subscription_ids) }
 
       it "uses ImmediateEmailBuilder to build emails" do
         emails_params = [
-          email_parameters(message, subscriber1, subscriber1_subscriptions),
-          email_parameters(message, subscriber2, subscriber2_subscriptions),
+          email_parameters(message, subscriber1, subscriber1_subscription),
+          email_parameters(message, subscriber2, subscriber2_subscription),
         ]
 
         expect(ImmediateEmailBuilder).to receive(:call)
@@ -90,18 +86,11 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
     end
 
     context "when a subscription was ended after determining which lists to email" do
-      let(:subscriber1_subscriptions) do
-        create_list(:subscription, 2, :immediately, :ended, subscriber: subscriber1)
+      let(:subscriber1_subscription) do
+        create(:subscription, :immediately, :ended, subscriber: subscriber1)
       end
 
-      let(:subscriber2_subscriptions) do
-        [
-          create(:subscription, :ended, :immediately, subscriber: subscriber2),
-          subscriber2_active_subscription,
-        ]
-      end
-
-      let(:subscriber2_active_subscription) do
+      let(:subscriber2_subscription) do
         create(:subscription, :immediately, subscriber: subscriber2)
       end
 
@@ -113,7 +102,7 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
       it "only uses active subscriptions to create the email" do
         email_params = email_parameters(content_change,
                                         subscriber2,
-                                        [subscriber2_active_subscription])
+                                        subscriber2_subscription)
 
         expect(ImmediateEmailBuilder).to receive(:call)
                                          .with([email_params])
@@ -122,26 +111,19 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
       end
     end
 
-    context "when one of the subscription frequencies is not immediate" do
-      let(:subscriber1_subscriptions) do
-        create_list(:subscription, 2, :daily, :ended, subscriber: subscriber1)
+    context "when one of the specified subscriptions is not immediate" do
+      let(:subscriber1_subscription) do
+        create(:subscription, :daily, subscriber: subscriber1)
       end
 
-      let(:subscriber2_subscriptions) do
-        [
-          create(:subscription, :weekly, subscriber: subscriber2),
-          subscriber2_immediate_subscription,
-        ]
-      end
-
-      let(:subscriber2_immediate_subscription) do
+      let(:subscriber2_subscription) do
         create(:subscription, :immediately, subscriber: subscriber2)
       end
 
       it "doesn't use that subscription to create the email" do
         email_params = email_parameters(content_change,
                                         subscriber2,
-                                        [subscriber2_immediate_subscription])
+                                        subscriber2_subscription)
 
         expect(ImmediateEmailBuilder).to receive(:call)
                                          .with([email_params])
@@ -154,12 +136,11 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
       "emails were already created" do
       before do
         email = create(:email)
-        subscriber1_subscriptions.each do |subscription|
-          create(:subscription_content,
-                 subscription: subscription,
-                 email: email,
-                 content_change: content_change)
-        end
+
+        create(:subscription_content,
+               subscription: subscriber1_subscription,
+               email: email,
+               content_change: content_change)
       end
 
       it "only creates emails that haven't been previously created" do
@@ -172,7 +153,7 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
     context "when a previous attempt created all the emails of this batch" do
       before do
         email = create(:email)
-        [subscriber1_subscriptions, subscriber2_subscriptions].flatten.each do |subscription|
+        [subscriber1_subscription, subscriber2_subscription].each do |subscription|
           create(:subscription_content,
                  subscription: subscription,
                  email: email,
