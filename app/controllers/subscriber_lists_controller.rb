@@ -24,22 +24,11 @@ class SubscriberListsController < ApplicationController
   end
 
   def create
-    subscriber_list = SubscriberList.create!(subscriber_list_params)
+    subscriber_list = CreateSubscriberListService.call(params: params, user: current_user)
     render json: subscriber_list.to_json, status: :created
   end
 
 private
-
-  def subscriber_list_params
-    title = params.fetch(:title)
-
-    find_exact_query_params.merge(
-      title: title,
-      slug: slugify(title),
-      url: params[:url],
-      signon_user_uid: current_user.uid,
-    )
-  end
 
   def convert_legacy_params(link_or_tags)
     link_or_tags.transform_values do |link_or_tag|
@@ -55,16 +44,5 @@ private
       email_document_supertype: params.fetch(:email_document_supertype, ""),
       government_document_supertype: params.fetch(:government_document_supertype, ""),
     }
-  end
-
-  def slugify(title)
-    slug = title.parameterize.truncate(255, omission: "", separator: "-")
-
-    while SubscriberList.where(slug: slug).exists?
-      slug = title.parameterize.truncate(244, omission: "", separator: "-")
-      slug += "-#{SecureRandom.hex(5)}"
-    end
-
-    slug
   end
 end
