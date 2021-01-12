@@ -33,13 +33,30 @@ RSpec.describe CreateSubscriberListService do
     end
 
     context "when a matching list exists" do
-      it "returns early with that list" do
-        existing_list = create(:subscriber_list)
+      let(:existing_list) do
+        create(:subscriber_list,
+               title: "other",
+               url: "/other",
+               updated_at: 2.days.ago.midnight)
+      end
 
+      before do
         allow(existing_list_query).to receive(:exact_match)
           .and_return(existing_list)
+      end
 
+      it "returns early with that list" do
         expect(list).to eq(existing_list)
+      end
+
+      it "updates the title and url" do
+        expect(list.title).to eq("This is a sample title")
+        expect(list.url).to eq("/oil-and-gas")
+      end
+
+      it "only updates if there is a change" do
+        params.merge!(title: "other", url: "/other")
+        expect(list.updated_at).to eq(2.days.ago.midnight)
       end
     end
 

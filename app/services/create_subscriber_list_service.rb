@@ -7,6 +7,8 @@ class CreateSubscriberListService < ApplicationService
   def call
     subscriber_list = FindExactQuery.new(**find_exact_query_params).exact_match
     return SubscriberList.create!(subscriber_list_params) unless subscriber_list
+
+    subscriber_list.update!(subscriber_list_params.slice(:title, :url).compact)
     subscriber_list
   end
 
