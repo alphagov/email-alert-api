@@ -17,11 +17,9 @@ private
   attr_reader :params, :user
 
   def subscriber_list_params
-    title = params.fetch(:title)
-
     find_exact_query_params.merge(
-      title: title,
-      slug: slugify(title),
+      title: params[:title],
+      slug: slug,
       url: params[:url],
       signon_user_uid: user.uid,
     )
@@ -43,14 +41,16 @@ private
     }
   end
 
-  def slugify(title)
-    slug = title.parameterize.truncate(255, omission: "", separator: "-")
+  def slug
+    @slug ||= begin
+      result = params[:title].parameterize.truncate(255, omission: "", separator: "-")
 
-    while SubscriberList.where(slug: slug).exists?
-      slug = title.parameterize.truncate(244, omission: "", separator: "-")
-      slug += "-#{SecureRandom.hex(5)}"
+      while SubscriberList.where(slug: result).exists?
+        result = params[:title].parameterize.truncate(244, omission: "", separator: "-")
+        result += "-#{SecureRandom.hex(5)}"
+      end
+
+      result
     end
-
-    slug
   end
 end
