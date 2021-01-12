@@ -5,7 +5,9 @@ class CreateSubscriberListService < ApplicationService
   end
 
   def call
-    SubscriberList.create!(subscriber_list_params)
+    subscriber_list = FindExactQuery.new(**find_exact_query_params).exact_match
+    return SubscriberList.create!(subscriber_list_params) unless subscriber_list
+    subscriber_list
   end
 
 private

@@ -1,6 +1,7 @@
 RSpec.describe CreateSubscriberListService do
   describe ".call" do
     let(:user) { create :user }
+    let(:existing_list_query) { double(FindExactQuery, exact_match: nil) }
 
     let(:params) do
       ActionController::Parameters.new(
@@ -16,6 +17,30 @@ RSpec.describe CreateSubscriberListService do
 
     let(:list) do
       described_class.call(params: params, user: user)
+    end
+
+    before do
+      allow(FindExactQuery).to receive(:new).with(
+        hash_including(
+          tags: a_kind_of(Hash),
+          links: a_kind_of(Hash),
+          document_type: a_kind_of(String),
+          email_document_supertype: a_kind_of(String),
+          government_document_supertype: a_kind_of(String),
+        ),
+      )
+      .and_return(existing_list_query)
+    end
+
+    context "when a matching list exists" do
+      it "returns early with that list" do
+        existing_list = create(:subscriber_list)
+
+        allow(existing_list_query).to receive(:exact_match)
+          .and_return(existing_list)
+
+        expect(list).to eq(existing_list)
+      end
     end
 
     context "with all of the possible params" do

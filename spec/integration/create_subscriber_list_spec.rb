@@ -68,6 +68,19 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list["tags"]))
     end
 
+    context "an existing subscriber list" do
+      it "returns the existing list" do
+        2.times.each do
+          create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
+                                         location: { all: %w[france germany] } })
+        end
+
+        expect(SubscriberList.count).to eq(1)
+        expect(response.status).to eq(201)
+        expect(response.body).to include("subscriber_list")
+      end
+    end
+
     context "an invalid subscriber list" do
       it "returns 422" do
         post "/subscriber-lists", params: { title: "" }
