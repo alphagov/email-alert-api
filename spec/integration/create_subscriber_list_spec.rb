@@ -68,57 +68,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list["tags"]))
     end
 
-    context "when a subscriber list has a long title" do
-      it "truncates the slug to be less than 255 characters" do
-        long_title = "Find Brexit guidance for your business with Sector / "\
-                     "Business Area of Accommodation, restaurants and "\
-                     "catering services, Aerospace, Agriculture, Air "\
-                     "transport (aviation), Ancillary services, Animal "\
-                     "health, Automotive, Banking, markets and infrastructure, "\
-                     "Broadcasting, Chemicals, Computer services, "\
-                     "Construction and contracting, Education, Electricity, "\
-                     "Electronics, Environmental services, Fisheries, Food "\
-                     "and drink, Furniture and other manufacturing, Gas "\
-                     "markets, Imports, Imputed rent, Insurance, Land "\
-                     "transport (excluding rail), Medical services, Motor "\
-                     "trades, Oil and gas production, Other personal services, "\
-                     "Parts and machinery, Pharmaceuticals, Post, Professional "\
-                     "and business services, Public administration and "\
-                     "defence, Rail, Real estate (excluding imputed rent), "\
-                     "Retail, Social work, Steel and other metals or "\
-                     "commodities, Telecoms, Textiles and clothing, "\
-                     "Warehousing and support for transportation, "\
-                     "Water transport including maritime and ports, "\
-                     "and Wholesale (excluding motor vehicles), Business "\
-                     "activity of Buy products or goods from abroad, Sell "\
-                     "products or goods abroad, and Transport goods abroad, "\
-                     "Who you employ of EU citizens and No EU citizens, "\
-                     "Personal data of Processing personal data from Europe, "\
-                     "Using websites or services hosted in Europe, and "\
-                     "Providing digital services available to Europe, "\
-                     "Intellectual property of Copyright, Trade marks, "\
-                     "Designs, Patents, and Exhaustion of rights, EU or UK "\
-                     "government funding of EU funding and UK government "\
-                     "funding, and Public sector procurement of Civil "\
-                     "government contracts and Defence contracts"
-        create_subscriber_list(
-          title: long_title,
-          tags: { topics: { any: ["oil-and-gas/licensing"] } },
-        )
-
-        expect(response.status).to eq(201)
-
-        response_hash = JSON.parse(response.body)
-        subscriber_list = response_hash["subscriber_list"]
-        slug = "find-brexit-guidance-for-your-business-with-sector-business-"\
-               "area-of-accommodation-restaurants-and-catering-services-"\
-               "aerospace-agriculture-air-transport-aviation-ancillary-"\
-               "services-animal-health-automotive-banking-markets-and-"\
-               "infrastructure-broadcasting"
-        expect(subscriber_list["slug"]).to eq(slug)
-      end
-    end
-
     describe "using legacy parameters" do
       it "creates a new subscriber list" do
         expect {

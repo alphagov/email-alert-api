@@ -68,5 +68,13 @@ RSpec.describe CreateSubscriberListService do
         expect(list.slug).to match(/this-is-a-sample-title-[a-z0-9]+/)
       end
     end
+
+    context "when the list title is very long" do
+      it "truncates the slug to < 255 chars" do
+        params.merge!(title: "long " * 1000)
+        expect(list.slug).to match(/^long-long-long-/)
+        expect(list.slug.length).to eq(254)
+      end
+    end
   end
 end
