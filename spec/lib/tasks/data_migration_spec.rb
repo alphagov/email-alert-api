@@ -20,4 +20,22 @@ RSpec.describe "data_migration" do
       expect(list.reload.tags[:location][:any]).to match_array %w[other]
     end
   end
+
+  describe "temp_unsubscribe_old_brexit_lists" do
+    before do
+      Rake::Task["data_migration:temp_unsubscribe_old_brexit_lists"].reenable
+    end
+
+    it "bulk unsubscribes across a couple of lists" do
+      list1 = create(:subscriber_list, id: 18_200)
+      list2 = create(:subscriber_list, id: 23_131)
+
+      create(:subscription, subscriber_list: list1)
+      create(:subscription, subscriber_list: list2)
+      create(:subscription)
+
+      Rake::Task["data_migration:temp_unsubscribe_old_brexit_lists"].invoke
+      expect(Subscription.active.count).to eq(1)
+    end
+  end
 end
