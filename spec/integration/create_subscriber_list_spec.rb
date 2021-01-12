@@ -11,11 +11,11 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(SubscriberList.count).to eq(1)
     end
 
-    it "returns a 201" do
+    it "returns a 200" do
       create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
                                      location: { all: %w[france germany] } })
 
-      expect(response.status).to eq(201)
+      expect(response.status).to eq(200)
     end
 
     it "returns the created subscriber list" do
@@ -76,7 +76,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
         end
 
         expect(SubscriberList.count).to eq(1)
-        expect(response.status).to eq(201)
+        expect(response.status).to eq(200)
         expect(response.body).to include("subscriber_list")
       end
     end

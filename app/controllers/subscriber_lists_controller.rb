@@ -25,7 +25,7 @@ class SubscriberListsController < ApplicationController
 
   def create
     subscriber_list = CreateSubscriberListService.call(params: params, user: current_user)
-    render json: subscriber_list.to_json, status: :created
+    render json: subscriber_list.to_json
   end
 
 private
