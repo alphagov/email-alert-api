@@ -76,5 +76,15 @@ RSpec.describe CreateSubscriberListService do
         expect(list.slug.length).to eq(254)
       end
     end
+
+    context "when links / tags aren't in a hash" do
+      it "nests the legacy params in 'any'" do
+        params.merge!(tags: { topics: %w[blah] })
+        params.merge!(links: { taxon_tree: %w[uuid] })
+
+        expect(list.tags).to eq(topics: { any: %w[blah] })
+        expect(list.links).to eq(taxon_tree: { any: %w[uuid] })
+      end
+    end
   end
 end

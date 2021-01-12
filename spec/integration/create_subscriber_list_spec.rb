@@ -68,25 +68,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list["tags"]))
     end
 
-    describe "using legacy parameters" do
-      it "creates a new subscriber list" do
-        expect {
-          create_subscriber_list(
-            title: "oil and gas licensing",
-            links: { topics: %w[uuid-888] },
-          )
-        }.to change { SubscriberList.count }.by(1)
-      end
-
-      it "returns an error if link isn't an array" do
-        create_subscriber_list(
-          links: { topics: "uuid-888" },
-        )
-
-        expect(response.status).to eq(422)
-      end
-    end
-
     context "an invalid subscriber list" do
       it "returns 422" do
         post "/subscriber-lists", params: { title: "" }
