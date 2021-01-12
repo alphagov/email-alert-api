@@ -6,7 +6,7 @@ class EmailParameters
     @subject = subject
     @template_data = template_data.merge(
       subject: subject,
-      address: subscriber.address,
+      subscriber: subscriber,
     )
   end
 end

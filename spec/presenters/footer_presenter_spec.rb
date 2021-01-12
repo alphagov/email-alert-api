@@ -1,19 +1,25 @@
 RSpec.describe FooterPresenter do
   describe ".call" do
     let(:subscriber) { create(:subscriber) }
-    let(:subscription) { create(:subscription) }
+    let(:frequency) { "immediately" }
+    let(:subscription) { create(:subscription, frequency: frequency) }
 
     let(:footer) do
       described_class.call(subscriber, subscription)
     end
 
     before do
+      utm_params = {
+        utm_source: subscription.subscriber_list.slug,
+        utm_content: frequency,
+      }
+
       allow(PublicUrls).to receive(:unsubscribe)
-        .with(subscription)
+        .with(subscription, **utm_params)
         .and_return("unsubscribe_url")
 
-      allow(PublicUrls).to receive(:authenticate_url)
-        .with(address: subscriber.address)
+      allow(PublicUrls).to receive(:manage_url)
+        .with(subscriber, **utm_params)
         .and_return("manage_url")
     end
 
@@ -35,7 +41,7 @@ RSpec.describe FooterPresenter do
 
     %w[weekly daily].each do |frequency|
       context "for a #{frequency} subscription" do
-        let(:subscription) { create(:subscription, frequency: frequency) }
+        let(:frequency) { frequency }
 
         it "uses a different explanation" do
           expect(footer).to include(I18n.t!("emails.footer.#{frequency}"))

@@ -3,9 +3,9 @@ require "redcarpet/render_strip"
 class ContentChangePresenter < ApplicationPresenter
   EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze
 
-  def initialize(content_change, frequency: "immediate")
+  def initialize(content_change, subscription)
     @content_change = content_change
-    @frequency = frequency
+    @subscription = subscription
   end
 
   def call
@@ -19,7 +19,7 @@ class ContentChangePresenter < ApplicationPresenter
 
 private
 
-  attr_reader :content_change, :frequency
+  attr_reader :content_change, :subscription
 
   delegate :title, :description, :change_note, :footnote, to: :content_change
 
@@ -27,7 +27,7 @@ private
     PublicUrls.url_for(
       base_path: content_change.base_path,
       utm_source: content_change.id,
-      utm_content: frequency,
+      utm_content: subscription.frequency,
     )
   end
 

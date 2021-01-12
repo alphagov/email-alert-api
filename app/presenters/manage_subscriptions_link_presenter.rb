@@ -1,6 +1,6 @@
 class ManageSubscriptionsLinkPresenter < ApplicationPresenter
-  def initialize(address)
-    @address = address
+  def initialize(subscriber)
+    @subscriber = subscriber
   end
 
   def call
@@ -9,9 +9,9 @@ class ManageSubscriptionsLinkPresenter < ApplicationPresenter
 
 private
 
-  attr_reader :address
+  attr_reader :subscriber
 
   def url
-    PublicUrls.authenticate_url(address: address)
+    PublicUrls.manage_url(subscriber)
   end
 end

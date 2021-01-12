@@ -4,7 +4,7 @@ class UnpublishHandlerService < ApplicationService
 
     You might want to subscribe to updates about '<%=redirect.title%>' instead: [<%=redirect.url%>](<%=add_utm(redirect.url, utm_parameters)%>)
 
-    <%=presented_manage_subscriptions_links(address)%>
+    <%=presented_manage_subscriptions_links(subscriber)%>
   BODY
 
   TEMPLATES = {

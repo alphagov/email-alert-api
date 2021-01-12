@@ -17,7 +17,7 @@ RSpec.describe "Sending an email", type: :request do
     expect(body).to include("Change note")
     expect(body).to include("12:00am, 1 January 2017")
     expect(body).to include("[Unsubscribe](http://www.dev.gov.uk/email/unsubscribe")
-    expect(body).to include("gov.uk/email/manage/authenticate?address=")
+    expect(body).to include("gov.uk/email/manage/authenticate")
   end
 
   scenario "sending an email for a message" do
@@ -39,6 +39,6 @@ RSpec.describe "Sending an email", type: :request do
     body = email_data.dig(:personalisation, :body)
     expect(body).to include("Body")
     expect(body).to include("[Unsubscribe](http://www.dev.gov.uk/email/unsubscribe")
-    expect(body).to include("gov.uk/email/manage/authenticate?address=")
+    expect(body).to include("gov.uk/email/manage/authenticate")
   end
 end

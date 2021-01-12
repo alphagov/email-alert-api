@@ -41,7 +41,7 @@ private
   def presented_results
     changes = content.map do |item|
       presenter = "#{item.class.name}Presenter".constantize
-      presenter.call(item, frequency: subscription.frequency)
+      presenter.call(item, subscription)
     end
 
     changes.join("\n\n---\n\n").strip

@@ -25,16 +25,37 @@ RSpec.describe PublicUrls do
   end
 
   describe ".unsubscribe" do
-    it "returns the GOV.UK url for a one-click unsubscribe" do
-      subscription = create :subscription
+    let(:subscription) { create :subscription }
 
+    before do
       allow(AuthTokenGeneratorService)
         .to receive(:call)
         .with(subscriber_id: subscription.subscriber_id)
         .and_return("token")
+    end
 
+    it "returns the GOV.UK url for a one-click unsubscribe" do
       url = subject.unsubscribe(subscription)
       expect(url).to eq("http://www.dev.gov.uk/email/unsubscribe/#{subscription.id}?token=token")
+    end
+
+    it "accepts additional UTM params" do
+      url = subject.unsubscribe(subscription, utm_source: "source")
+      expect(url).to include("utm_source=source")
+    end
+  end
+
+  describe ".manage_url" do
+    let(:subscriber) { create(:subscriber, address: "foo@bar.com") }
+
+    it "returns the GOV.UK url to manage subscriptions" do
+      url = subject.manage_url(subscriber)
+      expect(url).to eq("http://www.dev.gov.uk/email/manage/authenticate?address=foo%40bar.com")
+    end
+
+    it "accepts additional UTM params" do
+      url = subject.manage_url(subscriber, utm_source: "source")
+      expect(url).to include("utm_source=source")
     end
   end
 end

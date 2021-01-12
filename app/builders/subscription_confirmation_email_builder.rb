@@ -1,6 +1,8 @@
 class SubscriptionConfirmationEmailBuilder < ApplicationBuilder
   def initialize(subscription:)
     @subscription = subscription
+    @subscriber = subscription.subscriber
+    @subscriber_list = subscription.subscriber_list
   end
 
   def call
@@ -14,32 +16,31 @@ class SubscriptionConfirmationEmailBuilder < ApplicationBuilder
 
 private
 
-  attr_reader :subscription
-
-  def subscriber
-    @subscriber ||= subscription.subscriber
-  end
-
-  def subscriber_list
-    @subscriber_list ||= subscription.subscriber_list
-  end
+  attr_reader :subscription, :subscriber, :subscriber_list
 
   def subject
-    "You’ve subscribed to #{subscriber_list.title}"
+    "You’ve subscribed to: #{subscriber_list.title}"
   end
 
   def body
     <<~BODY
+      # You’ve subscribed to GOV.UK emails
+
+      #{I18n.t!("emails.confirmation.frequency.#{subscription.frequency}")}
+
       #{title_and_optional_url}
 
-      ---
+      Thanks
+      GOV.UK emails
 
-      #{ManageSubscriptionsLinkPresenter.call(subscriber.address)}
+      [Unsubscribe](#{unsubscribe_url})
+
+      [Manage your email preferences](#{manage_url})
     BODY
   end
 
   def title_and_optional_url
-    result = "You’ll get an email each time there are changes to #{subscriber_list.title}"
+    result = subscriber_list.title
 
     source_url = SourceUrlPresenter.call(
       subscriber_list.url,
@@ -49,5 +50,21 @@ private
 
     result += "\n\n" + source_url if source_url
     result
+  end
+
+  def unsubscribe_url
+    PublicUrls.unsubscribe(
+      subscription,
+      utm_source: subscriber_list.slug,
+      utm_content: subscription.frequency,
+    )
+  end
+
+  def manage_url
+    PublicUrls.manage_url(
+      subscriber,
+      utm_source: subscriber_list.slug,
+      utm_content: subscription.frequency,
+    )
   end
 end
