@@ -68,17 +68,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list["tags"]))
     end
 
-    it "can create a subscriber_list with a url" do
-      create_subscriber_list(
-        tags: { topics: { any: ["oil-and-gas/licensing"] },
-                location: { all: %w[france germany] } },
-        url: "/oil-and-gas",
-      )
-
-      expect(SubscriberList.count).to eq(1)
-      expect(SubscriberList.first.url).to eq("/oil-and-gas")
-    end
-
     context "with an existing subscriber list with the same slug" do
       before do
         create(:subscriber_list, slug: "oil-and-gas")
@@ -147,21 +136,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
     end
 
-    it "creates a subscriber_list with a digest of the JSON content" do
-      create_subscriber_list(
-        tags: { topics: { any: ["oil-and-gas/licensing"] },
-                location: { all: %w[france germany] } },
-        links: { topics: { any: %w[oil-and-gas-licensing] },
-                 location: { all: %w[france germany] } },
-      )
-      expect(SubscriberList.last.tags_digest).to eq(digested(SubscriberList.last.tags))
-      expect(SubscriberList.last.links_digest).to eq(digested(SubscriberList.last.links))
-
-      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] } })
-      expect(SubscriberList.last.tags_digest).to eq(digested(SubscriberList.last.tags))
-      expect(SubscriberList.last.links_digest).to be_nil
-    end
-
     describe "using legacy parameters" do
       it "creates a new subscriber list" do
         expect {
@@ -178,50 +152,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
         )
 
         expect(response.status).to eq(422)
-      end
-    end
-
-    context "when creating a subscriber list with a document_type" do
-      it "returns a 201" do
-        create_subscriber_list(document_type: "travel_advice")
-
-        expect(response.status).to eq(201)
-      end
-
-      it "sets the document_type on the subscriber list" do
-        create_subscriber_list(
-          tags: { location: { any: %w[andorra] } },
-          document_type: "travel_advice",
-        )
-
-        subscriber_list = SubscriberList.last
-        expect(subscriber_list.document_type).to eq("travel_advice")
-      end
-    end
-
-    context "when creating a subscriber list with no tags or links" do
-      context "and a document_type is provided" do
-        it "returns a 201" do
-          create_subscriber_list(document_type: "travel_advice")
-
-          expect(response.status).to eq(201)
-        end
-      end
-    end
-
-    context "when creating a subscriber list with 'email' and 'government' document supertypes" do
-      it "returns a 201" do
-        create_subscriber_list(
-          email_document_supertype: "publications",
-          government_document_supertype: "news_stories",
-        )
-
-        expect(response.status).to eq(201)
-
-        expect(SubscriberList.last).to have_attributes(
-          email_document_supertype: "publications",
-          government_document_supertype: "news_stories",
-        )
       end
     end
 
