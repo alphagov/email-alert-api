@@ -72,4 +72,13 @@ namespace :data_migration do
       puts "Updated #{args[:key]} in #{list.title} to #{new_criteria}"
     end
   end
+
+  desc "Temporary task to make old Brexit lists available for future deletion"
+  task temp_unsubscribe_old_brexit_lists: :environment do
+    [23_131, 18_200].each do |list_id|
+      SubscriberList.find(list_id).subscriptions.active.each do |subscription|
+        subscription.end(reason: :subscriber_list_changed)
+      end
+    end
+  end
 end
