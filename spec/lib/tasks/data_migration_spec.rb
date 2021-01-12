@@ -38,4 +38,36 @@ RSpec.describe "data_migration" do
       expect(Subscription.active.count).to eq(1)
     end
   end
+
+  describe "temp_update_brexit_list_titles" do
+    before do
+      Rake::Task["data_migration:temp_update_brexit_list_titles"].reenable
+    end
+
+    it "updates lists with 'Transition period' in the title" do
+      list = create(:subscriber_list, title: "Transition period")
+      Rake::Task["data_migration:temp_update_brexit_list_titles"].invoke
+      expect(list.reload.title).to eq("Brexit")
+    end
+
+    it "does not update lists with normal uses of 'transition'" do
+      list = create(:subscriber_list, title: "Brexit transition")
+      Rake::Task["data_migration:temp_update_brexit_list_titles"].invoke
+      expect(list.reload.title).to eq("Brexit transition")
+    end
+
+    it "updates lists with 'Transition' in the title" do
+      list1 = create(:subscriber_list, title: "Transition")
+      list2 = create(:subscriber_list, title: "Blah topic of Transition")
+      Rake::Task["data_migration:temp_update_brexit_list_titles"].invoke
+      expect(list1.reload.title).to eq("Brexit")
+      expect(list2.reload.title).to eq("Blah topic of Brexit")
+    end
+
+    it "does not update lists for world location taxons" do
+      list = create(:subscriber_list, id: 11_133, title: "Really should Transition")
+      Rake::Task["data_migration:temp_update_brexit_list_titles"].invoke
+      expect(list.reload.title).to eq("Really should Transition")
+    end
+  end
 end

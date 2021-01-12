@@ -81,4 +81,49 @@ namespace :data_migration do
       end
     end
   end
+
+  desc "Update titles for Brexit lists away from Transition terminology"
+  task temp_update_brexit_list_titles: :environment do
+    excluded_ids = [
+      11_133,
+      8951,
+      62_108,
+      62_155,
+      63_105,
+      64_274,
+      65_157,
+      64_346,
+      64_730,
+      64_837,
+      65_521,
+      10_602,
+      13_889,
+      9888,
+      9532,
+      67_143,
+      70_348,
+      74_038,
+      74_369,
+      74_370,
+      74_371,
+      74_372,
+      74_373,
+      74_409,
+      74_410,
+      74_411,
+      74_413,
+      81_021,
+    ]
+
+    lists = SubscriberList.where("title LIKE '%Transition%'")
+      .where.not(id: excluded_ids)
+
+    lists.each do |list|
+      new_title = list.title
+        .gsub("Transition period", "Brexit")
+        .gsub("Transition", "Brexit")
+
+      list.update!(title: new_title)
+    end
+  end
 end
