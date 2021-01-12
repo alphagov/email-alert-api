@@ -68,23 +68,6 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list["tags"]))
     end
 
-    context "with an existing subscriber list with the same slug" do
-      before do
-        create(:subscriber_list, slug: "oil-and-gas")
-      end
-
-      it "creates another subscriber list with a different slug" do
-        allow(SecureRandom).to receive(:hex).and_return("a1a1a1a1a1")
-        create_subscriber_list(title: "oil and gas", tags: { topics: { any: ["oil-and-gas/licensing"] } })
-
-        expect(response.status).to eq(201)
-
-        response_hash = JSON.parse(response.body)
-        subscriber_list = response_hash["subscriber_list"]
-        expect(subscriber_list["slug"]).to eq("oil-and-gas-a1a1a1a1a1")
-      end
-    end
-
     context "when a subscriber list has a long title" do
       it "truncates the slug to be less than 255 characters" do
         long_title = "Find Brexit guidance for your business with Sector / "\

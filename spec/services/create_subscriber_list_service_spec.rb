@@ -58,5 +58,15 @@ RSpec.describe CreateSubscriberListService do
         expect(list.links_digest).to be_nil
       end
     end
+
+    context "when a slug is already in use" do
+      before do
+        create(:subscriber_list, slug: "this-is-a-sample-title")
+      end
+
+      it "makes sure the slug is unique" do
+        expect(list.slug).to match(/this-is-a-sample-title-[a-z0-9]+/)
+      end
+    end
   end
 end
