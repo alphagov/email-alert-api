@@ -12,4 +12,11 @@ RSpec.describe "report" do
         .to output.to_stdout
     end
   end
+
+  describe "potentially_dead_lists" do
+    it "outputs a report of data for subscriber lists that appear to be inactive" do
+      expect { Rake::Task["report:potentially_dead_lists"].invoke }
+        .to output.to_stdout
+    end
+  end
 end

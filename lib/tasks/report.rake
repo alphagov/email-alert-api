@@ -10,4 +10,9 @@ namespace :report do
     options = { slugs: ENV.fetch("SLUGS", ""), tags_pattern: ENV["TAGS_PATTERN"], links_pattern: ENV["LINKS_PATTERN"] }
     puts Reports::SubscriberListsReport.new(args[:date], **options).call
   end
+
+  desc "Outputs a CSV of subscriber lists that appear to be inactive (tech debt)"
+  task potentially_dead_lists: :environment do
+    puts Reports::PotentiallyDeadListsReport.new.call
+  end
 end

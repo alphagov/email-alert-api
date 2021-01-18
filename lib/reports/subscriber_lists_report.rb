@@ -3,6 +3,7 @@ class Reports::SubscriberListsReport
 
   CSV_HEADERS = %i[title
                    slug
+                   url
                    matching_criteria
                    created_at
                    individual_subscribers
@@ -58,6 +59,7 @@ private
 
     [list.title,
      list.slug,
+     list.url,
      criteria(list),
      list.created_at,
      scope.immediately.count,

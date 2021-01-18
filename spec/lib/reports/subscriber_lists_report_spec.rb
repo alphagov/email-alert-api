@@ -2,7 +2,7 @@ RSpec.describe Reports::SubscriberListsReport do
   let(:created_at) { Time.zone.parse("2020-06-15").midday }
 
   before do
-    list = create(:subscriber_list, created_at: created_at, title: "list 1", slug: "list-1")
+    list = create(:subscriber_list, created_at: created_at, title: "list 1", slug: "list-1", url: "/url")
 
     create(:subscription, :immediately, subscriber_list: list, created_at: created_at)
     create(:subscription, :daily, subscriber_list: list, created_at: created_at)
@@ -20,7 +20,7 @@ RSpec.describe Reports::SubscriberListsReport do
 
     expected = CSV.generate do |csv|
       csv << Reports::SubscriberListsReport::CSV_HEADERS
-      csv << ["list 1", "list-1", expected_criteria_bits, created_at, 1, 1, 1, 1, 1, 1]
+      csv << ["list 1", "list-1", "/url", expected_criteria_bits, created_at, 1, 1, 1, 1, 1, 1]
     end
 
     expect(described_class.new("2020-06-15").call).to eq expected
