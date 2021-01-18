@@ -29,11 +29,11 @@ class Subscription < ApplicationRecord
             .where(matched_messages: { message_id: message.id })
         }
 
-  scope :subscription_ids_by_subscriber,
+  scope :dedup_by_subscriber,
         lambda {
-          group(:subscriber_id)
-            .pluck(:subscriber_id, Arel.sql("ARRAY_AGG(subscriptions.id)"))
-            .to_h
+          order("subscriptions.subscriber_id DESC, subscriptions.created_at desc")
+            .pluck(Arel.sql("DISTINCT ON (subscriptions.subscriber_id) subscriber_id, subscriptions.id as id"))
+            .map(&:last)
         }
 
   def as_json(options = {})

@@ -30,10 +30,10 @@ private
       scope
         .active
         .immediately
-        .subscription_ids_by_subscriber
+        .dedup_by_subscriber
         .each_slice(BATCH_SIZE)
-        .map do |batch_of_subscribers|
-          Batch.new(content, batch_of_subscribers.to_h)
+        .map do |subscription_ids|
+          Batch.new(content, subscription_ids)
         end
     end
   end

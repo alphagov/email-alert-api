@@ -112,14 +112,25 @@ RSpec.describe Subscription, type: :model do
     end
   end
 
-  describe ".subscription_ids_by_subscriber" do
-    it "returns a hash of subscriber id to an array of subscriptions" do
+  describe ".dedup_by_subscriber" do
+    it "returns the latest subscription for a subscriber" do
       subscriber = create(:subscriber)
-      subscription1 = create(:subscription, subscriber: subscriber)
-      subscription2 = create(:subscription, subscriber: subscriber)
+      create(:subscription, subscriber: subscriber, created_at: 2.days.ago)
 
-      expect(Subscription.subscription_ids_by_subscriber)
-        .to match(subscriber.id => match_array([subscription1.id, subscription2.id]))
+      expected = [
+        create(:subscription, subscriber: subscriber).id,
+        create(:subscription, subscriber: create(:subscriber)).id,
+      ]
+
+      expect(Subscription.dedup_by_subscriber).to match_array(expected)
+    end
+
+    it "respects any previous scopes applied to the model" do
+      create(:subscription, :ended)
+      create(:subscription, frequency: "daily")
+
+      create(:subscription)
+      expect(Subscription.active.immediately.dedup_by_subscriber.count).to eq(1)
     end
   end
 

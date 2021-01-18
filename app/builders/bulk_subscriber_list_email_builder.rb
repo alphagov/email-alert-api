@@ -10,8 +10,8 @@ class BulkSubscriberListEmailBuilder < ApplicationBuilder
 
   def call
     ActiveRecord::Base.transaction do
-      batches.flat_map do |batch|
-        records = records_for_batch(batch.to_h)
+      batches.flat_map do |subscription_ids|
+        records = records_for_batch(subscription_ids)
         Email.insert_all!(records).pluck("id")
       end
     end
@@ -21,24 +21,19 @@ private
 
   attr_reader :subject, :body, :subscriber_lists, :now
 
-  def records_for_batch(batch)
-    subscriber_ids = batch.keys
-    subscribers = Subscriber.find(subscriber_ids).index_by(&:id)
+  def records_for_batch(subscription_ids)
+    subscriptions = Subscription
+      .includes(:subscriber, :subscriber_list)
+      .find(subscription_ids)
 
-    subscription_ids = batch.values
-    subscriptions = Subscription.find(subscription_ids).index_by(&:id)
-
-    batch.map do |subscriber_id, subscriber_subscription_ids|
-      subscriber = subscribers[subscriber_id]
-
-      subscription = subscriptions.slice(*subscriber_subscription_ids)
-        .values.max_by(&:created_at)
+    subscriptions.map do |subscription|
+      subscriber = subscription.subscriber
 
       {
         address: subscriber.address,
         subject: subject,
         body: email_body(subscriber, subscription),
-        subscriber_id: subscriber_id,
+        subscriber_id: subscriber.id,
         created_at: now,
         updated_at: now,
       }
@@ -59,7 +54,7 @@ private
     Subscription
       .active
       .where(subscriber_list: subscriber_lists)
-      .subscription_ids_by_subscriber
+      .dedup_by_subscriber
       .each_slice(BATCH_SIZE)
   end
 end

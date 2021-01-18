@@ -1,6 +1,7 @@
 class ImmediateEmailBuilder < ApplicationBuilder
-  def initialize(recipients_and_content)
-    @recipients_and_content = recipients_and_content
+  def initialize(content, subscriptions)
+    @content = content
+    @subscriptions = subscriptions
   end
 
   def call
@@ -10,20 +11,18 @@ class ImmediateEmailBuilder < ApplicationBuilder
 
 private
 
-  attr_reader :recipients_and_content
+  attr_reader :content, :subscriptions
 
   def records
     @records ||= begin
       now = Time.zone.now
-      recipients_and_content.map do |recipient_and_content|
-        subscriber = recipient_and_content.fetch(:subscriber)
-        content = recipient_and_content.fetch(:content)
-        subscriptions = recipient_and_content.fetch(:subscriptions)
+      subscriptions.map do |subscription|
+        subscriber = subscription.subscriber
 
         {
           address: subscriber.address,
-          subject: subject(content),
-          body: body(content, subscriptions.first, subscriber),
+          subject: subject,
+          body: body(subscription, subscriber),
           subscriber_id: subscriber.id,
           created_at: now,
           updated_at: now,
@@ -32,11 +31,11 @@ private
     end
   end
 
-  def subject(content)
+  def subject
     "Update from GOV.UK for: #{content.title}"
   end
 
-  def body(content, subscription, subscriber)
+  def body(subscription, subscriber)
     list = subscription.subscriber_list
 
     <<~BODY
@@ -46,7 +45,7 @@ private
 
       ---
 
-      #{middle_section(subscription, content)}
+      #{middle_section(subscription)}
 
       ---
 
@@ -54,7 +53,7 @@ private
     BODY
   end
 
-  def middle_section(subscription, content)
+  def middle_section(subscription)
     subscriber_list = subscription.subscriber_list
     presenter = "#{content.class.name}Presenter".constantize
     section = presenter.call(content, subscription)
