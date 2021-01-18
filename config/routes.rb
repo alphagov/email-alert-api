@@ -4,11 +4,8 @@ Rails.application.routes.draw do
     resources :subscriber_lists, path: "subscriber-lists", only: %i[create]
     get "/subscriber-lists", to: "subscriber_lists#index"
     get "/subscriber-lists/:slug", to: "subscriber_lists#show"
-    get "/subscribables/:slug", to: "subscriber_lists#show" # for backwards compatiblity
 
     post "/unpublish-messages", to: "unpublish_messages#create"
-
-    post "/notifications", to: "content_changes#create" # for backwards compaibility
 
     resources :content_changes, only: %i[create], path: "content-changes"
     resources :messages, only: %i[create]
