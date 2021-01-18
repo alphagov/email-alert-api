@@ -2,7 +2,7 @@ module RequestHelpers
   def create_subscriber_list(overrides = {})
     params = { title: "Example", tags: {}, links: {} }.merge(overrides)
     post "/subscriber-lists", params: params.to_json, headers: json_headers
-    expect(response.status).to eq(201)
+    expect(response.status).to eq(200)
     data.dig(:subscriber_list, :id)
   end
 
