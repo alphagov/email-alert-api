@@ -12,10 +12,7 @@ class SubscriberListsController < ApplicationController
     subscriber_list = SubscriberList.find_by(slug: params[:slug])
     if subscriber_list
       render(
-        json: {
-          subscribable: subscriber_list.attributes, # for backwards compatiblity
-          subscriber_list: subscriber_list.attributes,
-        },
+        json: { subscriber_list: subscriber_list.attributes },
         status: status,
       )
     else
