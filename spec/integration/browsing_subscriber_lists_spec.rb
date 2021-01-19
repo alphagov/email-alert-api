@@ -94,6 +94,14 @@ RSpec.describe "Browsing subscriber lists", type: :request do
         get_subscriber_list({})
         expect(response.status).to eq(404)
       end
+
+      it "copes if the (legacy) links / tags are not in a hash" do
+        get_subscriber_list(links: { topics: [uuid, "drug-device-alert"] })
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_links_only.id)
+
+        get_subscriber_list(tags: { topics: ["drug-device-alert", "oil-and-gas/licensing"] })
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_tags_only.id)
+      end
     end
 
     context "without authentication" do
