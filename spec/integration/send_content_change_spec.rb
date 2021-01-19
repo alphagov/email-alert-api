@@ -85,13 +85,4 @@ RSpec.describe "Sending a content change", type: :request do
       expect(response.status).to eq(403)
     end
   end
-
-  context "with legacy endpoint" do
-    it "creates a ContentChange" do
-      login_with_internal_app
-      expect { post "/notifications", params: valid_request_params.to_json, headers: json_headers }
-        .to change { ContentChange.count }
-        .by(1)
-    end
-  end
 end
