@@ -16,8 +16,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
     it "returns the created subscriber list" do
       create_subscriber_list
-      response_hash = JSON.parse(response.body)
-      subscriber_list = response_hash["subscriber_list"]
+      subscriber_list = response_subscriber_list
 
       expect(subscriber_list.keys.to_set.sort).to eq(
         %w[
@@ -62,6 +61,28 @@ RSpec.describe "Creating a subscriber list", type: :request do
       expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list["tags"]))
     end
 
+    context "with legacy links / tags" do
+      it "converts them to a nested hash" do
+        create_subscriber_list(
+          tags: { location: %w[france germany] },
+          links: { topics: %w[uuid-888] },
+        )
+
+        expect(response_subscriber_list).to include(
+          "tags" => {
+            "location" => {
+              "any" => %w[france germany],
+            },
+          },
+          "links" => {
+            "topics" => {
+              "any" => %w[uuid-888],
+            },
+          },
+        )
+      end
+    end
+
     context "an existing subscriber list" do
       it "returns the existing list" do
         2.times.each { create_subscriber_list }
@@ -98,6 +119,10 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
       request_body = JSON.dump(defaults.merge(payload))
       post "/subscriber-lists", params: request_body, headers: json_headers
+    end
+
+    def response_subscriber_list
+      JSON.parse(response.body).fetch("subscriber_list")
     end
   end
 
