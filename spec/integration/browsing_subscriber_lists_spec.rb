@@ -51,9 +51,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
 
       it "responds with the matching subscriber list" do
         get_subscriber_list(links: { topics: { any: [uuid, "drug-device-alert"] } })
-
         database_subscriber_list = subscriber_list_links_only
-        response_subscriber_list = JSON.parse(response.body).fetch("subscriber_list").deep_symbolize_keys
 
         expect(response_subscriber_list).to include(
           id: database_subscriber_list.id,
@@ -68,25 +66,19 @@ RSpec.describe "Browsing subscriber lists", type: :request do
       it "finds subscriber lists that match all of the links" do
         get_subscriber_list(links: { topics: { any: [uuid, "drug-device-alert"] } })
         expect(response.status).to eq(200)
-
-        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-        expect(subscriber_list.fetch("id")).to eq(subscriber_list_links_only.id)
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_links_only.id)
       end
 
       it "finds subscriber lists that match all of the tags" do
         get_subscriber_list(tags: { topics: { any: ["drug-device-alert", "oil-and-gas/licensing"] } })
         expect(response.status).to eq(200)
-
-        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-        expect(subscriber_list.fetch("id")).to eq(subscriber_list_tags_only.id)
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_tags_only.id)
       end
 
       it "finds subscriber lists that match document type only" do
         get_subscriber_list(document_type: "travel_advice")
         expect(response.status).to eq(200)
-
-        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-        expect(subscriber_list.fetch("id")).to eq(subscriber_list_document_type_only.id)
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_document_type_only.id)
       end
 
       it "finds subscriber lists that match links and document type" do
@@ -95,9 +87,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           document_type: "tax",
         )
         expect(response.status).to eq(200)
-
-        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-        expect(subscriber_list.fetch("id")).to eq(subscriber_list_links_and_document_type.id)
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_links_and_document_type.id)
       end
 
       it "does not find subscriber lists when no query keys are provided" do
@@ -125,6 +115,10 @@ RSpec.describe "Browsing subscriber lists", type: :request do
 
     def get_subscriber_list(query_payload)
       get "/subscriber-lists", params: query_payload, headers: json_headers
+    end
+
+    def response_subscriber_list
+      JSON.parse(response.body).fetch("subscriber_list").deep_symbolize_keys
     end
   end
 end
