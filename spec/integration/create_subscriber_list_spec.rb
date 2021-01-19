@@ -18,23 +18,9 @@ RSpec.describe "Creating a subscriber list", type: :request do
       create_subscriber_list
       subscriber_list = response_subscriber_list
 
-      expect(subscriber_list.keys.to_set.sort).to eq(
-        %w[
-          id
-          title
-          slug
-          document_type
-          created_at
-          updated_at
-          url
-          tags
-          links
-          email_document_supertype
-          government_document_supertype
-          active_subscriptions_count
-          tags_digest
-          links_digest
-        ].to_set.sort,
+      expect(subscriber_list.keys).to include(
+        "id", "title", "slug", "document_type",
+        "tags", "links"
       )
 
       expect(subscriber_list).to include(
