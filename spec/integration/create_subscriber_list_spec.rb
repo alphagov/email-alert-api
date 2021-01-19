@@ -5,26 +5,17 @@ RSpec.describe "Creating a subscriber list", type: :request do
     end
 
     it "creates a subscriber_list" do
-      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
-                                     location: { all: %w[france germany] } })
-
+      create_subscriber_list
       expect(SubscriberList.count).to eq(1)
     end
 
     it "returns a 200" do
-      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
-                                     location: { all: %w[france germany] } })
-
+      create_subscriber_list
       expect(response.status).to eq(200)
     end
 
     it "returns the created subscriber list" do
-      create_subscriber_list(
-        title: "oil and gas licensing",
-        tags: { topics: { any: ["oil-and-gas/licensing"] } },
-        links: { topics: { any: %w[uuid-888] },
-                 taxon_tree: { all: %w[taxon1 taxon2] } },
-      )
+      create_subscriber_list
       response_hash = JSON.parse(response.body)
       subscriber_list = response_hash["subscriber_list"]
 
@@ -52,6 +43,9 @@ RSpec.describe "Creating a subscriber list", type: :request do
           "topics" => {
             "any" => ["oil-and-gas/licensing"],
           },
+          "location" => {
+            "all" => %w[france germany],
+          },
         },
         "links" => {
           "topics" => {
@@ -63,18 +57,14 @@ RSpec.describe "Creating a subscriber list", type: :request do
         },
       )
 
-      expect(subscriber_list["slug"]).to eq("oil-and-gas-licensing")
+      expect(subscriber_list["slug"]).to eq("this-is-a-sample-title")
       expect(subscriber_list["links_digest"]).to eq(digested(subscriber_list["links"]))
       expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list["tags"]))
     end
 
     context "an existing subscriber list" do
       it "returns the existing list" do
-        2.times.each do
-          create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
-                                         location: { all: %w[france germany] } })
-        end
-
+        2.times.each { create_subscriber_list }
         expect(SubscriberList.count).to eq(1)
         expect(response.status).to eq(200)
         expect(response.body).to include("subscriber_list")
@@ -96,12 +86,17 @@ RSpec.describe "Creating a subscriber list", type: :request do
     def create_subscriber_list(payload = {})
       defaults = {
         title: "This is a sample title",
-        tags: {},
-        links: {},
+        tags: {
+          topics: { any: ["oil-and-gas/licensing"] },
+          location: { all: %w[france germany] },
+        },
+        links: {
+          topics: { any: %w[uuid-888] },
+          taxon_tree: { all: %w[taxon1 taxon2] },
+        },
       }
 
       request_body = JSON.dump(defaults.merge(payload))
-
       post "/subscriber-lists", params: request_body, headers: json_headers
     end
   end
