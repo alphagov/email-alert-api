@@ -49,17 +49,6 @@ RSpec.describe "Browsing subscriber lists", type: :request do
         )
       end
 
-      let!(:subscriber_list_tags_and_document_type) do
-        create(
-          :subscriber_list,
-          links: {},
-          tags: {
-            topics: { any: %w[vat-rates] },
-          },
-          document_type: "tax",
-        )
-      end
-
       it "responds with the matching subscriber list" do
         get_subscriber_list(links: { topics: { any: [uuid, "drug-device-alert"] } })
 
@@ -109,52 +98,6 @@ RSpec.describe "Browsing subscriber lists", type: :request do
 
         subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
         expect(subscriber_list.fetch("id")).to eq(subscriber_list_links_and_document_type.id)
-      end
-
-      it "finds subscriber lists that match tags and document type" do
-        get_subscriber_list(
-          tags: { topics: { any: %w[vat-rates] } },
-          document_type: "tax",
-        )
-        expect(response.status).to eq(200)
-
-        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-        expect(subscriber_list.fetch("id")).to eq(subscriber_list_tags_and_document_type.id)
-      end
-
-      it "does not find subscriber lists that match some of the links" do
-        get_subscriber_list(links: { topics: { any: %w[drug-device-alert] } })
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that match some of the tags" do
-        get_subscriber_list(tags: { topics: { any: %w[drug-device-alert] } })
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that with a different document type" do
-        get_subscriber_list(document_type: "something_else")
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that match links but not document type" do
-        get_subscriber_list(links: { topics: { any: %w[vat-rates] } })
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that match document type but not links" do
-        get_subscriber_list(document_type: "tax")
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that match tags but not document type" do
-        get_subscriber_list(tags: { topics: { any: %w[vat-rates] } })
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that match document type but not tags" do
-        get_subscriber_list(document_type: "tax")
-        expect(response.status).to eq(404)
       end
 
       it "does not find subscriber lists when no query keys are provided" do
