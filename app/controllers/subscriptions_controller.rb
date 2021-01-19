@@ -52,11 +52,8 @@ private
   end
 
   def subscriber_list
+    subscriber_list_id = subscription_params.require(:subscriber_list_id)
     @subscriber_list ||= SubscriberList.find(subscriber_list_id)
-  end
-
-  def subscriber_list_id
-    subscription_params[:subscribable_id] || subscription_params.require(:subscriber_list_id)
   end
 
   def frequency
@@ -64,6 +61,6 @@ private
   end
 
   def subscription_params
-    params.permit(:id, :address, :subscribable_id, :subscriber_list_id, :frequency)
+    params.permit(:id, :address, :subscriber_list_id, :frequency)
   end
 end
