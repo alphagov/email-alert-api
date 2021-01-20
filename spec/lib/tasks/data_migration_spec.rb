@@ -20,4 +20,18 @@ RSpec.describe "data_migration" do
       expect(list.reload.tags[:location][:any]).to match_array %w[other]
     end
   end
+
+  describe "update_subscriber_list_slug" do
+    before do
+      Rake::Task["data_migration:update_subscriber_list_slug"].reenable
+    end
+
+    it "updates the slug of the list" do
+      list = create :subscriber_list
+
+      expect {
+        Rake::Task["data_migration:update_subscriber_list_slug"].invoke(list.slug, "new-slug")
+      }.to output.to_stdout
+    end
+  end
 end

@@ -42,23 +42,20 @@ namespace :data_migration do
     end
   end
 
-  desc "Update subscriber list title and slug"
-  task :update_subscriber_list, %i[slug new_title new_slug] => :environment do |_t, args|
+  # WARNING: this will cause any in-flight signup journeys to 404,
+  # as the slug is used as the ID of the list to subscribe to.
+  desc "Update subscriber list slug"
+  task :update_subscriber_list_slug, %i[slug new_slug] => :environment do |_t, args|
     slug = args[:slug]
-    new_title = args[:new_title]
     new_slug = args[:new_slug]
 
     subscriber_list = SubscriberList.find_by(slug: slug)
     raise "Cannot find subscriber list with #{slug}" if subscriber_list.nil?
 
-    subscriber_list.title = new_title
     subscriber_list.slug = new_slug
 
-    if subscriber_list.save!
-      puts "Subscriber list updated with title:#{new_title} and slug: #{new_slug}"
-    else
-      puts "Error updating subscriber list with title:#{new_title} and slug: #{new_slug}"
-    end
+    subscriber_list.save!
+    puts "Subscriber list updated with slug: #{new_slug}"
   end
 
   desc "Update one of the tags in a subscriber list"
