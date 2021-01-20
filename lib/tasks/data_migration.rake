@@ -54,11 +54,8 @@ namespace :data_migration do
 
     subscriber_list.slug = new_slug
 
-    if subscriber_list.save!
-      puts "Subscriber list updated with slug: #{new_slug}"
-    else
-      puts "Error updating subscriber list with slug: #{new_slug}"
-    end
+    subscriber_list.save!
+    puts "Subscriber list updated with slug: #{new_slug}"
   end
 
   desc "Update one of the tags in a subscriber list"
