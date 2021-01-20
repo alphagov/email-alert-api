@@ -64,13 +64,13 @@ class SubscriberListMover
 
   def build_emails(source_subscriber_list)
     email_subject = "Changes to GOV.UK emails"
-    email_utm_parameters = {
-      utm_source: from_slug,
-      utm_medium: "email",
-      utm_campaign: "govuk-subscription-ended",
-    }
-    email_redirect = EmailTemplateContext.new.add_utm("https://gov.uk/email/manage", email_utm_parameters)
     list_title = source_subscriber_list.title
+
+    email_redirect = PublicUrls.url_for(
+      base_path: "/email/manage",
+      utm_campaign: "govuk-subscription-ended",
+      utm_source: from_slug,
+    )
 
     bulk_move_template = <<~BODY.freeze
       Hello,

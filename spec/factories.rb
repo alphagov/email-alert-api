@@ -111,16 +111,6 @@ FactoryBot.define do
       tags { { format: %w[medical_safety_alert], alert_type: %w[devices drugs field-safety-notices company-led-drugs] } }
     end
 
-    factory :subscriber_list_with_subscribers do
-      transient do
-        subscriber_count { 5 }
-      end
-
-      after(:create) do |list, evaluator|
-        create_list(:subscriber, evaluator.subscriber_count, subscriber_lists: [list])
-      end
-    end
-
     factory :subscriber_list_with_invalid_tags do
       tags do
         {

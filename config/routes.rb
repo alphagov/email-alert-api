@@ -5,8 +5,6 @@ Rails.application.routes.draw do
     get "/subscriber-lists", to: "subscriber_lists#index"
     get "/subscriber-lists/:slug", to: "subscriber_lists#show"
 
-    post "/unpublish-messages", to: "unpublish_messages#create"
-
     resources :content_changes, only: %i[create], path: "content-changes"
     resources :messages, only: %i[create]
     resources :spam_reports, path: "spam-reports", only: %i[create]
