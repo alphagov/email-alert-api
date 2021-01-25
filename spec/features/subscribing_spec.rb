@@ -25,11 +25,7 @@ RSpec.describe "Subscribing", type: :request do
     body = email_data.dig(:personalisation, :body)
     expect(body).to include("http://www.dev.gov.uk/email/subscriptions/authenticate?token=")
 
-    token = URI.decode_www_form_component(
-      body.match(/token=([^&)]+)/)[1],
-    )
-
-    expect(decrypt_and_verify_token(token)).to eq(
+    expect(decrypt_token_from_link(body)).to eq(
       "address" => address,
       "frequency" => frequency,
       "topic_id" => subscriber_list[:slug],

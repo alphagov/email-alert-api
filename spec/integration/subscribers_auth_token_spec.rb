@@ -34,11 +34,7 @@ RSpec.describe "Subscribers auth token", type: :request do
       post path, params: params
       expect(Email.count).to be 1
 
-      token = URI.decode_www_form_component(
-        Email.last.body.match(/token=([^&)]+)/)[1],
-      )
-
-      expect(decrypt_and_verify_token(token)).to eq(
+      expect(decrypt_token_from_link(Email.last.body)).to eq(
         "subscriber_id" => subscriber.id,
       )
     end
