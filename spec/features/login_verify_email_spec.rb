@@ -1,12 +1,6 @@
 RSpec.describe "Login verify email", type: :request do
   include TokenHelpers
 
-  around do |example|
-    Sidekiq::Testing.inline! do
-      freeze_time { example.run }
-    end
-  end
-
   let(:address) { "test@example.com" }
   let!(:subscriber) { create(:subscriber, address: address) }
   let(:destination) { "/authenticate" }
