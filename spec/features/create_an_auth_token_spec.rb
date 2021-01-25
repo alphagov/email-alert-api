@@ -22,7 +22,7 @@ RSpec.describe "Create an auth token", type: :request do
 
     email_data = expect_an_email_was_sent(
       address: "test@example.com",
-      subject: "Manage your GOV.UK email subscriptions",
+      subject: "Change your GOV.UK email preferences",
     )
 
     expect(response.status).to be 201
@@ -31,7 +31,7 @@ RSpec.describe "Create an auth token", type: :request do
     expect(body).to include("http://www.dev.gov.uk#{destination}?token=")
 
     token = URI.decode_www_form_component(
-      body.match(/token=([^&\n]+)/)[1],
+      body.match(/token=([^&)]+)/)[1],
     )
 
     expect(decrypt_and_verify_token(token)).to eq(

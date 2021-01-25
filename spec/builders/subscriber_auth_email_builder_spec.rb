@@ -1,38 +1,39 @@
 RSpec.describe SubscriberAuthEmailBuilder do
   describe ".call" do
     let(:subscriber) { create(:subscriber) }
-    let(:destination) { "/destination" }
-    let(:token) { "secret" }
 
-    subject(:call) do
+    subject(:email) do
       described_class.call(
         subscriber: subscriber,
-        destination: destination,
-        token: token,
+        destination: "/destination",
+        token: "secret",
       )
     end
 
     before do
       allow(PublicUrls).to receive(:url_for)
-        .with(base_path: destination, token: token)
+        .with(base_path: "/destination", token: "secret")
         .and_return("auth_url")
     end
 
-    it { is_expected.to be_instance_of(Email) }
-
     it "creates an email" do
-      expect { call }.to change(Email, :count).by(1)
-    end
+      expect(email.subject).to eq("Change your GOV.UK email preferences")
+      expect(email.subscriber_id).to eq(subscriber.id)
 
-    it "has a subject line prompting the user to manage their subscriptions" do
-      subject = "Manage your GOV.UK email subscriptions"
-      email = call
-      expect(email.subject).to include(subject)
-    end
+      expect(email.body).to eq(
+        <<~BODY,
+          # Click the link to confirm your email address
 
-    it "has body content has a link allowing users to authenticate and manage their subscriptions" do
-      email = call
-      expect(email.body).to include("auth_url")
+          # [Yes, I want to change my GOV.UK email preferences](auth_url)
+
+          This link will stop working after 7 days.
+
+          If you did not request this email, you can ignore it.
+
+          Thanks
+          GOV.UK emails
+        BODY
+      )
     end
   end
 end

@@ -19,24 +19,21 @@ private
   attr_reader :subscriber, :destination, :token
 
   def subject
-    "Manage your GOV.UK email subscriptions"
+    "Change your GOV.UK email preferences"
   end
 
   def body
     <<~BODY
-      # Manage your GOV.UK email subscriptions
+      # Click the link to confirm your email address
 
-      Use this link to unsubscribe or change your email subscriptions:
+      # [Yes, I want to change my GOV.UK email preferences](#{link})
 
-      #{link}
+      This link will stop working after 7 days.
 
-      The link will stop working in 7 days.
+      If you did not request this email, you can ignore it.
 
-      # Didn’t request this email?
-
-      Ignore or delete this email if you didn’t request it. Your subscriptions will not be changed.
-
-      [Contact GOV.UK](https://www.gov.uk/contact/govuk) if you have any problems with your email subscriptions.
+      Thanks
+      GOV.UK emails
     BODY
   end
 
