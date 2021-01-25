@@ -4,18 +4,11 @@ RSpec.describe "Creating a subscriber list", type: :request do
       login_with_internal_app
     end
 
-    it "creates a subscriber_list" do
-      create_subscriber_list
-      expect(SubscriberList.count).to eq(1)
-    end
-
-    it "returns a 200" do
-      create_subscriber_list
-      expect(response.status).to eq(200)
-    end
-
     it "returns the created subscriber list" do
       create_subscriber_list
+      expect(response.status).to eq(200)
+
+      expect(SubscriberList.count).to eq(1)
       subscriber_list = response_subscriber_list
 
       expect(subscriber_list.keys).to include(
