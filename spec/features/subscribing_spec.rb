@@ -3,11 +3,7 @@ RSpec.describe "Subscribing", type: :request do
 
   let(:address) { "test@example.com" }
   let(:frequency) { "immediately" }
-
-  let(:subscriber_list) do
-    subscriber_list_id = create_subscriber_list
-    SubscriberList.find(subscriber_list_id)
-  end
+  let(:subscriber_list) { create_subscriber_list }
 
   before do
     login_with_internal_app
@@ -17,7 +13,7 @@ RSpec.describe "Subscribing", type: :request do
     post "/subscriptions/auth-token",
          params: {
            address: address,
-           topic_id: subscriber_list.slug,
+           topic_id: subscriber_list[:slug],
            frequency: frequency,
          }
 
@@ -36,13 +32,13 @@ RSpec.describe "Subscribing", type: :request do
     expect(decrypt_and_verify_token(token)).to eq(
       "address" => address,
       "frequency" => frequency,
-      "topic_id" => subscriber_list.slug,
+      "topic_id" => subscriber_list[:slug],
     )
 
     # It's expected that the frontend app will interpret the data in
     # the token in order to make this call.
     subscribe_to_subscriber_list(
-      subscriber_list.id,
+      subscriber_list[:id],
       address: address,
       frequency: frequency,
       expected_status: 200,
@@ -55,7 +51,7 @@ RSpec.describe "Subscribing", type: :request do
   end
 
   scenario "repeat subscription" do
-    subscribe_to_subscriber_list(subscriber_list.id, expected_status: 200)
-    subscribe_to_subscriber_list(subscriber_list.id, expected_status: 200)
+    subscribe_to_subscriber_list(subscriber_list[:id], expected_status: 200)
+    subscribe_to_subscriber_list(subscriber_list[:id], expected_status: 200)
   end
 end

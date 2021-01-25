@@ -3,7 +3,7 @@ module RequestHelpers
     params = { title: "Example", tags: {}, links: {} }.merge(overrides)
     post "/subscriber-lists", params: params.to_json, headers: json_headers
     expect(response.status).to eq(200)
-    data.dig(:subscriber_list, :id)
+    data[:subscriber_list]
   end
 
   def subscribe_to_subscriber_list(subscriber_list_id, expected_status: 200,

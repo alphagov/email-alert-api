@@ -1,8 +1,8 @@
 RSpec.describe "Unsubscribing from a subscriber_list", type: :request do
   scenario "unsubscribing from an email uuid, then no longer receiving emails" do
     login_with_internal_app
-    subscriber_list_id = create_subscriber_list
-    subscribe_to_subscriber_list(subscriber_list_id, frequency: "daily")
+    subscriber_list = create_subscriber_list
+    subscribe_to_subscriber_list(subscriber_list[:id], frequency: "daily")
 
     travel_to(Time.zone.yesterday.midday) { create_content_change }
 
