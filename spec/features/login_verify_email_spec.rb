@@ -1,4 +1,4 @@
-RSpec.describe "Create an auth token", type: :request do
+RSpec.describe "Login verify email", type: :request do
   include TokenHelpers
 
   around do |example|
