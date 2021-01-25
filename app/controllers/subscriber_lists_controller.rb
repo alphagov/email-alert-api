@@ -21,7 +21,13 @@ class SubscriberListsController < ApplicationController
   end
 
   def create
-    subscriber_list = CreateSubscriberListService.call(params: params, user: current_user)
+    subscriber_list = CreateSubscriberListService.call(
+      title: params.fetch(:title),
+      url: params.fetch(:url, nil),
+      matching_criteria: find_exact_query_params,
+      user: current_user,
+    )
+
     render json: subscriber_list.to_json
   end
 

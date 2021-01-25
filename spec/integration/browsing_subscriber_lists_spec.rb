@@ -49,22 +49,9 @@ RSpec.describe "Browsing subscriber lists", type: :request do
         )
       end
 
-      let!(:subscriber_list_tags_and_document_type) do
-        create(
-          :subscriber_list,
-          links: {},
-          tags: {
-            topics: { any: %w[vat-rates] },
-          },
-          document_type: "tax",
-        )
-      end
-
       it "responds with the matching subscriber list" do
         get_subscriber_list(links: { topics: { any: [uuid, "drug-device-alert"] } })
-
         database_subscriber_list = subscriber_list_links_only
-        response_subscriber_list = JSON.parse(response.body).fetch("subscriber_list").deep_symbolize_keys
 
         expect(response_subscriber_list).to include(
           id: database_subscriber_list.id,
@@ -79,25 +66,19 @@ RSpec.describe "Browsing subscriber lists", type: :request do
       it "finds subscriber lists that match all of the links" do
         get_subscriber_list(links: { topics: { any: [uuid, "drug-device-alert"] } })
         expect(response.status).to eq(200)
-
-        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-        expect(subscriber_list.fetch("id")).to eq(subscriber_list_links_only.id)
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_links_only.id)
       end
 
       it "finds subscriber lists that match all of the tags" do
         get_subscriber_list(tags: { topics: { any: ["drug-device-alert", "oil-and-gas/licensing"] } })
         expect(response.status).to eq(200)
-
-        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-        expect(subscriber_list.fetch("id")).to eq(subscriber_list_tags_only.id)
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_tags_only.id)
       end
 
       it "finds subscriber lists that match document type only" do
         get_subscriber_list(document_type: "travel_advice")
         expect(response.status).to eq(200)
-
-        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-        expect(subscriber_list.fetch("id")).to eq(subscriber_list_document_type_only.id)
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_document_type_only.id)
       end
 
       it "finds subscriber lists that match links and document type" do
@@ -106,55 +87,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           document_type: "tax",
         )
         expect(response.status).to eq(200)
-
-        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-        expect(subscriber_list.fetch("id")).to eq(subscriber_list_links_and_document_type.id)
-      end
-
-      it "finds subscriber lists that match tags and document type" do
-        get_subscriber_list(
-          tags: { topics: { any: %w[vat-rates] } },
-          document_type: "tax",
-        )
-        expect(response.status).to eq(200)
-
-        subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-        expect(subscriber_list.fetch("id")).to eq(subscriber_list_tags_and_document_type.id)
-      end
-
-      it "does not find subscriber lists that match some of the links" do
-        get_subscriber_list(links: { topics: { any: %w[drug-device-alert] } })
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that match some of the tags" do
-        get_subscriber_list(tags: { topics: { any: %w[drug-device-alert] } })
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that with a different document type" do
-        get_subscriber_list(document_type: "something_else")
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that match links but not document type" do
-        get_subscriber_list(links: { topics: { any: %w[vat-rates] } })
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that match document type but not links" do
-        get_subscriber_list(document_type: "tax")
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that match tags but not document type" do
-        get_subscriber_list(tags: { topics: { any: %w[vat-rates] } })
-        expect(response.status).to eq(404)
-      end
-
-      it "does not find subscriber lists that match document type but not tags" do
-        get_subscriber_list(document_type: "tax")
-        expect(response.status).to eq(404)
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_links_and_document_type.id)
       end
 
       it "does not find subscriber lists when no query keys are provided" do
@@ -162,78 +95,12 @@ RSpec.describe "Browsing subscriber lists", type: :request do
         expect(response.status).to eq(404)
       end
 
-      context "when passing in content_purpose_supergroup" do
-        it "does not find a subscriber list if the content_purpose_supergroup does not match" do
-          get_subscriber_list(
-            tags: {
-              topics: { any: %w[vat-rates] },
-              content_purpose_supergroup: { any: %w[news_and_communications] },
-            },
-            document_type: "tax",
-          )
-          expect(response.status).to eq(404)
-        end
+      it "copes if the (legacy) links / tags are not in a hash" do
+        get_subscriber_list(links: { topics: [uuid, "drug-device-alert"] })
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_links_only.id)
 
-        it "finds the subscriber list if the content_purpose_supergroup matches" do
-          _alpha = create(
-            :subscriber_list,
-            tags: {
-              topics: { any: %w[vat-rates] },
-              content_purpose_supergroup: { any: %w[services] },
-            },
-          )
-          beta = create(
-            :subscriber_list,
-            tags: {
-              topics: { any: %w[vat-rates] },
-              content_purpose_supergroup: { any: %w[news_and_communications] },
-            },
-          )
-          _gamma = create(
-            :subscriber_list,
-            tags: {
-              topics: { any: %w[vat-rates] },
-            },
-          )
-
-          get_subscriber_list(
-            tags: {
-              topics: { any: %w[vat-rates] },
-              content_purpose_supergroup: { any: %w[news_and_communications] },
-            },
-          )
-          expect(response.status).to eq(200)
-
-          subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-          expect(subscriber_list.fetch("id")).to eq(beta.id)
-        end
-      end
-
-      context "when passing in content_purpose_subgroup" do
-        it "does not find a subscriber list if the content_purpose_subgroup does not match" do
-          get_subscriber_list(
-            tags: {
-              topics: { any: %w[vat-rates] },
-              content_purpose_subgroup: { any: %w[news] },
-            },
-            document_type: "tax",
-          )
-          expect(response.status).to eq(404)
-        end
-
-        it "finds the subscriber list if the content_purpose_subgroup matches" do
-          _alpha = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w[updates_and_alerts] } })
-          beta = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w[news] } })
-          _gamma = create(:subscriber_list, tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w[] } })
-
-          get_subscriber_list(
-            tags: { topics: { any: %w[vat-rates] }, content_purpose_subgroup: { any: %w[news] } },
-          )
-          expect(response.status).to eq(200)
-
-          subscriber_list = JSON.parse(response.body).fetch("subscriber_list")
-          expect(subscriber_list.fetch("id")).to eq(beta.id)
-        end
+        get_subscriber_list(tags: { topics: ["drug-device-alert", "oil-and-gas/licensing"] })
+        expect(response_subscriber_list[:id]).to eq(subscriber_list_tags_only.id)
       end
     end
 
@@ -256,6 +123,10 @@ RSpec.describe "Browsing subscriber lists", type: :request do
 
     def get_subscriber_list(query_payload)
       get "/subscriber-lists", params: query_payload, headers: json_headers
+    end
+
+    def response_subscriber_list
+      JSON.parse(response.body).fetch("subscriber_list").deep_symbolize_keys
     end
   end
 end

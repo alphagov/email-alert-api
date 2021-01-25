@@ -2,21 +2,26 @@ RSpec.describe CreateSubscriberListService do
   describe ".call" do
     let(:user) { create :user }
     let(:existing_list_query) { double(FindExactQuery, exact_match: nil) }
+    let(:title) { "This is a sample title" }
+    let(:url) { "/oil-and-gas" }
 
-    let(:params) do
-      ActionController::Parameters.new(
-        title: "This is a sample title",
+    let(:matching_criteria) do
+      {
         tags: { topics: { any: %w[oil-and-gas/licensing] } },
         links: { taxon_tree: { any: %w[uuid] } },
-        url: "/oil-and-gas",
         document_type: "travel_advice",
         email_document_supertype: "publications",
         government_document_supertype: "news_stories",
-      )
+      }
     end
 
     let(:list) do
-      described_class.call(params: params, user: user)
+      described_class.call(
+        title: title,
+        url: url,
+        matching_criteria: matching_criteria,
+        user: user,
+      )
     end
 
     before do
@@ -34,10 +39,7 @@ RSpec.describe CreateSubscriberListService do
 
     context "when a matching list exists" do
       let(:existing_list) do
-        create(:subscriber_list,
-               title: "other",
-               url: "/other",
-               updated_at: 2.days.ago.midnight)
+        create(:subscriber_list, title: "other", url: "/other")
       end
 
       before do
@@ -53,17 +55,30 @@ RSpec.describe CreateSubscriberListService do
         expect(list.title).to eq("This is a sample title")
         expect(list.url).to eq("/oil-and-gas")
       end
+    end
+
+    context "when an up-to-date list exists" do
+      let(:existing_list) do
+        create(:subscriber_list,
+               title: title,
+               url: url,
+               updated_at: 2.days.ago.midnight)
+      end
+
+      before do
+        allow(existing_list_query).to receive(:exact_match)
+          .and_return(existing_list)
+      end
 
       it "only updates if there is a change" do
-        params.merge!(title: "other", url: "/other")
         expect(list.updated_at).to eq(2.days.ago.midnight)
       end
     end
 
     context "with all of the possible params" do
       it "creates a list with the given params" do
-        expect(list.title).to eq("This is a sample title")
-        expect(list.url).to eq("/oil-and-gas")
+        expect(list.title).to eq(title)
+        expect(list.url).to eq(url)
         expect(list.document_type).to eq("travel_advice")
         expect(list.email_document_supertype).to eq("publications")
         expect(list.government_document_supertype).to eq("news_stories")
@@ -82,8 +97,16 @@ RSpec.describe CreateSubscriberListService do
     end
 
     context "with minimal possible params" do
-      let(:params) do
-        ActionController::Parameters.new(title: "This is a sample title")
+      let(:url) { nil }
+
+      let(:matching_criteria) do
+        {
+          links: {},
+          tags: {},
+          document_type: "",
+          email_document_supertype: "",
+          government_document_supertype: "",
+        }
       end
 
       it "creates a list with the given params" do
@@ -112,20 +135,11 @@ RSpec.describe CreateSubscriberListService do
     end
 
     context "when the list title is very long" do
+      let(:title) { "long " * 1000 }
+
       it "truncates the slug to < 255 chars" do
-        params.merge!(title: "long " * 1000)
         expect(list.slug).to match(/^long-long-long-/)
         expect(list.slug.length).to eq(254)
-      end
-    end
-
-    context "when links / tags aren't in a hash" do
-      it "nests the legacy params in 'any'" do
-        params.merge!(tags: { topics: %w[blah] })
-        params.merge!(links: { taxon_tree: %w[uuid] })
-
-        expect(list.tags).to eq(topics: { any: %w[blah] })
-        expect(list.links).to eq(taxon_tree: { any: %w[uuid] })
       end
     end
   end

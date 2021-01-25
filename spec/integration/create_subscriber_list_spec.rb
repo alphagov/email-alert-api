@@ -4,53 +4,25 @@ RSpec.describe "Creating a subscriber list", type: :request do
       login_with_internal_app
     end
 
-    it "creates a subscriber_list" do
-      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
-                                     location: { all: %w[france germany] } })
+    it "returns the created subscriber list" do
+      create_subscriber_list
+      expect(response.status).to eq(200)
 
       expect(SubscriberList.count).to eq(1)
-    end
+      subscriber_list = response_subscriber_list
 
-    it "returns a 200" do
-      create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
-                                     location: { all: %w[france germany] } })
-
-      expect(response.status).to eq(200)
-    end
-
-    it "returns the created subscriber list" do
-      create_subscriber_list(
-        title: "oil and gas licensing",
-        tags: { topics: { any: ["oil-and-gas/licensing"] } },
-        links: { topics: { any: %w[uuid-888] },
-                 taxon_tree: { all: %w[taxon1 taxon2] } },
-      )
-      response_hash = JSON.parse(response.body)
-      subscriber_list = response_hash["subscriber_list"]
-
-      expect(subscriber_list.keys.to_set.sort).to eq(
-        %w[
-          id
-          title
-          slug
-          document_type
-          created_at
-          updated_at
-          url
-          tags
-          links
-          email_document_supertype
-          government_document_supertype
-          active_subscriptions_count
-          tags_digest
-          links_digest
-        ].to_set.sort,
+      expect(subscriber_list.keys).to include(
+        "id", "title", "slug", "document_type",
+        "tags", "links"
       )
 
       expect(subscriber_list).to include(
         "tags" => {
           "topics" => {
             "any" => ["oil-and-gas/licensing"],
+          },
+          "location" => {
+            "all" => %w[france germany],
           },
         },
         "links" => {
@@ -63,18 +35,36 @@ RSpec.describe "Creating a subscriber list", type: :request do
         },
       )
 
-      expect(subscriber_list["slug"]).to eq("oil-and-gas-licensing")
+      expect(subscriber_list["slug"]).to eq("this-is-a-sample-title")
       expect(subscriber_list["links_digest"]).to eq(digested(subscriber_list["links"]))
       expect(subscriber_list["tags_digest"]).to eq(digested(subscriber_list["tags"]))
     end
 
+    context "with legacy links / tags" do
+      it "converts them to a nested hash" do
+        create_subscriber_list(
+          tags: { location: %w[france germany] },
+          links: { topics: %w[uuid-888] },
+        )
+
+        expect(response_subscriber_list).to include(
+          "tags" => {
+            "location" => {
+              "any" => %w[france germany],
+            },
+          },
+          "links" => {
+            "topics" => {
+              "any" => %w[uuid-888],
+            },
+          },
+        )
+      end
+    end
+
     context "an existing subscriber list" do
       it "returns the existing list" do
-        2.times.each do
-          create_subscriber_list(tags: { topics: { any: ["oil-and-gas/licensing"] },
-                                         location: { all: %w[france germany] } })
-        end
-
+        2.times.each { create_subscriber_list }
         expect(SubscriberList.count).to eq(1)
         expect(response.status).to eq(200)
         expect(response.body).to include("subscriber_list")
@@ -96,13 +86,22 @@ RSpec.describe "Creating a subscriber list", type: :request do
     def create_subscriber_list(payload = {})
       defaults = {
         title: "This is a sample title",
-        tags: {},
-        links: {},
+        tags: {
+          topics: { any: ["oil-and-gas/licensing"] },
+          location: { all: %w[france germany] },
+        },
+        links: {
+          topics: { any: %w[uuid-888] },
+          taxon_tree: { all: %w[taxon1 taxon2] },
+        },
       }
 
       request_body = JSON.dump(defaults.merge(payload))
-
       post "/subscriber-lists", params: request_body, headers: json_headers
+    end
+
+    def response_subscriber_list
+      JSON.parse(response.body).fetch("subscriber_list")
     end
   end
 
