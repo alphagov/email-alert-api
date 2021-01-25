@@ -33,7 +33,7 @@ RSpec.describe FooterPresenter do
 
         [Unsubscribe](unsubscribe_url)
 
-        [Manage your email preferences](manage_url)
+        [Change your email preferences](manage_url)
       FOOTER
 
       expect(footer).to eq(expected.strip)
