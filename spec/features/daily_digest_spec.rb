@@ -2,7 +2,7 @@ RSpec.describe "Daily digests", type: :request do
   let(:list_one_topic_id) { "0eb5d0f0-d384-4f27-9da8-3f9e9b22a820" }
   let(:list_two_taxon_id) { "6416e4e0-c0c1-457a-8337-4bf8ed9d5f80" }
 
-  let(:subscriber_list_one_id) do
+  let(:subscriber_list_one) do
     create_subscriber_list(
       title: "Subscriber list one",
       links: {
@@ -11,7 +11,7 @@ RSpec.describe "Daily digests", type: :request do
     )
   end
 
-  let(:subscriber_list_two_id) do
+  let(:subscriber_list_two) do
     create_subscriber_list(
       title: "Subscriber list two",
       links: {
@@ -26,7 +26,7 @@ RSpec.describe "Daily digests", type: :request do
 
   scenario "single list" do
     subscribe_to_subscriber_list(
-      subscriber_list_one_id,
+      subscriber_list_one[:id],
       frequency: Frequency::DAILY,
     )
 
@@ -71,12 +71,12 @@ RSpec.describe "Daily digests", type: :request do
 
   scenario "multiple lists" do
     subscribe_to_subscriber_list(
-      subscriber_list_one_id,
+      subscriber_list_one[:id],
       frequency: Frequency::DAILY,
     )
 
     subscribe_to_subscriber_list(
-      subscriber_list_two_id,
+      subscriber_list_two[:id],
       frequency: Frequency::DAILY,
     )
 

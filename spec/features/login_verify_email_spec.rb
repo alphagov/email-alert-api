@@ -1,11 +1,5 @@
-RSpec.describe "Create an auth token", type: :request do
+RSpec.describe "Login verify email", type: :request do
   include TokenHelpers
-
-  around do |example|
-    Sidekiq::Testing.inline! do
-      freeze_time { example.run }
-    end
-  end
 
   let(:address) { "test@example.com" }
   let!(:subscriber) { create(:subscriber, address: address) }
@@ -22,7 +16,7 @@ RSpec.describe "Create an auth token", type: :request do
 
     email_data = expect_an_email_was_sent(
       address: "test@example.com",
-      subject: "Manage your GOV.UK email subscriptions",
+      subject: "Change your GOV.UK email preferences",
     )
 
     expect(response.status).to be 201
@@ -30,11 +24,7 @@ RSpec.describe "Create an auth token", type: :request do
     body = email_data.dig(:personalisation, :body)
     expect(body).to include("http://www.dev.gov.uk#{destination}?token=")
 
-    token = URI.decode_www_form_component(
-      body.match(/token=([^&\n]+)/)[1],
-    )
-
-    expect(decrypt_and_verify_token(token)).to eq(
+    expect(decrypt_token_from_link(body)).to eq(
       "subscriber_id" => subscriber.id,
     )
   end

@@ -1,8 +1,8 @@
 RSpec.describe "Status updates", type: :request do
   before do
     login_with(%w[internal_app status_updates])
-    subscriber_list_id = create_subscriber_list
-    subscribe_to_subscriber_list(subscriber_list_id)
+    subscriber_list = create_subscriber_list
+    subscribe_to_subscriber_list(subscriber_list[:id])
     create_content_change
     @email_data = expect_an_email_was_sent
   end
