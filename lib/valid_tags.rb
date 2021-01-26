@@ -32,6 +32,7 @@ class ValidTags
     employ_eu_citizens
     eu_uk_government_funding
     first_published_at
+    flood_and_coastal_erosion_category
     format
     fund_state
     fund_type
