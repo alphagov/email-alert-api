@@ -35,7 +35,7 @@ private
 
       [Unsubscribe](#{unsubscribe_url})
 
-      [Manage your email preferences](#{manage_url})
+      [Change your email preferences](#{manage_url})
     BODY
   end
 
