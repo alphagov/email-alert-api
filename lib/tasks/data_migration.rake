@@ -16,15 +16,17 @@ namespace :data_migration do
       next unless list.tags[:alert_type][:any].include? args[:from_slug]
       next if list.subscriptions.active.empty?
 
-      new_tags = (list.tags[:alert_type][:any] - [args[:from_slug]] + [args[:to_slug]]).uniq
+      new_alert_types = (list.tags[:alert_type][:any] - [args[:from_slug]] + [args[:to_slug]]).uniq
 
-      if (new_list = SubscriberList.where("tags->'alert_type' IS NOT NULL").find_all { |l| l.tags[:alert_type][:any].sort == new_tags.sort }.first) && list != new_list
+      if (new_list = SubscriberList.where("tags->'alert_type' IS NOT NULL").find_all { |l| l.tags[:alert_type][:any].sort == new_alert_types.sort }.first) && list != new_list
         puts "Moving #{list.slug} subscribers to #{new_list.slug}"
         SubscriberListMover.new(from_slug: list.slug, to_slug: new_list.slug).call
       else
-        puts "Updating #{list.slug} with tags #{new_tags} (was: #{list.tags})"
+        puts "Updating #{list.slug} with tags #{new_alert_types} (was: #{list.tags[:alert_type][:any]})"
 
-        list.tags[:alert_type][:any] = new_tags
+        new_tags = list.tags.deep_dup
+        new_tags[:alert_type][:any] = new_alert_types
+        list.tags = new_tags
 
         list.save!
       end
