@@ -14,13 +14,18 @@ namespace :data_migration do
   task :rename_alert_subscription_lists, %i[from_slug to_slug] => :environment do |_t, args|
     SubscriberList.where("tags->'alert_type' IS NOT NULL").find_each do |list|
       next unless list.tags[:alert_type][:any].include? args[:from_slug]
+      next if list.subscriptions.active.empty?
 
       new_tags = (list.tags[:alert_type][:any] - [args[:from_slug]] + [args[:to_slug]]).uniq
 
       if (new_list = SubscriberList.where("tags->'alert_type' IS NOT NULL").find_all { |l| l.tags[:alert_type][:any].sort == new_tags.sort }.first) && list != new_list
-        SubscriberListMover.new(from_slug: list.slug, to_slug: new_list.slug)
+        puts "Moving #{list.slug} subscribers to #{new_list.slug}"
+        SubscriberListMover.new(from_slug: list.slug, to_slug: new_list.slug).call
       else
+        puts "Updating #{list.slug} with tags #{new_tags} (was: #{list.tags})"
+
         list.tags[:alert_type][:any] = new_tags
+
         list.save!
       end
     end
