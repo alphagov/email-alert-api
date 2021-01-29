@@ -14,6 +14,7 @@ namespace :data_migration do
   task :rename_alert_subscription_lists, %i[from_slug to_slug] => :environment do |_t, args|
     SubscriberList.where("tags->'alert_type' IS NOT NULL").find_each do |list|
       next unless list.tags[:alert_type][:any].include? args[:from_slug]
+      next if list.subscriptions.active.empty?
 
       new_tags = (list.tags[:alert_type][:any] - [args[:from_slug]] + [args[:to_slug]]).uniq
 
