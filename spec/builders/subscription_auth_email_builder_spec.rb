@@ -41,7 +41,6 @@ RSpec.describe SubscriptionAuthEmailBuilder do
 
           Thanks 
           GOV.UK emails 
-          [https://www.gov.uk/help/update-email-notifications](https://www.gov.uk/help/update-email-notifications)
         BODY
       )
     end
