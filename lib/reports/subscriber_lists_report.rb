@@ -1,32 +1,22 @@
 class Reports::SubscriberListsReport
-  attr_reader :date, :slugs, :tags_pattern, :links_pattern
+  attr_reader :date, :slugs, :tags_pattern, :links_pattern, :headers
 
-  CSV_HEADERS = %i[title
-                   slug
-                   url
-                   matching_criteria
-                   created_at
-                   individual_subscribers
-                   daily_subscribers
-                   weekly_subscribers
-                   unsubscriptions
-                   matched_content_changes_for_date
-                   matched_messages_for_date].freeze
-
-  def initialize(date, slugs: "", tags_pattern: nil, links_pattern: nil)
+  def initialize(date, slugs: "", tags_pattern: nil, links_pattern: nil, headers: nil)
     @date = Time.zone.parse(date)
     @slugs = slugs.split(",")
     @tags_pattern = tags_pattern
     @links_pattern = links_pattern
+    @headers = parse_headers(headers)
   end
 
   def call
     validate_date
     validate_slugs
+    validate_headers
 
     CSV.generate do |csv|
-      csv << CSV_HEADERS
-      lists_to_report.find_each { |list| csv << export_list_row(list) }
+      csv << headers
+      lists_to_report.find_each { |list| csv << Reports::SubscriberListsReportRow.new(date, headers, list).call }
     end
   end
 
@@ -51,45 +41,29 @@ private
     raise "Lists not found for slugs: #{not_found.join(',')}" if not_found.any?
   end
 
-  def export_list_row(list)
-    unsubscriptions_count = list.subscriptions.where(ended_reason: :unsubscribed)
-      .where("ended_at <= ?", date.end_of_day).count
-
-    scope = list.subscriptions.active_on(date.end_of_day)
-
-    [list.title,
-     list.slug,
-     list.url,
-     criteria(list),
-     list.created_at,
-     scope.immediately.count,
-     scope.daily.count,
-     scope.weekly.count,
-     unsubscriptions_count,
-     matched_content_changes_count(list),
-     matched_messages_count(list)]
+  def validate_headers
+    not_found = headers - default_headers
+    raise "Header is not a valid option: #{not_found.join(', ')}" if not_found.any?
   end
 
-  def criteria(list)
-    list.as_json(root: false,
-                 only: %i[links
-                          tags
-                          email_document_supertype
-                          government_document_supertype
-                          document_type]).to_json
+  def parse_headers(headers)
+    return default_headers unless headers
+
+    headers.split(",").map(&:strip).map(&:to_sym)
   end
 
-  def matched_content_changes_count(list)
-    MatchedContentChange
-      .where(subscriber_list: list)
-      .where("created_at > ? AND created_at <= ?", date.beginning_of_day, date.end_of_day)
-      .count
-  end
-
-  def matched_messages_count(list)
-    MatchedMessage
-      .where(subscriber_list: list)
-      .where("created_at > ? AND created_at <= ?", date.beginning_of_day, date.end_of_day)
-      .count
+  def default_headers
+    %i[title
+       slug
+       url
+       matching_criteria
+       created_at
+       individual_subscribers
+       daily_subscribers
+       weekly_subscribers
+       unsubscriptions
+       matched_content_changes_for_date
+       matched_messages_for_date
+       total_subscribers].freeze
   end
 end
