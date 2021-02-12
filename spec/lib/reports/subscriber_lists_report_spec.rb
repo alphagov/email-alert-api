@@ -19,11 +19,40 @@ RSpec.describe Reports::SubscriberListsReport do
       '"links":{},"email_document_supertype":"","government_document_supertype":""}'
 
     expected = CSV.generate do |csv|
-      csv << Reports::SubscriberListsReport::CSV_HEADERS
-      csv << ["list 1", "list-1", "/url", expected_criteria_bits, created_at, 1, 1, 1, 1, 1, 1]
+      csv << %w[
+        title
+        slug
+        url
+        matching_criteria
+        created_at
+        individual_subscribers
+        daily_subscribers
+        weekly_subscribers
+        unsubscriptions
+        matched_content_changes_for_date
+        matched_messages_for_date
+        total_subscribers
+      ]
+      csv << ["list 1", "list-1", "/url", expected_criteria_bits, created_at, 1, 1, 1, 1, 1, 1, 3]
     end
 
     expect(described_class.new("2020-06-15").call).to eq expected
+  end
+
+  it "returns specified headers only" do
+    specified_headers = "title,individual_subscribers,daily_subscribers,weekly_subscribers,total_subscribers"
+    expected = CSV.generate do |csv|
+      csv << %w[
+        title
+        individual_subscribers
+        daily_subscribers
+        weekly_subscribers
+        total_subscribers
+      ]
+      csv << ["list 1", 1, 1, 1, 3]
+    end
+
+    expect(described_class.new("2020-06-15", headers: specified_headers).call).to eq expected
   end
 
   it "can filter based on comma separated list slugs" do
@@ -74,5 +103,10 @@ RSpec.describe Reports::SubscriberListsReport do
   it "raises an error if the date isn't within a year old" do
     expect { described_class.new("2019-05-01").call }
       .to raise_error("Date must be within a year old")
+  end
+
+  it "raises an error if a specified header doesn't exist" do
+    expect { described_class.new("2020-06-15", headers: "title,non-existent-header").call }
+      .to raise_error("Header is not a valid option: non-existent-header")
   end
 end
