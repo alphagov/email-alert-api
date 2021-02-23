@@ -33,33 +33,21 @@ notification services. Currently supports only [GOV.UK Notify](https://www.notif
 
 ## Technical documentation
 
-### Dependencies
+This is a Ruby on Rails app, and should follow [our Rails app conventions](https://docs.publishing.service.gov.uk/manual/conventions-for-rails-applications.html).
 
-* PostgreSQL database (9.3 or higher - requires `json` with `json_object_keys` method)
-* Redis (for [Sidekiq](http://sidekiq.org/))
-* GOV.UK Notify API key and other details (see
-  [`email_service.yml`](config/email_service.yml) for required fields)
+You can use the [GOV.UK Docker environment](https://github.com/alphagov/govuk-docker) to run the application and its tests with all the necessary dependencies. Follow [the usage instructions](https://github.com/alphagov/govuk-docker#usage) to get started.
 
-### Running the application
-
-```bash
-bundle exec rails server
-```
+**Use GOV.UK Docker to run any commands that follow.**
 
 ### Running the test suite
 
 ```bash
-bundle exec rspec
+bundle exec rake
 ```
 
-## Documentation
+### Manuals and decisions
 
-- [Analytics](docs/analytics.md)
-- [API](docs/api.md)
-- [Data cleanup mechanisms](docs/data-cleanup-mechanisms.md)
-- [Matching content to subscriber lists](docs/matching-content-to-subscriber-lists.md)
-- [Support tasks](docs/support-tasks.md)
-- [ENV vars](docs/env-vars.md)
+Check the [docs/](docs/) directory for detailed instructions, decisions and other documentation.
 
 ## Licence
 
