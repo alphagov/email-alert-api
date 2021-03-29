@@ -2,7 +2,7 @@ class Reports::SubscriberListsReport
   attr_reader :date, :slugs, :tags_pattern, :links_pattern, :headers
 
   def initialize(date, slugs: "", tags_pattern: nil, links_pattern: nil, headers: nil)
-    @date = Time.zone.parse(date)
+    @date = Date.parse(date)
     @slugs = slugs.split(",")
     @tags_pattern = tags_pattern
     @links_pattern = links_pattern
@@ -31,7 +31,6 @@ private
   end
 
   def validate_date
-    raise "Invalid date" if date.blank?
     raise "Date must be in the past" if date >= Time.zone.today
     raise "Date must be within a year old" if date <= 1.year.ago
   end
