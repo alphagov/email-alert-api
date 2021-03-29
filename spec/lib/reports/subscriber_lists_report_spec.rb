@@ -90,11 +90,6 @@ RSpec.describe Reports::SubscriberListsReport do
       .to raise_error("Lists not found for slugs: other-list,list")
   end
 
-  it "raises an error if the date is invalid" do
-    expect { described_class.new("blahhh").call }
-      .to raise_error("Invalid date")
-  end
-
   it "raises an error if the date isn't in the past" do
     expect { described_class.new(Time.zone.today.to_s).call }
       .to raise_error("Date must be in the past")
