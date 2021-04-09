@@ -144,6 +144,52 @@ RSpec.describe DigestItemsQuery do
           )
       end
 
+      it "includes a content item uniquely per list" do
+        content_id = SecureRandom.uuid
+
+        content_change1 = create(
+          :content_change, :matched,
+          content_id: content_id,
+          subscriber_list: subscriber_list1,
+          created_at: digest_run.starts_at + 1.hour
+        )
+
+        create(
+          :content_change, :matched,
+          content_id: content_id,
+          subscriber_list: subscriber_list1,
+          created_at: digest_run.starts_at
+        )
+
+        content_change3 = create(
+          :content_change, :matched,
+          content_id: content_id,
+          subscriber_list: subscriber_list2,
+          created_at: digest_run.starts_at + 1.hour
+        )
+
+        create(
+          :content_change, :matched,
+          content_id: content_id,
+          subscriber_list: subscriber_list2,
+          created_at: digest_run.starts_at
+        )
+
+        expect(results.count).to eq(2)
+        expected_results = [
+          [subscription1, [content_change1]],
+          [subscription2, [content_change3]],
+        ]
+
+        expected_results.each.with_index do |(subscription, changes), index|
+          expect(results[index].to_h)
+            .to match(
+              subscription: subscription,
+              content: changes,
+            )
+        end
+      end
+
       it "returns a message only once if it's in two lists" do
         message = create(:message, created_at: digest_run.starts_at)
         create(:matched_message, message: message, subscriber_list: subscriber_list1)
