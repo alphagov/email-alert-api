@@ -35,7 +35,8 @@ private
       .where(subscriptions: { id: subscriptions })
       .where("content_changes.created_at >= ?", digest_run.starts_at)
       .where("content_changes.created_at < ?", digest_run.ends_at)
-      .uniq(&:content_id)
+      .order(created_at: :desc)
+      .uniq { |content| [content.content_id, content.subscription_id] }
       .group_by(&:subscription_id)
   end
 
