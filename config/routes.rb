@@ -22,6 +22,15 @@ Rails.application.routes.draw do
 
     post "/unsubscribe/:id", to: "unsubscribe#unsubscribe"
 
-    get "/healthcheck", to: "healthcheck#index"
+    get "/healthcheck", to: GovukHealthcheck.rack_response(
+      GovukHealthcheck::SidekiqRedis,
+      GovukHealthcheck::ActiveRecord,
+    )
+
+    get "/healthcheck/live", to: proc { [200, {}, %w[OK]] }
+    get "/healthcheck/ready", to: GovukHealthcheck.rack_response(
+      GovukHealthcheck::SidekiqRedis,
+      GovukHealthcheck::ActiveRecord,
+    )
   end
 end
