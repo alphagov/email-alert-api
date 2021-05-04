@@ -1,4 +1,6 @@
-class SubscriptionConfirmationEmailBuilder < ApplicationBuilder
+class SubscriptionConfirmationEmailBuilder
+  include Callable
+
   def initialize(subscription:)
     @subscription = subscription
     @subscriber = subscription.subscriber

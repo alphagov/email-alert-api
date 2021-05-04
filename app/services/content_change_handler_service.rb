@@ -1,4 +1,6 @@
-class ContentChangeHandlerService < ApplicationService
+class ContentChangeHandlerService
+  include Callable
+
   def initialize(params:, govuk_request_id:, user: nil)
     @params = params
     @govuk_request_id = govuk_request_id

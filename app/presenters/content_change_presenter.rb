@@ -1,6 +1,8 @@
 require "redcarpet/render_strip"
 
-class ContentChangePresenter < ApplicationPresenter
+class ContentChangePresenter
+  include Callable
+
   EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze
 
   def initialize(content_change, subscription)

@@ -1,4 +1,6 @@
-class SourceUrlPresenter < ApplicationPresenter
+class SourceUrlPresenter
+  include Callable
+
   def initialize(url, utm_source:, utm_content:)
     @url = url
     @utm_source = utm_source

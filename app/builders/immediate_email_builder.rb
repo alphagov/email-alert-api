@@ -1,4 +1,6 @@
-class ImmediateEmailBuilder < ApplicationBuilder
+class ImmediateEmailBuilder
+  include Callable
+
   def initialize(content, subscriptions)
     @content = content
     @subscriptions = subscriptions

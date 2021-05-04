@@ -1,4 +1,6 @@
-class SubscriberAuthEmailBuilder < ApplicationBuilder
+class SubscriberAuthEmailBuilder
+  include Callable
+
   def initialize(subscriber:, destination:, token:)
     @subscriber = subscriber
     @destination = destination

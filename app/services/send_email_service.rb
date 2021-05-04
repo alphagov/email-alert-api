@@ -1,4 +1,6 @@
-class SendEmailService < ApplicationService
+class SendEmailService
+  include Callable
+
   class NotifyCommunicationFailure < RuntimeError; end
 
   def initialize(email:, metrics: {})

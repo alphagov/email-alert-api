@@ -1,4 +1,6 @@
-class FooterPresenter < ApplicationPresenter
+class FooterPresenter
+  include Callable
+
   def initialize(subscriber, subscription)
     @subscription = subscription
     @subscriber = subscriber

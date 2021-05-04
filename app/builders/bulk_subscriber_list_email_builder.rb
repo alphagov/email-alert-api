@@ -1,4 +1,6 @@
-class BulkSubscriberListEmailBuilder < ApplicationBuilder
+class BulkSubscriberListEmailBuilder
+  include Callable
+
   BATCH_SIZE = 5000
 
   def initialize(subject:, body:, subscriber_lists:)

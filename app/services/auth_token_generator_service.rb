@@ -1,4 +1,6 @@
-class AuthTokenGeneratorService < ApplicationService
+class AuthTokenGeneratorService
+  include Callable
+
   CIPHER = "aes-256-gcm".freeze
   OPTIONS = { cipher: CIPHER, serializer: JSON }.freeze
 

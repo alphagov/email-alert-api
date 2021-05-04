@@ -1,4 +1,6 @@
-class DigestEmailBuilder < ApplicationBuilder
+class DigestEmailBuilder
+  include Callable
+
   def initialize(content:, subscription:)
     @content = content
     @subscription = subscription

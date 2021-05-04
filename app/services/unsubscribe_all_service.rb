@@ -1,4 +1,6 @@
-class UnsubscribeAllService < ApplicationService
+class UnsubscribeAllService
+  include Callable
+
   attr_reader :subscriber, :reason
 
   def initialize(subscriber, reason, **)
