@@ -1,56 +1,28 @@
 RSpec.describe RootRelativeUrlValidator do
-  class RootRelativeUrlValidatable
-    include ActiveModel::Validations
-    include ActiveModel::Model
+  let(:record_class) do
+    Class.new do
+      include ActiveModel::Validations
+      include ActiveModel::Model
 
-    attr_accessor :url
+      attr_accessor :url
 
-    validates :url, root_relative_url: true
-  end
-
-  subject(:model) { RootRelativeUrlValidatable.new }
-
-  context "when an absolute path is provided" do
-    before { model.url = "/test" }
-    it { is_expected.to be_valid }
-  end
-
-  context "when a relative path is provided" do
-    before { model.url = "test" }
-
-    it "has an error" do
-      expect(model.valid?).to be false
-      expect(model.errors[:url]).to match(["must be a root-relative URL"])
+      validates :url, root_relative_url: true
     end
   end
 
-  context "when an invalid URI is provided" do
-    before { model.url = "bad URI" }
-
-    it { is_expected.not_to be_valid }
+  it "is valid for an absolute path" do
+    expect(record_class.new(url: "/path")).to be_valid
   end
 
-  context "when a full url is provided" do
-    before { model.url = "https://example.com/test" }
-
-    it { is_expected.not_to be_valid }
+  it "is invalid for a relative path" do
+    expect(record_class.new(url: "path")).to be_invalid
   end
 
-  context "when a protocol-relative url is provided" do
-    before { model.url = "//example.com/test" }
-
-    it { is_expected.not_to be_valid }
+  it "is invalid when a protocol-relative url is provided" do
+    expect(record_class.new(url: "//example.com/test")).to be_invalid
   end
 
-  context "when a path with query string is provided" do
-    before { model.url = "/test?test=this" }
-
-    it { is_expected.to be_valid }
-  end
-
-  context "when a path with a fragment is provided" do
-    before { model.url = "/test#fragment" }
-
-    it { is_expected.to be_valid }
+  it "is invalid for an invalid URI" do
+    expect(record_class.new(url: "bad uri")).to be_invalid
   end
 end
