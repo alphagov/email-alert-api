@@ -48,7 +48,7 @@ private
       utm_content: "confirmation",
     )
 
-    result += "\n\n" + source_url if source_url
+    result += "\n\n#{source_url}" if source_url
     result
   end
 

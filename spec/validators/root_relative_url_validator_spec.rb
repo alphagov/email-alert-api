@@ -4,6 +4,7 @@ RSpec.describe RootRelativeUrlValidator do
     include ActiveModel::Model
 
     attr_accessor :url
+
     validates :url, root_relative_url: true
   end
 

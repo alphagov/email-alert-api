@@ -4,6 +4,7 @@ RSpec.describe LinksValidator do
     include ActiveModel::Model
 
     attr_accessor :links
+
     validates :links, links: true
   end
 

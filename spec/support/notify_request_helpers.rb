@@ -10,7 +10,7 @@ module NotifyRequestHelpers
     expectation = lambda do |request|
       request_data = JSON.parse(request.body).deep_symbolize_keys
 
-      request_data.dig(:email_address) == address &&
+      request_data[:email_address] == address &&
         request_data.dig(:personalisation, :subject).match?(subject)
     end
 

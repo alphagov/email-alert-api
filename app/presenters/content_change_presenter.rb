@@ -58,7 +58,7 @@ private
   def description_markdown
     return nil if description.blank?
 
-    description_header + "\n" + strip_markdown(description)
+    "#{description_header}\n#{strip_markdown(description)}"
   end
 
   def change_note_header

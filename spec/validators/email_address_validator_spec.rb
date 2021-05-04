@@ -4,6 +4,7 @@ RSpec.describe EmailAddressValidator do
     include ActiveModel::Model
 
     attr_accessor :email
+
     validates :email, email_address: true
   end
 

@@ -4,6 +4,7 @@ RSpec.describe TagsValidator do
     include ActiveModel::Model
 
     attr_accessor :tags
+
     validates :tags, tags: true
   end
 

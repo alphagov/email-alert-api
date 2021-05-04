@@ -4,6 +4,7 @@ RSpec.describe UuidValidator do
     include ActiveModel::Model
 
     attr_accessor :uuid
+
     validates :uuid, uuid: true
   end
 

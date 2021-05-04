@@ -4,6 +4,7 @@ RSpec.describe CriteriaSchemaValidator do
     include ActiveModel::Model
 
     attr_accessor :criteria_rules
+
     validates :criteria_rules, criteria_schema: true
   end
 

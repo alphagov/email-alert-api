@@ -19,9 +19,10 @@ private
   # You should get the same digest for a hash regardless of structure.
   def sort_hash(hash)
     value_sorted_hash = hash.transform_values do |value|
-      if value.is_a?(Hash)
+      case value
+      when Hash
         sort_hash(value)
-      elsif value.is_a?(Array)
+      when Array
         value.compact.sort
       else
         value

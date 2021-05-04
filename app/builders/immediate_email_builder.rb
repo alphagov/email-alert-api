@@ -64,7 +64,7 @@ private
       utm_content: "immediate",
     )
 
-    section += "\n\n" + source_url if source_url
+    section += "\n\n#{source_url}" if source_url
     section
   end
 end
