@@ -39,5 +39,14 @@ RSpec.describe "bulk_email" do
 
       Rake::Task["bulk_email:for_lists"].invoke(subscriber_list.id)
     end
+
+    it "states how many emails are being sent" do
+      subscriber_list = create(:subscriber_list)
+      allow(BulkSubscriberListEmailBuilder).to receive(:call)
+        .and_return([1, 2])
+
+      expect { Rake::Task["bulk_email:for_lists"].invoke(subscriber_list.id) }
+        .to output(/Sending 2 emails/).to_stdout
+    end
   end
 end
