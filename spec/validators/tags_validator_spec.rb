@@ -1,45 +1,38 @@
 RSpec.describe TagsValidator do
-  class TagsValidatable
-    include ActiveModel::Validations
-    include ActiveModel::Model
+  let(:record_class) do
+    Class.new do
+      include ActiveModel::Validations
+      include ActiveModel::Model
 
-    attr_accessor :tags
-    validates :tags, tags: true
+      attr_accessor :tags
+
+      validates :tags, tags: true
+    end
   end
 
-  subject(:model) { TagsValidatable.new }
+  let(:valid_tags) { %w[alpha-numeric-123 Capitals underscores_ slash/separated] }
 
-  context "when valid tags are provided" do
-    before do
-      model.tags = {
-        topics: { any: %w[dogs cats], all: %w[horses] },
-        policies: { any: %w[wWelcome1098-_/], all: %w[news_story] },
-        commodity_type: { any: %w[f3bbdec2-0e62-4520-a7fd-6ffd5d36e03a], all: %w[123-Abc] },
-      }
-    end
-
-    it { is_expected.to be_valid }
+  it "is valid when tags meet the formatting rules" do
+    record = record_class.new(tags: { topics: { any: valid_tags } })
+    expect(record).to be_valid
   end
 
-  context "when invalid tags are provided" do
-    before do
-      model.tags = {
-        organisations: { any: %w[dogs cats] },
-        topics: { any: %w[dogs cats] },
-        foo: { any: %w([dogs] !cats) },
-        people: { any: %w[\u0000] },
-        world_locations: { any: "dogs" },
-        policies: { any: "><script>alert(1);</script>" },
-      }
-    end
+  it "is invalid when tag values aren't set as an array" do
+    record = record_class.new(tags: { topics: { any: "a-tag" } })
+    expect(record).to be_invalid
+    expect(record.errors[:tags]).to match(["All tag values must be sent as Arrays"])
+  end
 
-    it "has an error" do
-      expect(model.valid?).to be false
-      expect(model.errors[:tags]).to match([
-        "All tag values must be sent as Arrays",
-        "organisations, foo, people, and world_locations are not valid tags.",
-        "foo, people, and policies has a value with an invalid format.",
-      ])
-    end
+  it "is invalid when a tag key is given that isn't defined as a ValidTag" do
+    record = record_class.new(tags: { animals: { any: valid_tags } })
+    expect(ValidTags::ALLOWED_TAGS).not_to include("animals")
+    expect(record).to be_invalid
+    expect(record.errors[:tags]).to match(["animals are not valid tags."])
+  end
+
+  it "is invalid when the value for a tag doesn't match the allowed characters" do
+    record = record_class.new(tags: { topics: { any: ["<script>"] } })
+    expect(record).to be_invalid
+    expect(record.errors[:tags]).to match(["topics has a value with an invalid format."])
   end
 end

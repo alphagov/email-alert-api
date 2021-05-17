@@ -1,4 +1,6 @@
-class ImmediateEmailBuilder < ApplicationBuilder
+class ImmediateEmailBuilder
+  include Callable
+
   def initialize(content, subscriptions)
     @content = content
     @subscriptions = subscriptions
@@ -64,7 +66,7 @@ private
       utm_content: "immediate",
     )
 
-    section += "\n\n" + source_url if source_url
+    section += "\n\n#{source_url}" if source_url
     section
   end
 end

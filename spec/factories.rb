@@ -227,9 +227,7 @@ FactoryBot.define do
           "current" => "/v2/notifications?page=3&template_type=email&status=delivered",
           "next" => "/v2/notifications?page=3&template_type=email&status=delivered",
         },
-        "notifications" => 1.times.map do
-          attributes_for(:client_notification)[:body]
-        end,
+        "notifications" => [attributes_for(:client_notification)[:body]],
       }
     end
   end

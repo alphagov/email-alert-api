@@ -23,7 +23,7 @@ RSpec.describe Reports::MatchedContentChangesReport do
           "#{row[:match].subscriber_list.slug}" \
       end
 
-      rows.join("\n") + "\n"
+      "#{rows.join("\n")}\n"
     end
   end
 end

@@ -1,4 +1,6 @@
-class BulkEmailBodyPresenter < ApplicationPresenter
+class BulkEmailBodyPresenter
+  include Callable
+
   def initialize(body, subscriber_list)
     @body = body
     @subscriber_list = subscriber_list

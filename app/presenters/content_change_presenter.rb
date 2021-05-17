@@ -1,6 +1,8 @@
 require "redcarpet/render_strip"
 
-class ContentChangePresenter < ApplicationPresenter
+class ContentChangePresenter
+  include Callable
+
   EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze
 
   def initialize(content_change, subscription)
@@ -58,7 +60,7 @@ private
   def description_markdown
     return nil if description.blank?
 
-    description_header + "\n" + strip_markdown(description)
+    "#{description_header}\n#{strip_markdown(description)}"
   end
 
   def change_note_header

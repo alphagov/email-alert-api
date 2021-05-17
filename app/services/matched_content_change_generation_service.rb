@@ -1,5 +1,7 @@
-class MatchedContentChangeGenerationService < ApplicationService
-  def initialize(content_change, **)
+class MatchedContentChangeGenerationService
+  include Callable
+
+  def initialize(content_change)
     @content_change = content_change
   end
 

@@ -1,4 +1,6 @@
-class CreateSubscriberListService < ApplicationService
+class CreateSubscriberListService
+  include Callable
+
   def initialize(title:, url:, matching_criteria:, user:)
     @title = title
     @url = url

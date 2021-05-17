@@ -1,4 +1,6 @@
-class DigestInitiatorService < ApplicationService
+class DigestInitiatorService
+  include Callable
+
   def initialize(date:, range:)
     @range = range
     @date = date

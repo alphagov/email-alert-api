@@ -1,4 +1,6 @@
-class MessagePresenter < ApplicationPresenter
+class MessagePresenter
+  include Callable
+
   def initialize(message, _subscription = nil)
     @message = message
   end

@@ -1,4 +1,6 @@
-class CreateSubscriptionService < ApplicationService
+class CreateSubscriptionService
+  include Callable
+
   attr_reader :subscriber_list, :subscriber, :frequency, :current_user
 
   def initialize(subscriber_list, subscriber, frequency, current_user)

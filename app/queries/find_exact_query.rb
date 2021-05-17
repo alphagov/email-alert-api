@@ -44,9 +44,10 @@ private
 
     digest = HashDigest.new(query).generate
 
-    if query_field == :tags
+    case query_field
+    when :tags
       base_scope.find_by_tags_digest(digest)
-    elsif query_field == :links
+    when :links
       base_scope.find_by_links_digest(digest)
     end
   end

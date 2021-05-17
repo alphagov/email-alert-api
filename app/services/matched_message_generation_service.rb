@@ -1,5 +1,7 @@
-class MatchedMessageGenerationService < ApplicationService
-  def initialize(message, **)
+class MatchedMessageGenerationService
+  include Callable
+
+  def initialize(message)
     @message = message
   end
 

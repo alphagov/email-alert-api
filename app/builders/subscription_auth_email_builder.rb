@@ -1,4 +1,6 @@
-class SubscriptionAuthEmailBuilder < ApplicationBuilder
+class SubscriptionAuthEmailBuilder
+  include Callable
+
   def initialize(address:, token:, subscriber_list:, frequency:)
     @address = address
     @token = token

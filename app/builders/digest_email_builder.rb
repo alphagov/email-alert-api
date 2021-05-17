@@ -1,4 +1,6 @@
-class DigestEmailBuilder < ApplicationBuilder
+class DigestEmailBuilder
+  include Callable
+
   def initialize(content:, subscription:)
     @content = content
     @subscription = subscription
@@ -48,7 +50,7 @@ private
   end
 
   def title_and_optional_url
-    result = "# " + subscriber_list.title
+    result = "# #{subscriber_list.title}"
 
     source_url = SourceUrlPresenter.call(
       subscriber_list.url,
@@ -56,7 +58,7 @@ private
       utm_content: subscription.frequency,
     )
 
-    result += "\n\n" + source_url if source_url
+    result += "\n\n#{source_url}" if source_url
     result
   end
 end

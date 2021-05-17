@@ -1,25 +1,20 @@
 RSpec.describe UuidValidator do
-  class UuidValidatable
-    include ActiveModel::Validations
-    include ActiveModel::Model
+  let(:record_class) do
+    Class.new do
+      include ActiveModel::Validations
+      include ActiveModel::Model
 
-    attr_accessor :uuid
-    validates :uuid, uuid: true
-  end
+      attr_accessor :uuid
 
-  subject(:model) { UuidValidatable.new }
-
-  context "when a valid UUID is provided" do
-    before { model.uuid = SecureRandom.uuid }
-    it { is_expected.to be_valid }
-  end
-
-  context "when an invalid UUID is provided" do
-    before { model.uuid = "ThisIsNotAValidUUID" }
-
-    it "has an error" do
-      expect(model.valid?).to be false
-      expect(model.errors[:uuid]).to match(["is not a valid UUID"])
+      validates :uuid, uuid: true
     end
+  end
+
+  it "is valid for a correctly formatted UUID" do
+    expect(record_class.new(uuid: SecureRandom.uuid)).to be_valid
+  end
+
+  it "is invalid for a incorrectly formatted UUID" do
+    expect(record_class.new(uuid: "not a UUID")).to be_invalid
   end
 end

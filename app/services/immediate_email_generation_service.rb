@@ -1,7 +1,9 @@
-class ImmediateEmailGenerationService < ApplicationService
+class ImmediateEmailGenerationService
+  include Callable
+
   BATCH_SIZE = 5000
 
-  def initialize(content, **)
+  def initialize(content)
     @content = content
   end
 

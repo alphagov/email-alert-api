@@ -1,4 +1,6 @@
-class SubscriptionConfirmationEmailBuilder < ApplicationBuilder
+class SubscriptionConfirmationEmailBuilder
+  include Callable
+
   def initialize(subscription:)
     @subscription = subscription
     @subscriber = subscription.subscriber
@@ -48,7 +50,7 @@ private
       utm_content: "confirmation",
     )
 
-    result += "\n\n" + source_url if source_url
+    result += "\n\n#{source_url}" if source_url
     result
   end
 
