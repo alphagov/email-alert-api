@@ -384,7 +384,7 @@ DEPENDENCIES
   ratelimit
   redcarpet
   rspec-rails
-  rubocop-govuk (= 4.0.0)
+  rubocop-govuk
   sidekiq-scheduler
   simplecov
   webmock
