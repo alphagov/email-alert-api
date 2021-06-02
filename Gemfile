@@ -31,6 +31,6 @@ group :development, :test do
   gem "listen"
   gem "pry-byebug"
   gem "rspec-rails"
-  gem "rubocop-govuk", "4.0.0.pre.1", require: false
+  gem "rubocop-govuk", require: false
   gem "simplecov"
 end
