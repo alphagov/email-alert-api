@@ -74,8 +74,6 @@ private
   end
 
   def scope
-    @scope ||= begin
-      list.subscriptions.active_on(date.end_of_day)
-    end
+    @scope ||= list.subscriptions.active_on(date.end_of_day)
   end
 end
