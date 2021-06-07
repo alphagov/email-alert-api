@@ -3,4 +3,6 @@ GovukError.configure do |config|
     SendEmailService::NotifyCommunicationFailure
     RatelimitExceededError
   ]
+
+  config.rails.report_rescued_exceptions = false
 end
