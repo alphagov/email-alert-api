@@ -18,11 +18,11 @@ Rails.application.configure do
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
-    'Cache-Control' => "public, max-age=#{1.hour.to_i}"
+    "Cache-Control" => "public, max-age=#{1.hour.to_i}",
   }
 
-    # Use a higher log level to avoid unnecessary clutter and disk IO.
-    config.log_level = :warn
+  # Use a higher log level to avoid unnecessary clutter and disk IO.
+  config.log_level = :warn
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
