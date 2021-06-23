@@ -1,5 +1,5 @@
 RSpec.describe Reports::SubscriberListsReport do
-  let(:created_at) { Time.zone.parse("2020-06-15").midday }
+  let(:created_at) { 10.days.ago.midday }
 
   before do
     list = create(:subscriber_list, created_at: created_at, title: "list 1", slug: "list-1", url: "/url")
@@ -36,7 +36,7 @@ RSpec.describe Reports::SubscriberListsReport do
       csv << ["list 1", "list-1", "/url", expected_criteria_bits, created_at, 1, 1, 1, 1, 1, 1, 3]
     end
 
-    expect(described_class.new("2020-06-15").call).to eq expected
+    expect(described_class.new(created_at.to_s).call).to eq expected
   end
 
   it "returns specified headers only" do
@@ -52,41 +52,41 @@ RSpec.describe Reports::SubscriberListsReport do
       csv << ["list 1", 1, 1, 1, 3]
     end
 
-    expect(described_class.new("2020-06-15", headers: specified_headers).call).to eq expected
+    expect(described_class.new(created_at.to_s, headers: specified_headers).call).to eq expected
   end
 
   it "can filter based on comma separated list slugs" do
     create(:subscriber_list, slug: "other-list")
 
-    output = described_class.new("2020-06-15", slugs: "list-1,other-list").call
+    output = described_class.new(created_at.to_s, slugs: "list-1,other-list").call
     expect(output.lines.count).to eq 3
 
-    output = described_class.new("2020-06-15", slugs: "list-1").call
+    output = described_class.new(created_at.to_s, slugs: "list-1").call
     expect(output.lines.count).to eq 2
   end
 
   it "can filter based on list tags (as a string)" do
     create(:subscriber_list, tags: {})
 
-    output = described_class.new("2020-06-15", tags_pattern: "road").call
+    output = described_class.new(created_at.to_s, tags_pattern: "road").call
     expect(output.lines.count).to eq 2
 
-    output = described_class.new("2020-06-15", tags_pattern: "nothing").call
+    output = described_class.new(created_at.to_s, tags_pattern: "nothing").call
     expect(output.lines.count).to eq 1
   end
 
   it "can filter based on list links (as a string)" do
     create(:subscriber_list, :travel_advice)
 
-    output = described_class.new("2020-06-15", links_pattern: "countries").call
+    output = described_class.new(created_at.to_s, links_pattern: "countries").call
     expect(output.lines.count).to eq 2
 
-    output = described_class.new("2020-06-15", links_pattern: "nothing").call
+    output = described_class.new(created_at.to_s, links_pattern: "nothing").call
     expect(output.lines.count).to eq 1
   end
 
   it "raises an error if a specified slug is not found" do
-    expect { described_class.new("2020-06-15", slugs: "other-list,list").call }
+    expect { described_class.new(created_at.to_s, slugs: "other-list,list").call }
       .to raise_error("Lists not found for slugs: other-list,list")
   end
 
@@ -101,7 +101,7 @@ RSpec.describe Reports::SubscriberListsReport do
   end
 
   it "raises an error if a specified header doesn't exist" do
-    expect { described_class.new("2020-06-15", headers: "title,non-existent-header").call }
+    expect { described_class.new(created_at.to_s, headers: "title,non-existent-header").call }
       .to raise_error("Header is not a valid option: non-existent-header")
   end
 end
