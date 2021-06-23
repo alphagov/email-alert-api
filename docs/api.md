@@ -209,6 +209,38 @@ destination with a query string of token and a [JWT](https://jwt.io/) token.
 Returns a 201 status code on success or 404 if the subscriber is not known
 to Email Alert API.
 
+### `POST /subscribers/govuk-account`
+
+```json
+{
+  "govuk_account_session": "session-token-from-account-header"
+}
+```
+
+Checks if the given GOV.UK account has a verified email address which
+matches a subscriber and, if so, returns the subscriber in the form
+
+```json
+{
+  "subscriber": {
+    "id": 1,
+    "address": "test@example.com",
+    "created_at": "Wed, 07 Mar 2018 17:04:28 UTC +00:00",
+    "updated_at": "Wed, 07 Mar 2018 17:04:28 UTC +00:00",
+  }
+}
+```
+
+Returns a 401 if the account session identifier is invalid.
+
+Returns a 403 if the account's email address is not verified.
+
+Returns a 404 if there is no matching subscriber.
+
+The 403, 404, and 200 responses may optionally have a
+`govuk_account_session` response field, which should replace the value
+in the user's session.
+
 ## Healthcheck
 
 A queue health check endpoint is available at `/healthcheck`.

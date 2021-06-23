@@ -20,6 +20,8 @@ Rails.application.routes.draw do
     post "/subscribers/auth-token", to: "subscribers_auth_token#auth_token"
     post "/subscriptions/auth-token", to: "subscriptions_auth_token#auth_token"
 
+    post "/subscribers/govuk-account", to: "subscribers_govuk_account#authenticate"
+
     post "/unsubscribe/:id", to: "unsubscribe#unsubscribe"
 
     get "/healthcheck/live", to: proc { [200, {}, %w[OK]] }
