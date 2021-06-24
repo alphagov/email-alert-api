@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_09_090225) do
+ActiveRecord::Schema.define(version: 2021_06_08_161920) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,6 +127,8 @@ ActiveRecord::Schema.define(version: 2021_03_09_090225) do
     t.string "url"
     t.string "tags_digest"
     t.string "links_digest"
+    t.uuid "content_id"
+    t.index ["content_id"], name: "index_subscriber_lists_on_content_id"
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
     t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
     t.index ["government_document_supertype"], name: "index_subscriber_lists_on_government_document_supertype"
