@@ -13,6 +13,7 @@ Gets a stored subscriber list that's relevant to just the `cabinet-office` organ
     "title": "Title of topic",
     "gov_delivery_id": "123",
     "document_type": "",
+    "content_id": "",
     "created_at": "20141010T12:00:00",
     "updated_at": "20141010T12:00:00",
     "tags": {
@@ -57,6 +58,8 @@ The following fields are accepted:
   changes that share the corresponding field;
 - government_document_supertype: A field that can be used to match with
   content changes that share the corresponding field.
+- content_id: A field that can be used to match with a single content item
+  for subscriptions to individual pages or pieces of guidance.
 
 [valid tags]: https://github.com/alphagov/email-alert-api/blob/b6428880aa730e316803d7129db3ec47304e933b/lib/valid_tags.rb
 
@@ -130,6 +133,7 @@ Gets a subscriber's subscriptions, in the form:
         "created_at": "Thu, 01 Aug 2013 12:53:34 UTC +00:00",
         "updated_at": "Tue, 13 Mar 2018 15:11:29 UTC +00:00",
         "document_type": "",
+        "content_id": "",
         "tags": {},
         "links": {
           "organisations": ["9adfc4ed-9f6c-4976-a6d8-18d34356367c"]
