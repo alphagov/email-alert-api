@@ -107,6 +107,12 @@ RSpec.describe FindExactQuery do
       expect(query.exact_match).to eq(subscriber_list)
     end
 
+    it "matched when subscriber list has the same tags and matching content_id" do
+      query = build_query(links: { policies: { any: %w[beer] } }, content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
+      subscriber_list = create_subscriber_list(links: { policies: { any: %w[beer] } }, content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
+      expect(query.exact_match).to eq(subscriber_list)
+    end
+
     it "not matched when subscriber list has different links" do
       query = build_query(links: { policies: { any: %w[aa-11] } })
       _subscriber_list = create_subscriber_list(links: { policies: { any: %w[11-aa] } })
@@ -128,6 +134,12 @@ RSpec.describe FindExactQuery do
     it "not matched on document type - even if they match" do
       query = build_query(links: { policies: { any: %w[aa-11] } }, document_type: "travel_advice")
       _subscriber_list = create_subscriber_list(document_type: "travel_advice")
+      expect(query.exact_match).to be_nil
+    end
+
+    it "not matched on content_id - even if they match" do
+      query = build_query(links: { policies: { any: %w[beer] } }, content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
+      _subscriber_list = create_subscriber_list(content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
       expect(query.exact_match).to be_nil
     end
   end
@@ -241,6 +253,12 @@ RSpec.describe FindExactQuery do
       expect(query.exact_match).to eq(subscriber_list)
     end
 
+    it "matched when subscriber list has the same tags and matching content_id" do
+      query = build_query(tags: { policies: { any: %w[beer] } }, content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
+      subscriber_list = create_subscriber_list(tags: { policies: { any: %w[beer] } }, content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
+      expect(query.exact_match).to eq(subscriber_list)
+    end
+
     it "not matched when subscriber list has different tags" do
       query = build_query(tags: { policies: { any: %w[beer] } })
       _subscriber_list = create_subscriber_list(tags: { policies: { any: %w[cider] } })
@@ -256,6 +274,12 @@ RSpec.describe FindExactQuery do
     it "not matched on document type - even if they match" do
       query = build_query(tags: { policies: { any: %w[beer] } }, document_type: "travel_advice")
       _subscriber_list = create_subscriber_list(document_type: "travel_advice")
+      expect(query.exact_match).to be_nil
+    end
+
+    it "not matched on content_id - even if they match" do
+      query = build_query(tags: { policies: { any: %w[beer] } }, content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
+      _subscriber_list = create_subscriber_list(content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
       expect(query.exact_match).to be_nil
     end
   end
@@ -290,8 +314,27 @@ RSpec.describe FindExactQuery do
     expect(query.exact_match).to be_nil
   end
 
+  it "matched on content_id only" do
+    query = build_query(content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
+    subscriber_list = create_subscriber_list(content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
+    expect(query.exact_match).to eq(subscriber_list)
+  end
+
+  it "not matched on different content_id" do
+    query = build_query(content_id: "11a51f5e-3f17-4516-87c7-02afba87ef40")
+    _subscriber_list = create_subscriber_list(content_id: "ef8a3fd2-2b15-4c0e-a2d4-2a34187f337a")
+    expect(query.exact_match).to be_nil
+  end
+
+  it "matched on blank content_id" do
+    query = build_query(content_id: "")
+    subscriber_list = create_subscriber_list(content_id: nil)
+    expect(query.exact_match).to eq(subscriber_list)
+  end
+
   def build_query(params = {})
     defaults = {
+      content_id: nil,
       tags: {},
       links: {},
       document_type: "",
@@ -304,6 +347,7 @@ RSpec.describe FindExactQuery do
 
   def create_subscriber_list(params = {})
     defaults = {
+      content_id: nil,
       tags: {},
       links: {},
       document_type: "",

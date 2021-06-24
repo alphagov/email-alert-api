@@ -2,6 +2,7 @@ class FindExactQuery
   class InvalidFindCriteria < StandardError; end
 
   def initialize(
+    content_id:,
     tags:,
     links:,
     document_type:,
@@ -9,6 +10,7 @@ class FindExactQuery
     government_document_supertype:,
     slug: nil
   )
+    @content_id = content_id.presence
     @tags = tags.deep_symbolize_keys
     @links = links.deep_symbolize_keys
     @document_type = document_type
@@ -29,6 +31,7 @@ private
   def base_scope
     @base_scope ||= begin
       scope = SubscriberList
+        .where(content_id: @content_id)
         .where(document_type: @document_type)
         .where(email_document_supertype: @email_document_supertype)
         .where(government_document_supertype: @government_document_supertype)

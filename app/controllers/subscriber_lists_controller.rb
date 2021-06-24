@@ -41,6 +41,7 @@ private
 
   def find_exact_query_params
     {
+      content_id: params.fetch(:content_id, nil),
       tags: convert_legacy_params(params.permit(tags: {}).to_h.fetch(:tags, {})),
       links: convert_legacy_params(params.permit(links: {}).to_h.fetch(:links, {})),
       document_type: params.fetch(:document_type, ""),

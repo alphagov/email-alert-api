@@ -41,21 +41,27 @@ private
   end
 
   def type_rule(scope, type:, key:, value:)
-    field = case type
-            when "tag" then "tags"
-            when "link" then "links"
-            else
-              raise "Unexpected rule type: #{type}"
-            end
+    hash_rule_to_scope = lambda do |field|
+      # we only apply this rule to SubscriberList tagged to "any", it didn't seem
+      # to make logical sense to apply this to "all" ones
+      scope.where(
+        ":value IN (SELECT json_array_elements(#{field}->:key->'any')::text)",
+        key: key,
+        # Postgres returns a string in double quotes where other double quote
+        # characters are escaped
+        value: %("#{value.gsub('"', '\\"')}"),
+      )
+    end
 
-    # we only apply this rule to SubscriberList tagged to "any", it didn't seem
-    # to make logical sense to apply this to "all" ones
-    scope.where(
-      ":value IN (SELECT json_array_elements(#{field}->:key->'any')::text)",
-      key: key,
-      # Postgres returns a string in double quotes where other double quote
-      # characters are escaped
-      value: %("#{value.gsub('"', '\\"')}"),
-    )
+    case type
+    when "tag"
+      hash_rule_to_scope.call("tags")
+    when "link"
+      hash_rule_to_scope.call("links")
+    when "content_id"
+      scope.where(content_id: value)
+    else
+      raise "Unexpected rule type: #{type}"
+    end
   end
 end
