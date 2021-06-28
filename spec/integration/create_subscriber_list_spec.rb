@@ -62,6 +62,21 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
     end
 
+    context "with content_id" do
+      it "returns the content subscriber list by content_id" do
+        create_subscriber_list(
+          { "content_id": "7c615f50-d48e-47a9-82be-6181559198ed" },
+        )
+        expect(response.status).to eq(200)
+
+        expect(SubscriberList.count).to eq(1)
+
+        expect(response_subscriber_list).to include(
+          "content_id" => "7c615f50-d48e-47a9-82be-6181559198ed",
+        )
+      end
+    end
+
     context "an existing subscriber list" do
       it "returns the existing list" do
         2.times.each { create_subscriber_list }

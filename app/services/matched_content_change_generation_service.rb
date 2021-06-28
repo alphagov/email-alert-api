@@ -29,6 +29,7 @@ private
 
   def subscriber_lists
     @subscriber_lists ||= SubscriberListQuery.new(
+      content_id: content_change.content_id,
       tags: content_change.tags,
       links: content_change.links,
       document_type: content_change.document_type,
