@@ -1,28 +1,40 @@
 class SubscribersGovukAccountController < ApplicationController
   before_action :validate_params
 
-  def authenticate
-    account_response = GdsApi.account_api.get_attributes(
-      attributes: %i[email email_verified],
+  before_action do
+    account_response = GdsApi.account_api.get_user(
       govuk_account_session: expected_params[:govuk_account_session],
     )
 
-    email_verified = account_response.dig("values", "email_verified")
-    email = account_response.dig("values", "email")
+    @govuk_account_id = account_response["id"]
+    email = account_response["email"]
+    email_verified = account_response["email_verified"]
 
-    api_response = { govuk_account_session: account_response["govuk_account_session"] }.compact
+    @api_response = { govuk_account_session: account_response["govuk_account_session"] }.compact
 
-    render status: :forbidden, json: api_response and return unless email_verified
-    render status: :forbidden, json: api_response and return unless email
-
-    subscriber = Subscriber.resilient_find_or_create(email, signon_user_uid: current_user.uid)
-
-    render json: api_response.merge(subscriber: subscriber)
+    if !email
+      render status: :forbidden, json: @api_response
+    elsif !email_verified
+      render status: :forbidden, json: @api_response
+    else
+      @subscriber = Subscriber.resilient_find_or_create(email, signon_user_uid: current_user.uid)
+    end
   rescue GdsApi::HTTPUnauthorized
     head :unauthorized
   end
 
+  def authenticate
+    render json: api_response.merge(subscriber: subscriber)
+  end
+
+  def link_subscriber_to_account
+    subscriber.update!(govuk_account_id: govuk_account_id)
+    render json: api_response.merge(subscriber: subscriber)
+  end
+
 private
+
+  attr_reader :api_response, :govuk_account_id, :subscriber
 
   def expected_params
     params.permit(:govuk_account_session)
