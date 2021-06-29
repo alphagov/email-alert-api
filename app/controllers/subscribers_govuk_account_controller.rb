@@ -13,10 +13,9 @@ class SubscribersGovukAccountController < ApplicationController
     api_response = { govuk_account_session: account_response["govuk_account_session"] }.compact
 
     render status: :forbidden, json: api_response and return unless email_verified
-    render status: :not_found, json: api_response and return unless email
+    render status: :forbidden, json: api_response and return unless email
 
-    subscriber = Subscriber.find_by_address(email)
-    render status: :not_found, json: api_response and return unless subscriber
+    subscriber = Subscriber.resilient_find_or_create(email, signon_user_uid: current_user.uid)
 
     render json: api_response.merge(subscriber: subscriber)
   rescue GdsApi::HTTPUnauthorized

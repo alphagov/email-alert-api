@@ -239,9 +239,7 @@ Returns a 401 if the account session identifier is invalid.
 
 Returns a 403 if the account's email address is not verified.
 
-Returns a 404 if there is no matching subscriber.
-
-The 403, 404, and 200 responses may optionally have a
+The 403 and 200 responses may optionally have a
 `govuk_account_session` response field, which should replace the value
 in the user's session.
 
