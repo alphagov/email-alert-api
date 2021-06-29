@@ -35,9 +35,10 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
     context "when the subscriber does not exist" do
       let(:subscriber_email) { "different@example.com" }
 
-      it "returns a 404" do
+      it "creates the subscriber" do
         post path, params: params
-        expect(response.status).to eq(404)
+        expect(response.status).to eq(200)
+        expect(data[:subscriber][:id]).not_to eq(subscriber.id)
       end
     end
 
@@ -53,9 +54,9 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
     context "when the email attribute is missing" do
       let(:email) { nil }
 
-      it "returns a 404" do
+      it "returns a 403" do
         post path, params: params
-        expect(response.status).to eq(404)
+        expect(response.status).to eq(403)
       end
     end
 
