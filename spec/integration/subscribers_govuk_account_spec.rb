@@ -72,6 +72,26 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
     end
   end
 
+  describe "fetching a user by GOV.UK Account ID" do
+    let(:path) { "/subscribers/govuk-account/#{govuk_account_id}" }
+
+    it "returns a 404" do
+      get path
+      expect(response.status).to eq(404)
+    end
+
+    context "when the subscriber is linked to a GOV.UK Account" do
+      let(:subscriber) { create(:subscriber, address: subscriber_email, govuk_account_id: govuk_account_id) }
+
+      it "returns the subscriber" do
+        get path
+        expect(response.status).to eq(200)
+        expect(data[:subscriber][:id]).to eq(subscriber.id)
+        expect(data[:subscriber][:govuk_account_id]).to eq(subscriber.govuk_account_id)
+      end
+    end
+  end
+
   describe "authenticating a user" do
     let(:path) { "/subscribers/govuk-account" }
 
