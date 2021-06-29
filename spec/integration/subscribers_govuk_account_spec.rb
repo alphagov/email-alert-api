@@ -32,6 +32,17 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       expect(data[:subscriber][:id]).to eq(subscriber.id)
     end
 
+    context "when the subscriber is linked to a GOV.UK Account" do
+      let(:subscriber) { create(:subscriber, address: subscriber_email, govuk_account_id: "govuk-account-id") }
+
+      it "returns the GOV.UK Account ID" do
+        post path, params: params
+        expect(response.status).to eq(200)
+        expect(data[:subscriber][:id]).to eq(subscriber.id)
+        expect(data[:subscriber][:govuk_account_id]).to eq(subscriber.govuk_account_id)
+      end
+    end
+
     context "when the subscriber does not exist" do
       let(:subscriber_email) { "different@example.com" }
 
