@@ -243,6 +243,59 @@ The 403 and 200 responses may optionally have a
 `govuk_account_session` response field, which should replace the value
 in the user's session.
 
+### `POST /subscribers/govuk-account/link`
+
+```json
+{
+  "govuk_account_session": "session-token-from-account-header"
+}
+```
+
+Looks up a GOV.UK Account and finds or creates a subscriber (in the
+same way as `POST /subscribers/govuk-account`), and stores the GOV.UK
+Account ID against the subscriber record.  Returns the subscriber in
+the form:
+
+```json
+{
+  "subscriber": {
+    "id": 1,
+    "govuk_account_id": "user-id",
+    "address": "test@example.com",
+    "created_at": "Wed, 07 Mar 2018 17:04:28 UTC +00:00",
+    "updated_at": "Wed, 07 Mar 2018 17:04:28 UTC +00:00",
+  }
+}
+```
+
+Returns a 401 if the account session identifier is invalid.
+
+Returns a 403 if the account's email address is not verified.
+
+The 403 and 200 responses may optionally have a
+`govuk_account_session` response field, which should replace the value
+in the user's session.
+
+### `GET /subscribers/govuk-account/:id`
+
+Looks for a subscriber with a matching GOV.UK Account ID (as
+previously set by `POST /subscribers/govuk-account/link`) and, if
+there is one, returns it in the form:
+
+```json
+{
+  "subscriber": {
+    "id": 1,
+    "govuk_account_id": "user-id",
+    "address": "test@example.com",
+    "created_at": "Wed, 07 Mar 2018 17:04:28 UTC +00:00",
+    "updated_at": "Wed, 07 Mar 2018 17:04:28 UTC +00:00",
+  }
+}
+```
+
+Returns a 404 if there is no matching subscriber.
+
 ## Healthcheck
 
 A queue health check endpoint is available at `/healthcheck`.

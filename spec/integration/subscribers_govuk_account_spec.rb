@@ -3,45 +3,27 @@ require "gds_api/test_helpers/account_api"
 RSpec.describe "Subscribers GOV.UK account", type: :request do
   include GdsApi::TestHelpers::AccountApi
 
-  before { login_with_internal_app }
+  let(:params) { { govuk_account_session: govuk_account_session } }
+  let(:govuk_account_session) { "session identifier" }
 
-  describe "authenticating a user" do
-    let(:path) { "/subscribers/govuk-account" }
-    let(:params) { { govuk_account_session: govuk_account_session } }
-    let(:govuk_account_session) { "session identifier" }
+  let(:govuk_account_id) { "internal-user-id" }
+  let(:email) { "test@example.com" }
+  let(:email_verified) { true }
 
-    let(:email) { "test@example.com" }
-    let(:email_verified) { true }
+  let(:subscriber_email) { email }
+  let!(:subscriber) { create(:subscriber, address: subscriber_email) }
 
-    let(:subscriber_email) { email }
-    let!(:subscriber) { create(:subscriber, address: subscriber_email) }
+  before do
+    login_with_internal_app
 
-    before do
-      stub_account_api_has_attributes(
-        attributes: %i[email email_verified],
-        values: {
-          "email" => email,
-          "email_verified" => email_verified,
-        }.compact,
-      )
-    end
+    stub_account_api_user_info(
+      id: govuk_account_id,
+      email: email,
+      email_verified: email_verified,
+    )
+  end
 
-    it "returns the subscriber" do
-      post path, params: params
-      expect(response.status).to eq(200)
-      expect(data[:subscriber][:id]).to eq(subscriber.id)
-    end
-
-    context "when the subscriber does not exist" do
-      let(:subscriber_email) { "different@example.com" }
-
-      it "creates the subscriber" do
-        post path, params: params
-        expect(response.status).to eq(200)
-        expect(data[:subscriber][:id]).not_to eq(subscriber.id)
-      end
-    end
-
+  shared_examples "validates the user info response" do
     context "when the email address has not been verified" do
       let(:email_verified) { false }
 
@@ -71,7 +53,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
 
     context "when the session is invalid" do
       before do
-        stub_account_api_unauthorized_has_attributes(attributes: %i[email email_verified])
+        stub_account_api_unauthorized_user_info
       end
 
       it "returns a 401" do
@@ -86,6 +68,98 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       it "returns a 422" do
         post path, params: params
         expect(response.status).to eq(422)
+      end
+    end
+  end
+
+  describe "fetching a user by GOV.UK Account ID" do
+    let(:path) { "/subscribers/govuk-account/#{govuk_account_id}" }
+
+    it "returns a 404" do
+      get path
+      expect(response.status).to eq(404)
+    end
+
+    context "when the subscriber is linked to a GOV.UK Account" do
+      let(:subscriber) { create(:subscriber, address: subscriber_email, govuk_account_id: govuk_account_id) }
+
+      it "returns the subscriber" do
+        get path
+        expect(response.status).to eq(200)
+        expect(data[:subscriber][:id]).to eq(subscriber.id)
+        expect(data[:subscriber][:govuk_account_id]).to eq(subscriber.govuk_account_id)
+      end
+    end
+  end
+
+  describe "authenticating a user" do
+    let(:path) { "/subscribers/govuk-account" }
+
+    include_examples "validates the user info response"
+
+    it "returns the subscriber" do
+      post path, params: params
+      expect(response.status).to eq(200)
+      expect(data[:subscriber][:id]).to eq(subscriber.id)
+    end
+
+    context "when the subscriber is linked to a GOV.UK Account" do
+      let(:subscriber) { create(:subscriber, address: subscriber_email, govuk_account_id: "govuk-account-id") }
+
+      it "returns the GOV.UK Account ID" do
+        post path, params: params
+        expect(response.status).to eq(200)
+        expect(data[:subscriber][:id]).to eq(subscriber.id)
+        expect(data[:subscriber][:govuk_account_id]).to eq(subscriber.govuk_account_id)
+      end
+    end
+
+    context "when the subscriber does not exist" do
+      let(:subscriber_email) { "different@example.com" }
+
+      it "creates the subscriber" do
+        post path, params: params
+        expect(response.status).to eq(200)
+        expect(data[:subscriber][:id]).not_to eq(subscriber.id)
+      end
+    end
+  end
+
+  describe "linking to an account" do
+    let(:path) { "/subscribers/govuk-account/link" }
+
+    include_examples "validates the user info response"
+
+    it "returns the subscriber" do
+      post path, params: params
+      expect(response.status).to eq(200)
+      expect(data[:subscriber][:id]).to eq(subscriber.id)
+    end
+
+    it "records the GOV.UK Account ID" do
+      post path, params: params
+      expect(response.status).to eq(200)
+      expect(data[:subscriber][:govuk_account_id]).to eq(govuk_account_id)
+    end
+
+    context "when the subscriber is linked to another GOV.UK Account" do
+      let(:subscriber) { create(:subscriber, address: subscriber_email, govuk_account_id: "govuk-account-id") }
+
+      it "replaces the old GOV.UK Account ID" do
+        post path, params: params
+        expect(response.status).to eq(200)
+        expect(data[:subscriber][:id]).to eq(subscriber.id)
+        expect(data[:subscriber][:govuk_account_id]).to eq(govuk_account_id)
+      end
+    end
+
+    context "when the subscriber does not exist" do
+      let(:subscriber_email) { "different@example.com" }
+
+      it "creates the subscriber" do
+        post path, params: params
+        expect(response.status).to eq(200)
+        expect(data[:subscriber][:id]).not_to eq(subscriber.id)
       end
     end
   end

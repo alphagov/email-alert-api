@@ -1,40 +1,49 @@
 class SubscribersGovukAccountController < ApplicationController
-  before_action :validate_params
+  before_action :get_user_from_account_api, only: %i[authenticate link_subscriber_to_account]
+
+  def show
+    head :unprocessable_entity and return unless params.fetch(:govuk_account_id)
+
+    subscriber = Subscriber.find_by(govuk_account_id: params.fetch(:govuk_account_id))
+
+    if subscriber
+      render json: { subscriber: subscriber }
+    else
+      head :not_found
+    end
+  end
 
   def authenticate
-    account_response = GdsApi.account_api.get_attributes(
-      attributes: %i[email email_verified],
-      govuk_account_session: expected_params[:govuk_account_session],
-    )
-
-    email_verified = account_response.dig("values", "email_verified")
-    email = account_response.dig("values", "email")
-
-    api_response = { govuk_account_session: account_response["govuk_account_session"] }.compact
-
-    render status: :forbidden, json: api_response and return unless email_verified
-    render status: :forbidden, json: api_response and return unless email
-
-    subscriber = Subscriber.resilient_find_or_create(email, signon_user_uid: current_user.uid)
-
     render json: api_response.merge(subscriber: subscriber)
-  rescue GdsApi::HTTPUnauthorized
-    head :unauthorized
+  end
+
+  def link_subscriber_to_account
+    subscriber.update!(govuk_account_id: govuk_account_id)
+    render json: api_response.merge(subscriber: subscriber)
   end
 
 private
 
-  def expected_params
-    params.permit(:govuk_account_session)
-  end
+  attr_reader :api_response, :govuk_account_id, :subscriber
 
-  def validate_params
-    ParamsValidator.new(expected_params).validate!
-  end
+  def get_user_from_account_api
+    head :unprocessable_entity and return unless params.fetch(:govuk_account_session)
 
-  class ParamsValidator < OpenStruct
-    include ActiveModel::Validations
+    account_response = GdsApi.account_api.get_user(
+      govuk_account_session: params.fetch(:govuk_account_session),
+    )
 
-    validates :govuk_account_session, presence: true
+    @govuk_account_id = account_response["id"]
+    email = account_response["email"]
+    email_verified = account_response["email_verified"]
+
+    @api_response = { govuk_account_session: account_response["govuk_account_session"] }.compact
+
+    render status: :forbidden, json: @api_response and return unless email
+    render status: :forbidden, json: @api_response and return unless email_verified
+
+    @subscriber = Subscriber.resilient_find_or_create(email, signon_user_uid: current_user.uid)
+  rescue GdsApi::HTTPUnauthorized
+    head :unauthorized
   end
 end

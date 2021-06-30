@@ -20,7 +20,9 @@ Rails.application.routes.draw do
     post "/subscribers/auth-token", to: "subscribers_auth_token#auth_token"
     post "/subscriptions/auth-token", to: "subscriptions_auth_token#auth_token"
 
+    get  "/subscribers/govuk-account/:govuk_account_id", to: "subscribers_govuk_account#show"
     post "/subscribers/govuk-account", to: "subscribers_govuk_account#authenticate"
+    post "/subscribers/govuk-account/link", to: "subscribers_govuk_account#link_subscriber_to_account"
 
     post "/unsubscribe/:id", to: "unsubscribe#unsubscribe"
 
