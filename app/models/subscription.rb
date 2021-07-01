@@ -12,6 +12,7 @@ class Subscription < ApplicationRecord
     imported: 2, # Historical (from govDelivery migration)
     subscriber_list_changed: 3,
     bulk_immediate_to_digest: 4, # Historical (for a one-off migration)
+    subscriber_merged: 5,
   }, _prefix: true
 
   enum ended_reason: {
@@ -22,6 +23,7 @@ class Subscription < ApplicationRecord
     marked_as_spam: 4,
     unpublished: 5, # Unused since 5eeda132 (can be removed after a year)
     bulk_immediate_to_digest: 6, # Potentially unused (for a one-off migration)
+    subscriber_merged: 7,
   }, _prefix: :ended
 
   scope :active, -> { where(ended_at: nil) }
