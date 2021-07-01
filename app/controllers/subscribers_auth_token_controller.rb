@@ -3,6 +3,8 @@ class SubscribersAuthTokenController < ApplicationController
 
   def auth_token
     subscriber = Subscriber.find_by_address!(expected_params[:address])
+    head :forbidden and return if subscriber.linked_to_govuk_account?
+
     token = generate_token(subscriber)
     email = build_email(subscriber, token)
 
