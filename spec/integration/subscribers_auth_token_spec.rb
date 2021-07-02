@@ -39,6 +39,15 @@ RSpec.describe "Subscribers auth token", type: :request do
       )
     end
 
+    context "when the user is linked to a GOV.UK Account" do
+      before { subscriber.update!(govuk_account_id: "42") }
+
+      it "returns a 403" do
+        post path, params: params
+        expect(response.status).to eq(403)
+      end
+    end
+
     context "when it's a user we didn't previously know" do
       before { subscriber.delete }
 

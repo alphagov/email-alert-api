@@ -39,6 +39,10 @@ class Subscriber < ApplicationRecord
     (retries += 1) == 1 ? retry : raise
   end
 
+  def linked_to_govuk_account?
+    !govuk_account_id.nil?
+  end
+
   def nullified?
     address.nil?
   end
