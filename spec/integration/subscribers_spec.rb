@@ -92,6 +92,21 @@ RSpec.describe "Subscriptions", type: :request do
           patch "/subscribers/#{subscriber.id}", params: { new_address: "new-test@example.com" }
           expect(response.status).to eq(422)
         end
+
+        context "when on_conflict=merge" do
+          it "changes the email address if the new email address is valid" do
+            patch "/subscribers/#{subscriber.id}", params: { new_address: "new-test@example.com", on_conflict: "merge" }
+            expect(response.status).to eq(200)
+            expect(data[:subscriber][:address]).to eq("new-test@example.com")
+          end
+
+          it "merges the subscribers if the new email address is not unique" do
+            clashing_subscriber = create :subscriber, address: "new-test@example.com"
+            patch "/subscribers/#{subscriber.id}", params: { new_address: "new-test@example.com", on_conflict: "merge" }
+            expect(response.status).to eq(200)
+            expect(clashing_subscriber.reload.address).to be_nil
+          end
+        end
       end
 
       context "without an existing subscriber" do

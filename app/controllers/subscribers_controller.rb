@@ -11,7 +11,18 @@ class SubscribersController < ApplicationController
   end
 
   def change_address
-    subscriber.update!(address: new_address)
+    Subscriber.transaction do
+      if subscriber_params[:on_conflict] == "merge"
+        MergeSubscribersService.call(
+          subscriber_to_keep: subscriber,
+          subscriber_to_absorb: Subscriber.find_by_address(new_address),
+          current_user: current_user,
+        )
+      end
+
+      subscriber.update!(address: new_address)
+    end
+
     render json: { subscriber: subscriber }
   end
 
@@ -58,6 +69,6 @@ private
   end
 
   def subscriber_params
-    params.permit(:id, :new_address)
+    params.permit(:id, :new_address, :on_conflict)
   end
 end
