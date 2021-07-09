@@ -45,7 +45,7 @@ You can use the [GOV.UK Docker environment](https://github.com/alphagov/govuk-do
 bundle exec rake
 ```
 
-### Manuals and decisions
+### Further documentation
 
 Check the [docs/](docs/) directory for detailed instructions, decisions and other documentation.
 
