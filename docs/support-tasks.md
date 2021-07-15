@@ -109,3 +109,13 @@ Depending on the number of emails to send, the Rake task can take a few minutes 
 ```bash
 bundle exec rake 'support:resend_failed_emails:by_id[<email_one_id>,<email_two_id>]'
 ```
+
+## Get subscriber numbers for a list
+
+To see the number of subscribers for a given list:
+
+```bash
+bundle exec rake 'report:csv_subscriber_lists[<on_date>] SLUGS=<list_slug>'
+```
+
+The date should be in ISO8601 format, for example 2020-01-01.
