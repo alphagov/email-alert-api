@@ -6,7 +6,7 @@ gem "bootsnap", require: false
 gem "faraday"
 gem "gds-api-adapters"
 gem "gds-sso"
-gem "govuk_app_config", "4.0.0.pre.4"
+gem "govuk_app_config"
 gem "govuk_document_types"
 gem "govuk_sidekiq"
 gem "json-schema"
