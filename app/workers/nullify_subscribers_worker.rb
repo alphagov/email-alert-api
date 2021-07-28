@@ -1,7 +1,7 @@
 class NullifySubscribersWorker < ApplicationWorker
   def perform
     run_with_advisory_lock(Subscriber, "nullify") do
-      nullifyable_subscribers.update_all(address: nil, updated_at: Time.zone.now)
+      nullifyable_subscribers.update_all(address: nil, govuk_account_id: nil, updated_at: Time.zone.now)
     end
   end
 
