@@ -24,8 +24,15 @@ Any occurrence of `%LISTURL%` in the body text will be substituted with the URL 
 Next you'll need to get the IDs of all the subscriber lists to send the email
 out to. This will require querying the email-alert-api `SubscriberList` model.
 
-For example, to get the IDs of all the subscriber lists for travel advice, you
-could use the following query:
+If you have the mailing list's slug (e.g. from the query string on the email
+signup pages):
+
+```rb
+> SubscriberList.find_by(slug: "your-slug").id
+```
+
+For a more complex query, for example to get the IDs of all the subscriber
+lists for travel advice, you could use the following query:
 
 ```rb
 > SubscriberList.where("links->'countries' IS NOT NULL").pluck(:id)
