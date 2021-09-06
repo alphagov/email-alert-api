@@ -36,10 +36,7 @@ RSpec.describe ContentChangeHandlerService do
 
   let(:document_type_hash) do
     {
-      navigation_document_supertype: "other",
-      content_purpose_document_supertype: "news",
       user_journey_document_supertype: "thing",
-      search_user_need_document_supertype: "government",
       email_document_supertype: "other",
       government_document_supertype: "other",
       content_purpose_subgroup: "news",
