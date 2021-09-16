@@ -48,6 +48,7 @@ class ValidTags
     location
     market_sector
     medical_specialism
+    oim_project_type
     opened_date
     outcome_type
     personal_data
