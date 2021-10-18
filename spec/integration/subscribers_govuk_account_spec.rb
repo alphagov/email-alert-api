@@ -142,7 +142,23 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       expect(data[:subscriber][:govuk_account_id]).to eq(govuk_account_id)
     end
 
-    context "when the subscriber is linked to another GOV.UK Account" do
+    it "does not send an email" do
+      expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
+      post path, params: params
+    end
+
+    context "when the subscriber has active subscriptions" do
+      before do
+        create(:subscription, subscriber: subscriber)
+      end
+
+      it "sends an email" do
+        expect(SendEmailWorker).to receive(:perform_async_in_queue)
+        post path, params: params
+      end
+    end
+
+    context "when the subscriber is already linked to a GOV.UK account" do
       let(:subscriber) { create(:subscriber, address: subscriber_email, govuk_account_id: "govuk-account-id") }
 
       it "replaces the old GOV.UK Account ID" do
@@ -150,6 +166,17 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
         expect(response.status).to eq(200)
         expect(data[:subscriber][:id]).to eq(subscriber.id)
         expect(data[:subscriber][:govuk_account_id]).to eq(govuk_account_id)
+      end
+
+      context "when the subscriber has active subscriptions" do
+        before do
+          create(:subscription, subscriber: subscriber)
+        end
+
+        it "does not send an email" do
+          expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
+          post path, params: params
+        end
       end
     end
 
@@ -160,6 +187,11 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
         post path, params: params
         expect(response.status).to eq(200)
         expect(data[:subscriber][:id]).not_to eq(subscriber.id)
+      end
+
+      it "does not send an email" do
+        expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
+        post path, params: params
       end
     end
   end

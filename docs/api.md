@@ -269,6 +269,11 @@ the form:
 }
 ```
 
+If the subscriber was not previously linked to a GOV.UK account, they
+are sent an email listing the active subscriptions which they can now
+manage through their account.  If they had no active subscriptions, no
+email is sent.
+
 Returns a 401 if the account session identifier is invalid.
 
 Returns a 403 if the account's email address is not verified.
