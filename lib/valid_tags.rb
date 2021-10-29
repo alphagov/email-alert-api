@@ -53,6 +53,7 @@ class ValidTags
     outcome_type
     personal_data
     policies
+    product_alert_type
     public_sector_procurement
     railway_type
     regions
