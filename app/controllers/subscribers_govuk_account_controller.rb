@@ -18,7 +18,20 @@ class SubscribersGovukAccountController < ApplicationController
   end
 
   def link_subscriber_to_account
+    previously_linked = !subscriber.govuk_account_id.nil?
     subscriber.update!(govuk_account_id: govuk_account_id)
+
+    unless previously_linked || subscriber.active_subscriptions.empty?
+      email = LinkedAccountEmailBuilder.call(
+        subscriber: subscriber,
+      )
+
+      SendEmailWorker.perform_async_in_queue(
+        email.id,
+        queue: :send_email_transactional,
+      )
+    end
+
     render json: api_response.merge(subscriber: subscriber)
   end
 
