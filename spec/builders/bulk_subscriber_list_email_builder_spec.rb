@@ -68,5 +68,20 @@ RSpec.describe BulkSubscriberListEmailBuilder do
         expect(Email.count).to eq(1)
       end
     end
+
+    context "with rejected subscribers in /config/accounts/email_addresses.txt" do
+      let(:excluded_subscriber) { create(:subscriber, address: "test@example.com") }
+      let(:subscription) { create(:subscription, subscriber: subscriber, subscriber_list: subscriber_lists.first) }
+
+      before do
+        create(:subscription, subscriber: excluded_subscriber, subscriber_list: subscriber_lists.first)
+      end
+
+      it "should only create emails for subscribers not in the file" do
+        expect(email).to be_present
+        expect(Email.count).to eq(1)
+        expect(Email.first.address).not_to eq("test@example.com")
+      end
+    end
   end
 end

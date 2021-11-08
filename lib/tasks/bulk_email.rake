@@ -1,5 +1,5 @@
 namespace :bulk_email do
-  desc "Send a bulk email to many subscriber lists"
+  desc "Send a bulk email to many subscriber lists. Any email addresses in config/bulk_email/email_addresses.txt will be skipped."
   task :for_lists, [] => :environment do |_t, args|
     subscriber_lists = SubscriberList.where(id: args.extras)
     email_ids = BulkSubscriberListEmailBuilder.call(
