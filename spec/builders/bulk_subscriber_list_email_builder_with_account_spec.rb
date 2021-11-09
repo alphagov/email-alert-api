@@ -1,6 +1,6 @@
-RSpec.describe BulkSubscriberListEmailBuilder do
+RSpec.describe BulkSubscriberListEmailBuilderWithAccount do
   describe ".call" do
-    let(:subscriber) { create(:subscriber) }
+    let(:subscriber) { create(:subscriber, address: "test@example.com") }
 
     let(:subscriber_lists) do
       [create(:subscriber_list, title: "My List"), create(:subscriber_list)]
@@ -70,7 +70,7 @@ RSpec.describe BulkSubscriberListEmailBuilder do
     end
 
     context "with rejected subscribers in /config/accounts/email_addresses.txt" do
-      let(:excluded_subscriber) { create(:subscriber, address: "test@example.com") }
+      let(:excluded_subscriber) { create(:subscriber) }
       let(:subscription) { create(:subscription, subscriber: subscriber, subscriber_list: subscriber_lists.first) }
 
       before do
@@ -80,7 +80,7 @@ RSpec.describe BulkSubscriberListEmailBuilder do
       it "should only create emails for subscribers not in the file" do
         expect(email).to be_present
         expect(Email.count).to eq(1)
-        expect(Email.first.address).not_to eq("test@example.com")
+        expect(Email.first.address).to eq("test@example.com")
       end
     end
   end

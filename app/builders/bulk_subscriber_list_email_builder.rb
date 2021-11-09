@@ -14,7 +14,7 @@ class BulkSubscriberListEmailBuilder
     ActiveRecord::Base.transaction do
       batches.flat_map do |subscription_ids|
         records = records_for_batch(subscription_ids)
-        Email.insert_all!(records).pluck("id")
+        records.empty? ? [] : Email.insert_all!(records).pluck("id")
       end
     end
   end
@@ -28,7 +28,9 @@ private
       .includes(:subscriber, :subscriber_list)
       .find(subscription_ids)
 
-    subscriptions.map do |subscription|
+    filtered_subscriptions = filter_subscriptions(subscriptions)
+
+    filtered_subscriptions.map do |subscription|
       subscriber = subscription.subscriber
 
       {
@@ -40,6 +42,10 @@ private
         updated_at: now,
       }
     end
+  end
+
+  def filter_subscriptions(subscriptions)
+    subscriptions.reject { |sub| Services.accounts_emails.include?(sub.subscriber.address) }
   end
 
   def email_body(subscriber, subscription)
