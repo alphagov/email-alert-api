@@ -1,5 +1,6 @@
 RSpec.describe ContentChangePresenter do
-  let(:subscription) { create(:subscription, frequency: "immediately") }
+  let(:subscriber_list) { create(:subscriber_list) }
+  let(:subscription) { create(:subscription, subscriber_list: subscriber_list) }
 
   let(:content_change) do
     build(
@@ -22,8 +23,18 @@ RSpec.describe ContentChangePresenter do
         base_path: content_change.base_path,
         utm_source: content_change.id,
         utm_content: subscription.frequency,
+        utm_campaign: "govuk-notifications-topic",
       )
       .and_return("public_url")
+
+    allow(PublicUrls).to receive(:url_for)
+      .with(
+        base_path: content_change.base_path,
+        utm_source: content_change.id,
+        utm_content: subscription.frequency,
+        utm_campaign: "govuk-notifications-single-page",
+      )
+      .and_return("single_page_url")
   end
 
   describe ".call" do
@@ -42,6 +53,27 @@ RSpec.describe ContentChangePresenter do
       CONTENT_CHANGE
 
       expect(result).to eq(expected.strip)
+    end
+
+    context "when subscriber list is for a content id" do
+      let(:subscriber_list) { create(:subscriber_list, content_id: SecureRandom.uuid) }
+
+      it "generates a url with utm_campaign=govuk-notifications-single-page" do
+        expected = <<~CONTENT_CHANGE
+          # [Change title](single_page_url)
+
+          Page summary:
+          Test description
+
+          Change made:
+          Test change note
+
+          Time updated:
+          11:00am, 28 March 2018
+        CONTENT_CHANGE
+
+        expect(result).to eq(expected.strip)
+      end
     end
 
     context "when content change contains markdown" do
