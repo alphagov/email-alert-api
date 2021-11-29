@@ -28,7 +28,7 @@ private
     <<~BODY
       # You’ve subscribed to GOV.UK emails
 
-      #{I18n.t!("emails.confirmation.frequency.#{subscription.frequency}")}
+      #{frequency}
 
       #{title_and_optional_url}
 
@@ -68,5 +68,10 @@ private
       utm_source: subscriber_list.slug,
       utm_content: subscription.frequency,
     )
+  end
+
+  def frequency
+    subscription_type = subscriber_list.content_id.present? ? "page" : "topic"
+    I18n.t!("emails.confirmation.frequency.#{subscription_type}.#{subscription.frequency}")
   end
 end
