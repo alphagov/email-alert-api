@@ -31,7 +31,7 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
           <<~BODY,
             # You’ve subscribed to GOV.UK emails
 
-            #{I18n.t!('emails.confirmation.frequency.immediately')}
+            #{I18n.t!('emails.confirmation.frequency.topic.immediately')}
 
             My List
 
@@ -44,6 +44,15 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
           BODY
         )
       end
+
+      context "when the subscription is to a single page" do
+        let(:subscriber_list) { build(:subscriber_list, :with_content_id) }
+        let(:subscription) { build(:subscription, subscriber_list: subscriber_list, frequency: "immediately") }
+
+        it "includes the content for a single page email" do
+          expect(email.body).to include(I18n.t!("emails.confirmation.frequency.page.immediately"))
+        end
+      end
     end
 
     %w[daily weekly].each do |frequency|
@@ -52,7 +61,7 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
 
         it "creates an email" do
           expect(email.body).to include(
-            I18n.t!("emails.confirmation.frequency.#{frequency}"),
+            I18n.t!("emails.confirmation.frequency.topic.#{frequency}"),
           )
         end
       end
