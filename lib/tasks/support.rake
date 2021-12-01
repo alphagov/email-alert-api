@@ -91,6 +91,16 @@ namespace :support do
     end
   end
 
+  desc "Unsubscribe all Brexit checker subscriptions"
+  task unsubscribe_all_brexit_checker_subscriptions: :environment do
+    unsubscribe_time = Time.zone.now
+
+    brexit_subscriptions = Subscription.joins(:subscriber_list).where("ended_at IS NULL").where("subscriber_lists.tags ->> 'brexit_checklist_criteria' IS NOT NULL")
+
+    puts "Unsubscribing #{brexit_subscriptions.count} subscriptions"
+    brexit_subscriptions.update_all(ended_reason: :unsubscribed, ended_at: unsubscribe_time)
+  end
+
   desc "Query the Notify API for email(s) by email ID"
   task :get_notifications_from_notify_by_email_id, [:id] => :environment do |_t, args|
     NotificationsFromNotify.call(args[:id])

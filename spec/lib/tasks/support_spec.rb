@@ -80,4 +80,43 @@ RSpec.describe "support" do
       end
     end
   end
+
+  describe "unsubscribe_all_brexit_checker_subscriptions" do
+    before do
+      Rake::Task["support:unsubscribe_all_brexit_checker_subscriptions"].reenable
+    end
+
+    it "ends all Brexit checker subscriptions" do
+      subscription = create :subscription, :brexit_checker
+
+      expect {
+        Rake::Task["support:unsubscribe_all_brexit_checker_subscriptions"].invoke
+      }.to output.to_stdout
+
+      expect(subscription.reload).to be_ended
+    end
+
+    it "does not update already unsubscribed subscriptions" do
+      ended_at = Time.zone.now - 1.week
+      subscription = create :subscription, :brexit_checker
+      subscription.update!(ended_at: ended_at)
+
+      expect {
+        Rake::Task["support:unsubscribe_all_brexit_checker_subscriptions"].invoke
+      }.to output("Unsubscribing 0 subscriptions\n").to_stdout
+
+      expect(subscription.ended_at).to be_within(1.second).of ended_at
+    end
+
+    it "only unsubscribes Brexit checker subscriptions" do
+      create :subscription, :brexit_checker
+      subscription = create :subscription
+
+      expect {
+        Rake::Task["support:unsubscribe_all_brexit_checker_subscriptions"].invoke
+      }.to output("Unsubscribing 1 subscriptions\n").to_stdout
+
+      expect(subscription.ended_at).to be_nil
+    end
+  end
 end
