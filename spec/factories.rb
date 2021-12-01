@@ -111,6 +111,10 @@ FactoryBot.define do
       tags { { format: %w[medical_safety_alert], alert_type: %w[devices drugs field-safety-notices company-led-drugs] } }
     end
 
+    trait :brexit_checker do
+      tags { { brexit_checklist_criteria: { any: %w[old other] } } }
+    end
+
     trait :with_content_id do
       content_id { SecureRandom.uuid }
     end
@@ -138,6 +142,10 @@ FactoryBot.define do
     subscriber
     subscriber_list
     frequency { Frequency::IMMEDIATELY }
+
+    trait :brexit_checker do
+      subscriber_list { build(:subscriber_list, :brexit_checker) }
+    end
 
     trait :immediately
 
