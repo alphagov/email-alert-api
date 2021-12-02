@@ -2,7 +2,7 @@
 
 library("govuk")
 
-node("postgresql-9.6") {
-  govuk.setEnvar("TEST_DATABASE_URL", "postgresql://email-alert-api:email-alert-api@localhost/email-alert-api_test")
+node {
+  govuk.setEnvar("TEST_DATABASE_URL", "postgresql://postgres@127.0.0.1:54313/email-alert-api-test")
   govuk.buildProject()
 }
