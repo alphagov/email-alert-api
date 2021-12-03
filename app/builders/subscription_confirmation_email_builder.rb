@@ -42,7 +42,7 @@ private
   end
 
   def title_and_optional_url
-    result = subscriber_list.title
+    result = title
 
     source_url = SourceUrlPresenter.call(
       subscriber_list.url,
@@ -52,6 +52,10 @@ private
 
     result += "\n\n#{source_url}" if source_url
     result
+  end
+
+  def title
+    is_single_page_subscription? ? "[#{subscriber_list.title}](#{subscriber_list.url})" : subscriber_list.title
   end
 
   def unsubscribe_url
@@ -70,8 +74,12 @@ private
     )
   end
 
+  def is_single_page_subscription?
+    subscriber_list.content_id.present?
+  end
+
   def frequency
-    subscription_type = subscriber_list.content_id.present? ? "page" : "topic"
+    subscription_type = is_single_page_subscription? ? "page" : "topic"
     I18n.t!("emails.confirmation.frequency.#{subscription_type}.#{subscription.frequency}")
   end
 end

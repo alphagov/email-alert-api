@@ -46,11 +46,15 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
       end
 
       context "when the subscription is to a single page" do
-        let(:subscriber_list) { build(:subscriber_list, :with_content_id) }
+        let(:subscriber_list) { build(:subscriber_list, :for_single_page_subscription) }
         let(:subscription) { build(:subscription, subscriber_list: subscriber_list, frequency: "immediately") }
 
         it "includes the content for a single page email" do
           expect(email.body).to include(I18n.t!("emails.confirmation.frequency.page.immediately"))
+        end
+
+        it "makes the page title a link to the page" do
+          expect(email.body).to include("[#{subscriber_list.title}](#{subscriber_list.url})")
         end
       end
     end
