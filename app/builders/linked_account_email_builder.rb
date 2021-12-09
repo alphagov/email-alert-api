@@ -1,5 +1,3 @@
-require "govuk_personalisation"
-
 class LinkedAccountEmailBuilder
   include Callable
 
@@ -52,7 +50,7 @@ private
   end
 
   def sign_in_url
-    GovukPersonalisation::Urls.sign_in
+    "https://www.gov.uk/account"
   end
 
   def contact_url
