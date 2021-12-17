@@ -30,6 +30,7 @@ private
       base_path: content_change.base_path,
       utm_source: content_change.id,
       utm_content: subscription.frequency,
+      utm_campaign: subscription.subscriber_list.content_id.nil? ? "govuk-notifications-topic" : "govuk-notifications-single-page",
     )
   end
 
