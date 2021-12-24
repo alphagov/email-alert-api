@@ -1,0 +1,10 @@
+en:
+  emails:
+    unpublication_notification:
+      footer_notice: ^You’ve been automatically unsubscribed from this page because it was removed.
+      publish_in_error_no_url:
+        change_made: "This page was removed from GOV.UK because it was published in error."
+      publish_in_error_alt_url:
+        change_made: "This page was removed from GOV.UK because it was published in error. It's been replaced by: [%{alternative_url}]"
+      page_consolidated:
+        change_made: "This page was removed from GOV.UK. It’s been replaced by: %{alternative_url}"

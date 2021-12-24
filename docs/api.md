@@ -302,6 +302,32 @@ there is one, returns it in the form:
 
 Returns a 404 if there is no matching subscriber.
 
+### `POST /unpublication_notification`
+
+Looks up a subscription list by content ID. If there are subscribers
+notify them the item they were subscribed to has been unpublished and remove their subscription.
+
+Optionally pass a notification_template parameter to customise the
+notification to users, providing more information about the type
+of unpublication (for example publishing in error)
+
+```json
+{
+  "content_id": "4da7a6a7-c8f7-482e-aeb9-a26cea90780c",
+  "notification_template": "default"
+}
+```
+
+Allowed notification types are:
+- "default" - Generic unsubscription notification with no further details
+
+Returns a 202 if the request is accepted, and emails are queued.
+
+Returns a 400 if the notification_template does not match any
+known templates.
+
+Returns a 404 if the content_id cannot be matched to any subscription_list.
+
 ## Healthcheck
 
 A queue health check endpoint is available at `/healthcheck`.
