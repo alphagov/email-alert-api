@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_29_083707) do
+ActiveRecord::Schema.define(version: 2022_01_05_174025) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,7 +66,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_083707) do
   end
 
   create_table "emails", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.string "subject", null: false
+    t.text "subject", null: false
     t.text "body", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -114,7 +114,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_083707) do
   end
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
-    t.string "title", null: false
+    t.text "title", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "document_type", default: "", null: false
@@ -124,7 +124,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_083707) do
     t.string "government_document_supertype", default: "", null: false
     t.string "signon_user_uid"
     t.string "slug", null: false
-    t.string "url"
+    t.text "url"
     t.string "tags_digest"
     t.string "links_digest"
     t.uuid "content_id"
