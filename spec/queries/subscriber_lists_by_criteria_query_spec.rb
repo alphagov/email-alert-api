@@ -1,5 +1,19 @@
 RSpec.describe SubscriberListsByCriteriaQuery do
   describe ".call" do
+    it "can match an ID" do
+      list = create(:subscriber_list, tags: { format: { any: %w[match] } })
+      create(:subscriber_list, tags: { format: { any: %w[no-match] } })
+
+      result = described_class.call(
+        SubscriberList,
+        [
+          { id: list.id },
+        ],
+      )
+
+      expect(result).to contain_exactly(list)
+    end
+
     it "can match a tag" do
       list = create(:subscriber_list, tags: { format: { any: %w[match] } })
       create(:subscriber_list, tags: { format: { any: %w[no-match] } })

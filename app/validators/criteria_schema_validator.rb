@@ -21,6 +21,14 @@ private
             {
               "type" => "object",
               "additionalProperties" => false,
+              "requires" => %w[id],
+              "properties" => {
+                "id" => { "type" => "integer" },
+              },
+            },
+            {
+              "type" => "object",
+              "additionalProperties" => false,
               "required" => %w[type key value],
               "properties" => {
                 "type" => { "enum" => %w[tag] },

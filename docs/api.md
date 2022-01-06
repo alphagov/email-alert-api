@@ -25,6 +25,8 @@ Gets a stored subscriber list that's relevant to just the `cabinet-office` organ
 }
 ```
 
+Returns a `404 Not Found` if there is no such list.
+
 ### `POST /subscriber-lists`
 
 ```json
@@ -62,6 +64,39 @@ The following fields are accepted:
   for subscriptions to individual pages or pieces of guidance.
 
 [valid tags]: https://github.com/alphagov/email-alert-api/blob/b6428880aa730e316803d7129db3ec47304e933b/lib/valid_tags.rb
+
+### `GET /subscriber-lists/xxx`
+
+Gets the stored subscriber list with the given ID.
+
+It will respond with the JSON response for the `GET` call above.
+
+Returns a `404 Not Found` if there is no such list.
+
+### `POST /subscriber-lists/xxx/bulk-unsubscribe`
+
+Unsubscribes all subscribers from that list, and optionally sends an email to them.
+
+```json
+{
+  "sender_message_id": "bfeee5a9-20c2-44ec-8162-f14dde721c21",
+  "body": "Message body here"
+}
+```
+
+The following fields are accepted on this endpoint:
+`sender_message_id`, `body`.
+
+It will respond with `202 Accepted` (the call is queued).  When it is
+processed, all users then-subscribed to the list will be sent an
+immediate email (if the `body` is given) and be unsubscribed.
+
+Returns a `422 Unprocessable Entity` if `body` is given but
+`sender_message_id` is not.
+
+Returns a `409 Conflict` if `sender_message_id` has already been used.
+
+Returns a `404 Not Found` if there is no such list.
 
 ### `POST /content-changes`
 

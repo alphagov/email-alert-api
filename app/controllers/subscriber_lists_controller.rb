@@ -31,6 +31,27 @@ class SubscriberListsController < ApplicationController
     render json: subscriber_list.to_json
   end
 
+  def bulk_unsubscribe
+    subscriber_list = SubscriberList.find_by(slug: params[:slug])
+
+    if subscriber_list.nil?
+      render json: { error: "Could not find the subscriber list" }, status: :not_found
+    elsif bulk_unsubscribe_params[:body] && !bulk_unsubscribe_params[:sender_message_id]
+      render json: { error: "Unprocessable entity" }, status: :unprocessable_entity
+    elsif bulk_unsubscribe_already_requested?
+      render json: { error: "Message already received" }, status: :conflict
+    else
+      BulkUnsubscribeListService.call(
+        subscriber_list: subscriber_list,
+        params: bulk_unsubscribe_params,
+        user: current_user,
+        govuk_request_id: GdsApi::GovukHeaders.headers[:govuk_request_id],
+      )
+
+      render json: { message: "List queued for bulk unsubscription" }, status: :accepted
+    end
+  end
+
 private
 
   def convert_legacy_params(link_or_tags)
@@ -48,5 +69,15 @@ private
       email_document_supertype: params.fetch(:email_document_supertype, ""),
       government_document_supertype: params.fetch(:government_document_supertype, ""),
     }
+  end
+
+  def bulk_unsubscribe_params
+    params.permit(:body, :sender_message_id)
+  end
+
+  def bulk_unsubscribe_already_requested?
+    return unless bulk_unsubscribe_params[:sender_message_id]
+
+    Message.exists?(sender_message_id: bulk_unsubscribe_params[:sender_message_id])
   end
 end
