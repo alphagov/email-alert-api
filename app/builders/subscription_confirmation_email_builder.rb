@@ -30,7 +30,7 @@ private
 
       #{frequency}
 
-      #{title_and_optional_url}
+      #{title}
 
       Thanks
       GOV.UK emails
@@ -39,19 +39,6 @@ private
 
       [Change your email preferences](#{manage_url})
     BODY
-  end
-
-  def title_and_optional_url
-    result = title
-
-    source_url = SourceUrlPresenter.call(
-      subscriber_list.url,
-      utm_source: subscriber_list.slug,
-      utm_content: "confirmation",
-    )
-
-    result += "\n\n#{source_url}" if source_url
-    result
   end
 
   def title

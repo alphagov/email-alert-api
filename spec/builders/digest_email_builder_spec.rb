@@ -25,9 +25,6 @@ RSpec.describe DigestEmailBuilder do
       .with(subscriber, subscription)
       .and_return("presented_footer")
 
-    allow(SourceUrlPresenter).to receive(:call)
-      .and_return(nil)
-
     expect(ContentChangePresenter).to receive(:call)
       .and_return("presented_content_change")
 
@@ -75,27 +72,6 @@ RSpec.describe DigestEmailBuilder do
             Weekly update from GOV.UK for:
 
             # Test title 1
-
-            ---
-          BODY
-        )
-      end
-    end
-
-    context "when the list has a source URL" do
-      before do
-        allow(SourceUrlPresenter).to receive(:call)
-          .and_return("Presented URL")
-      end
-
-      it "includes it in the body" do
-        expect(email.body).to include(
-          <<~BODY,
-            Daily update from GOV.UK for:
-
-            # Test title 1
-
-            Presented URL
 
             ---
           BODY

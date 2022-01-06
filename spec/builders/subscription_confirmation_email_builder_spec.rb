@@ -70,24 +70,5 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
         end
       end
     end
-
-    context "when the list has a URL" do
-      before do
-        allow(SourceUrlPresenter).to receive(:call)
-          .and_return("Presented URL")
-      end
-
-      it "includes it in the body" do
-        expect(email.body).to include(
-          <<~BODY,
-            My List
-
-            Presented URL
-
-            Thanks
-          BODY
-        )
-      end
-    end
   end
 end

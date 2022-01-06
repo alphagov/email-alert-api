@@ -28,7 +28,7 @@ private
     <<~BODY
       #{I18n.t("emails.digests.#{subscription.frequency}.opening_line")}
 
-      #{title_and_optional_url}
+      # #{subscriber_list.title}
 
       ---
 
@@ -47,18 +47,5 @@ private
     end
 
     changes.join("\n\n---\n\n").strip
-  end
-
-  def title_and_optional_url
-    result = "# #{subscriber_list.title}"
-
-    source_url = SourceUrlPresenter.call(
-      subscriber_list.url,
-      utm_source: subscriber_list.slug,
-      utm_content: subscription.frequency,
-    )
-
-    result += "\n\n#{source_url}" if source_url
-    result
   end
 end
