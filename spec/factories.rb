@@ -113,7 +113,7 @@ FactoryBot.define do
 
     trait :for_single_page_subscription do
       content_id { SecureRandom.uuid }
-      url { "https://www.gov.uk/an/example/page" }
+      url { "/an/example/page" }
     end
 
     factory :subscriber_list_with_invalid_tags do
