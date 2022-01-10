@@ -30,7 +30,7 @@ private
 
       #{frequency}
 
-      #{title_and_optional_url}
+      #{title}
 
       Thanks
       GOV.UK emails
@@ -41,21 +41,17 @@ private
     BODY
   end
 
-  def title_and_optional_url
-    result = title
-
-    source_url = SourceUrlPresenter.call(
-      subscriber_list.url,
-      utm_source: subscriber_list.slug,
-      utm_content: "confirmation",
-    )
-
-    result += "\n\n#{source_url}" if source_url
-    result
-  end
-
   def title
-    is_single_page_subscription? ? "[#{subscriber_list.title}](#{subscriber_list.url})" : subscriber_list.title
+    if is_single_page_subscription?
+      absolute_url = PublicUrls.url_for(
+        base_path: subscriber_list.url,
+        utm_source: subscriber_list.slug,
+        utm_content: "confirmation",
+      )
+      "[#{subscriber_list.title}](#{absolute_url})"
+    else
+      subscriber_list.title
+    end
   end
 
   def unsubscribe_url

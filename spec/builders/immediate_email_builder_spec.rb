@@ -85,36 +85,5 @@ RSpec.describe ImmediateEmailBuilder do
         )
       end
     end
-
-    context "when the list has a source URL" do
-      let(:content_change) { build(:content_change, title: "Title") }
-
-      subject(:email) do
-        import = described_class.call(content_change, [subscription])
-        Email.find(import.first)
-      end
-
-      before do
-        allow(ContentChangePresenter).to receive(:call)
-          .with(content_change, subscription)
-          .and_return("presented_content_change")
-
-        allow(SourceUrlPresenter).to receive(:call).and_return("Presented URL")
-      end
-
-      it "includes it in the body" do
-        expect(email.body).to include(
-          <<~BODY,
-            ---
-
-            presented_content_change
-
-            Presented URL
-
-            ---
-          BODY
-        )
-      end
-    end
   end
 end

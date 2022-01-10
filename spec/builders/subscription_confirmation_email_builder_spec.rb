@@ -54,7 +54,7 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
         end
 
         it "makes the page title a link to the page" do
-          expect(email.body).to include("[#{subscriber_list.title}](#{subscriber_list.url})")
+          expect(email.body).to include("[#{subscriber_list.title}](http://www.dev.gov.uk#{subscriber_list.url}?utm_medium=email&utm_campaign=govuk-notifications&utm_source=#{subscriber_list.slug}&utm_content=confirmation)")
         end
       end
     end
@@ -68,25 +68,6 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
             I18n.t!("emails.confirmation.frequency.topic.#{frequency}"),
           )
         end
-      end
-    end
-
-    context "when the list has a URL" do
-      before do
-        allow(SourceUrlPresenter).to receive(:call)
-          .and_return("Presented URL")
-      end
-
-      it "includes it in the body" do
-        expect(email.body).to include(
-          <<~BODY,
-            My List
-
-            Presented URL
-
-            Thanks
-          BODY
-        )
       end
     end
   end

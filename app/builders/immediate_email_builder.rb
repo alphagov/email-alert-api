@@ -56,17 +56,7 @@ private
   end
 
   def middle_section(subscription)
-    subscriber_list = subscription.subscriber_list
     presenter = "#{content.class.name}Presenter".constantize
-    section = presenter.call(content, subscription)
-
-    source_url = SourceUrlPresenter.call(
-      subscriber_list.url,
-      utm_source: subscriber_list.slug,
-      utm_content: "immediate",
-    )
-
-    section += "\n\n#{source_url}" if source_url
-    section
+    presenter.call(content, subscription)
   end
 end
