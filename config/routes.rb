@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     resources :subscriber_lists, path: "subscriber-lists", only: %i[create]
     get "/subscriber-lists", to: "subscriber_lists#index"
     get "/subscriber-lists/:slug", to: "subscriber_lists#show"
+    post "/subscriber-lists/:slug/bulk-unsubscribe", to: "subscriber_lists#bulk_unsubscribe"
 
     resources :content_changes, only: %i[create], path: "content-changes"
     resources :messages, only: %i[create]

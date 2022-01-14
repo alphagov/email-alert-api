@@ -24,6 +24,7 @@ class Subscription < ApplicationRecord
     unpublished: 5, # Unused since 5eeda132 (can be removed after a year)
     bulk_immediate_to_digest: 6, # Potentially unused (for a one-off migration)
     subscriber_merged: 7,
+    bulk_unsubscribed: 8,
   }, _prefix: :ended
 
   scope :active, -> { where(ended_at: nil) }
