@@ -29,6 +29,7 @@ class BulkUnsubscribeListService
         criteria_rules: [{ id: subscriber_list.id }],
         govuk_request_id: govuk_request_id,
         signon_user_uid: user&.uid,
+        omit_footer_unsubscribe_link: true,
       )
   end
 end

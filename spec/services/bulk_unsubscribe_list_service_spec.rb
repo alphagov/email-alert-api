@@ -30,6 +30,7 @@ RSpec.describe BulkUnsubscribeListService do
           title: subscriber_list.title,
           body: "Message body",
           criteria_rules: [{ id: subscriber_list.id }],
+          omit_footer_unsubscribe_link: true,
         )
       end
 

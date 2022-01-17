@@ -3,10 +3,11 @@ RSpec.describe ImmediateEmailBuilder do
     let(:subscriber_list) { build(:subscriber_list, title: "My List") }
     let(:subscription) { build(:subscription, subscriber_list: subscriber_list) }
     let(:subscriber) { subscription.subscriber }
+    let(:omit_footer_unsubscribe_link) { false }
 
     before do
       allow(FooterPresenter).to receive(:call)
-        .with(subscriber, subscription)
+        .with(subscriber, subscription, omit_unsubscribe_link: false)
         .and_return("presented_footer")
     end
 
@@ -83,6 +84,37 @@ RSpec.describe ImmediateEmailBuilder do
             presented_footer
           BODY
         )
+      end
+
+      context "when the message omits the footer unsubscribe link" do
+        let(:message) { build(:message, title: "Title", omit_footer_unsubscribe_link: true) }
+
+        before do
+          allow(FooterPresenter).to receive(:call)
+            .with(subscriber, subscription, omit_unsubscribe_link: true)
+            .and_return("presented_footer_without_unsubscribe_link")
+        end
+
+        it "creates an email without the footer unsubscribe link" do
+          expect(email.subject).to eq("Update from GOV.UK for: Title")
+          expect(email.subscriber_id).to eq(subscriber.id)
+
+          expect(email.body).to eq(
+            <<~BODY,
+              Update from GOV.UK for:
+
+              # My List
+
+              ---
+
+              presented_message
+
+              ---
+
+              presented_footer_without_unsubscribe_link
+            BODY
+          )
+        end
       end
     end
   end

@@ -3,9 +3,10 @@ RSpec.describe FooterPresenter do
     let(:subscriber) { create(:subscriber) }
     let(:frequency) { "immediately" }
     let(:subscription) { create(:subscription, frequency: frequency) }
+    let(:omit_unsubscribe_link) { false }
 
     let(:footer) do
-      described_class.call(subscriber, subscription)
+      described_class.call(subscriber, subscription, omit_unsubscribe_link: omit_unsubscribe_link)
     end
 
     before do
@@ -37,6 +38,24 @@ RSpec.describe FooterPresenter do
       FOOTER
 
       expect(footer).to eq(expected.strip)
+    end
+
+    context "when omit_unsubscribe_link is true" do
+      let(:omit_unsubscribe_link) { true }
+
+      it "omits the unsubscribe link" do
+        expected = <<~FOOTER
+          # Why am I getting this email?
+
+          #{I18n.t!('emails.footer.immediately')}
+
+          #{subscription.subscriber_list.title}
+
+          [Change your email preferences](manage_url)
+        FOOTER
+
+        expect(footer).to eq(expected.strip)
+      end
     end
 
     %w[weekly daily].each do |frequency|
