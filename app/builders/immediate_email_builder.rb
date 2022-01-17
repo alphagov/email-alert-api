@@ -51,12 +51,20 @@ private
 
       ---
 
-      #{FooterPresenter.call(subscriber, subscription)}
+      #{FooterPresenter.call(subscriber, subscription, omit_unsubscribe_link: omit_footer_unsubscribe_link)}
     BODY
   end
 
   def middle_section(subscription)
     presenter = "#{content.class.name}Presenter".constantize
     presenter.call(content, subscription)
+  end
+
+  def omit_footer_unsubscribe_link
+    if content.respond_to?(:omit_footer_unsubscribe_link)
+      content.omit_footer_unsubscribe_link
+    else
+      false
+    end
   end
 end
