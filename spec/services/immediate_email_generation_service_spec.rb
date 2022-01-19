@@ -63,12 +63,13 @@ RSpec.describe ImmediateEmailGenerationService do
 
     context "when given a message" do
       let(:message) { create(:message) }
+      let(:frequency) { :immediately }
 
       before do
         create(:matched_message,
                subscriber_list: subscriber_list,
                message: message)
-        create(:subscription, :immediately, subscriber_list: subscriber_list)
+        create(:subscription, frequency, subscriber_list: subscriber_list)
       end
 
       it "can create and queue emails" do
@@ -85,6 +86,22 @@ RSpec.describe ImmediateEmailGenerationService do
         expect(SendEmailWorker)
           .to have_received(:perform_async_in_queue)
           .with(an_instance_of(String), metrics, an_instance_of(Hash))
+      end
+
+      context "when the subscription is not immediate" do
+        let(:frequency) { :daily }
+
+        it "does not create an email" do
+          expect { described_class.call(message) }.not_to change(Email, :count)
+        end
+
+        context "with override_subscription_frequency_to_immediate set to true" do
+          let(:message) { create(:message, override_subscription_frequency_to_immediate: true) }
+
+          it "creates an email" do
+            expect { described_class.call(message) }.to change(Email, :count).by(1)
+          end
+        end
       end
     end
   end
