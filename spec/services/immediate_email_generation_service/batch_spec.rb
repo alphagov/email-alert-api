@@ -77,6 +77,18 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
         expect(ImmediateEmailBuilder).to_not receive(:call)
         instance.generate_emails
       end
+
+      context "when the content is a message with override_subscription_frequency_to_immediate set to true" do
+        let(:content) { create(:message, override_subscription_frequency_to_immediate: true) }
+
+        it "uses ImmediateEmailBuilder to build emails" do
+          expect(ImmediateEmailBuilder).to receive(:call)
+           .with(content, subscriptions)
+           .and_call_original
+
+          instance.generate_emails
+        end
+      end
     end
 
     context "when only some of the emails were generated due to a failure" do

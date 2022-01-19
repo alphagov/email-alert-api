@@ -29,9 +29,17 @@ private
       scope = Subscription.for_content_change(content) if content.is_a?(ContentChange)
       scope = Subscription.for_message(content) if content.is_a?(Message)
 
+      override_subscription_frequency_to_immediate =
+        if content.respond_to?(:override_subscription_frequency_to_immediate)
+          content.override_subscription_frequency_to_immediate
+        else
+          false
+        end
+
+      scope = scope.immediately unless override_subscription_frequency_to_immediate
+
       scope
         .active
-        .immediately
         .dedup_by_subscriber
         .each_slice(BATCH_SIZE)
         .map do |subscription_ids|

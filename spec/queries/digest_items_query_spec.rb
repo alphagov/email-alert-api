@@ -43,6 +43,30 @@ RSpec.describe DigestItemsQuery do
           )
       end
 
+      it "excludes overridden-immediate messages" do
+        create(
+          :message,
+          :matched,
+          subscriber_list: subscriber_list,
+          created_at: digest_run.starts_at,
+          override_subscription_frequency_to_immediate: true,
+        )
+
+        message = create(
+          :message,
+          :matched,
+          subscriber_list: subscriber_list,
+          created_at: digest_run.starts_at,
+        )
+
+        expect(results.count).to eq(1)
+        expect(results.first.to_h)
+          .to match(
+            subscription: subscription,
+            content: [message],
+          )
+      end
+
       it "returns the content ordered by created_at time" do
         content_change1 = create(
           :content_change,

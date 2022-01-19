@@ -45,6 +45,7 @@ private
       .select("messages.*, subscriptions.id AS subscription_id")
       .joins(matched_messages: { subscriber_list: :subscriptions })
       .where(subscriptions: { id: subscriptions })
+      .where(messages: { override_subscription_frequency_to_immediate: false })
       .where("messages.created_at >= ?", digest_run.starts_at)
       .where("messages.created_at < ?", digest_run.ends_at)
       .uniq(&:id)

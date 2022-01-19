@@ -16,6 +16,23 @@ RSpec.describe "Destroying a subscriber list", type: :request do
       expect(response.status).to eq(202)
     end
 
+    context "when there is a subscriber" do
+      before do
+        post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: subscriber.address, frequency: "immediately" }.to_json, headers: json_headers
+      end
+
+      let!(:subscriber) { create(:subscriber) }
+
+      it "unsubscribes them" do
+        post "/subscriber-lists/#{subscriber_list.slug}/bulk-unsubscribe", headers: json_headers
+        expect(subscriber.active_subscriptions.count).to eq(0)
+      end
+
+      it "does not send an email" do
+        expect { post "/subscriber-lists/#{subscriber_list.slug}/bulk-unsubscribe", headers: json_headers }.not_to change(Email, :count)
+      end
+    end
+
     context "when message parameters are given" do
       let(:sender_message_id) { Digest::UUID.uuid_v5(content_id, public_updated_at) }
       let(:content_id) { SecureRandom.uuid }
@@ -32,14 +49,29 @@ RSpec.describe "Destroying a subscriber list", type: :request do
 
       context "when there is a subscriber" do
         before do
-          post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: subscriber.address, frequency: "immediately" }.to_json, headers: json_headers
+          post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: subscriber.address, frequency: frequency }.to_json, headers: json_headers
         end
 
+        let(:frequency) { "immediately" }
         let!(:subscriber) { create(:subscriber) }
 
         it "unsubscribes them" do
-          post "/subscriber-lists/#{subscriber_list.slug}/bulk-unsubscribe", headers: json_headers
+          post "/subscriber-lists/#{subscriber_list.slug}/bulk-unsubscribe", params: message_params.to_json, headers: json_headers
           expect(subscriber.active_subscriptions.count).to eq(0)
+        end
+
+        it "sends an immediate email" do
+          post "/subscriber-lists/#{subscriber_list.slug}/bulk-unsubscribe", params: message_params.to_json, headers: json_headers
+          expect(Email.order(:created_at).last.body).to include(message_params[:body])
+        end
+
+        context "when the subscribtion is for batch updates" do
+          let(:frequency) { "weekly" }
+
+          it "sends an immediate email" do
+            post "/subscriber-lists/#{subscriber_list.slug}/bulk-unsubscribe", params: message_params.to_json, headers: json_headers
+            expect(Email.order(:created_at).last.body).to include(message_params[:body])
+          end
         end
       end
 

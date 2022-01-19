@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_17_130900) do
+ActiveRecord::Schema.define(version: 2022_01_19_090527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -111,6 +111,7 @@ ActiveRecord::Schema.define(version: 2022_01_17_130900) do
     t.datetime "updated_at", null: false
     t.json "criteria_rules"
     t.boolean "omit_footer_unsubscribe_link", default: false, null: false
+    t.boolean "override_subscription_frequency_to_immediate", default: false, null: false
     t.index ["sender_message_id"], name: "index_messages_on_sender_message_id", unique: true
   end
 
