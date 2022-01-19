@@ -9,6 +9,12 @@ RSpec.describe BulkUnsubscribeListWorker do
     end
   end
 
+  let!(:weekly_subscriber) do
+    create(:subscriber).tap do |subscriber|
+      create(:subscription, :weekly, subscriber: subscriber, subscriber_list: subscriber_list)
+    end
+  end
+
   let!(:other_subscriber) do
     create(:subscriber).tap do |subscriber|
       other_list = create(:subscriber_list)
@@ -19,6 +25,10 @@ RSpec.describe BulkUnsubscribeListWorker do
   describe "#perform" do
     it "unsubscribes members of the subscriber list" do
       expect { described_class.new.perform(subscriber_list.id, message&.id) }.to(change { subscriber.ended_subscriptions.count })
+    end
+
+    it "unsubscribes members of the subscriber list with weekly subscriptions" do
+      expect { described_class.new.perform(subscriber_list.id, message&.id) }.to(change { weekly_subscriber.ended_subscriptions.count })
     end
 
     it "does not unsubscribe users from other subscriber lists" do
