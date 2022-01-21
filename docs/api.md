@@ -73,6 +73,30 @@ It will respond with the JSON response for the `GET` call above.
 
 Returns a `404 Not Found` if there is no such list.
 
+### `PATCH /subscriber-lists/xxx`
+
+Update data that helps describe the subscriber list, such as the title.
+It requires at least one parameter to update.
+
+```json
+{
+  "title": "A new Subscriber list title",
+}
+```
+
+The following fields are accepted:
+- title: The title of this particular list, which will be shown to the user;
+  email sent to a user;
+
+Any additional parameters will be ignored.
+
+Returns a `200 OK` with the details of the subscriber list including the
+new parameters, for an acceptable request.
+
+Returns a `404 Not Found` if there is no such list.
+
+Returns a `422 Bad Request` if no allowed parameters are provided to update.
+
 ### `POST /subscriber-lists/xxx/bulk-unsubscribe`
 
 Unsubscribes all subscribers from that list, and optionally sends an email to them.
