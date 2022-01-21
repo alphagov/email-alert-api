@@ -135,7 +135,7 @@ GEM
       statsd-ruby (~> 1.5.0)
       unicorn (>= 5.4, < 5.9)
     govuk_document_types (1.0.1)
-    govuk_personalisation (0.11.0)
+    govuk_personalisation (0.11.1)
       plek (>= 1.9.0)
       rails (~> 6)
     govuk_sidekiq (5.0.0)
@@ -359,7 +359,7 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     statsd-ruby (1.5.0)
-    thor (1.1.0)
+    thor (1.2.1)
     thwait (0.2.0)
       e2mmap
     tilt (2.0.10)
@@ -385,7 +385,7 @@ GEM
     websocket-extensions (0.1.5)
     with_advisory_lock (4.6.0)
       activerecord (>= 4.2)
-    zeitwerk (2.5.1)
+    zeitwerk (2.5.3)
 
 PLATFORMS
   ruby
