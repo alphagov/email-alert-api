@@ -127,7 +127,7 @@ GEM
       warden-oauth2 (~> 0.0.1)
     globalid (1.0.0)
       activesupport (>= 5.0)
-    govuk_app_config (4.1.0)
+    govuk_app_config (4.2.0)
       logstasher (>= 1.2.2, < 2.2.0)
       puma (~> 5.0)
       sentry-rails (~> 4.5.0)
@@ -252,7 +252,7 @@ GEM
       rake (>= 0.13)
       thor (~> 1.0)
     rainbow (3.0.0)
-    raindrops (0.19.2)
+    raindrops (0.20.0)
     rake (13.0.6)
     ratelimit (1.0.3)
       redis (>= 2.0.0)
@@ -265,7 +265,7 @@ GEM
     redis-namespace (1.8.0)
       redis (>= 3.0.4)
     regexp_parser (2.1.1)
-    request_store (1.5.0)
+    request_store (1.5.1)
       rack (>= 1.4)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
@@ -359,7 +359,7 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     statsd-ruby (1.5.0)
-    thor (1.1.0)
+    thor (1.2.1)
     thwait (0.2.0)
       e2mmap
     tilt (2.0.10)
@@ -385,7 +385,7 @@ GEM
     websocket-extensions (0.1.5)
     with_advisory_lock (4.6.0)
       activerecord (>= 4.2)
-    zeitwerk (2.5.1)
+    zeitwerk (2.5.3)
 
 PLATFORMS
   ruby
