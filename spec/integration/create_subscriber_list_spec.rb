@@ -98,6 +98,19 @@ RSpec.describe "Creating a subscriber list", type: :request do
       end
     end
 
+    context "with a description" do
+      it "returns a list with a description" do
+        create_subscriber_list(
+          { "description": "A description" },
+        )
+
+        expect(response.status).to eq(200)
+        expect(response_subscriber_list).to include(
+          "description" => "A description",
+        )
+      end
+    end
+
     def create_subscriber_list(payload = {})
       defaults = {
         title: "This is a sample title",

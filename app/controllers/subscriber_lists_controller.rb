@@ -26,6 +26,7 @@ class SubscriberListsController < ApplicationController
       url: params.fetch(:url, nil),
       matching_criteria: find_exact_query_params,
       user: current_user,
+      description: params.fetch(:description, nil),
     )
 
     render json: subscriber_list.to_json

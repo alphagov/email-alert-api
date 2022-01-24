@@ -1,11 +1,12 @@
 class CreateSubscriberListService
   include Callable
 
-  def initialize(title:, url:, matching_criteria:, user:)
+  def initialize(title:, url:, matching_criteria:, user:, description: nil)
     @title = title
     @url = url
     @matching_criteria = matching_criteria
     @user = user
+    @description = description
   end
 
   def call
@@ -18,7 +19,7 @@ class CreateSubscriberListService
 
 private
 
-  attr_reader :title, :url, :matching_criteria, :user
+  attr_reader :title, :url, :matching_criteria, :user, :description
 
   def subscriber_list_params
     matching_criteria.merge(
@@ -26,6 +27,7 @@ private
       slug: slug,
       url: url,
       signon_user_uid: user.uid,
+      description: description,
     )
   end
 
