@@ -32,6 +32,27 @@ class SubscriberListsController < ApplicationController
     render json: subscriber_list.to_json
   end
 
+  def update
+    permitted_params = params.permit(updatable_parameters)
+
+    if permitted_params.empty?
+      render json: {
+        error: "Must include at least one of: #{updatable_parameters.join(', ')}",
+      }, status: :unprocessable_entity
+      return
+    end
+
+    subscriber_list = SubscriberList.find_by(slug: params[:slug])
+
+    unless subscriber_list
+      render json: { error: "Could not find the subscriber list" }, status: :not_found
+      return
+    end
+
+    subscriber_list.update!(permitted_params)
+    render json: subscriber_list.to_json
+  end
+
   def bulk_unsubscribe
     subscriber_list = SubscriberList.find_by(slug: params[:slug])
 
@@ -54,6 +75,10 @@ class SubscriberListsController < ApplicationController
   end
 
 private
+
+  def updatable_parameters
+    [:title]
+  end
 
   def convert_legacy_params(link_or_tags)
     link_or_tags.transform_values do |link_or_tag|
