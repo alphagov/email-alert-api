@@ -7,4 +7,8 @@ module Services
     @accounts_emails ||=
       File.readlines(Rails.root.join("config/bulk_email/email_addresses.txt"), chomp: true)
   end
+
+  def self.content_store
+    @content_store ||= GdsApi::ContentStore.new(Plek.new.find("content-store"))
+  end
 end
