@@ -77,7 +77,7 @@ class SubscriberListsController < ApplicationController
 private
 
   def updatable_parameters
-    [:title]
+    %i[title description]
   end
 
   def convert_legacy_params(link_or_tags)
