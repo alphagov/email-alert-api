@@ -81,12 +81,14 @@ It requires at least one parameter to update.
 ```json
 {
   "title": "A new Subscriber list title",
+  "description": "A new subscriber list description",
 }
 ```
 
 The following fields are accepted:
 - title: The title of this particular list, which will be shown to the user;
   email sent to a user;
+- description: A description of the content this list represents, used by [email-alert-service](https://github.com/alphagov/email-alert-service) to construct emails when a page is unpublished. 
 
 Any additional parameters will be ignored.
 

@@ -34,6 +34,36 @@ RSpec.describe "Updating a subscriber list", type: :request do
       expect(response.status).to eq(422)
     end
 
+    context "when a description is provided" do
+      let(:update_params) do
+        {
+          "description" => "A new list description",
+        }
+      end
+
+      it "returns the subscriber list with an updated description" do
+        patch update_subscriber_lists_path, params: update_params.to_json, headers: json_headers
+
+        expect(JSON.parse(response.body).dig("subscriber_list", "description")).to eq(update_params["description"])
+      end
+    end
+
+    context "when a both a title and description are provided" do
+      let(:update_params) do
+        {
+          "title" => "A new title",
+          "description" => "A new list description",
+        }
+      end
+
+      it "returns the subscriber list with an updated title and description" do
+        patch update_subscriber_lists_path, params: update_params.to_json, headers: json_headers
+
+        expect(JSON.parse(response.body).dig("subscriber_list", "title")).to eq(update_params["title"])
+        expect(JSON.parse(response.body).dig("subscriber_list", "description")).to eq(update_params["description"])
+      end
+    end
+
     context "for an unknown subscriber list" do
       let(:slug) { "not-a-real-slug" }
 
