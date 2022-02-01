@@ -1,8 +1,4 @@
-require "gds_api/test_helpers/content_store"
-
 RSpec.describe "data_migration" do
-  include GdsApi::TestHelpers::ContentStore
-
   describe "update_subscriber_list_tag" do
     before do
       Rake::Task["data_migration:update_subscriber_list_tag"].reenable
@@ -36,20 +32,6 @@ RSpec.describe "data_migration" do
       expect {
         Rake::Task["data_migration:update_subscriber_list_slug"].invoke(list.slug, "new-slug")
       }.to output.to_stdout
-    end
-  end
-
-  describe "fetch_subscriber_list_descriptions" do
-    before do
-      Rake::Task["data_migration:fetch_subscriber_list_descriptions"].reenable
-      stub_content_store_has_item("/an/example/page")
-    end
-
-    it "updates the subscriber list description" do
-      list = create(:subscriber_list, :for_single_page_subscription)
-
-      Rake::Task["data_migration:fetch_subscriber_list_descriptions"].invoke
-      expect(list.reload.description).to eq("Description for /an/example/page")
     end
   end
 end

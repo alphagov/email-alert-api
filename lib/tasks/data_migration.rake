@@ -76,14 +76,4 @@ namespace :data_migration do
       puts "Updated #{args[:key]} in #{list.title} to #{new_criteria}"
     end
   end
-
-  desc "Fetch descriptions for single page subscription lists which don't have descriptions"
-  task fetch_subscriber_list_descriptions: :environment do |_t, _args|
-    SubscriberList.where.not(content_id: nil).where(description: nil).find_each do |list|
-      new_description = Services.content_store.content_item(list.url)["description"]
-      list.update!(description: new_description)
-
-      puts "Subscriber list for #{list.url} updated with new description"
-    end
-  end
 end
