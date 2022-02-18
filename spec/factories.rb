@@ -116,6 +116,11 @@ FactoryBot.define do
       url { "/an/example/page" }
     end
 
+    trait :archived_topic do
+      content_id { SecureRandom.uuid }
+      url { "/topic/benefits-credits/universal-credit" }
+    end
+
     factory :subscriber_list_with_invalid_tags do
       tags do
         {
