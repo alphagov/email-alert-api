@@ -45,7 +45,7 @@ Use [the Send bulk emails job in Staging][send-bulk-staging] to send the email.
 **Make sure you know [how to receive emails in Staging][staging-emails].**
 
 [send-bulk-staging]: https://deploy.blue.staging.govuk.digital/job/send-bulk-email/
-[staging-emails]: /manual/receiving-emails-from-email-alert-api-in-integration-and-staging.html
+[staging-emails]: /docs/receiving-emails-from-email-alert-api-in-integration-and-staging.html
 
 ## 4. Send the real email
 
