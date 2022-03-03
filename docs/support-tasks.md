@@ -110,12 +110,31 @@ Depending on the number of emails to send, the Rake task can take a few minutes 
 bundle exec rake 'support:resend_failed_emails:by_id[<email_one_id>,<email_two_id>]'
 ```
 
-## Get subscriber numbers for a list
+## Get subscriber list csv report
 
-To see the number of subscribers for a given list:
+To see a csv report for the number of subscribers for a given list:
 
 ```bash
 bundle exec rake 'report:csv_subscriber_lists[<on_date>] SLUGS=<list_slug>'
 ```
 
 The date should be in ISO8601 format, for example 2020-01-01.
+
+## Get a simple count of subscribers to a list by its URL
+
+To see a simple count of the number of subscribers for a given list:
+
+```bash
+bundle exec rake 'report:csv_subscriber_lists[<url>]'
+```
+This will always report on the number of active subscriptions for a given url, as of the end of today.
+
+You can also pass it a :active_on_datetime which will count how many active subscriptions there were at the end of the day on a particular date.
+(active is defined as created before that datetime and not with an "ended_on" datetime by the given date)
+
+```bash
+bundle exec rake 'report:csv_subscriber_lists[<url>, <active_on_date>]'
+```
+
+The active_on_date should be in ISO8601 format, for example 2022-03-03T12:12:16+00:00.
+The time will always be rounded to the end of the day, even if that is in the future.
