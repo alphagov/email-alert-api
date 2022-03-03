@@ -19,4 +19,11 @@ RSpec.describe "report" do
         .to output.to_stdout
     end
   end
+
+  describe "subscriber_list_subscriber_count" do
+    it "outputs a count of subscribers for subscriber lists" do
+      expect { Rake::Task["report:subscriber_list_subscriber_count"].invoke("/url") }
+        .to output.to_stdout
+    end
+  end
 end
