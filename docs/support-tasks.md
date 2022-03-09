@@ -132,6 +132,12 @@ This will always report on the number of active subscriptions for a given url, a
 You can also pass it a :active_on_datetime which will count how many active subscriptions there were at the end of the day on a particular date.
 (active is defined as created before that datetime and not with an "ended_on" datetime by the given date)
 
+You can run the task on Jenkins with the following links:
+
+- [Integration](https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:subscriber_list_subscriber_count[%22%3Cpage_path_here%3E%22]) - Only really useful for testing
+- [Staging](https://deploy.blue.staging.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:subscriber_list_subscriber_count[%22%3Cpage_path_here%3E%22]) - Data will be a snapshot from last replication
+- [Production](https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:subscriber_list_subscriber_count[%22%3Cpage_path_here%3E%22]) - Live data
+
 ```bash
 bundle exec rake 'report:csv_subscriber_lists[<url>, <active_on_date>]'
 ```
