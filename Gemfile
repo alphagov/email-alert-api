@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails", "7.0.2.2"
+gem "rails", "7.0.2.3"
 
 gem "bootsnap", require: false
 gem "faraday"
