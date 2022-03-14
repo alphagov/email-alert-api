@@ -144,3 +144,24 @@ bundle exec rake 'report:csv_subscriber_lists[<url>, <active_on_date>]'
 
 The active_on_date should be in ISO8601 format, for example 2022-03-03T12:12:16+00:00.
 The time will always be rounded to the end of the day, even if that is in the future.
+
+## Get a report of single page notification subscriber lists by active subscriber count
+
+This report provides a count of all subscriber lists with a content ID, followed by individual subscriber lists ordered by active subscriber count.
+
+```bash
+bundle exec rake 'report:single_page_notifications_top_subscriber_lists'
+```
+
+By default output is limited to only show the top 25 lists by active subscriber count. However
+that can be overridden to increase or decrease the output number.
+
+```bash
+bundle exec rake 'report:single_page_notifications_top_subscriber_lists[5]'
+```
+
+You can run the task on Jenkins with the following links:
+
+- [Integration](https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:single_page_notifications_top_subscriber_lists) - Only really useful for testing
+- [Staging](https://deploy.blue.staging.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:single_page_notifications_top_subscriber_lists) - Data will be a snapshot from last replication
+- [Production](https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:single_page_notifications_top_subscriber_lists) - Live data
