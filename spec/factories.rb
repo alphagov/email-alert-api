@@ -111,6 +111,10 @@ FactoryBot.define do
       tags { { format: %w[medical_safety_alert], alert_type: %w[devices drugs field-safety-notices company-led-drugs] } }
     end
 
+    trait :brexit_checker do
+      tags { { brexit_checklist_criteria: { any: %w[old other] } } }
+    end
+
     trait :for_single_page_subscription do
       content_id { SecureRandom.uuid }
       url { "/an/example/page" }
@@ -157,6 +161,10 @@ FactoryBot.define do
 
     trait :unpublished do
       ended_reason { "unpublished" }
+    end
+
+    trait :brexit_checker do
+      subscriber_list { build(:subscriber_list, :brexit_checker) }
     end
   end
 
