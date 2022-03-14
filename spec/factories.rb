@@ -113,7 +113,15 @@ FactoryBot.define do
 
     trait :for_single_page_subscription do
       content_id { SecureRandom.uuid }
-      url { "/an/example/page" }
+      sequence(:url) { |n| "/an/example/page-#{n}" }
+      transient do
+        subscriber_count { (0..3).to_a.sample }
+      end
+
+      after(:create) do |list, evaluator|
+        list = build_list(:subscriber, evaluator.subscriber_count, subscriber_lists: [list])
+        list.each { |item| item.save!(validate: false) }
+      end
     end
 
     factory :subscriber_list_with_invalid_tags do
