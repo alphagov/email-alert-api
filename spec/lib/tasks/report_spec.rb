@@ -26,4 +26,11 @@ RSpec.describe "report" do
         .to output.to_stdout
     end
   end
+
+  describe "single_page_notifications_top_subscriber_lists" do
+    it "outputs a report of single page notification subscriber lists" do
+      expect { Rake::Task["report:single_page_notifications_top_subscriber_lists"].invoke }
+        .to output.to_stdout
+    end
+  end
 end

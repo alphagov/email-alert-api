@@ -23,4 +23,9 @@ namespace :report do
       args[:active_on_date],
     ).call
   end
+
+  desc "Output a report of top single page notification subscriber lists"
+  task :single_page_notifications_top_subscriber_lists, %i[limit] => :environment do |_t, args|
+    puts Reports::SinglePageNotificationsReport.new(args[:limit] || 25).call.join("\n")
+  end
 end
