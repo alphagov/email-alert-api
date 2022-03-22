@@ -1,7 +1,7 @@
 namespace :archived_topics do
   desc "Send emails to subscribers of archived Specialist Topics and unsubscribe. Dry runs by default without `run` argument."
-  task :email_and_unsubscribe, [:run] => :environment do |_t, args|
-    args.with_defaults(run: "false")
+  task :email_and_unsubscribe, [:dry_run] => :environment do |_t, args|
+    args.with_defaults(dry_run: "true")
     topic_urls.each do |topic|
       sub_list = SubscriberList.find_by(url: topic[:url])
       if !sub_list
@@ -30,7 +30,7 @@ namespace :archived_topics do
         BODY
 
         puts "==============="
-        puts "DRY RUN" unless args[:run] != "true"
+        puts "DRY RUN" unless args[:dry_run] != "true"
         puts "CHECK OUTPUT"
         puts "First SubscriberList..."
         puts "The subscribers will see:"
@@ -39,7 +39,7 @@ namespace :archived_topics do
         puts "First recipient #{sub_list.subscribers.first.address}" if sub_list.subscribers.count.positive?
         puts "==============="
 
-        unless args[:run] == "true"
+        unless args[:dry_run] == "true"
           email_ids = BulkSubscriberListEmailBuilder.call(
             subject: subject,
             body: body,
