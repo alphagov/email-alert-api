@@ -1,7 +1,7 @@
 namespace :archived_topics do
   desc "Send emails to subscribers of archived Specialist Topics and unsubscribe. Dry runs by default without `run` argument."
   task :email_and_unsubscribe, [:run] => :environment do |_t, args|
-    args.with_defaults(run: "true")
+    args.with_defaults(run: "false")
     topic_urls.each do |topic|
       sub_list = SubscriberList.find_by(url: topic[:url])
       if !sub_list
