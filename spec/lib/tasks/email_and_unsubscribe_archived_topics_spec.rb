@@ -5,6 +5,7 @@ RSpec.describe "archived_topics" do
     end
 
     let(:subs_list) { create(:subscriber_list, :archived_topic) }
+
     let(:body) do
       <<~BODY
         You asked GOV.UK to email you when we add or update a page about:
@@ -16,8 +17,8 @@ RSpec.describe "archived_topics" do
       BODY
     end
 
-    it "states the topic the emails are being sent to" do
-      expect { Rake::Task["archived_topics:email_and_unsubscribe"].invoke }.to output(include("Sending email for #{subs_list.url} (ID: #{subs_list.id})")).to_stdout
+    it "states the topic the emails are being sent to and a redirect URL" do
+      expect { Rake::Task["archived_topics:email_and_unsubscribe"].invoke }.to output(include("Sending email for #{subs_list.url} (ID: #{subs_list.id})")).to_stdout and output(include("https://www.gov.uk")).to_stdout
     end
 
     it "outputs the check message by default" do
@@ -28,7 +29,7 @@ RSpec.describe "archived_topics" do
       expect { Rake::Task["archived_topics:email_and_unsubscribe"].invoke }.to_not output(include("Destroying subscription list #{subs_list.url} (ID: #{subs_list.id})")).to_stdout
     end
 
-    it "does not attempt to destroy list with dry_run true (default)" do
+    it "will destroy list with dry_run true (default)" do
       expect { Rake::Task["archived_topics:email_and_unsubscribe"].invoke("run") }.to output(include("Destroying subscription list #{subs_list.url} (ID: #{subs_list.id})")).to_stdout
     end
   end
