@@ -130,7 +130,7 @@ FactoryBot.define do
 
     trait :archived_topic do
       content_id { SecureRandom.uuid }
-      url { "/topic/benefits-credits/universal-credit" }
+      url { "/topic/business-tax/international-tax" }
     end
 
     factory :subscriber_list_with_invalid_tags do

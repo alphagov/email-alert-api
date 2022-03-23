@@ -24,8 +24,12 @@ RSpec.describe "archived_topics" do
       expect { Rake::Task["archived_topics:email_and_unsubscribe"].invoke }.to output(include(body)).to_stdout and output(include("DRY RUN")).to_stdout
     end
 
-    it "does not attempt to destroy list with check_output true (default)" do
+    it "does not attempt to destroy list with dry_run true (default)" do
       expect { Rake::Task["archived_topics:email_and_unsubscribe"].invoke }.to_not output(include("Destroying subscription list #{subs_list.url} (ID: #{subs_list.id})")).to_stdout
+    end
+
+    it "does not attempt to destroy list with dry_run true (default)" do
+      expect { Rake::Task["archived_topics:email_and_unsubscribe"].invoke("run") }.to output(include("Destroying subscription list #{subs_list.url} (ID: #{subs_list.id})")).to_stdout
     end
   end
 end
