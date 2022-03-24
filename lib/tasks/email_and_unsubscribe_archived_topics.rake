@@ -26,7 +26,7 @@ namespace :archived_topics do
 
           This topic has been archived. You will not get any more emails about it.
 
-          You can find more information about this topic at [#{topic[:redirect_title]}](#{topic[:redirect]}).
+          You can find more information about this topic at [#{topic[:redirect_title]}](https://www.gov.uk#{topic[:redirect]}).
         BODY
 
         puts "==============="
