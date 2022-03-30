@@ -49,6 +49,6 @@ bundle exec rake
 
 Check the [docs/](docs/) directory for detailed instructions, decisions and other documentation.
 
-## Licence
+## License
 
-[MIT License](LICENCE)
+[MIT License](LICENSE)
