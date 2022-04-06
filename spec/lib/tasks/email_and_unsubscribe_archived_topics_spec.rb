@@ -4,7 +4,7 @@ RSpec.describe "archived_topics" do
       Rake::Task["archived_topics:email_and_unsubscribe"].reenable
     end
 
-    let(:subs_list) { create(:subscriber_list, :archived_topic) }
+    let(:subs_list) { create(:subscriber_list, url: "/topic/business-tax/international-tax") }
 
     let(:body) do
       <<~BODY
