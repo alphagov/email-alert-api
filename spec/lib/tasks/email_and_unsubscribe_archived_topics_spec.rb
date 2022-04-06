@@ -3,8 +3,8 @@ RSpec.describe "archived_topics" do
     before do
       Rake::Task["archived_topics:email_and_unsubscribe"].reenable
     end
-
-    let(:subs_list) { create(:subscriber_list, url: "/topic/business-tax/international-tax") }
+    let(:url) { ArchivedTopics.urls_to_redirect.first[:url] }
+    let(:subs_list) { create(:subscriber_list, url: url) }
 
     let(:body) do
       <<~BODY
