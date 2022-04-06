@@ -2,14 +2,14 @@ module ArchivedTopics
   def self.urls_to_redirect
     [
       {
-        "url": "/topic/business-tax/international-tax",
-        "redirect": "/government/collections/double-taxation-relief-for-companies",
-        "redirect_title": "Double Taxation Relief for companies",
+        "url": "/topic/ships-cargoes/shipping-dangerous-goods",
+        "redirect": "/shipping-dangerous-goods",
+        "redirect_title": "Shipping dangerous goods",
       },
       {
-        "url": "/topic/business-tax/life-insurance-policies",
-        "redirect": "/guidance/reporting-of-chargeable-event-gains-life-insurance-policies",
-        "redirect_title": "Report chargeable event gains for life insurance policies",
+        "url": "/topic/business-enterprise/farming",
+        "redirect": "/browse/business/farming",
+        "redirect_title": "Browse: Farming business",
       },
     ]
   end
