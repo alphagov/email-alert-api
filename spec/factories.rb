@@ -128,11 +128,6 @@ FactoryBot.define do
       end
     end
 
-    trait :archived_topic do
-      content_id { SecureRandom.uuid }
-      url { "/topic/business-tax/international-tax" }
-    end
-
     factory :subscriber_list_with_invalid_tags do
       tags do
         {

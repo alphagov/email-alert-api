@@ -1,8 +1,11 @@
+require "archived_topics"
+
 namespace :archived_topics do
   desc "Send emails to subscribers of archived Specialist Topics and unsubscribe. Dry runs by default without `run` argument."
   task :email_and_unsubscribe, [:dry_run] => :environment do |_t, args|
+    include ArchivedTopics
     args.with_defaults(dry_run: "true")
-    topic_urls.each do |topic|
+    ArchivedTopics.urls_to_redirect.each do |topic|
       sub_list = SubscriberList.find_by(url: topic[:url])
       if !sub_list
         puts "No SubscriberList for #{topic[:url]}"
@@ -56,19 +59,4 @@ namespace :archived_topics do
       end
     end
   end
-end
-
-def topic_urls
-  [
-    {
-      "url": "/topic/business-tax/international-tax",
-      "redirect": "/government/collections/double-taxation-relief-for-companies",
-      "redirect_title": "Double Taxation Relief for companies",
-    },
-    {
-      "url": "/topic/business-tax/life-insurance-policies",
-      "redirect": "/guidance/reporting-of-chargeable-event-gains-life-insurance-policies",
-      "redirect_title": "Report chargeable event gains for life insurance policies",
-    },
-  ]
 end
