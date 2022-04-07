@@ -4,7 +4,7 @@ Sometimes it may be necessary to send a bulk email to many subscribers at once.
 There is [a Rake task in email-alert-api][rake-task] to perform this task and
 it's [available as a job in Jenkins][send-bulk-production].
 
-[rake-task]: https://github.com/alphagov/email-alert-api/blob/3a3eaaa59e71e03427021ba730c626ecdf107ccd/lib/tasks/bulk.rake#L2-L9
+[rake-task]: https://github.com/alphagov/email-alert-api/blob/main/lib/tasks/bulk_email.rake
 
 ## 1. Prepare the content
 
@@ -45,7 +45,7 @@ Use [the Send bulk emails job in Staging][send-bulk-staging] to send the email.
 **Make sure you know [how to receive emails in Staging][staging-emails].**
 
 [send-bulk-staging]: https://deploy.blue.staging.govuk.digital/job/send-bulk-email/
-[staging-emails]: /docs/receiving-emails-from-email-alert-api-in-integration-and-staging.html
+[staging-emails]: https://docs.publishing.service.gov.uk/repos/email-alert-api/receiving-emails-from-email-alert-api-in-integration-and-staging.html
 
 ## 4. Send the real email
 
