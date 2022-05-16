@@ -56,4 +56,8 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
+
+  # Specifies whether generated namespaced UUIDs follow the RFC 4122 standard for namespace
+  # IDs provided as a String to Digest::UUID.uuid_v3 or Digest::UUID.uuid_v5 method calls.
+  config.active_support.use_rfc4122_namespaced_uuids = true
 end
