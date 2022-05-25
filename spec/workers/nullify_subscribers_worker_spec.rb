@@ -1,4 +1,9 @@
+require "spec_helper"
+require "gds_api/test_helpers/account_api"
+
 RSpec.describe NullifySubscribersWorker do
+  include GdsApi::TestHelpers::AccountApi
+
   describe ".perform" do
     context "when subscribers are older than the nullifyable period" do
       let(:nullifyable_time) { 29.days.ago }
@@ -17,6 +22,15 @@ RSpec.describe NullifySubscribersWorker do
 
         expect { subject.perform }
           .to change { Subscriber.nullified.count }.by(1)
+      end
+
+      context "when the subscriber has a govuk_account_id" do
+        it "deletes them from account-api" do
+          create(:subscriber, govuk_account_id: "sub", created_at: nullifyable_time)
+          stub = stub_account_api_delete_user_by_subject_identifier(subject_identifier: "sub")
+          subject.perform
+          expect(stub).to have_been_made
+        end
       end
 
       it "doesn't nullify subscribers with recently ended subscriptions" do
