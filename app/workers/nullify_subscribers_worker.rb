@@ -1,7 +1,10 @@
 class NullifySubscribersWorker < ApplicationWorker
   def perform
     run_with_advisory_lock(Subscriber, "nullify") do
-      nullifyable_subscribers.update_all(address: nil, govuk_account_id: nil, updated_at: Time.zone.now)
+      nullifyable_subscribers.each do |s|
+        GdsApi.account_api.delete_user_by_subject_identifier(subject_identifier: s.govuk_account_id) unless s.govuk_account_id.nil?
+        s.update!(address: nil, govuk_account_id: nil, updated_at: Time.zone.now)
+      end
     end
   end
 
