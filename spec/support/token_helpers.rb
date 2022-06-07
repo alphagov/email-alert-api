@@ -12,7 +12,7 @@ module TokenHelpers
     len = ActiveSupport::MessageEncryptor.key_len(cipher)
 
     secret = Rails.application.secrets.email_alert_auth_token
-    key = ActiveSupport::KeyGenerator.new(secret).generate_key("", len)
+    key = ActiveSupport::KeyGenerator.new(secret, hash_digest_class: OpenSSL::Digest::SHA256).generate_key("", len)
 
     options = AuthTokenGeneratorService::OPTIONS
     crypt = ActiveSupport::MessageEncryptor.new(key, **options)
