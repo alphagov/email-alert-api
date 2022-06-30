@@ -5,6 +5,10 @@ Google groups for the integration and staging environments. Emails
 sent to addresses other than those of these groups will be
 [written to a logfile][logging-emails].
 
+> Note that these two emails are sometimes accidentally used to sign up to GOV.UK
+accounts. If you try to test a signup and are stopped by the requirement to log
+into an account, you can fix using the procedure below under "Troubleshooting"
+
 ## In Integration
 
 In Integration there is the [Email Alert API Integration Google
@@ -38,6 +42,15 @@ If you are testing over multiple days, bear in mind that each night the
 databases in Integration and Staging are reset due to the [data sync][].
 This will mean that any test subscriptions you've created will be lost and
 you'll need to recreate them.
+
+## Troubleshooting
+
+Sometimes these email addresses get linked to GOV.UK accounts, making them impossible to use for testing these journeys. If that happens, you can use the accounts-api console in the relevant environment to clear the account:
+
+```
+% gds govuk connect app-console -e integration account-api
+> OidcUser.where(email: "email-alert-api-integration@digital.cabinet-office.gov.uk").delete_all
+```
 
 [logging-emails]: https://github.com/alphagov/email-alert-api/blob/006afa2ee6c35631b83b16519f8af2c6c2ea5c59/app/services/send_email_service/send_pseudo_email.rb#L10-L20
 [integration-group]: https://groups.google.com/a/digital.cabinet-office.gov.uk/g/email-alert-api-integration
