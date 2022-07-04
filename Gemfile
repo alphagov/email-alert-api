@@ -29,7 +29,10 @@ group :test do
 end
 
 group :development, :test do
+  gem "database_cleaner"
   gem "listen"
+  gem "pact", require: false
+  gem "pact_broker-client"
   gem "pry-byebug"
   gem "rspec-rails"
   gem "rubocop-govuk", require: false
