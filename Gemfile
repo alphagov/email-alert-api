@@ -18,6 +18,7 @@ gem "pg"
 gem "plek"
 gem "ratelimit"
 gem "redcarpet"
+gem "sentry-sidekiq"
 gem "sidekiq-scheduler"
 gem "with_advisory_lock"
 
