@@ -26,7 +26,8 @@ class SubscriptionsAuthTokenController < ApplicationController
   end
 
   def validate_params
-    ParamsValidator.new(expected_params).validate!
+    validator = ParamsValidator.new(expected_params)
+    render_unprocessable(validator.errors.messages) unless validator.valid?
   end
 
   def expected_params
