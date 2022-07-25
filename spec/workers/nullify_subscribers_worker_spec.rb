@@ -31,6 +31,14 @@ RSpec.describe NullifySubscribersWorker do
           subject.perform
           expect(stub).to have_been_made
         end
+
+        it "gracefully handles account-apit record missing, nullifies both local accounts" do
+          create(:subscriber, govuk_account_id: "sub", created_at: nullifyable_time)
+          stub = stub_account_api_delete_user_by_subject_identifier_does_not_exist(subject_identifier: "sub")
+          expect { subject.perform }
+            .to change { Subscriber.nullified.count }.by(2)
+          expect(stub).to have_been_made
+        end
       end
 
       it "doesn't nullify subscribers with recently ended subscriptions" do
