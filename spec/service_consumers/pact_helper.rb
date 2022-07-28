@@ -8,6 +8,9 @@ require "gds_api/test_helpers/account_api"
 
 require ::File.expand_path("../../config/environment", __dir__)
 
+provider_version = ENV["GIT_COMMIT"] || `git rev-parse --verify HEAD`.strip
+provider_branch = ENV["GIT_BRANCH"] || `git name-rev --name-only HEAD`.strip
+
 Pact.configure do |config|
   config.reports_dir = "spec/reports/pacts"
   config.include WebMock::API
@@ -35,6 +38,10 @@ Pact.service_provider "Email Alert API" do
       pact_uri("#{base_url}/#{path}/#{version_modifier}")
     end
   end
+
+  app_version(provider_version)
+  app_version_branch(provider_branch)
+  publish_verification_results(ENV["CI"] == "true")
 end
 
 Pact.provider_states_for "GDS API Adapters" do
