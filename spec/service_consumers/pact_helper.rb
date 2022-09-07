@@ -67,6 +67,22 @@ Pact.provider_states_for "GDS API Adapters" do
     end
   end
 
+  provider_state "a subscriber list with id 1 exists" do
+    set_up do
+      create(:subscriber_list, id: 1)
+    end
+  end
+
+  provider_state "a bulk_unsubscribe message with the sender_message_id b735f541-c29c-4752-b084-c4ddb47aee73 and subscriber_list with slug title-1 exists" do
+    set_up do
+      create(:subscriber_list, slug: "title-1")
+      create(
+        :message,
+        sender_message_id: "b735f541-c29c-4752-b084-c4ddb47aee73",
+      )
+    end
+  end
+
   provider_state "a content change with content_id 5fc8fb2b-c0b1-4490-99cb-c987a53afb75 exists" do
     set_up do
       create(
@@ -101,6 +117,23 @@ Pact.provider_states_for "GDS API Adapters" do
         email: "test@example.com",
         email_verified: false,
       )
+    end
+  end
+
+  provider_state "a verified govuk_account_session exists with a linked subscriber" do
+    set_up do
+      stub_account_api_user_info(
+        id: "internal-user-id",
+        email: "test@example.com",
+        email_verified: true,
+      )
+      create(:subscriber, id: 1, address: "test@example.com", govuk_account_id: "internal-user-id")
+    end
+  end
+
+  provider_state "the account api can't find the user by session" do
+    set_up do
+      stub_account_api_unauthorized_user_info
     end
   end
 end
