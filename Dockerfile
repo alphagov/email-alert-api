@@ -1,27 +1,21 @@
-FROM ruby:2.7.6
-RUN apt-get update -qq && apt-get install -y \
-  build-essential \
-  libpq-dev \
-  libxml2-dev \
-  libxslt1-dev
-RUN apt-get clean
-RUN gem install foreman
+ARG base_image=ghcr.io/alphagov/govuk-ruby-base:2.7.6
+ARG builder_image=ghcr.io/alphagov/govuk-ruby-builder:2.7.6
+ 
+FROM $builder_image AS builder
+WORKDIR /app
+COPY Gemfile* .ruby-version /app/
+RUN bundle install
+COPY . /app
 
-# This image is only intended to be able to run this app in a production RAILS_ENV
-ENV RAILS_ENV production
+FROM $base_image
 
-ENV DATABASE_URL postgresql://postgres@postgres/email-alert-api
-ENV GOVUK_APP_NAME email-alert-api
-ENV PORT 3088
+ENV GOVUK_APP_NAME=email-alert-api 
 
-ENV APP_HOME /app
-RUN mkdir $APP_HOME
+WORKDIR /app
 
-WORKDIR $APP_HOME
-ADD Gemfile* $APP_HOME/
-RUN bundle config set deployment 'true'
-RUN bundle config set without 'development test'
-RUN bundle install --jobs 4
-ADD . $APP_HOME
+COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+COPY --from=builder /app /app/
 
-CMD foreman run web
+USER app
+
+CMD bundle exec puma
