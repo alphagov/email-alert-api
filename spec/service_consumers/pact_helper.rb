@@ -42,8 +42,11 @@ end
 
 Pact.provider_states_for "GDS API Adapters" do
   set_up do
-    DatabaseCleaner.clean_with :truncation
     GDS::SSO.test_user = create(:user, permissions: %w[internal_app])
+  end
+
+  tear_down do
+    DatabaseCleaner.clean_with :truncation
   end
 
   provider_state "a subscription with the uuid 719efe7b-00d0-4168-ac30-99fe6093e3fc exists" do
