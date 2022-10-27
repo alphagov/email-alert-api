@@ -1,7 +1,7 @@
 RSpec.describe Reports::SubscriberListSubscriberCountReport do
   let(:url) { "/url" }
   let(:created_at) { 10.days.ago.midday }
-  let(:list) { create(:subscriber_list, created_at: created_at, title: "list 1", slug: "list-1", url: url) }
+  let(:list) { create(:subscriber_list, created_at:, title: "list 1", slug: "list-1", url:) }
 
   before { create_range_of_subscribers(list, created_at) }
 
@@ -34,9 +34,9 @@ RSpec.describe Reports::SubscriberListSubscriberCountReport do
   end
 
   def create_range_of_subscribers(list, created_at)
-    create(:subscription, :immediately, subscriber_list: list, created_at: created_at)
-    create(:subscription, :daily, subscriber_list: list, created_at: created_at)
-    create(:subscription, :weekly, subscriber_list: list, created_at: created_at)
+    create(:subscription, :immediately, subscriber_list: list, created_at:)
+    create(:subscription, :daily, subscriber_list: list, created_at:)
+    create(:subscription, :weekly, subscriber_list: list, created_at:)
     create(:subscription, :ended, ended_at: created_at, subscriber_list: list)
     create(:subscription, :ended, ended_at: created_at, ended_reason: :frequency_changed, subscriber_list: list)
     create(:subscription, :immediately, subscriber_list: list, created_at: Time.zone.now)

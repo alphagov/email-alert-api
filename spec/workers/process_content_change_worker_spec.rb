@@ -10,8 +10,8 @@ RSpec.describe ProcessContentChangeWorker do
   describe "#perform" do
     it "matches the content change to subscriber lists" do
       attributes = {
-        content_change: content_change,
-        subscriber_list: subscriber_list,
+        content_change:,
+        subscriber_list:,
       }
 
       expect { described_class.new.perform(content_change.id) }

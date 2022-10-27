@@ -7,16 +7,16 @@ RSpec.describe DigestEmailBuilder do
   let(:subscription) do
     build(
       :subscription,
-      frequency: frequency,
-      subscriber_list: subscriber_list,
-      subscriber: subscriber,
+      frequency:,
+      subscriber_list:,
+      subscriber:,
     )
   end
 
   let(:email) do
     described_class.call(
-      content: content,
-      subscription: subscription,
+      content:,
+      subscription:,
     )
   end
 

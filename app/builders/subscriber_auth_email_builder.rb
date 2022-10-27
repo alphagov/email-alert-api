@@ -9,8 +9,8 @@ class SubscriberAuthEmailBuilder
 
   def call
     Email.create!(
-      subject: subject,
-      body: body,
+      subject:,
+      body:,
       address: subscriber.address,
       subscriber_id: subscriber.id,
     )
@@ -40,6 +40,6 @@ private
   end
 
   def link
-    PublicUrls.url_for(base_path: destination, token: token)
+    PublicUrls.url_for(base_path: destination, token:)
   end
 end

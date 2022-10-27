@@ -15,7 +15,7 @@ RSpec.describe ProcessMessageWorker do
   describe "#perform" do
     it "matches the message to subscriber lists" do
       expect { described_class.new.perform(message.id) }
-        .to change { MatchedMessage.exists?(message: message, subscriber_list: subscriber_list) }
+        .to change { MatchedMessage.exists?(message:, subscriber_list:) }
         .to(true)
     end
 

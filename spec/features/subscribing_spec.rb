@@ -12,9 +12,9 @@ RSpec.describe "Subscribing", type: :request do
   scenario "successful subscription" do
     post "/subscriptions/auth-token",
          params: {
-           address: address,
+           address:,
            topic_id: subscriber_list[:slug],
-           frequency: frequency,
+           frequency:,
          }
 
     email_data = expect_an_email_was_sent(
@@ -35,14 +35,14 @@ RSpec.describe "Subscribing", type: :request do
     # the token in order to make this call.
     subscribe_to_subscriber_list(
       subscriber_list[:id],
-      address: address,
-      frequency: frequency,
+      address:,
+      frequency:,
       expected_status: 200,
     )
 
     expect_an_email_was_sent(
       subject: /You’ve subscribed to/,
-      address: address,
+      address:,
     )
   end
 

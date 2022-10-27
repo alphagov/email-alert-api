@@ -12,7 +12,7 @@ class NotificationsFromNotify
 
     response = client.get_notifications(
       template_type: "email",
-      reference: reference,
+      reference:,
     )
 
     if response.is_a?(Notifications::Client::NotificationsCollection)

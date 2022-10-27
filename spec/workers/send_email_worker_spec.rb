@@ -14,7 +14,7 @@ RSpec.describe SendEmailWorker do
     it "delegates sending the email to SendEmailService" do
       expect(SendEmailService)
         .to receive(:call)
-        .with(email: email, metrics: {})
+        .with(email:, metrics: {})
       described_class.new.perform(email.id, {}, queue)
     end
 
@@ -22,7 +22,7 @@ RSpec.describe SendEmailWorker do
       freeze_time do
         expect(SendEmailService)
           .to receive(:call)
-          .with(email: email, metrics: { content_change_created_at: Time.zone.now })
+          .with(email:, metrics: { content_change_created_at: Time.zone.now })
 
         described_class.new.perform(
           email.id,

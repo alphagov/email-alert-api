@@ -37,7 +37,7 @@ RSpec.describe "Destroying a subscriber list", type: :request do
       let(:sender_message_id) { Digest::UUID.uuid_v5(content_id, public_updated_at) }
       let(:content_id) { SecureRandom.uuid }
       let(:public_updated_at) { "2022-01-13" }
-      let(:message_params) { { body: "it's gone!", sender_message_id: sender_message_id } }
+      let(:message_params) { { body: "it's gone!", sender_message_id: } }
 
       it "creates a message to send" do
         expect { post "/subscriber-lists/#{subscriber_list.slug}/bulk-unsubscribe", params: message_params.to_json, headers: json_headers }.to change(Message, :count)
@@ -49,7 +49,7 @@ RSpec.describe "Destroying a subscriber list", type: :request do
 
       context "when there is a subscriber" do
         before do
-          post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: subscriber.address, frequency: frequency }.to_json, headers: json_headers
+          post "/subscriptions", params: { subscriber_list_id: subscriber_list.id, address: subscriber.address, frequency: }.to_json, headers: json_headers
         end
 
         let(:frequency) { "immediately" }
@@ -86,7 +86,7 @@ RSpec.describe "Destroying a subscriber list", type: :request do
 
       context "when the unsubscribe has already been requested" do
         before do
-          create(:message, sender_message_id: sender_message_id)
+          create(:message, sender_message_id:)
         end
 
         it "returns a 409" do

@@ -9,9 +9,9 @@ module RequestHelpers
   def subscribe_to_subscriber_list(subscriber_list_id, expected_status: 200,
                                    address: "test@test.com", frequency: "immediately")
     params = {
-      subscriber_list_id: subscriber_list_id,
-      address: address,
-      frequency: frequency,
+      subscriber_list_id:,
+      address:,
+      frequency:,
     }
     post "/subscriptions", params: params.to_json, headers: json_headers
     expect(response.status).to eq(expected_status)
@@ -58,7 +58,7 @@ module RequestHelpers
                          status: "delivered",
                          to: "test.user@example.com",
                          expected_status: 204)
-    params = { reference: reference, status: status, to: to }
+    params = { reference:, status:, to: }
     post "/status-updates", params: params.to_json, headers: json_headers
     expect(response.status).to eq(expected_status)
   end

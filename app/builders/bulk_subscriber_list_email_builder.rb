@@ -35,7 +35,7 @@ private
 
       {
         address: subscriber.address,
-        subject: subject,
+        subject:,
         body: email_body(subscriber, subscription),
         subscriber_id: subscriber.id,
         created_at: now,

@@ -9,11 +9,11 @@ RSpec.describe BulkUnsubscribeListService do
     it "queues a job" do
       expect(BulkUnsubscribeListWorker).to receive(:perform_async)
 
-      described_class.call(subscriber_list: subscriber_list, params: params, govuk_request_id: govuk_request_id)
+      described_class.call(subscriber_list:, params:, govuk_request_id:)
     end
 
     it "does not create a Message" do
-      expect { described_class.call(subscriber_list: subscriber_list, params: params, govuk_request_id: govuk_request_id) }.not_to change(Message, :count)
+      expect { described_class.call(subscriber_list:, params:, govuk_request_id:) }.not_to change(Message, :count)
     end
 
     context "when a body is given" do
@@ -24,7 +24,7 @@ RSpec.describe BulkUnsubscribeListService do
       end
 
       it "creates a Message" do
-        expect { described_class.call(subscriber_list: subscriber_list, params: params, govuk_request_id: govuk_request_id) }.to change(Message, :count).by(1)
+        expect { described_class.call(subscriber_list:, params:, govuk_request_id:) }.to change(Message, :count).by(1)
 
         expect(Message.last).to have_attributes(
           title: subscriber_list.title,
@@ -38,7 +38,7 @@ RSpec.describe BulkUnsubscribeListService do
         let(:user) { create(:user) }
 
         it "stores the user" do
-          described_class.call(subscriber_list: subscriber_list, params: params, govuk_request_id: govuk_request_id, user: user)
+          described_class.call(subscriber_list:, params:, govuk_request_id:, user:)
 
           expect(Message.last.signon_user_uid).to eq(user.uid)
         end

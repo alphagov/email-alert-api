@@ -7,23 +7,23 @@ class SubscribersGovukAccountController < ApplicationController
     subscriber = Subscriber.find_by(govuk_account_id: params.fetch(:govuk_account_id))
 
     if subscriber
-      render json: { subscriber: subscriber }
+      render json: { subscriber: }
     else
       head :not_found
     end
   end
 
   def authenticate
-    render json: api_response.merge(subscriber: subscriber)
+    render json: api_response.merge(subscriber:)
   end
 
   def link_subscriber_to_account
     previously_linked = !subscriber.govuk_account_id.nil?
-    subscriber.update!(govuk_account_id: govuk_account_id)
+    subscriber.update!(govuk_account_id:)
 
     unless previously_linked || subscriber.active_subscriptions.empty?
       email = LinkedAccountEmailBuilder.call(
-        subscriber: subscriber,
+        subscriber:,
       )
 
       SendEmailWorker.perform_async_in_queue(
@@ -32,7 +32,7 @@ class SubscribersGovukAccountController < ApplicationController
       )
     end
 
-    render json: api_response.merge(subscriber: subscriber)
+    render json: api_response.merge(subscriber:)
   end
 
 private

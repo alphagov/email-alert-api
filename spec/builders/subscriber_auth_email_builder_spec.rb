@@ -4,7 +4,7 @@ RSpec.describe SubscriberAuthEmailBuilder do
 
     subject(:email) do
       described_class.call(
-        subscriber: subscriber,
+        subscriber:,
         destination: "/destination",
         token: "secret",
       )

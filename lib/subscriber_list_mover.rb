@@ -28,7 +28,7 @@ class SubscriberListMover
     subscribers.each do |subscriber|
       Subscription.transaction do
         existing_subscription = Subscription.active.find_by(
-          subscriber: subscriber,
+          subscriber:,
           subscriber_list: source_subscriber_list,
         )
 
@@ -37,7 +37,7 @@ class SubscriberListMover
         existing_subscription.end(reason: :subscriber_list_changed)
 
         subscribed_to_destination_subscriber_list = Subscription.find_by(
-          subscriber: subscriber,
+          subscriber:,
           subscriber_list: destination_subscriber_list,
         )
 
@@ -45,7 +45,7 @@ class SubscriberListMover
           puts "Moving #{subscriber.address} with ID #{subscriber.id} to #{destination_subscriber_list.title} list"
 
           Subscription.create!(
-            subscriber: subscriber,
+            subscriber:,
             subscriber_list: destination_subscriber_list,
             frequency: existing_subscription.frequency,
             source: :subscriber_list_changed,

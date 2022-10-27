@@ -5,7 +5,7 @@ namespace :bulk_email do
     email_ids = BulkSubscriberListEmailBuilder.call(
       subject: ENV.fetch("SUBJECT"),
       body: ENV.fetch("BODY"),
-      subscriber_lists: subscriber_lists,
+      subscriber_lists:,
     )
     email_ids.each do |id|
       SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate)
@@ -19,7 +19,7 @@ namespace :bulk_email do
     email_ids = BulkSubscriberListEmailBuilderWithAccount.call(
       subject: ENV.fetch("SUBJECT"),
       body: ENV.fetch("BODY"),
-      subscriber_lists: subscriber_lists,
+      subscriber_lists:,
     )
     email_ids.each do |id|
       SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate)

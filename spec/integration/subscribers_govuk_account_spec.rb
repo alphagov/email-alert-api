@@ -3,7 +3,7 @@ require "gds_api/test_helpers/account_api"
 RSpec.describe "Subscribers GOV.UK account", type: :request do
   include GdsApi::TestHelpers::AccountApi
 
-  let(:params) { { govuk_account_session: govuk_account_session } }
+  let(:params) { { govuk_account_session: } }
   let(:govuk_account_session) { "session identifier" }
 
   let(:govuk_account_id) { "internal-user-id" }
@@ -18,8 +18,8 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
 
     stub_account_api_user_info(
       id: govuk_account_id,
-      email: email,
-      email_verified: email_verified,
+      email:,
+      email_verified:,
     )
   end
 
@@ -81,7 +81,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
     end
 
     context "when the subscriber is linked to a GOV.UK Account" do
-      let(:subscriber) { create(:subscriber, address: subscriber_email, govuk_account_id: govuk_account_id) }
+      let(:subscriber) { create(:subscriber, address: subscriber_email, govuk_account_id:) }
 
       it "returns the subscriber" do
         get path
@@ -144,17 +144,17 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
 
     it "does not send an email" do
       expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
-      post path, params: params
+      post path, params:
     end
 
     context "when the subscriber has active subscriptions" do
       before do
-        create(:subscription, subscriber: subscriber)
+        create(:subscription, subscriber:)
       end
 
       it "sends an email" do
         expect(SendEmailWorker).to receive(:perform_async_in_queue)
-        post path, params: params
+        post path, params:
       end
     end
 
@@ -170,12 +170,12 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
 
       context "when the subscriber has active subscriptions" do
         before do
-          create(:subscription, subscriber: subscriber)
+          create(:subscription, subscriber:)
         end
 
         it "does not send an email" do
           expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
-          post path, params: params
+          post path, params:
         end
       end
     end
@@ -191,7 +191,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
 
       it "does not send an email" do
         expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
-        post path, params: params
+        post path, params:
       end
     end
   end

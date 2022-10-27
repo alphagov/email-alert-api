@@ -8,13 +8,13 @@ private
 
   def non_existent_daily_digests
     expected_digest_week
-      .map { |date| DigestRun.find_or_initialize_by(date: date, range: :daily) }
+      .map { |date| DigestRun.find_or_initialize_by(date:, range: :daily) }
       .reject(&:persisted?)
   end
 
   def non_existent_weekly_digests
     [expected_digest_week.find(&:saturday?)]
-      .map { |date| DigestRun.find_or_initialize_by(date: date, range: :weekly) }
+      .map { |date| DigestRun.find_or_initialize_by(date:, range: :weekly) }
       .reject(&:persisted?)
   end
 

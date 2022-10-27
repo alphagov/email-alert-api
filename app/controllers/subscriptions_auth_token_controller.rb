@@ -19,8 +19,8 @@ class SubscriptionsAuthTokenController < ApplicationController
   def build_email(token, subscriber_list)
     SubscriptionAuthEmailBuilder.call(
       address: expected_params[:address],
-      token: token,
-      subscriber_list: subscriber_list,
+      token:,
+      subscriber_list:,
       frequency: expected_params[:frequency],
     )
   end

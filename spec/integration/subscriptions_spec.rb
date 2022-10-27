@@ -7,7 +7,7 @@ RSpec.describe "Subscriptions", type: :request do
     context "with an existing subscription" do
       let(:subscriber_list) { create(:subscriber_list) }
       let(:subscriber) { create(:subscriber, address: "test@example.com") }
-      let!(:subscription) { create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber, frequency: :immediately) }
+      let!(:subscription) { create(:subscription, subscriber_list:, subscriber:, frequency: :immediately) }
       let(:frequency) { "daily" }
 
       it "lets you query the subscription" do
@@ -24,8 +24,8 @@ RSpec.describe "Subscriptions", type: :request do
     context "with an existing subscription and an expired matching subscription" do
       let(:subscriber_list) { create(:subscriber_list) }
       let(:subscriber) { create(:subscriber, address: "test@example.com") }
-      let!(:old_subscription) { create(:subscription, :ended, subscriber_list: subscriber_list, subscriber: subscriber, created_at: 1000.days.ago) }
-      let!(:new_subscription) { create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber) }
+      let!(:old_subscription) { create(:subscription, :ended, subscriber_list:, subscriber:, created_at: 1000.days.ago) }
+      let!(:new_subscription) { create(:subscription, subscriber_list:, subscriber:) }
 
       it "returns a more recent subscription if it exists" do
         get "/subscriptions/#{old_subscription.id}/latest"

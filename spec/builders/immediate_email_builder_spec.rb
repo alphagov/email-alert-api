@@ -1,7 +1,7 @@
 RSpec.describe ImmediateEmailBuilder do
   describe ".call" do
     let(:subscriber_list) { build(:subscriber_list, title: "My List") }
-    let(:subscription) { build(:subscription, subscriber_list: subscriber_list) }
+    let(:subscription) { build(:subscription, subscriber_list:) }
     let(:subscriber) { subscription.subscriber }
     let(:omit_footer_unsubscribe_link) { false }
 

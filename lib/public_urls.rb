@@ -18,9 +18,9 @@ module PublicUrls
 
     def unsubscribe(subscription, **utm_params)
       subscriber_id = subscription.subscriber_id
-      token = AuthTokenGeneratorService.call(subscriber_id: subscriber_id)
+      token = AuthTokenGeneratorService.call(subscriber_id:)
 
-      params = utm_params.merge(token: token)
+      params = utm_params.merge(token:)
       url_for(base_path: "/email/unsubscribe/#{subscription.id}", **params)
     end
 

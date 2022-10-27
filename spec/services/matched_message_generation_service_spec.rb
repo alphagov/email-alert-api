@@ -25,7 +25,7 @@ RSpec.describe MatchedMessageGenerationService do
     end
 
     it "copes and does nothing when the MatchedMessage records already exists" do
-      MatchedMessage.create!(message: message, subscriber_list: subscriber_list)
+      MatchedMessage.create!(message:, subscriber_list:)
 
       expect { described_class.call(message) }
         .to_not(change { MatchedMessage.count })

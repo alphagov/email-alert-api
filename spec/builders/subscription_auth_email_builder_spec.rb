@@ -10,15 +10,15 @@ RSpec.describe SubscriptionAuthEmailBuilder do
       described_class.call(
         address: "test@gov.uk",
         token: "secret",
-        subscriber_list: subscriber_list,
-        frequency: frequency,
+        subscriber_list:,
+        frequency:,
       )
     end
 
     before do
       allow(PublicUrls).to receive(:url_for)
         .with(base_path: "/email/subscriptions/authenticate",
-              frequency: frequency,
+              frequency:,
               token: "secret",
               topic_id: subscriber_list.slug)
         .and_return("auth_url")

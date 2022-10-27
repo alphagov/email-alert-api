@@ -14,7 +14,7 @@ class StatusUpdatesController < ApplicationController
     unless %w[delivered permanent-failure temporary-failure].include?(status)
       error = "Recieved an unexpected status from Notify: '#{status}'"
       GovukError.notify(error)
-      render json: { error: error }, status: :unprocessable_entity
+      render json: { error: }, status: :unprocessable_entity
       return
     end
 

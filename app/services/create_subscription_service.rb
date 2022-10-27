@@ -15,8 +15,8 @@ class CreateSubscriptionService
       subscriber.lock!
 
       subscription = Subscription.active.find_by(
-        subscriber_list: subscriber_list,
-        subscriber: subscriber,
+        subscriber_list:,
+        subscriber:,
       )
 
       if subscription
@@ -26,9 +26,9 @@ class CreateSubscriptionService
       end
 
       Subscription.create!(
-        subscriber: subscriber,
-        subscriber_list: subscriber_list,
-        frequency: frequency,
+        subscriber:,
+        subscriber_list:,
+        frequency:,
         signon_user_uid: current_user.uid,
         source: subscription ? :frequency_changed : :user_signed_up,
       )

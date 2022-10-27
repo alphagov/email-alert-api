@@ -16,14 +16,14 @@ class SubscribersController < ApplicationController
         MergeSubscribersService.call(
           subscriber_to_keep: subscriber,
           subscriber_to_absorb: Subscriber.find_by_address(new_address),
-          current_user: current_user,
+          current_user:,
         )
       end
 
       subscriber.update!(address: new_address)
     end
 
-    render json: { subscriber: subscriber }
+    render json: { subscriber: }
   end
 
 private
@@ -54,7 +54,7 @@ private
       .active
       .joins(:subscriber_list)
       .includes(:subscriber_list)
-      .where(subscriber: subscriber)
+      .where(subscriber:)
       .order(subscription_ordering)
       .order(id: :asc)
       .as_json(include: :subscriber_list)

@@ -10,7 +10,7 @@ class DigestRunSubscriber < ApplicationRecord
     records = subscriber_ids.map do |subscriber_id|
       {
         digest_run_id: digest_run.id,
-        subscriber_id: subscriber_id,
+        subscriber_id:,
         created_at: now,
         updated_at: now,
       }

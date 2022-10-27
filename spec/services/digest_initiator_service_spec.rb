@@ -47,7 +47,7 @@ RSpec.describe DigestInitiatorService do
                             range: Frequency::DAILY,
                             date: Date.current)
         create(:digest_run_subscriber,
-               digest_run: digest_run,
+               digest_run:,
                subscriber: subscribers.first)
 
         expect { described_class.call(date: Date.current, range: Frequency::DAILY) }

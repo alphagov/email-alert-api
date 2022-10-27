@@ -2,16 +2,16 @@ RSpec.describe Reports::SubscriberListsReport do
   let(:created_at) { 10.days.ago.midday }
 
   before do
-    list = create(:subscriber_list, created_at: created_at, title: "list 1", slug: "list-1", url: "/url")
+    list = create(:subscriber_list, created_at:, title: "list 1", slug: "list-1", url: "/url")
 
-    create(:subscription, :immediately, subscriber_list: list, created_at: created_at)
-    create(:subscription, :daily, subscriber_list: list, created_at: created_at)
-    create(:subscription, :weekly, subscriber_list: list, created_at: created_at)
+    create(:subscription, :immediately, subscriber_list: list, created_at:)
+    create(:subscription, :daily, subscriber_list: list, created_at:)
+    create(:subscription, :weekly, subscriber_list: list, created_at:)
     create(:subscription, :ended, ended_at: created_at, subscriber_list: list)
     create(:subscription, :ended, ended_at: created_at, ended_reason: :frequency_changed, subscriber_list: list)
 
-    create(:matched_content_change, subscriber_list: list, created_at: created_at)
-    create(:matched_message, subscriber_list: list, created_at: created_at)
+    create(:matched_content_change, subscriber_list: list, created_at:)
+    create(:matched_message, subscriber_list: list, created_at:)
   end
 
   it "returns data around active lists for the given date" do

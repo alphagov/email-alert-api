@@ -13,7 +13,7 @@ class SubscriberListsController < ApplicationController
     if subscriber_list
       render(
         json: { subscriber_list: subscriber_list.attributes },
-        status: status,
+        status:,
       )
     else
       render json: { error: "Could not find the subscriber list" }, status: :not_found
@@ -64,7 +64,7 @@ class SubscriberListsController < ApplicationController
       render json: { error: "Message already received" }, status: :conflict
     else
       BulkUnsubscribeListService.call(
-        subscriber_list: subscriber_list,
+        subscriber_list:,
         params: bulk_unsubscribe_params,
         user: current_user,
         govuk_request_id: GdsApi::GovukHeaders.headers[:govuk_request_id],

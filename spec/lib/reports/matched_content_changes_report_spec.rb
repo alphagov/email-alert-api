@@ -3,7 +3,7 @@ RSpec.describe Reports::MatchedContentChangesReport do
     it "outputs a CSV of matched content changes" do
       subscriber_list = create :subscriber_list
       match = create :matched_content_change, subscriber_list: subscriber_list
-      expect(described_class.new.call).to eq report_for([{ match: match }])
+      expect(described_class.new.call).to eq report_for([{ match: }])
     end
 
     it "allows specifying the date range to report" do

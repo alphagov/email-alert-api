@@ -2,11 +2,11 @@ RSpec.describe FooterPresenter do
   describe ".call" do
     let(:subscriber) { create(:subscriber) }
     let(:frequency) { "immediately" }
-    let(:subscription) { create(:subscription, frequency: frequency) }
+    let(:subscription) { create(:subscription, frequency:) }
     let(:omit_unsubscribe_link) { false }
 
     let(:footer) do
-      described_class.call(subscriber, subscription, omit_unsubscribe_link: omit_unsubscribe_link)
+      described_class.call(subscriber, subscription, omit_unsubscribe_link:)
     end
 
     before do

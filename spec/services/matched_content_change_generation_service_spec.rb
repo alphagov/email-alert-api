@@ -20,8 +20,8 @@ RSpec.describe MatchedContentChangeGenerationService do
     end
 
     it "copes and does nothing when the MatchedContentChange records already exists" do
-      MatchedContentChange.create!(content_change: content_change,
-                                   subscriber_list: subscriber_list)
+      MatchedContentChange.create!(content_change:,
+                                   subscriber_list:)
 
       expect { described_class.call(content_change) }
         .to_not(change { MatchedContentChange.count })

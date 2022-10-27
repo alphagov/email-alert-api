@@ -14,9 +14,9 @@ RSpec.describe "Subscriptions auth token", type: :request do
 
     let(:params) do
       {
-        address: address,
-        topic_id: topic_id,
-        frequency: frequency,
+        address:,
+        topic_id:,
+        frequency:,
       }
     end
 
@@ -80,12 +80,12 @@ RSpec.describe "Subscriptions auth token", type: :request do
     end
 
     it "creates an email" do
-      expect { post path, params: params }.to change { Email.count }.by(1)
+      expect { post path, params: }.to change { Email.count }.by(1)
     end
 
     it "sends the email" do
       expect(SendEmailWorker).to receive(:perform_async_in_queue)
-      post path, params: params
+      post path, params:
     end
 
     it "sends an email with the correct token" do

@@ -37,7 +37,7 @@ RSpec.describe FindLatestMatchingSubscription do
   end
 
   def create_subscription(*traits, options)
-    subscription_args = { subscriber_list: subscriber_list, subscriber: subscriber }.merge(options)
+    subscription_args = { subscriber_list:, subscriber: }.merge(options)
     create(:subscription, *traits, subscription_args)
   end
 end

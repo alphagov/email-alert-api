@@ -150,8 +150,8 @@ RSpec.describe MergeSubscribersService do
 
     def merge_subscribers!
       described_class.call(
-        subscriber_to_keep: subscriber_to_keep,
-        subscriber_to_absorb: subscriber_to_absorb,
+        subscriber_to_keep:,
+        subscriber_to_absorb:,
         current_user: user,
       )
     end

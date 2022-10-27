@@ -28,7 +28,7 @@ class Subscriber < ApplicationRecord
     # want to isolate any failed transactions.
     transaction(requires_new: true) do
       subscriber = find_by_address(address)
-      subscriber || create!({ address: address }.merge(create_params))
+      subscriber || create!({ address: }.merge(create_params))
     end
   rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
     # if we have concurrent requests trying to find or create the same

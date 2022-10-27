@@ -21,7 +21,7 @@ RSpec.describe "Creating subscriber lists for single content items", type: :requ
   end
 
   def content_id_is_in_returned_payload(response, content_id)
-    expect(response).to include(content_id: content_id)
+    expect(response).to include(content_id:)
   end
 
   def given_i_am_authenticated

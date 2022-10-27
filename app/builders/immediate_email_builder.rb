@@ -23,7 +23,7 @@ private
 
         {
           address: subscriber.address,
-          subject: subject,
+          subject:,
           body: body(subscription, subscriber),
           subscriber_id: subscriber.id,
           created_at: now,

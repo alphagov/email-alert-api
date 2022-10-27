@@ -1,7 +1,7 @@
 module NotifyRequestHelpers
   def stub_notify
     body = {}.to_json
-    stub_request(:post, /notifications\.service\.gov\.uk/).to_return(body: body)
+    stub_request(:post, /notifications\.service\.gov\.uk/).to_return(body:)
   end
 
   def expect_an_email_was_sent(subject: /.*/, address: "test@test.com")

@@ -56,7 +56,7 @@ namespace :data_migration do
     slug = args[:slug]
     new_slug = args[:new_slug]
 
-    subscriber_list = SubscriberList.find_by(slug: slug)
+    subscriber_list = SubscriberList.find_by(slug:)
     raise "Cannot find subscriber list with #{slug}" if subscriber_list.nil?
 
     subscriber_list.slug = new_slug

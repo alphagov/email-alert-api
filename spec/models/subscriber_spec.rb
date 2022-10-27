@@ -163,7 +163,7 @@ RSpec.describe Subscriber, type: :model do
 
       it "creates a new subscriber" do
         expect { described_class.resilient_find_or_create(address) }
-          .to change { Subscriber.exists?(address: address) }
+          .to change { Subscriber.exists?(address:) }
           .to(true)
       end
 
@@ -175,7 +175,7 @@ RSpec.describe Subscriber, type: :model do
         )
 
         expect(subscriber.reload)
-          .to have_attributes(address: address, signon_user_uid: user_uid)
+          .to have_attributes(address:, signon_user_uid: user_uid)
       end
     end
 
@@ -197,9 +197,9 @@ RSpec.describe Subscriber, type: :model do
   describe "#active_subscriptions" do
     let(:subscriber) { create(:subscriber) }
     before do
-      create(:subscription, subscriber: subscriber)
-      create(:subscription, subscriber: subscriber)
-      create(:subscription, :ended, subscriber: subscriber)
+      create(:subscription, subscriber:)
+      create(:subscription, subscriber:)
+      create(:subscription, :ended, subscriber:)
     end
 
     it "returns active subscriptions" do
@@ -210,9 +210,9 @@ RSpec.describe Subscriber, type: :model do
   describe "#ended_subscriptions" do
     let(:subscriber) { create(:subscriber) }
     before do
-      create(:subscription, subscriber: subscriber)
-      create(:subscription, subscriber: subscriber)
-      create(:subscription, :ended, subscriber: subscriber)
+      create(:subscription, subscriber:)
+      create(:subscription, subscriber:)
+      create(:subscription, :ended, subscriber:)
     end
 
     it "returns ended subscriptions" do

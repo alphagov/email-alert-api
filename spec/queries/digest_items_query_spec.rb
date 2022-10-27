@@ -16,8 +16,8 @@ RSpec.describe DigestItemsQuery do
         create(
           :subscription,
           :daily,
-          subscriber_list: subscriber_list,
-          subscriber: subscriber,
+          subscriber_list:,
+          subscriber:,
         )
       end
 
@@ -25,20 +25,20 @@ RSpec.describe DigestItemsQuery do
         content_change = create(
           :content_change,
           :matched,
-          subscriber_list: subscriber_list,
+          subscriber_list:,
           created_at: digest_run.starts_at,
         )
         message = create(
           :message,
           :matched,
-          subscriber_list: subscriber_list,
+          subscriber_list:,
           created_at: digest_run.starts_at,
         )
 
         expect(results.count).to eq(1)
         expect(results.first.to_h)
           .to match(
-            subscription: subscription,
+            subscription:,
             content: [content_change, message],
           )
       end
@@ -47,7 +47,7 @@ RSpec.describe DigestItemsQuery do
         create(
           :message,
           :matched,
-          subscriber_list: subscriber_list,
+          subscriber_list:,
           created_at: digest_run.starts_at,
           override_subscription_frequency_to_immediate: true,
         )
@@ -55,14 +55,14 @@ RSpec.describe DigestItemsQuery do
         message = create(
           :message,
           :matched,
-          subscriber_list: subscriber_list,
+          subscriber_list:,
           created_at: digest_run.starts_at,
         )
 
         expect(results.count).to eq(1)
         expect(results.first.to_h)
           .to match(
-            subscription: subscription,
+            subscription:,
             content: [message],
           )
       end
@@ -71,25 +71,25 @@ RSpec.describe DigestItemsQuery do
         content_change1 = create(
           :content_change,
           :matched,
-          subscriber_list: subscriber_list,
+          subscriber_list:,
           created_at: digest_run.starts_at,
         )
         content_change2 = create(
           :content_change,
           :matched,
-          subscriber_list: subscriber_list,
+          subscriber_list:,
           created_at: digest_run.starts_at + 20.minutes,
         )
         message1 = create(
           :message,
           :matched,
-          subscriber_list: subscriber_list,
+          subscriber_list:,
           created_at: digest_run.starts_at + 25.minutes,
         )
         message2 = create(
           :message,
           :matched,
-          subscriber_list: subscriber_list,
+          subscriber_list:,
           created_at: digest_run.starts_at + 10.minutes,
         )
         expect(results.first.content)
@@ -101,15 +101,15 @@ RSpec.describe DigestItemsQuery do
         create(
           :content_change,
           :matched,
-          content_id: content_id,
-          subscriber_list: subscriber_list,
+          content_id:,
+          subscriber_list:,
           created_at: digest_run.starts_at,
         )
         create(
           :content_change,
           :matched,
-          content_id: content_id,
-          subscriber_list: subscriber_list,
+          content_id:,
+          subscriber_list:,
           created_at: digest_run.starts_at + 20.minutes,
         )
 
@@ -126,7 +126,7 @@ RSpec.describe DigestItemsQuery do
           :subscription,
           :daily,
           subscriber_list: subscriber_list1,
-          subscriber: subscriber,
+          subscriber:,
         )
       end
 
@@ -135,7 +135,7 @@ RSpec.describe DigestItemsQuery do
           :subscription,
           :daily,
           subscriber_list: subscriber_list2,
-          subscriber: subscriber,
+          subscriber:,
         )
       end
 
@@ -173,28 +173,28 @@ RSpec.describe DigestItemsQuery do
 
         content_change1 = create(
           :content_change, :matched,
-          content_id: content_id,
+          content_id:,
           subscriber_list: subscriber_list1,
           created_at: digest_run.starts_at + 1.hour
         )
 
         create(
           :content_change, :matched,
-          content_id: content_id,
+          content_id:,
           subscriber_list: subscriber_list1,
           created_at: digest_run.starts_at
         )
 
         content_change3 = create(
           :content_change, :matched,
-          content_id: content_id,
+          content_id:,
           subscriber_list: subscriber_list2,
           created_at: digest_run.starts_at + 1.hour
         )
 
         create(
           :content_change, :matched,
-          content_id: content_id,
+          content_id:,
           subscriber_list: subscriber_list2,
           created_at: digest_run.starts_at
         )
@@ -208,7 +208,7 @@ RSpec.describe DigestItemsQuery do
         expected_results.each.with_index do |(subscription, changes), index|
           expect(results[index].to_h)
             .to match(
-              subscription: subscription,
+              subscription:,
               content: changes,
             )
         end
@@ -216,8 +216,8 @@ RSpec.describe DigestItemsQuery do
 
       it "returns a message only once if it's in two lists" do
         message = create(:message, created_at: digest_run.starts_at)
-        create(:matched_message, message: message, subscriber_list: subscriber_list1)
-        create(:matched_message, message: message, subscriber_list: subscriber_list2)
+        create(:matched_message, message:, subscriber_list: subscriber_list1)
+        create(:matched_message, message:, subscriber_list: subscriber_list2)
 
         expect(results.count).to eq(1)
         expect(results.first.to_h)
@@ -235,8 +235,8 @@ RSpec.describe DigestItemsQuery do
           :subscription,
           :daily,
           :ended,
-          subscriber_list: subscriber_list,
-          subscriber: subscriber,
+          subscriber_list:,
+          subscriber:,
         )
       end
 
@@ -244,7 +244,7 @@ RSpec.describe DigestItemsQuery do
         create(
           :content_change,
           :matched,
-          subscriber_list: subscriber_list,
+          subscriber_list:,
           created_at: digest_run.starts_at,
         )
       end
