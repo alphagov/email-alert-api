@@ -44,8 +44,8 @@ RSpec.describe SubscriptionContent do
     it "raises an error when records already exist" do
       content_change = create(:content_change)
       create(:subscription_content,
-             content_change: content_change,
-             email: email,
+             content_change:,
+             email:,
              subscription: subscriptions.last)
 
       expect { described_class.populate_for_content(content_change, records) }

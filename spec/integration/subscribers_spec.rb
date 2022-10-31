@@ -13,7 +13,7 @@ RSpec.describe "Subscriptions", type: :request do
         let!(:subscription_1) do
           create(
             :subscription,
-            subscriber: subscriber,
+            subscriber:,
             subscriber_list: subscriber_list_1,
             created_at: Time.zone.now.days_ago(2),
           )
@@ -21,7 +21,7 @@ RSpec.describe "Subscriptions", type: :request do
         let!(:subscription_2) do
           create(
             :subscription,
-            subscriber: subscriber,
+            subscriber:,
             subscriber_list: subscriber_list_2,
             ended_at: Time.zone.now,
             ended_reason: :frequency_changed,
@@ -30,7 +30,7 @@ RSpec.describe "Subscriptions", type: :request do
         let!(:subscription_3) do
           create(
             :subscription,
-            subscriber: subscriber,
+            subscriber:,
             subscriber_list: subscriber_list_3,
             created_at: Time.zone.now.days_ago(1),
             frequency: :daily,
@@ -120,7 +120,7 @@ RSpec.describe "Subscriptions", type: :request do
     context "when unsubscribing a subscriber from everything" do
       context "when the subscriber exists" do
         let!(:subscriber) { create(:subscriber) }
-        let(:subscription) { create(:subscription, subscriber: subscriber) }
+        let(:subscription) { create(:subscription, subscriber:) }
 
         before do
           delete "/subscribers/#{subscriber.id}"

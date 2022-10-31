@@ -31,14 +31,14 @@ class ImmediateEmailGenerationService
 
     def subscription_content_records(email_ids)
       subscriptions_to_fulfill.zip(email_ids).map do |subscription, email_id|
-        { subscription_id: subscription.id, email_id: email_id }
+        { subscription_id: subscription.id, email_id: }
       end
     end
 
     def subscriptions_to_fulfill
       @subscriptions_to_fulfill ||= begin
-        criteria = { message: message,
-                     content_change: content_change,
+        criteria = { message:,
+                     content_change:,
                      subscription_id: subscription_ids }.compact
         covered_by_earlier_attempts = SubscriptionContent.where(criteria)
                                                          .pluck(:subscription_id)

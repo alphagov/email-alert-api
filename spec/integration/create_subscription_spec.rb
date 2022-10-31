@@ -7,8 +7,8 @@ RSpec.describe "Creating a subscription", type: :request do
   def create_subscription(extra_params: {})
     default_params = {
       subscriber_list_id: subscriber_list.id,
-      address: address,
-      frequency: frequency,
+      address:,
+      frequency:,
     }
 
     post "/subscriptions", params: default_params.merge(extra_params)
@@ -35,7 +35,7 @@ RSpec.describe "Creating a subscription", type: :request do
     end
 
     context "with an existing subscription with different frequency" do
-      let!(:subscription) { create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber, frequency: :immediately) }
+      let!(:subscription) { create(:subscription, subscriber_list:, subscriber:, frequency: :immediately) }
 
       it "creates a new subscription" do
         expect { create_subscription }.to change(Subscription, :count)
@@ -78,7 +78,7 @@ RSpec.describe "Creating a subscription", type: :request do
     end
 
     context "with an existing subscription with identical frequency" do
-      let!(:subscription) { create(:subscription, subscriber_list: subscriber_list, subscriber: subscriber, frequency: frequency) }
+      let!(:subscription) { create(:subscription, subscriber_list:, subscriber:, frequency:) }
 
       it "does not create a new subscription" do
         expect { create_subscription }.to_not change(Subscription, :count)
@@ -118,7 +118,7 @@ RSpec.describe "Creating a subscription", type: :request do
 
       it "creates a new subscriber" do
         expect { create_subscription }.to change(Subscriber, :count).by(1)
-        expect(Subscriber.exists?(address: address)).to be_truthy
+        expect(Subscriber.exists?(address:)).to be_truthy
       end
     end
 

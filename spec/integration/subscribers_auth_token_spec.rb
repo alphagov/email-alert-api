@@ -9,8 +9,8 @@ RSpec.describe "Subscribers auth token", type: :request do
     let(:destination) { "/test" }
     let(:params) do
       {
-        address: address,
-        destination: destination,
+        address:,
+        destination:,
       }
     end
     let!(:subscriber) { create(:subscriber, address: "test@example.com") }
@@ -27,7 +27,7 @@ RSpec.describe "Subscribers auth token", type: :request do
 
     it "sends an email" do
       expect(SendEmailWorker).to receive(:perform_async_in_queue)
-      post path, params: params
+      post path, params:
     end
 
     it "sends an email with the correct token" do

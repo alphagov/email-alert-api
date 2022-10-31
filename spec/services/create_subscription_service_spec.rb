@@ -17,8 +17,8 @@ RSpec.describe CreateSubscriptionService do
     it "replaces a subscription if the frequencies differ" do
       subscription = create(
         :subscription,
-        subscriber_list: subscriber_list,
-        subscriber: subscriber,
+        subscriber_list:,
+        subscriber:,
         frequency: "weekly",
       )
 
@@ -36,9 +36,9 @@ RSpec.describe CreateSubscriptionService do
     it "preserves a subscription if the frequency is unchanged" do
       subscription = create(
         :subscription,
-        subscriber_list: subscriber_list,
-        subscriber: subscriber,
-        frequency: frequency,
+        subscriber_list:,
+        subscriber:,
+        frequency:,
       )
 
       new_subscription = described_class.call(*args)
@@ -49,9 +49,9 @@ RSpec.describe CreateSubscriptionService do
       create(
         :subscription,
         :ended,
-        subscriber_list: subscriber_list,
-        subscriber: subscriber,
-        frequency: frequency,
+        subscriber_list:,
+        subscriber:,
+        frequency:,
       )
 
       new_subscription = described_class.call(*args)

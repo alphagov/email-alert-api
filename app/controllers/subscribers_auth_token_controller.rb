@@ -11,7 +11,7 @@ class SubscribersAuthTokenController < ApplicationController
     SendEmailWorker
       .perform_async_in_queue(email.id, queue: :send_email_transactional)
 
-    render json: { subscriber: subscriber }, status: :created
+    render json: { subscriber: }, status: :created
   end
 
 private
@@ -22,9 +22,9 @@ private
 
   def build_email(subscriber, token)
     SubscriberAuthEmailBuilder.call(
-      subscriber: subscriber,
+      subscriber:,
       destination: expected_params[:destination],
-      token: token,
+      token:,
     )
   end
 

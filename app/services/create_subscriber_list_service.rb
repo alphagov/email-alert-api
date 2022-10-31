@@ -13,7 +13,7 @@ class CreateSubscriberListService
     subscriber_list = FindExactQuery.new(**matching_criteria).exact_match
     return SubscriberList.create!(subscriber_list_params) unless subscriber_list
 
-    subscriber_list.update!(title: title, url: url)
+    subscriber_list.update!(title:, url:)
     subscriber_list
   end
 
@@ -23,11 +23,11 @@ private
 
   def subscriber_list_params
     matching_criteria.merge(
-      title: title,
-      slug: slug,
-      url: url,
+      title:,
+      slug:,
+      url:,
       signon_user_uid: user.uid,
-      description: description,
+      description:,
     )
   end
 

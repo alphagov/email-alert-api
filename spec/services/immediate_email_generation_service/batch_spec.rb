@@ -100,7 +100,7 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
         email = create(:email)
         create(:subscription_content,
                subscription: other_subscription,
-               email: email,
+               email:,
                content_change: content)
       end
 
@@ -116,7 +116,7 @@ RSpec.describe ImmediateEmailGenerationService::Batch do
         email = create(:email)
         create(:subscription_content,
                subscription: subscriptions.first,
-               email: email,
+               email:,
                content_change: content)
       end
 

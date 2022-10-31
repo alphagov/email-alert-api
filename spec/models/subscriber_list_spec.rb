@@ -94,9 +94,9 @@ RSpec.describe SubscriberList, type: :model do
     let!(:a_sanity_check_list) { build(:subscriber_list) }
     let!(:subscriber) { create(:subscriber) }
     let!(:subscriber2) { create(:subscriber) }
-    let!(:subscription1) { create(:subscription, subscriber: subscriber, subscriber_list: subject) }
+    let!(:subscription1) { create(:subscription, subscriber:, subscriber_list: subject) }
     let!(:subscription2) { create(:subscription, subscriber: subscriber2, subscriber_list: subject) }
-    let!(:subscription3) { create(:subscription, subscriber: subscriber, subscriber_list: a_sanity_check_list) }
+    let!(:subscription3) { create(:subscription, subscriber:, subscriber_list: a_sanity_check_list) }
 
     it "will delete all dependent subscriptions" do
       expect { subject.destroy! }.to(change { subscriber.subscriptions.count }.by(-1))

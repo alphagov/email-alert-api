@@ -2,7 +2,7 @@ RSpec.describe "Login verify email", type: :request do
   include TokenHelpers
 
   let(:address) { "test@example.com" }
-  let!(:subscriber) { create(:subscriber, address: address) }
+  let!(:subscriber) { create(:subscriber, address:) }
   let(:destination) { "/authenticate" }
 
   scenario "successful auth token" do
@@ -10,8 +10,8 @@ RSpec.describe "Login verify email", type: :request do
 
     post "/subscribers/auth-token",
          params: {
-           address: address,
-           destination: destination,
+           address:,
+           destination:,
          }
 
     email_data = expect_an_email_was_sent(

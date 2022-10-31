@@ -29,7 +29,7 @@ private
       public_updated_at: params[:public_updated_at],
       email_document_supertype: params[:email_document_supertype],
       government_document_supertype: params[:government_document_supertype],
-      govuk_request_id: govuk_request_id,
+      govuk_request_id:,
       document_type: params[:document_type],
       publishing_app: params[:publishing_app],
       priority: params.fetch(:priority, "normal").to_sym,

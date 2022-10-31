@@ -47,7 +47,7 @@ private
       # to make logical sense to apply this to "all" ones
       scope.where(
         ":value IN (SELECT json_array_elements(#{field}->:key->'any')::text)",
-        key: key,
+        key:,
         # Postgres returns a string in double quotes where other double quote
         # characters are escaped
         value: %("#{value.gsub('"', '\\"')}"),

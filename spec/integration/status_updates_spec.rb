@@ -2,11 +2,11 @@ RSpec.describe "Receiving a status update", type: :request do
   describe "#create" do
     let(:status) { "delivered" }
     let(:permissions) { %w[signin status_updates] }
-    let(:user) { create(:user, permissions: permissions) }
+    let(:user) { create(:user, permissions:) }
     let(:params) do
       {
         reference: SecureRandom.uuid,
-        status: status,
+        status:,
         to: "test.user@example.com",
       }
     end

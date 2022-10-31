@@ -45,7 +45,7 @@ private
 
     records = digest_item.content.map do |content|
       {
-        email_id: email_id,
+        email_id:,
         subscription_id: digest_item.subscription.id,
         content_change_id: content.is_a?(ContentChange) ? content.id : nil,
         message_id: content.is_a?(Message) ? content.id : nil,

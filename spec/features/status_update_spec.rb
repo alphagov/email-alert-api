@@ -9,7 +9,7 @@ RSpec.describe "Status updates", type: :request do
 
   scenario "successful delivery" do
     reference = @email_data.fetch(:reference)
-    send_status_update(reference: reference, expected_status: 204)
+    send_status_update(reference:, expected_status: 204)
     send_status_update(reference: nil, expected_status: 400)
   end
 

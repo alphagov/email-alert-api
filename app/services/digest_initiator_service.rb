@@ -7,7 +7,7 @@ class DigestInitiatorService
   end
 
   def call
-    digest_run = DigestRun.find_or_create_by!(date: date, range: range)
+    digest_run = DigestRun.find_or_create_by!(date:, range:)
     return if digest_run.processed_at
 
     create_digest_run_subscribers(digest_run)
@@ -20,7 +20,7 @@ private
 
   def create_digest_run_subscribers(digest_run)
     Metrics.digest_initiator_service(range) do
-      subscriber_ids = DigestRunSubscriberQuery.call(digest_run: digest_run).pluck(:id)
+      subscriber_ids = DigestRunSubscriberQuery.call(digest_run:).pluck(:id)
 
       subscriber_ids.each_slice(1000) do |subscriber_ids_chunk|
         digest_run_subscriber_ids = DigestRunSubscriber.populate(digest_run, subscriber_ids_chunk)

@@ -3,11 +3,11 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "fd560cd836e0d365f3f8c834b65e28b64c1ffc42fa0d6d3038ec4b0751f71786",
+      "fingerprint": "30b19388240b1f6855a70229fc36d62209dbef1b11b75c0464f25e59738fba2c",
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/queries/subscriber_lists_by_criteria_query.rb",
-      "line": 48,
+      "line": 49,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "scope.where(\":value IN (SELECT json_array_elements(#{field}->:key->'any')::text)\", :key => key, :value => (\"\\\"#{value.gsub(\"\\\"\", \"\\\\\\\"\")}\\\"\"))",
       "render_path": null,
@@ -18,9 +18,12 @@
       },
       "user_input": "field",
       "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
       "note": ""
     }
   ],
-  "updated": "2021-06-25 10:58:12 +0100",
-  "brakeman_version": "5.0.4"
+  "updated": "2022-10-27 16:17:02 +0100",
+  "brakeman_version": "5.3.1"
 }

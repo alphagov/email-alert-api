@@ -10,7 +10,7 @@ RSpec.describe BulkSubscriberListEmailBuilder do
       email_ids = described_class.call(
         subject: "email subject",
         body: "email body",
-        subscriber_lists: subscriber_lists,
+        subscriber_lists:,
       )
 
       Email.find(email_ids).first
@@ -28,7 +28,7 @@ RSpec.describe BulkSubscriberListEmailBuilder do
 
     context "with one subscription" do
       let(:subscription) do
-        create(:subscription, subscriber: subscriber, subscriber_list: subscriber_lists.first)
+        create(:subscription, subscriber:, subscriber_list: subscriber_lists.first)
       end
 
       it "creates an email" do
@@ -56,11 +56,11 @@ RSpec.describe BulkSubscriberListEmailBuilder do
 
     context "with many subscriptions" do
       let(:subscription) do
-        create(:subscription, subscriber: subscriber, subscriber_list: subscriber_lists.first, created_at: 1.hour.ago)
+        create(:subscription, subscriber:, subscriber_list: subscriber_lists.first, created_at: 1.hour.ago)
       end
 
       before do
-        create(:subscription, subscriber: subscriber, subscriber_list: subscriber_lists.second, created_at: 2.days.ago)
+        create(:subscription, subscriber:, subscriber_list: subscriber_lists.second, created_at: 2.days.ago)
       end
 
       it "should only create one email per subscriber" do
@@ -71,7 +71,7 @@ RSpec.describe BulkSubscriberListEmailBuilder do
 
     context "with rejected subscribers in /config/accounts/email_addresses.txt" do
       let(:excluded_subscriber) { create(:subscriber, address: "test@example.com") }
-      let(:subscription) { create(:subscription, subscriber: subscriber, subscriber_list: subscriber_lists.first) }
+      let(:subscription) { create(:subscription, subscriber:, subscriber_list: subscriber_lists.first) }
 
       before do
         create(:subscription, subscriber: excluded_subscriber, subscriber_list: subscriber_lists.first)

@@ -1,6 +1,6 @@
 RSpec.describe ContentChangePresenter do
   let(:subscriber_list) { create(:subscriber_list) }
-  let(:subscription) { create(:subscription, subscriber_list: subscriber_list) }
+  let(:subscription) { create(:subscription, subscriber_list:) }
 
   let(:content_change) do
     build(

@@ -115,10 +115,10 @@ RSpec.describe Subscription, type: :model do
   describe ".dedup_by_subscriber" do
     it "returns the latest subscription for a subscriber" do
       subscriber = create(:subscriber)
-      create(:subscription, subscriber: subscriber, created_at: 2.days.ago)
+      create(:subscription, subscriber:, created_at: 2.days.ago)
 
       expected = [
-        create(:subscription, subscriber: subscriber).id,
+        create(:subscription, subscriber:).id,
         create(:subscription, subscriber: create(:subscriber)).id,
       ]
 

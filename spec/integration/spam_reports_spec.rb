@@ -1,7 +1,7 @@
 RSpec.describe "Receiving a spam report", type: :request do
   let(:subscriber) { create(:subscriber) }
   let(:permissions) { %w[signin status_updates] }
-  let(:user) { create(:user, permissions: permissions) }
+  let(:user) { create(:user, permissions:) }
 
   before { login_as(user) }
 

@@ -17,7 +17,7 @@ private
       tags = criteria["tags"]
 
       subscriber_list = SubscriberList.find_by(slug: row["slug"])
-      subscriber_list.update!(tags: tags) if subscriber_list
+      subscriber_list.update!(tags:) if subscriber_list
     end
   end
 end

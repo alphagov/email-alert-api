@@ -17,7 +17,7 @@ RSpec.describe MessageHandlerService do
     let(:govuk_request_id) { SecureRandom.uuid }
 
     it "creates a Message" do
-      expect { described_class.call(params: params, govuk_request_id: govuk_request_id) }
+      expect { described_class.call(params:, govuk_request_id:) }
         .to change { Message.count }.by(1)
       expect(Message.last).to have_attributes(
         title: "Message title",
@@ -27,17 +27,17 @@ RSpec.describe MessageHandlerService do
 
     it "records a metric" do
       expect(Metrics).to receive(:message_created)
-      described_class.call(params: params, govuk_request_id: govuk_request_id)
+      described_class.call(params:, govuk_request_id:)
     end
 
     it "queues a job" do
       expect(ProcessMessageWorker).to receive(:perform_async)
 
-      described_class.call(params: params, govuk_request_id: govuk_request_id)
+      described_class.call(params:, govuk_request_id:)
     end
 
     it "raises errors if the Message is invalid" do
-      expect { described_class.call(params: {}, govuk_request_id: govuk_request_id) }
+      expect { described_class.call(params: {}, govuk_request_id:) }
         .to raise_error(ActiveRecord::RecordInvalid)
     end
 
@@ -45,9 +45,9 @@ RSpec.describe MessageHandlerService do
       user = create(:user)
 
       described_class.call(
-        params: params,
-        govuk_request_id: govuk_request_id,
-        user: user,
+        params:,
+        govuk_request_id:,
+        user:,
       )
 
       expect(Message.last).to have_attributes(signon_user_uid: user.uid)
@@ -58,7 +58,7 @@ RSpec.describe MessageHandlerService do
 
       described_class.call(
         params: params.merge(sender_message_id: uuid),
-        govuk_request_id: govuk_request_id,
+        govuk_request_id:,
       )
 
       expect(Message.last).to have_attributes(

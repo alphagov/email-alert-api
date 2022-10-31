@@ -9,8 +9,8 @@ class SubscriptionConfirmationEmailBuilder
 
   def call
     Email.create!(
-      subject: subject,
-      body: body,
+      subject:,
+      body:,
       address: subscriber.address,
       subscriber_id: subscriber.id,
     )

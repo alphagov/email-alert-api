@@ -17,10 +17,10 @@ RSpec.describe CreateSubscriberListService do
 
     let(:list) do
       described_class.call(
-        title: title,
-        url: url,
-        matching_criteria: matching_criteria,
-        user: user,
+        title:,
+        url:,
+        matching_criteria:,
+        user:,
       )
     end
 
@@ -60,8 +60,8 @@ RSpec.describe CreateSubscriberListService do
     context "when an up-to-date list exists" do
       let(:existing_list) do
         create(:subscriber_list,
-               title: title,
-               url: url,
+               title:,
+               url:,
                updated_at: 2.days.ago.midnight)
       end
 

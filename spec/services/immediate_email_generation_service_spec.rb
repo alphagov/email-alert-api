@@ -5,15 +5,15 @@ RSpec.describe ImmediateEmailGenerationService do
 
     before do
       create(:matched_content_change,
-             subscriber_list: subscriber_list,
-             content_change: content_change)
+             subscriber_list:,
+             content_change:)
       allow(SendEmailWorker).to receive(:perform_async_in_queue)
     end
 
     it "generates emails for active, immediate subscribers" do
-      create(:subscription, :ended, subscriber_list: subscriber_list)
-      create(:subscription, :daily, subscriber_list: subscriber_list)
-      immediate = create(:subscription, :immediately, subscriber_list: subscriber_list)
+      create(:subscription, :ended, subscriber_list:)
+      create(:subscription, :daily, subscriber_list:)
+      immediate = create(:subscription, :immediately, subscriber_list:)
 
       expect { described_class.call(content_change) }
         .to change { Email.count }.by(1)
@@ -27,7 +27,7 @@ RSpec.describe ImmediateEmailGenerationService do
     end
 
     it "queues SendEmailWorkers" do
-      create(:subscription, subscriber_list: subscriber_list)
+      create(:subscription, subscriber_list:)
 
       described_class.call(content_change)
 
@@ -38,7 +38,7 @@ RSpec.describe ImmediateEmailGenerationService do
     end
 
     it "sets metrics for the SendEmailWorker" do
-      create(:subscription, subscriber_list: subscriber_list)
+      create(:subscription, subscriber_list:)
       metrics = { "content_change_created_at" => content_change.created_at.iso8601 }
 
       described_class.call(content_change)
@@ -52,7 +52,7 @@ RSpec.describe ImmediateEmailGenerationService do
       let(:content_change) { create(:content_change, priority: "high") }
 
       it "puts the delivery request on the high priority queue" do
-        create(:subscription, :immediately, subscriber_list: subscriber_list)
+        create(:subscription, :immediately, subscriber_list:)
 
         described_class.call(content_change)
         expect(SendEmailWorker)
@@ -67,9 +67,9 @@ RSpec.describe ImmediateEmailGenerationService do
 
       before do
         create(:matched_message,
-               subscriber_list: subscriber_list,
-               message: message)
-        create(:subscription, frequency, subscriber_list: subscriber_list)
+               subscriber_list:,
+               message:)
+        create(:subscription, frequency, subscriber_list:)
       end
 
       it "can create and queue emails" do

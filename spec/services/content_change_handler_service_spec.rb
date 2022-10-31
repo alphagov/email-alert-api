@@ -47,14 +47,14 @@ RSpec.describe ContentChangeHandlerService do
 
   describe ".call" do
     it "creates a ContentChange" do
-      expect { described_class.call(params: params, govuk_request_id: govuk_request_id) }
+      expect { described_class.call(params:, govuk_request_id:) }
         .to change { ContentChange.count }.by(1)
     end
 
     let(:content_change) { create(:content_change) }
 
     it "adds GovukDocumentTypes to the content_change tags" do
-      described_class.call(params: params, govuk_request_id: govuk_request_id)
+      described_class.call(params:, govuk_request_id:)
 
       expect(ContentChange.last).to have_attributes(
         title: "Travel advice",
@@ -72,7 +72,7 @@ RSpec.describe ContentChangeHandlerService do
         ),
         email_document_supertype: "email document supertype",
         government_document_supertype: "government document supertype",
-        govuk_request_id: govuk_request_id,
+        govuk_request_id:,
         document_type: "news_article",
         publishing_app: "publishing app",
         processed_at: nil,
@@ -83,12 +83,12 @@ RSpec.describe ContentChangeHandlerService do
     end
 
     it "adds GovukDocumentTypes to the content_change links" do
-      described_class.call(params: params, govuk_request_id: govuk_request_id)
+      described_class.call(params:, govuk_request_id:)
       expect(ContentChange.last.links).to include(document_type_hash)
     end
 
     it "adds GovukDocumentTypes to the content_change tags" do
-      described_class.call(params: params, govuk_request_id: govuk_request_id)
+      described_class.call(params:, govuk_request_id:)
       expect(ContentChange.last.tags).to include(document_type_hash)
     end
 
@@ -99,7 +99,7 @@ RSpec.describe ContentChangeHandlerService do
         .to receive(:perform_async)
         .with(content_change.id)
 
-      described_class.call(params: params, govuk_request_id: govuk_request_id)
+      described_class.call(params:, govuk_request_id:)
     end
 
     it "Raises errors if the ContentChange is invalid" do
@@ -107,7 +107,7 @@ RSpec.describe ContentChangeHandlerService do
         ActiveRecord::RecordInvalid,
       )
 
-      expect { described_class.call(params: params, govuk_request_id: govuk_request_id) }
+      expect { described_class.call(params:, govuk_request_id:) }
         .to raise_error(ActiveRecord::RecordInvalid)
     end
   end

@@ -15,17 +15,17 @@ RSpec.describe DigestEmailGenerationWorker do
     let(:subscriber) { create(:subscriber) }
 
     let(:subscription_one) do
-      create(:subscription, subscriber: subscriber, frequency: "daily")
+      create(:subscription, subscriber:, frequency: "daily")
     end
 
     let(:subscription_two) do
-      create(:subscription, subscriber: subscriber, frequency: "daily")
+      create(:subscription, subscriber:, frequency: "daily")
     end
 
     let(:digest_run) { create(:digest_run) }
 
     let(:digest_run_subscriber) do
-      create(:digest_run_subscriber, digest_run: digest_run, subscriber: subscriber)
+      create(:digest_run_subscriber, digest_run:, subscriber:)
     end
 
     let(:digest_items) do

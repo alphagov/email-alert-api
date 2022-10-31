@@ -4,7 +4,7 @@ RSpec.describe DigestRunSubscriberQuery do
   let(:starts_at) { digest_run.starts_at }
 
   describe ".call" do
-    subject(:subscribers) { described_class.call(digest_run: digest_run) }
+    subject(:subscribers) { described_class.call(digest_run:) }
 
     let(:subscriber_list_one) { create(:subscriber_list) }
 
@@ -147,7 +147,7 @@ RSpec.describe DigestRunSubscriberQuery do
         create(
           :subscription,
           :daily,
-          subscriber: subscriber,
+          subscriber:,
           subscriber_list: subscriber_list_one,
         )
       end
@@ -155,7 +155,7 @@ RSpec.describe DigestRunSubscriberQuery do
         create(
           :subscription,
           :daily,
-          subscriber: subscriber,
+          subscriber:,
           subscriber_list: subscriber_list_two,
         )
       end

@@ -5,14 +5,14 @@ RSpec.describe BulkUnsubscribeListWorker do
 
   let!(:subscriber) do
     create(:subscriber).tap do |subscriber|
-      create(:subscription, subscriber: subscriber, subscriber_list: subscriber_list)
+      create(:subscription, subscriber:, subscriber_list:)
     end
   end
 
   let!(:other_subscriber) do
     create(:subscriber).tap do |subscriber|
       other_list = create(:subscriber_list)
-      create(:subscription, subscriber: subscriber, subscriber_list: other_list)
+      create(:subscription, subscriber:, subscriber_list: other_list)
     end
   end
 

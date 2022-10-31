@@ -3,7 +3,7 @@ RSpec.describe UnsubscribeAllService do
     let(:subscriber) { create(:subscriber) }
 
     before do
-      create_list(:subscription, 2, subscriber: subscriber)
+      create_list(:subscription, 2, subscriber:)
     end
 
     it "ends the active subscriptions" do

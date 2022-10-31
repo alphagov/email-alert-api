@@ -17,12 +17,12 @@ class SendEmailWorker < ApplicationWorker
       return unless email
 
       increment_rate_limiter
-      SendEmailService.call(email: email, metrics: parsed_metrics(metrics))
+      SendEmailService.call(email:, metrics: parsed_metrics(metrics))
     end
   end
 
   def self.perform_async_in_queue(email_id, metrics = {}, queue:)
-    set(queue: queue).perform_async(email_id, metrics, queue)
+    set(queue:).perform_async(email_id, metrics, queue)
   end
 
 private
@@ -39,7 +39,7 @@ private
     content_change_created_at = metrics["content_change_created_at"]
       &.then { |t| Time.zone.iso8601(t) }
 
-    { content_change_created_at: content_change_created_at }.compact
+    { content_change_created_at: }.compact
   end
 
   def increment_rate_limiter

@@ -5,8 +5,8 @@ RSpec.describe DigestRunCompletionMarkerWorker, type: :worker do
       let(:completed_time) { Date.yesterday.midday }
 
       before do
-        create(:digest_run_subscriber, digest_run: digest_run, processed_at: completed_time)
-        create(:digest_run_subscriber, digest_run: digest_run, processed_at: completed_time)
+        create(:digest_run_subscriber, digest_run:, processed_at: completed_time)
+        create(:digest_run_subscriber, digest_run:, processed_at: completed_time)
       end
 
       it "marks the digest run as complete at the most recent subscriber completion time" do
@@ -20,8 +20,8 @@ RSpec.describe DigestRunCompletionMarkerWorker, type: :worker do
       let(:digest_run) { create(:digest_run, processed_at: Time.zone.now) }
 
       before do
-        create(:digest_run_subscriber, digest_run: digest_run)
-        create(:digest_run_subscriber, digest_run: digest_run, processed_at: Time.zone.now)
+        create(:digest_run_subscriber, digest_run:)
+        create(:digest_run_subscriber, digest_run:, processed_at: Time.zone.now)
       end
 
       it "doesn't mark the digest run as complete" do

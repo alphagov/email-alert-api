@@ -62,7 +62,7 @@ RSpec.describe HistoricalDataDeletionWorker do
 
       it "should remove all old subscriber lists which have no recent active subscriptions" do
         subscriber_list = create(:subscriber_list, created_at: historic_date)
-        create(:subscription, ended_at: historic_date, subscriber_list: subscriber_list)
+        create(:subscription, ended_at: historic_date, subscriber_list:)
         expect { perform }.to change(SubscriberList, :count).by(-1)
       end
 
@@ -73,7 +73,7 @@ RSpec.describe HistoricalDataDeletionWorker do
 
       it "shouldn't remove subscriber lists which have recent active subscriptions" do
         subscriber_list = create(:subscriber_list, created_at: historic_date)
-        create(:subscription, ended_at: 1.week.ago, subscriber_list: subscriber_list)
+        create(:subscription, ended_at: 1.week.ago, subscriber_list:)
         expect { perform }.to_not change(SubscriberList, :count)
       end
     end
@@ -86,7 +86,7 @@ RSpec.describe HistoricalDataDeletionWorker do
 
       it "should remove all old subscribers that have historic subscriptions" do
         subscriber = create(:subscriber, created_at: historic_date)
-        create(:subscription, :ended, ended_at: historic_date, subscriber: subscriber)
+        create(:subscription, :ended, ended_at: historic_date, subscriber:)
         expect { perform }.to change(Subscriber, :count).by(-1)
       end
 
@@ -97,7 +97,7 @@ RSpec.describe HistoricalDataDeletionWorker do
 
       it "shouldn't remove old subscribers with active subscriptions" do
         subscriber = create(:subscriber, created_at: historic_date)
-        create(:subscription, subscriber: subscriber)
+        create(:subscription, subscriber:)
         expect { perform }.to_not change(Subscriber, :count)
       end
     end

@@ -15,7 +15,7 @@ class DigestEmailBuilder
         "emails.digests.#{subscription.frequency}.subject",
         title: subscriber_list.title,
       ),
-      body: body,
+      body:,
       subscriber_id: subscriber.id,
     )
   end

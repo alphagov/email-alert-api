@@ -8,7 +8,7 @@ class MatchedMessageGenerationService
   def call
     # if we already have records already, then we expect the process completed
     # successfully previously since the insert is an atomic operation
-    return if MatchedMessage.exists?(message: message) || subscriber_lists.empty?
+    return if MatchedMessage.exists?(message:) || subscriber_lists.empty?
 
     now = Time.zone.now
     records = subscriber_lists.map do |list|

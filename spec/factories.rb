@@ -26,7 +26,7 @@ FactoryBot.define do
       after(:build) do |content_change, evaluator|
         content_change.matched_content_changes << evaluator.association(
           :matched_content_change,
-          content_change: content_change,
+          content_change:,
           subscriber_list: evaluator.subscriber_list,
         )
       end
@@ -56,7 +56,7 @@ FactoryBot.define do
       after(:build) do |message, evaluator|
         message.matched_messages << evaluator.association(
           :matched_message,
-          message: message,
+          message:,
           subscriber_list: evaluator.subscriber_list,
         )
       end
@@ -279,7 +279,7 @@ FactoryBot.define do
 
     initialize_with do
       new(
-        OpenStruct.new(code: code, body: body.to_json),
+        OpenStruct.new(code:, body: body.to_json),
       )
     end
   end

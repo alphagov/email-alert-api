@@ -2,10 +2,10 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
   describe ".call" do
     let(:frequency) { "immediately" }
     let(:subscriber_list) { build(:subscriber_list, title: "My List") }
-    let(:subscription) { build(:subscription, subscriber_list: subscriber_list, frequency: frequency) }
+    let(:subscription) { build(:subscription, subscriber_list:, frequency:) }
     let(:subscriber) { subscription.subscriber }
 
-    subject(:email) { described_class.call(subscription: subscription) }
+    subject(:email) { described_class.call(subscription:) }
 
     before do
       utm_params = {
@@ -47,7 +47,7 @@ RSpec.describe SubscriptionConfirmationEmailBuilder do
 
       context "when the subscription is to a single page" do
         let(:subscriber_list) { build(:subscriber_list, :for_single_page_subscription) }
-        let(:subscription) { build(:subscription, subscriber_list: subscriber_list, frequency: "immediately") }
+        let(:subscription) { build(:subscription, subscriber_list:, frequency: "immediately") }
 
         it "includes the content for a single page email" do
           expect(email.body).to include(I18n.t!("emails.confirmation.frequency.page.immediately"))

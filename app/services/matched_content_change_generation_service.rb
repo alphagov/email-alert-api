@@ -8,7 +8,7 @@ class MatchedContentChangeGenerationService
   def call
     # if we have records already, then we expect the process completed
     # successfully previously since the insert is an atomic operation
-    return if MatchedContentChange.exists?(content_change: content_change) || subscriber_lists.empty?
+    return if MatchedContentChange.exists?(content_change:) || subscriber_lists.empty?
 
     now = Time.zone.now
     records = subscriber_lists.map do |list|

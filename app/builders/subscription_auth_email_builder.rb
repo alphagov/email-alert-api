@@ -10,9 +10,9 @@ class SubscriptionAuthEmailBuilder
 
   def call
     Email.create!(
-      subject: subject,
-      body: body,
-      address: address,
+      subject:,
+      body:,
+      address:,
     )
   end
 
@@ -44,9 +44,9 @@ private
   def link
     PublicUrls.url_for(
       base_path: "/email/subscriptions/authenticate",
-      token: token,
+      token:,
       topic_id: subscriber_list.slug,
-      frequency: frequency,
+      frequency:,
     )
   end
 end

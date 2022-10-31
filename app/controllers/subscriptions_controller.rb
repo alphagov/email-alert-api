@@ -13,16 +13,16 @@ class SubscriptionsController < ApplicationController
     )
 
     unless params[:skip_confirmation_email]
-      email = SubscriptionConfirmationEmailBuilder.call(subscription: subscription)
+      email = SubscriptionConfirmationEmailBuilder.call(subscription:)
       SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_transactional)
     end
 
-    render json: { subscription: subscription }
+    render json: { subscription: }
   end
 
   def show
     subscription = Subscription.find(subscription_params.require(:id))
-    render json: { subscription: subscription }
+    render json: { subscription: }
   end
 
   def update
