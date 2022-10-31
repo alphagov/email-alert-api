@@ -8,7 +8,6 @@ Rails.application.routes.draw do
     post "/subscriber-lists/:slug/bulk-unsubscribe", to: "subscriber_lists#bulk_unsubscribe"
 
     resources :content_changes, only: %i[create], path: "content-changes"
-    resources :messages, only: %i[create]
     resources :spam_reports, path: "spam-reports", only: %i[create]
     resources :status_updates, path: "status-updates", only: %i[create]
     resources :subscriptions, only: %i[create show update]
