@@ -36,23 +36,23 @@ module RequestHelpers
     expect(response.status).to eq(202)
   end
 
-  def create_message(overrides = {})
-    params = {
-      sender_message_id: SecureRandom.uuid,
-      title: "Title",
-      body: "Body",
-      criteria_rules: [
-        {
-          type: "tag",
-          key: "brexit_checklist_criteria",
-          value: "eu-national",
-        },
-      ],
-    }.merge(overrides)
+  # def create_message(overrides = {})
+  #   params = {
+  #     sender_message_id: SecureRandom.uuid,
+  #     title: "Title",
+  #     body: "Body",
+  #     criteria_rules: [
+  #       {
+  #         type: "tag",
+  #         key: "brexit_checklist_criteria",
+  #         value: "eu-national",
+  #       },
+  #     ],
+  #   }.merge(overrides)
 
-    post "/messages", params: params.to_json, headers: json_headers
-    expect(response.status).to eq(202)
-  end
+  #   post "/messages", params: params.to_json, headers: json_headers
+  #   expect(response.status).to eq(202)
+  # end
 
   def send_status_update(reference: SecureRandom.uuid,
                          status: "delivered",

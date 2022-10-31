@@ -44,14 +44,14 @@ RSpec.describe "Weekly digests", type: :request do
       )
     end
 
-    travel_to(Time.zone.parse("2017-01-01 09:31")) do
-      create_message(
-        body: "Body",
-        criteria_rules: [
-          { type: "link", key: "topics", value: list_one_topic_id },
-        ],
-      )
-    end
+    # travel_to(Time.zone.parse("2017-01-01 09:31")) do
+    #   create_message(
+    #     body: "Body",
+    #     criteria_rules: [
+    #       { type: "link", key: "topics", value: list_one_topic_id },
+    #     ],
+    #   )
+    # end
 
     travel_to(Time.zone.parse("2017-01-07 10:00")) do
       WeeklyDigestInitiatorWorker.new.perform
@@ -67,7 +67,7 @@ RSpec.describe "Weekly digests", type: :request do
     expect(body).to include("gov.uk/base-path")
     expect(body).to include("Change note one")
     expect(body).to include("Description one")
-    expect(body).to include("Body")
+    # expect(body).to include("Body")
     expect(body).to include("10:00am, 1 January 2017")
     expect(body).to include("[Unsubscribe](http://www.dev.gov.uk/email/unsubscribe")
     expect(body).to include("gov.uk/email/manage/authenticate")
