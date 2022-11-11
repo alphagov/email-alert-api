@@ -1,9 +1,18 @@
 RSpec.describe SubscriberListQuery do
+  let(:content_id) { "37ac8e5c-331a-48fc-8ac0-d401579c3d30" }
+  let(:document_collection_id) { "5f6222fe-7631-11e4-a3cb-005056011aef" }
+
   subject do
     described_class.new(
-      content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
+      content_id:,
       tags: { policies: %w[eggs] },
-      links: { policies: %w[f05dc04b-ca95-4cca-9875-a7591d055467], taxon_tree: %w[f05dc04b-ca95-4cca-9875-a7591d055448] },
+      links: {
+        policies: %w[f05dc04b-ca95-4cca-9875-a7591d055467],
+        taxon_tree: %w[f05dc04b-ca95-4cca-9875-a7591d055448],
+        document_collections: [
+          { content_id: document_collection_id },
+        ],
+      },
       document_type: "travel_advice",
       email_document_supertype: "publications",
       government_document_supertype: "news_stories",
@@ -11,7 +20,7 @@ RSpec.describe SubscriberListQuery do
   end
 
   shared_examples "#links matching" do |tags_or_links|
-    it { is_included_in_links tags_or_links, content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30" }
+    it { is_included_in_links tags_or_links, content_id: content_id }
     it { is_excluded_from_links tags_or_links, content_id: "00000000-0000-0000-0000-000000000000" }
     it { is_included_in_links tags_or_links, content_id: "" }
     it { is_included_in_links tags_or_links, document_type: "travel_advice" }
@@ -24,7 +33,7 @@ RSpec.describe SubscriberListQuery do
     it do
       is_included_in_links(
         tags_or_links,
-        content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
+        content_id:,
         document_type: "travel_advice",
         email_document_supertype: "publications",
         government_document_supertype: "news_stories",
@@ -44,7 +53,7 @@ RSpec.describe SubscriberListQuery do
     it do
       is_included_in_links(
         tags_or_links,
-        content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
+        content_id:,
         document_type: "travel_advice",
         email_document_supertype: "publications",
         government_document_supertype: "news_stories",
@@ -54,7 +63,7 @@ RSpec.describe SubscriberListQuery do
     it do
       is_excluded_from_links(
         tags_or_links,
-        content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
+        content_id:,
         document_type: "other",
         email_document_supertype: "publications",
         government_document_supertype: "news_stories",
@@ -64,7 +73,7 @@ RSpec.describe SubscriberListQuery do
     it do
       is_excluded_from_links(
         tags_or_links,
-        content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
+        content_id:,
         document_type: "travel_advice",
         email_document_supertype: "other",
         government_document_supertype: "news_stories",
@@ -74,7 +83,7 @@ RSpec.describe SubscriberListQuery do
     it do
       is_excluded_from_links(
         tags_or_links,
-        content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
+        content_id:,
         document_type: "travel_advice",
         email_document_supertype: "publications",
         government_document_supertype: "other",
