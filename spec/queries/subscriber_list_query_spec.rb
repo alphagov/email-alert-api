@@ -9,9 +9,7 @@ RSpec.describe SubscriberListQuery do
       links: {
         policies: %w[f05dc04b-ca95-4cca-9875-a7591d055467],
         taxon_tree: %w[f05dc04b-ca95-4cca-9875-a7591d055448],
-        document_collections: [
-          { content_id: document_collection_id },
-        ],
+        document_collections: [document_collection_id],
       },
       document_type: "travel_advice",
       email_document_supertype: "publications",
@@ -20,7 +18,8 @@ RSpec.describe SubscriberListQuery do
   end
 
   shared_examples "#links matching" do |tags_or_links|
-    it { is_included_in_links tags_or_links, content_id: content_id }
+    it { is_included_in_links tags_or_links, content_id: }
+    it { is_included_in_links tags_or_links, content_id: document_collection_id }
     it { is_excluded_from_links tags_or_links, content_id: "00000000-0000-0000-0000-000000000000" }
     it { is_included_in_links tags_or_links, content_id: "" }
     it { is_included_in_links tags_or_links, document_type: "travel_advice" }
