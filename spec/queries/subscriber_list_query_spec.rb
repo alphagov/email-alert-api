@@ -149,6 +149,21 @@ RSpec.describe SubscriberListQuery do
     end
   end
 
+  context "when list has content id only" do
+    let(:matching_content_id) { "37ac8e5c-331a-48fc-8ac0-d401579c3d30" }
+    let(:no_match_content_id) { "9376121a-b7bc-4521-b973-b63a72e0f1cf" }
+
+    it "includes lists where the content id matches" do
+      subscriber_list = create_subscriber_list(default_list_attributes.merge(content_id: matching_content_id))
+      expect(subject.lists).to include(subscriber_list)
+    end
+
+    it "excludes lists where the content id does not match" do
+      subscriber_list = create_subscriber_list(default_list_attributes.merge(content_id: no_match_content_id))
+      expect(subject.lists).not_to include(subscriber_list)
+    end
+  end
+
   def create_subscriber_list(options)
     create(:subscriber_list, options)
   end
