@@ -44,16 +44,6 @@ RSpec.describe SubscriberListQuery do
     end
 
     it do
-      includes_subscriber_list(
-        tags_or_links,
-        content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
-        document_type: "travel_advice",
-        email_document_supertype: "publications",
-        government_document_supertype: "news_stories",
-      )
-    end
-
-    it do
       excludes_subscriber_list(
         tags_or_links,
         content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
