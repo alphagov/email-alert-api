@@ -13,9 +13,6 @@ RSpec.describe SubscriberListQuery do
   subject { described_class.new(**content_change_attributes) }
 
   shared_examples "#list matching" do |tags_or_links|
-    it { includes_subscriber_list(tags_or_links, content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30") }
-    it { excludes_subscriber_list(tags_or_links, content_id: "00000000-0000-0000-0000-000000000000") }
-    it { includes_subscriber_list(tags_or_links, content_id: "") }
     it { includes_subscriber_list(tags_or_links, document_type: "travel_advice") }
     it { excludes_subscriber_list(tags_or_links, document_type: "other") }
     it { includes_subscriber_list(tags_or_links, email_document_supertype: "publications") }
@@ -26,7 +23,6 @@ RSpec.describe SubscriberListQuery do
     it do
       includes_subscriber_list(
         tags_or_links,
-        content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
         document_type: "travel_advice",
         email_document_supertype: "publications",
         government_document_supertype: "news_stories",
@@ -36,17 +32,6 @@ RSpec.describe SubscriberListQuery do
     it do
       excludes_subscriber_list(
         tags_or_links,
-        content_id: "00000000-0000-0000-0000-000000000000",
-        document_type: "travel_advice",
-        email_document_supertype: "publications",
-        government_document_supertype: "news_stories",
-      )
-    end
-
-    it do
-      excludes_subscriber_list(
-        tags_or_links,
-        content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
         document_type: "other",
         email_document_supertype: "publications",
         government_document_supertype: "news_stories",
@@ -56,7 +41,6 @@ RSpec.describe SubscriberListQuery do
     it do
       excludes_subscriber_list(
         tags_or_links,
-        content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
         document_type: "travel_advice",
         email_document_supertype: "other",
         government_document_supertype: "news_stories",
@@ -66,7 +50,6 @@ RSpec.describe SubscriberListQuery do
     it do
       excludes_subscriber_list(
         tags_or_links,
-        content_id: "37ac8e5c-331a-48fc-8ac0-d401579c3d30",
         document_type: "travel_advice",
         email_document_supertype: "publications",
         government_document_supertype: "other",
