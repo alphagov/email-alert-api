@@ -25,7 +25,7 @@ namespace :support do
     limit = args[:limit] ? args[:limit].to_i : 10
     raise ArgumentError, "Provide an email!" if email_address.blank?
 
-    query = Email.where(address: email_address)
+    query = Email.where(address: email_address).order(created_at: :desc)
     puts "#{query.count} emails sent to #{email_address}:"
     results = query.limit(limit).map do |email|
       {
