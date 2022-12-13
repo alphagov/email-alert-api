@@ -469,6 +469,7 @@ DEPENDENCIES
   json-schema
   jwt
   listen
+  mail (~> 2.7.1)
   nokogiri
   notifications-ruby-client
   pact

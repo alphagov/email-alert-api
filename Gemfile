@@ -12,6 +12,7 @@ gem "govuk_personalisation"
 gem "govuk_sidekiq"
 gem "json-schema"
 gem "jwt"
+gem "mail", "~> 2.7.1"  # TODO: remove once https://github.com/mikel/mail/issues/1489 is fixed.
 gem "nokogiri"
 gem "notifications-ruby-client"
 gem "pg"
