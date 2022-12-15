@@ -176,8 +176,11 @@ GEM
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
-    mail (2.7.1)
+    mail (2.8.0)
       mini_mime (>= 0.1.1)
+      net-imap
+      net-pop
+      net-smtp
     marcel (1.0.2)
     method_source (1.0.0)
     mime-types (3.4.1)
@@ -469,7 +472,7 @@ DEPENDENCIES
   json-schema
   jwt
   listen
-  mail (~> 2.7.1)
+  mail (~> 2.8.0)
   nokogiri
   notifications-ruby-client
   pact
