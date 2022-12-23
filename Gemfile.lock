@@ -164,7 +164,7 @@ GEM
     json (2.6.2)
     json-schema (3.0.0)
       addressable (>= 2.8)
-    jwt (2.5.0)
+    jwt (2.6.0)
     kgio (2.11.4)
     link_header (0.0.8)
     listen (3.7.1)
