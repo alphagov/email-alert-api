@@ -24,6 +24,7 @@ gem "sidekiq-scheduler"
 gem "with_advisory_lock"
 
 group :test do
+  gem "brakeman"
   gem "climate_control"
   gem "equivalent-xml"
   gem "factory_bot_rails"
