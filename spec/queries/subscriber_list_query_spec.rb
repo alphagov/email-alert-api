@@ -252,4 +252,24 @@ RSpec.describe SubscriberListQuery do
       expect(query.lists).not_to include(list)
     end
   end
+
+  context "when a subscriber_list has content id and document type" do
+    let(:no_match_content_id) { "9376121a-b7bc-4521-b973-b63a72e0f1cf" }
+
+    it "includes lists that match on content id and document type" do
+      content_change = build_content_change(document_type_attributes)
+      list = create_subscriber_list(document_type_attributes.merge(content_id:))
+      query = described_class.new(**content_change)
+
+      expect(query.lists).to include(list)
+    end
+
+    it "excludes lists that match on content id but do not match on document type" do
+      content_change = build_content_change(document_type_attributes)
+      list = create_subscriber_list(document_type_attributes.merge(content_id:, document_type: "other"))
+      query = described_class.new(**content_change)
+
+      expect(query.lists).not_to include(list)
+    end
+  end
 end
