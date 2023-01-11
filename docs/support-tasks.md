@@ -125,12 +125,17 @@ The date should be in ISO8601 format, for example 2020-01-01.
 To see a simple count of the number of subscribers for a given list:
 
 ```bash
-bundle exec rake 'report:csv_subscriber_lists[<url>]'
+bundle exec rake 'report:csv_subscriber_lists[<path>,<active_on_date (optional)>]'
 ```
-This will always report on the number of active subscriptions for a given url, as of the end of today.
+This will report on the number of active subscriptions for a given path.
 
-You can also pass it a :active_on_datetime which will count how many active subscriptions there were at the end of the day on a particular date.
-(active is defined as created before that datetime and not with an "ended_on" datetime by the given date)
+> **Warning**
+>
+> This is called simple because it only gets subscriber lists for a direct path. There may still be subscriptions by topic or link, so finding an empty or missing subcription list does not mean that no-one will receive email updates about that page! See below for a more detailed description of how to get the subscriber list.
+
+The path should be the full path on gov.uk (for instance /government/statistics/examples if the page you're interested in is https://www.gov.uk/government/statistics/examples)
+
+You can also pass it a :active_on_datetime which will count how many active subscriptions there were at the end of the day on a particular date. The active_on_date defaults to today if not specified, and should be in ISO8601 format, for example 2022-03-03T12:12:16+00:00. The time will always be rounded to the end of the day, even if that is in the future.
 
 You can run the task on Jenkins with the following links:
 
@@ -138,12 +143,37 @@ You can run the task on Jenkins with the following links:
 - [Staging](https://deploy.blue.staging.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:subscriber_list_subscriber_count[%22%3Cpage_path_here%3E%22]) - Data will be a snapshot from last replication
 - [Production](https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:subscriber_list_subscriber_count[%22%3Cpage_path_here%3E%22]) - Live data
 
+## Finding all subscriber lists that match a given page.
+
+The previous rake task only gets subscriber lists that match a URL. But subscribers can match on topics/tags/links, so to get a full idea of how many people subscribe to a page you will need to access the console:
+
 ```bash
-bundle exec rake 'report:csv_subscriber_lists[<url>, <active_on_date>]'
+gds govuk connect -e integration app-console email-alert-api
 ```
 
-The active_on_date should be in ISO8601 format, for example 2022-03-03T12:12:16+00:00.
-The time will always be rounded to the end of the day, even if that is in the future.
+..then you can create a SubscriberListQuery. If an email has already been sent out for a page, you can query the ContentChange item for that email:
+
+
+```
+cc = ContentChange.where(base_path: '/government/publications/my-publication').first
+```
+
+...then use that to build a SubscriberlistQuery:
+
+```
+lists = SubscriberListQuery.new(content_id: cc.content_id, tags: cc.tags, links: cc.links, document_type: cc.document_type, email_document_supertype: cc.email_document_supertype, government_document_supertype: cc.government_document_supertype).lists
+
+total_subs = lists.sum { |l| l.subscriptions.active.count }
+
+# Broken down by frequency:
+
+immediately_subs = lists.sum { |l| l.subscriptions.active.immediately.count }
+daily_subs = lists.sum { |l| l.subscriptions.active.daily.count }
+weekly_subs = lists.sum { |l| l.subscriptions.active.weekly.count }
+
+```
+
+If an email hasn't already been sent out, you will need to console into an app that has access to the Content Store and find the values for the SubscriberListQuery manually and copy/paste them across.
 
 ## Get a report of single page notification subscriber lists by active subscriber count
 
