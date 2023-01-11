@@ -272,4 +272,44 @@ RSpec.describe SubscriberListQuery do
       expect(query.lists).to include(list)
     end
   end
+
+  context "when a subscriber_list has a content id and links" do
+    let(:document_collection_id) { "4d74904a-e45e-47e4-921d-c9dc13c8c9de" }
+    let(:content_change_links) { { document_collections: [document_collection_id] } }
+    let(:subscriber_list_links) { { document_collections: { any: [document_collection_id] } } }
+    let(:unmatched_content_change_links) { { policies: %w[f05dc04b-ca95-4cca-9875-a7591d055467] } }
+    let(:unmatched_content_id) { "f05dc04b-ca95-4cca-9875-a7591d055467" }
+
+    it "includes lists that match on content id and match on links" do
+      content_change = build_content_change(links: content_change_links)
+      list = create_subscriber_list(links: subscriber_list_links)
+      query = described_class.new(**content_change)
+
+      expect(query.lists).to include(list)
+    end
+
+    it "includes lists that match on content id but do not match on links" do
+      content_change = build_content_change(links: unmatched_content_change_links)
+      list = create_subscriber_list(links: subscriber_list_links, content_id:)
+      query = described_class.new(**content_change)
+
+      expect(query.lists).to include(list)
+    end
+
+    it "includes lists that match on links but do not match on content id" do
+      content_change = build_content_change(links: content_change_links)
+      list = create_subscriber_list(links: subscriber_list_links, content_id: unmatched_content_id)
+      query = described_class.new(**content_change)
+
+      expect(query.lists).to include(list)
+    end
+
+    it "exludes lists that do not match on content id and do not match on links" do
+      content_change = build_content_change(links: unmatched_content_change_links)
+      list = create_subscriber_list(links: subscriber_list_links, content_id: unmatched_content_id)
+      query = described_class.new(**content_change)
+
+      expect(query.lists).not_to include(list)
+    end
+  end
 end
