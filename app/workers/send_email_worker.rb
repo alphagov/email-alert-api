@@ -22,7 +22,7 @@ class SendEmailWorker < ApplicationWorker
   end
 
   def self.perform_async_in_queue(email_id, metrics = {}, queue:)
-    set(queue:).perform_async(email_id, metrics, queue)
+    set(queue:).perform_async(email_id, metrics, queue.to_s)
   end
 
 private
