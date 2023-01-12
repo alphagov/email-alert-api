@@ -49,4 +49,6 @@ WebMock.disable_net_connect!(allow_localhost: true)
 
 Sidekiq::Testing.inline!
 Sidekiq::Worker.clear_all
-Sidekiq::Logging.logger = nil
+Sidekiq.configure_client do |config|
+  config.logger = nil
+end
