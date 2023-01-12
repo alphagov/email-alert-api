@@ -19,6 +19,12 @@ jobs:
     name: Lint Ruby
     uses: alphagov/govuk-infrastructure/.github/workflows/rubocop.yml@main
 
+  pact-tests:
+    name: Run Pact tests
+    uses: ./.github/workflows/pact-verify.yml
+    with:
+      commitish: ${{ github.ref }}
+
   test-ruby:
     name: Test Ruby
     runs-on: ubuntu-latest
