@@ -1,9 +1,6 @@
 ---
 :verbose: false
 :concurrency: 32
-<% if ENV.key?('SIDEKIQ_LOGFILE') %>
-:logfile: <%= ENV['SIDEKIQ_LOGFILE'] %>
-<% end %>
 :timeout: 4
 :max_retries: 9
 :queues:

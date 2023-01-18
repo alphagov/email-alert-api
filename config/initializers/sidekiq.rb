@@ -1,4 +1,2 @@
-Sidekiq.configure_server do
-  # Calls to Rails.logger in a sidekiq process will use Sidekiq's logger
-  Rails.logger = Sidekiq::Logging.logger
-end
+# Set strict args so we're ready for Sidekiq 7
+Sidekiq.strict_args!
