@@ -13,28 +13,29 @@
   - [send_email_immediate, 2] # To send emails to users with immediate subscriptions.
   - [send_email_digest, 2] # To send digest emails to users with either daily or weekly subscriptions.
   - [default, 1] # Miscellaneous operations e.g. initiating digest runs, monitoring, DB cleanup and recovering lost Sidekiq jobs.
-:schedule:
-  daily_digest_initiator:
-    cron: '30 8 * * * Europe/London' # every day at 8:30am
-    class: DailyDigestInitiatorWorker
-  weekly_digest_initiator:
-    cron: '30 8 * * 6 Europe/London' # every Saturday at 8:30am
-    class: WeeklyDigestInitiatorWorker
-  historical_data_deletion:
-    cron: '0 12 * * * Europe/London' # every day at midday
-    class: HistoricalDataDeletionWorker
-  nullify_subscribers:
-    every: '1h'
-    class: NullifySubscribersWorker
-  email_deleter:
-    every: '1h'
-    class: EmailDeletionWorker
-  digest_run_completion_marker:
-    every: '1m'
-    class: DigestRunCompletionMarkerWorker
-  metrics_collection:
-    every: '1m'
-    class: MetricsCollectionWorker
-  recover_lost_jobs:
-    every: '30m'
-    class: RecoverLostJobsWorker
+:scheduler:
+  :schedule:
+    daily_digest_initiator:
+      cron: '30 8 * * * Europe/London' # every day at 8:30am
+      class: DailyDigestInitiatorWorker
+    weekly_digest_initiator:
+      cron: '30 8 * * 6 Europe/London' # every Saturday at 8:30am
+      class: WeeklyDigestInitiatorWorker
+    historical_data_deletion:
+      cron: '0 12 * * * Europe/London' # every day at midday
+      class: HistoricalDataDeletionWorker
+    nullify_subscribers:
+      every: '1h'
+      class: NullifySubscribersWorker
+    email_deleter:
+      every: '1h'
+      class: EmailDeletionWorker
+    digest_run_completion_marker:
+      every: '1m'
+      class: DigestRunCompletionMarkerWorker
+    metrics_collection:
+      every: '1m'
+      class: MetricsCollectionWorker
+    recover_lost_jobs:
+      every: '30m'
+      class: RecoverLostJobsWorker
