@@ -12,27 +12,31 @@ class SubscriberListQuery
     @lists ||= (
       lists_matched_on_links +
       lists_matched_on_tags +
-      lists_matched_without_links_or_tags
+      lists_matched_on_document_type_only +
+      lists_matched_on_content_id
     ).uniq(&:id)
   end
 
 private
 
   def lists_matched_on_tags
-    MatchedForNotification.new(query_field: :tags, scope: base_scope).call(@tags)
+    MatchedForNotification.new(query_field: :tags, scope: document_type_scope).call(@tags)
   end
 
   def lists_matched_on_links
-    MatchedForNotification.new(query_field: :links, scope: base_scope).call(@links)
+    MatchedForNotification.new(query_field: :links, scope: document_type_scope).call(@links)
   end
 
-  def lists_matched_without_links_or_tags
-    FindWithoutLinksAndTags.new(scope: base_scope).call
+  def lists_matched_on_document_type_only
+    FindWithoutLinksAndTagsAndContentId.new(scope: document_type_scope).call
   end
 
-  def base_scope
+  def lists_matched_on_content_id
+    SubscriberList.where(content_id: @content_id)
+  end
+
+  def document_type_scope
     SubscriberList
-      .where(content_id: [nil, @content_id])
       .where(document_type: ["", @document_type])
       .where(email_document_supertype: ["", @email_document_supertype])
       .where(government_document_supertype: ["", @government_document_supertype])
