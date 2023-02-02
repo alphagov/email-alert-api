@@ -11,12 +11,12 @@ RSpec.describe "Receiving a spam report", type: :request do
 
     context "when there is a subscriber associated with the recipient email address" do
       it "unsubscribes the user" do
-        post "/spam-reports", params: params
+        post("/spam-reports", params:)
         expect(subscriber.active_subscriptions).to be_empty
       end
 
       it "renders 204 no content" do
-        post "/spam-reports", params: params
+        post("/spam-reports", params:)
 
         expect(response.status).to eq(204)
         expect(response.body).to eq("")
@@ -36,7 +36,7 @@ RSpec.describe "Receiving a spam report", type: :request do
       let(:permissions) { %w[signin] }
 
       it "renders 403" do
-        post "/spam-reports", params: params
+        post("/spam-reports", params:)
 
         expect(response.status).to eq(403)
       end

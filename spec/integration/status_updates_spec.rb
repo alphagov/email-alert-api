@@ -14,7 +14,7 @@ RSpec.describe "Receiving a status update", type: :request do
     before { login_as(user) }
 
     it "responds with no content" do
-      post "/status-updates", params: params
+      post("/status-updates", params:)
 
       expect(response).to have_http_status(:no_content)
       expect(response.body).to eq("")
@@ -24,7 +24,7 @@ RSpec.describe "Receiving a status update", type: :request do
       let(:permissions) { %w[signin] }
 
       it "responds with a forbidden" do
-        post "/status-updates", params: params
+        post("/status-updates", params:)
 
         expect(response).to have_http_status(:forbidden)
       end
@@ -38,7 +38,7 @@ RSpec.describe "Receiving a status update", type: :request do
 
         expect(UnsubscribeAllService).to receive(:call).with(subscriber, :non_existent_email)
 
-        post "/status-updates", params: params
+        post("/status-updates", params:)
 
         expect(response).to be_successful
       end
@@ -46,7 +46,7 @@ RSpec.describe "Receiving a status update", type: :request do
       it "can cope if the subscriber doesn't exist" do
         expect(UnsubscribeAllService).not_to receive(:call)
 
-        post "/status-updates", params: params
+        post("/status-updates", params:)
 
         expect(response).to be_successful
       end
@@ -56,7 +56,7 @@ RSpec.describe "Receiving a status update", type: :request do
       let(:status) { "unknown" }
 
       it "responds with 422" do
-        post "/status-updates", params: params
+        post("/status-updates", params:)
 
         expect(response).to have_http_status(:unprocessable_entity)
       end

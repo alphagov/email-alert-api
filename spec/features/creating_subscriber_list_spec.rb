@@ -44,7 +44,7 @@ RSpec.describe "Creating subscriber lists", type: :request do
   end
 
   def lookup_subscriber_list(params, expected_status: 200)
-    get "/subscriber-lists", params: params, headers: json_headers
+    get "/subscriber-lists", params:, headers: json_headers
     expect(response.status).to eq(expected_status)
   end
 end

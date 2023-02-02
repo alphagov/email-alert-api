@@ -16,12 +16,12 @@ RSpec.describe "Subscribers auth token", type: :request do
     let!(:subscriber) { create(:subscriber, address: "test@example.com") }
 
     it "returns 201" do
-      post path, params: params
+      post(path, params:)
       expect(response.status).to eq(201)
     end
 
     it "returns subscriber details" do
-      post path, params: params
+      post(path, params:)
       expect(data[:subscriber][:id]).to eq(subscriber.id)
     end
 
@@ -31,7 +31,7 @@ RSpec.describe "Subscribers auth token", type: :request do
     end
 
     it "sends an email with the correct token" do
-      post path, params: params
+      post(path, params:)
       expect(Email.count).to be 1
 
       expect(decrypt_token_from_link(Email.last.body)).to eq(
@@ -43,7 +43,7 @@ RSpec.describe "Subscribers auth token", type: :request do
       before { subscriber.update!(govuk_account_id: "42") }
 
       it "returns a 403" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(403)
       end
     end
@@ -52,7 +52,7 @@ RSpec.describe "Subscribers auth token", type: :request do
       before { subscriber.delete }
 
       it "returns a 404" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(404)
       end
     end
@@ -61,7 +61,7 @@ RSpec.describe "Subscribers auth token", type: :request do
       let(:address) { "bad-address" }
 
       it "returns a 422" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(422)
       end
     end
@@ -70,7 +70,7 @@ RSpec.describe "Subscribers auth token", type: :request do
       let(:address) { nil }
 
       it "returns a 422" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(422)
       end
     end
@@ -79,7 +79,7 @@ RSpec.describe "Subscribers auth token", type: :request do
       let(:destination) { nil }
 
       it "returns a 422" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(422)
       end
     end
@@ -88,7 +88,7 @@ RSpec.describe "Subscribers auth token", type: :request do
       let(:destination) { "http://example.com/test" }
 
       it "returns a 422" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(422)
       end
     end

@@ -125,7 +125,7 @@ RSpec.describe "Creating a subscription", type: :request do
     context "without an existing subscription" do
       it "returns a 200" do
         params = JSON.dump(address: "test@example.com", subscriber_list_id: subscriber_list.id)
-        post "/subscriptions", params: params, headers: json_headers
+        post "/subscriptions", params:, headers: json_headers
 
         expect(response.status).to eq(200)
       end

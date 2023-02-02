@@ -28,7 +28,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       let(:email_verified) { false }
 
       it "returns a 403" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(403)
       end
     end
@@ -37,7 +37,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       let(:email) { nil }
 
       it "returns a 403" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(403)
       end
     end
@@ -46,7 +46,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       let(:email_verified) { nil }
 
       it "and returns a 403" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(403)
       end
     end
@@ -57,7 +57,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       end
 
       it "returns a 401" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(401)
       end
     end
@@ -66,7 +66,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       let(:govuk_account_session) { nil }
 
       it "returns a 422" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(422)
       end
     end
@@ -98,7 +98,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
     include_examples "validates the user info response"
 
     it "returns the subscriber" do
-      post path, params: params
+      post(path, params:)
       expect(response.status).to eq(200)
       expect(data[:subscriber][:id]).to eq(subscriber.id)
     end
@@ -107,7 +107,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       let(:subscriber) { create(:subscriber, address: subscriber_email, govuk_account_id: "govuk-account-id") }
 
       it "returns the GOV.UK Account ID" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(200)
         expect(data[:subscriber][:id]).to eq(subscriber.id)
         expect(data[:subscriber][:govuk_account_id]).to eq(subscriber.govuk_account_id)
@@ -118,7 +118,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       let(:subscriber_email) { "different@example.com" }
 
       it "creates the subscriber" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(200)
         expect(data[:subscriber][:id]).not_to eq(subscriber.id)
       end
@@ -131,13 +131,13 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
     include_examples "validates the user info response"
 
     it "returns the subscriber" do
-      post path, params: params
+      post(path, params:)
       expect(response.status).to eq(200)
       expect(data[:subscriber][:id]).to eq(subscriber.id)
     end
 
     it "records the GOV.UK Account ID" do
-      post path, params: params
+      post(path, params:)
       expect(response.status).to eq(200)
       expect(data[:subscriber][:govuk_account_id]).to eq(govuk_account_id)
     end
@@ -162,7 +162,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       let(:subscriber) { create(:subscriber, address: subscriber_email, govuk_account_id: "govuk-account-id") }
 
       it "replaces the old GOV.UK Account ID" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(200)
         expect(data[:subscriber][:id]).to eq(subscriber.id)
         expect(data[:subscriber][:govuk_account_id]).to eq(govuk_account_id)
@@ -184,7 +184,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       let(:subscriber_email) { "different@example.com" }
 
       it "creates the subscriber" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(200)
         expect(data[:subscriber][:id]).not_to eq(subscriber.id)
       end
