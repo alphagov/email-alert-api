@@ -21,7 +21,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
     end
 
     it "returns 200" do
-      post path, params: params
+      post(path, params:)
       expect(response.status).to eq(200)
     end
 
@@ -29,7 +29,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
       let(:address) { nil }
 
       it "returns a 422" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(422)
       end
     end
@@ -38,7 +38,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
       let(:address) { "wrong.bad" }
 
       it "returns a 422" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(422)
       end
     end
@@ -47,7 +47,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
       let(:topic_id) { nil }
 
       it "returns a 422" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(422)
       end
     end
@@ -56,7 +56,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
       let(:topic_id) { "does-not-exist" }
 
       it "returns a 404" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(404)
       end
     end
@@ -65,7 +65,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
       let(:frequency) { nil }
 
       it "returns a 422" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(422)
       end
     end
@@ -74,7 +74,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
       let(:frequency) { "something_else" }
 
       it "returns a 422" do
-        post path, params: params
+        post(path, params:)
         expect(response.status).to eq(422)
       end
     end
@@ -89,7 +89,7 @@ RSpec.describe "Subscriptions auth token", type: :request do
     end
 
     it "sends an email with the correct token" do
-      post path, params: params
+      post(path, params:)
       expect(Email.count).to be 1
 
       expect(decrypt_token_from_link(Email.last.body)).to eq(
