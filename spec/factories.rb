@@ -108,7 +108,7 @@ FactoryBot.define do
     end
 
     trait :medical_safety_alert do
-      tags { { format: %w[medical_safety_alert], alert_type: %w[devices drugs field-safety-notices company-led-drugs] } }
+      tags { { format: { any: %w[medical_safety_alert] }, alert_type: { any: %w[devices drugs field-safety-notices company-led-drugs] } } }
     end
 
     trait :brexit_checker do
