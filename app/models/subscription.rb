@@ -25,6 +25,7 @@ class Subscription < ApplicationRecord
     bulk_immediate_to_digest: 6, # Potentially unused (for a one-off migration)
     subscriber_merged: 7,
     bulk_unsubscribed: 8,
+    bulk_migrated: 9,
   }, _prefix: :ended
 
   scope :active, -> { where(ended_at: nil) }

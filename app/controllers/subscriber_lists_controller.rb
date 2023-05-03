@@ -74,6 +74,30 @@ class SubscriberListsController < ApplicationController
     end
   end
 
+  def bulk_migrate
+    unless bulk_migrate_params[:from_slug].present? && bulk_migrate_params[:to_slug].present?
+      render json: {
+        error: "Must provide slugs for source and destination subscriber lists",
+      }, status: :unprocessable_entity
+      return
+    end
+
+    source_list = SubscriberList.find_by(slug: bulk_migrate_params[:from_slug])
+    destination_list = SubscriberList.find_by(slug: bulk_migrate_params[:to_slug])
+
+    if source_list.nil?
+      render json: { error: "Could not find source subscriber list" }, status: :not_found
+    elsif destination_list.nil?
+      render json: { error: "Could not find destination subscriber list" }, status: :not_found
+    else
+      BulkMigrateListWorker.perform_async(
+        source_list.id,
+        destination_list.id,
+      )
+      render json: { message: "List queued for bulk migration" }, status: :accepted
+    end
+  end
+
 private
 
   def updatable_parameters
@@ -99,6 +123,10 @@ private
 
   def bulk_unsubscribe_params
     params.permit(:body, :sender_message_id)
+  end
+
+  def bulk_migrate_params
+    params.permit(:from_slug, :to_slug)
   end
 
   def bulk_unsubscribe_already_requested?
