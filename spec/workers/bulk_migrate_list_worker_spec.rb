@@ -16,6 +16,12 @@ RSpec.describe BulkMigrateListWorker do
   end
 
   describe "#perform" do
+    around(:each) do |example|
+      ClimateControl.modify(BULK_MIGRATE_CONFIRMATION_EMAIL_ACCOUNT: "test@test.uk") do
+        example.run
+      end
+    end
+
     it "migrates subscribers from the source list to the successor list" do
       source_list_subscriber_id = source_list.subscribers.first.id
 
@@ -30,6 +36,14 @@ RSpec.describe BulkMigrateListWorker do
 
     it "will not move subscribers from other lists" do
       expect { described_class.new.perform(source_list.id, destination_list.id) }.not_to(change { other_list_subscribers.ended_subscriptions.count })
+    end
+
+    it "queues a confirmation email when the migration is complete" do
+      allow(SendEmailWorker).to receive(:perform_async_in_queue)
+      described_class.new.perform(source_list.id, destination_list.id)
+
+      expect(Email.last.subject).to eq("Bulk migration of #{source_list.title} is complete")
+      expect(SendEmailWorker).to have_received(:perform_async_in_queue).with(Email.last.id, queue: :send_email_transactional)
     end
   end
 end

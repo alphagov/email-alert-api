@@ -9,7 +9,7 @@ class BulkMigrateListWorker < ApplicationWorker
         return
       end
 
-      migrate_subscribers
+      migrate_subscribers_and_confirm
     end
   end
 
@@ -27,7 +27,7 @@ private
     @subscribers_to_move_count ||= source_list.active_subscriptions_count
   end
 
-  def migrate_subscribers
+  def migrate_subscribers_and_confirm
     subscribers = source_list.subscribers
     subscribers.each do |subscriber|
       Subscription.transaction do
@@ -54,6 +54,21 @@ private
           )
         end
       end
+    end
+    send_confirmation_message
+  end
+
+  def send_confirmation_message
+    remaining_active_subscriptions = Subscription.active.find_by(subscriber_list_id: source_list.id)
+
+    if remaining_active_subscriptions.nil?
+      email = BulkMigrateConfirmationEmailBuilder.call(
+        source_id: source_list.id,
+        destination_id: destination_list.id,
+        count: subscribers_to_move_count,
+      )
+      SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_transactional)
+      logger.info("Migration of subscriberlist #{source_list.id} complete. Email with id #{email.id} queued for delivery")
     end
   end
 end
