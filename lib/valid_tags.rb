@@ -1,5 +1,6 @@
 class ValidTags
   ALLOWED_TAGS = %i[
+    ai_assurance_technique
     aircraft_category
     aircraft_type
     alert_type
@@ -34,6 +35,7 @@ class ValidTags
     first_published_at
     flood_and_coastal_erosion_category
     format
+    function_of_ai
     fund_state
     fund_type
     funding_amount
@@ -53,12 +55,14 @@ class ValidTags
     outcome_type
     personal_data
     policies
+    principle
     product_alert_type
     public_sector_procurement
     railway_type
     regions
     registration
     report_type
+    sector
     sector_business_area
     sift_end_date
     sifting_status
@@ -76,6 +80,7 @@ class ValidTags
     tribunal_decision_sub_categories
     tribunal_decision_sub_category
     types_of_support
+    use_case
     value_of_funding
     vessel_type
     will_continue_on
