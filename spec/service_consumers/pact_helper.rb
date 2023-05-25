@@ -142,4 +142,23 @@ Pact.provider_states_for "GDS API Adapters" do
       stub_account_api_unauthorized_user_info
     end
   end
+
+  provider_state "subscriber lists exist with 'source_list_slug' and 'destination_list_slug'" do
+    set_up do
+      create(:subscriber_list, slug: "source_list_slug")
+      create(:subscriber_list, slug: "destination_list_slug")
+    end
+  end
+
+  provider_state "a subscriber list exists for 'source_slug'" do
+    set_up do
+      create(:subscriber_list, slug: "source_list_slug")
+    end
+  end
+
+  provider_state "a subscriber list exists for 'destination_slug'" do
+    set_up do
+      create(:subscriber_list, slug: "destination_slug")
+    end
+  end
 end
