@@ -17,6 +17,10 @@ class BadListSubscriptionsMigrator
     end
   end
 
+  def bad_lists
+    subscriber_lists - valid_links_based_lists?(subscriber_lists)
+  end
+
 private
 
   def valid_prefix?
@@ -32,7 +36,7 @@ private
   end
 
   def move_users_from_bad_lists_to_good_list(lists)
-    good_lists = lists.select { |list| valid_links_based_list?(list) }
+    good_lists = valid_links_based_lists?(lists)
     bad_lists = lists - good_lists
 
     good_list = good_lists.first
@@ -46,6 +50,10 @@ private
 
   def with_active_subscriptions(lists)
     lists.select { |list| list.active_subscriptions_count.positive? }
+  end
+
+  def valid_links_based_lists?(lists)
+    lists.select { |list| valid_links_based_list?(list) }
   end
 
   def valid_links_based_list?(list)
