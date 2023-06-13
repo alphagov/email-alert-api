@@ -42,8 +42,6 @@ class SubscriberListMover
         )
 
         if subscribed_to_destination_subscriber_list.nil?
-          puts "Moving #{subscriber.address} with ID #{subscriber.id} to #{destination_subscriber_list.title} list"
-
           Subscription.create!(
             subscriber:,
             subscriber_list: destination_subscriber_list,
