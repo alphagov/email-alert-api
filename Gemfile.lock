@@ -163,7 +163,7 @@ GEM
     json (2.6.3)
     json-schema (4.0.0)
       addressable (>= 2.8)
-    jwt (2.7.0)
+    jwt (2.7.1)
     link_header (0.0.8)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
