@@ -1,5 +1,5 @@
 class BadListSubscriptionsMigrator
-  VALID_PREFIXES = %w[topic].freeze
+  VALID_PREFIXES = %w[topic organisations].freeze
 
   attr_reader :prefix
 
