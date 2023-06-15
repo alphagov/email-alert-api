@@ -56,11 +56,19 @@ RSpec.describe BadListSubscriptionsMigrator do
       )
     end
 
-    it "can only be called with valid prefix arguments" do
+    it "will raise an error with invalid prefix arguments" do
       prefix = "foo"
       remover = described_class.new(prefix)
       message = "Subscription migration not possible for the provided prefix"
       expect { remover.process_all_lists }.to raise_error(message)
+    end
+
+    it "can can only be called with valid prefix arguments" do
+      valid_prefixes = %w[topic organisations]
+      valid_prefixes.each do |prefix|
+        remover = described_class.new(prefix)
+        expect { remover.process_all_lists }.not_to raise_error
+      end
     end
 
     context "when the destination subscriber list has active subscriptions" do
