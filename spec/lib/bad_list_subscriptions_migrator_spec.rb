@@ -64,7 +64,15 @@ RSpec.describe BadListSubscriptionsMigrator do
     end
 
     it "can can only be called with valid prefix arguments" do
-      valid_prefixes = %w[topic organisations]
+      valid_prefixes = %w[
+        topic
+        organisations
+        government/people
+        government/ministers
+        government/topical-events
+        service-manual
+        service-manual/service-standard
+      ]
       valid_prefixes.each do |prefix|
         remover = described_class.new(prefix)
         expect { remover.process_all_lists }.not_to raise_error
