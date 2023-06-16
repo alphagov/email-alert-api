@@ -1,5 +1,13 @@
 class BadListSubscriptionsMigrator
-  VALID_PREFIXES = %w[topic organisations].freeze
+  VALID_PREFIXES = %w[
+    topic
+    organisations
+    government/people
+    government/ministers
+    government/topical-events
+    service-manual
+    service-manual/service-standard
+  ].freeze
 
   attr_reader :prefix
 
