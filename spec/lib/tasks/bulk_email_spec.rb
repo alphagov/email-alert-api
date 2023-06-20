@@ -52,4 +52,66 @@ RSpec.describe "bulk_email" do
         ).to_stdout
     end
   end
+
+  describe "archived_specialist_topic_subscribers" do
+    before do
+      Rake::Task["bulk_email:archived_specialist_topic_subscribers"].reenable
+    end
+
+    it "is hardcoded to call the TopicListBulkUnsubscriber with 9 malformed archived specialist topic lists" do
+      data = [
+        {
+          "list_slug" => "immigration-rules-4f0e641750",
+          "redirect_title" => "Visas and immigration operational guidance",
+          "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+        },
+        {
+          "list_slug" => "asylum-policy",
+          "redirect_title" => "Visas and immigration operational guidance",
+          "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+        },
+        {
+          "list_slug" => "fees-and-forms",
+          "redirect_title" => "Visas and immigration operational guidance",
+          "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+        },
+        {
+          "list_slug" => "nationality-guidance",
+          "redirect_title" => "Visas and immigration operational guidance",
+          "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+        },
+        {
+          "list_slug" => "entry-clearance-guidance",
+          "redirect_title" => "Visas and immigration operational guidance",
+          "redirect_url" => "government/collections/visas-and-immigration-operational-guidance",
+        },
+        {
+          "list_slug" => "immigration-staff-guidance",
+          "redirect_title" => "Immigration staff guidance",
+          "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+        },
+        {
+          "list_slug" => "business-auditing-accounting-and-reporting-38e0c4ed05",
+          "redirect_title" => "Accounting for UK companies",
+          "redirect_url" => "/guidance/accounting-for-uk-companies",
+        },
+        {
+          "list_slug" => "enforcement",
+          "redirect_title" => "Visas and immigration operational guidance",
+          "redirect_url" => "government/collections/visas-and-immigration-operational-guidance",
+        },
+        {
+          "list_slug" => "windrush-caseworker-guidance",
+          "redirect_title" => "Visas and immigration operational guidance",
+          "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+        },
+      ]
+
+      data.each do |specialist_topic_data|
+        expect(TopicListBulkUnsubscriber).to receive(:call).with(specialist_topic_data)
+      end
+
+      Rake::Task["bulk_email:archived_specialist_topic_subscribers"].invoke
+    end
+  end
 end

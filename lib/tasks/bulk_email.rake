@@ -26,4 +26,59 @@ namespace :bulk_email do
     end
     puts "Sending #{email_ids.count} emails to subscribers on the following lists: #{subscriber_lists.pluck(:slug).join(', ')}"
   end
+
+  desc "Bulk unsubscribe archived specialist topic subscribers"
+  task archived_specialist_topic_subscribers: :environment do
+    data = [
+      {
+        "list_slug" => "immigration-rules-4f0e641750",
+        "redirect_title" => "Visas and immigration operational guidance",
+        "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+      },
+      {
+        "list_slug" => "asylum-policy",
+        "redirect_title" => "Visas and immigration operational guidance",
+        "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+      },
+      {
+        "list_slug" => "fees-and-forms",
+        "redirect_title" => "Visas and immigration operational guidance",
+        "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+      },
+      {
+        "list_slug" => "nationality-guidance",
+        "redirect_title" => "Visas and immigration operational guidance",
+        "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+      },
+      {
+        "list_slug" => "entry-clearance-guidance",
+        "redirect_title" => "Visas and immigration operational guidance",
+        "redirect_url" => "government/collections/visas-and-immigration-operational-guidance",
+      },
+      {
+        "list_slug" => "immigration-staff-guidance",
+        "redirect_title" => "Immigration staff guidance",
+        "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+      },
+      {
+        "list_slug" => "business-auditing-accounting-and-reporting-38e0c4ed05",
+        "redirect_title" => "Accounting for UK companies",
+        "redirect_url" => "/guidance/accounting-for-uk-companies",
+      },
+      {
+        "list_slug" => "enforcement",
+        "redirect_title" => "Visas and immigration operational guidance",
+        "redirect_url" => "government/collections/visas-and-immigration-operational-guidance",
+      },
+      {
+        "list_slug" => "windrush-caseworker-guidance",
+        "redirect_title" => "Visas and immigration operational guidance",
+        "redirect_url" => "/government/collections/visas-and-immigration-operational-guidance",
+      },
+    ]
+
+    data.each do |hash|
+      TopicListBulkUnsubscriber.call(hash)
+    end
+  end
 end
