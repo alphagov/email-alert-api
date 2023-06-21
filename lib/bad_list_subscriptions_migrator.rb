@@ -1,24 +1,7 @@
 class BadListSubscriptionsMigrator
-  VALID_PREFIXES = %w[
-    topic
-    organisations
-    government/people
-    government/ministers
-    government/topical-events
-    service-manual
-    service-manual/service-standard
-  ].freeze
-
-  attr_reader :prefix
-
-  def initialize(prefix)
-    @prefix = prefix
-  end
+  include AllTaxonomyTopics
 
   def process_all_lists
-    message = "Subscription migration not possible for the provided prefix"
-    raise message unless valid_prefix?
-
     subscriber_list_urls.each do |url|
       candidate_lists = SubscriberList.where(url:)
       move_users_from_bad_lists_to_good_list(candidate_lists)
@@ -31,16 +14,14 @@ class BadListSubscriptionsMigrator
 
 private
 
-  def valid_prefix?
-    VALID_PREFIXES.include?(prefix)
-  end
-
   def subscriber_list_urls
     @subscriber_list_urls ||= subscriber_lists.pluck(:url).uniq
   end
 
   def subscriber_lists
-    @subscriber_lists ||= SubscriberList.where("url LIKE ?", "%/#{prefix}/%")
+    taxonomy_topic_urls.flat_map do |taxon_url|
+      SubscriberList.where(url: taxon_url)
+    end
   end
 
   def move_users_from_bad_lists_to_good_list(lists)

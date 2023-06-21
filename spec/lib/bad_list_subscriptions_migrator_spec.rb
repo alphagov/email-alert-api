@@ -2,106 +2,83 @@ RSpec.describe BadListSubscriptionsMigrator do
   describe "#process_all_lists" do
     let(:prefix) { "topic" }
 
-    let(:child_benefit_base_params) do
+    let(:taxonomy_topic_one_base_params) do
       {
-        title: "Child Benefit",
-        url: "/topic/benefits-credits/child-benefit",
+        title: "T Levels",
+        url: "/education/t-levels",
       }
     end
 
-    let(:tax_credit_base_params) do
+    let(:taxonomy_topic_two_base_params) do
       {
-        title: "Tax credits",
-        url: "/topic/benefits-credits/tax-credits",
+        title: "Lasting power of attorney, being in care and managing finances",
+        url: "/life-circumstances/lasting-power-attorney",
       }
     end
 
-    let!(:child_benefit_good_list) do
+    let!(:taxonomy_topic_one_good_list) do
       SubscriberList.create!(
-        child_benefit_base_params.merge(
-          slug: "tax-credits-and-child-benefit-child-benefit",
-          links: { "topics" => { "any" => %w[cc9eb8ab-7701-43a7-a66d-bdc5046224c0] } },
+        taxonomy_topic_one_base_params.merge(
+          slug: "t-levels",
+          links: { "taxon_tree" => { "any" => %w[d27447bd-86db-4a97-aed1-ac2049431513] } },
           content_id: nil,
         ),
       )
     end
 
-    let!(:child_benefit_bad_list) do
+    let!(:taxonomy_topic_one_bad_list) do
       SubscriberList.create!(
-        child_benefit_base_params.merge(
-          slug: "child-benefit-f71e6de312",
+        taxonomy_topic_one_base_params.merge(
+          slug: "t-levels-7333acacbe",
           links: {},
-          content_id: "cc9eb8ab-7701-43a7-a66d-bdc5046224c0",
+          content_id: "d27447bd-86db-4a97-aed1-ac2049431513",
         ),
       )
     end
 
-    let!(:tax_credit_good_list) do
+    let!(:taxonomy_topic_two_good_list) do
       SubscriberList.create!(
-        tax_credit_base_params.merge(
-          slug: "tax-credits-and-child-benefit-tax-credits",
-          links: { "topics" => { "any" => %w[f881f972-6094-4c7d-849c-9143461a9307] } },
+        taxonomy_topic_two_base_params.merge(
+          slug: "lasting-power-of-attorney-being-in-care-and-your-financial-affairs",
+          links: { "taxon_tree" => { "any" => %w[6bf58181-7ebe-4599-8a93-281f9b7af810] } },
           content_id: nil,
         ),
       )
     end
 
-    let!(:tax_credit_bad_list) do
+    let!(:taxonomy_topic_two_bad_list) do
       SubscriberList.create!(
-        tax_credit_base_params.merge(
-          slug: "tax-credits-c845c124bb",
+        taxonomy_topic_two_base_params.merge(
+          slug: "lasting-power-of-attorney-being-in-care-and-managing-finances",
           links: {},
-          content_id: "f881f972-6094-4c7d-849c-9143461a9307",
+          content_id: "6bf58181-7ebe-4599-8a93-281f9b7af810",
         ),
       )
-    end
-
-    it "will raise an error with invalid prefix arguments" do
-      prefix = "foo"
-      remover = described_class.new(prefix)
-      message = "Subscription migration not possible for the provided prefix"
-      expect { remover.process_all_lists }.to raise_error(message)
-    end
-
-    it "can can only be called with valid prefix arguments" do
-      valid_prefixes = %w[
-        topic
-        organisations
-        government/people
-        government/ministers
-        government/topical-events
-        service-manual
-        service-manual/service-standard
-      ]
-      valid_prefixes.each do |prefix|
-        remover = described_class.new(prefix)
-        expect { remover.process_all_lists }.not_to raise_error
-      end
     end
 
     context "when the destination subscriber list has active subscriptions" do
       before do
-        create(:subscription, subscriber_list: tax_credit_good_list)
-        create(:subscription, subscriber_list: child_benefit_good_list)
-        create(:subscription, subscriber_list: tax_credit_bad_list)
-        create(:subscription, subscriber_list: child_benefit_bad_list)
+        create(:subscription, subscriber_list: taxonomy_topic_two_good_list)
+        create(:subscription, subscriber_list: taxonomy_topic_one_good_list)
+        create(:subscription, subscriber_list: taxonomy_topic_two_bad_list)
+        create(:subscription, subscriber_list: taxonomy_topic_one_bad_list)
       end
 
       it "calls the SubscriberListMover" do
-        remover = described_class.new(prefix)
+        remover = described_class.new
         list_mover_double = double("SubscriberListMover")
         expect(list_mover_double).to receive(:call).twice
-        expect(tax_credit_good_list.active_subscriptions_count).to be 1
-        expect(child_benefit_good_list.active_subscriptions_count).to be 1
+        expect(taxonomy_topic_two_good_list.active_subscriptions_count).to be 1
+        expect(taxonomy_topic_one_good_list.active_subscriptions_count).to be 1
 
         allow(SubscriberListMover)
           .to receive(:new)
-          .with(from_slug: "tax-credits-c845c124bb", to_slug: "tax-credits-and-child-benefit-tax-credits")
+          .with(from_slug: "lasting-power-of-attorney-being-in-care-and-managing-finances", to_slug: "lasting-power-of-attorney-being-in-care-and-your-financial-affairs")
           .and_return(list_mover_double)
 
         allow(SubscriberListMover)
           .to receive(:new)
-          .with(from_slug: "child-benefit-f71e6de312", to_slug: "tax-credits-and-child-benefit-child-benefit")
+          .with(from_slug: "t-levels-7333acacbe", to_slug: "t-levels")
           .and_return(list_mover_double)
 
         remover.process_all_lists
@@ -110,11 +87,11 @@ RSpec.describe BadListSubscriptionsMigrator do
 
     context "when the destination subscriber list has no active subscriptions" do
       it "does not call the SubscriberListMover" do
-        remover = described_class.new(prefix)
+        remover = described_class.new
         list_mover_double = double("SubscriberListMover")
 
-        expect(tax_credit_good_list.active_subscriptions_count).to be 0
-        expect(child_benefit_good_list.active_subscriptions_count).to be 0
+        expect(taxonomy_topic_two_good_list.active_subscriptions_count).to be 0
+        expect(taxonomy_topic_one_good_list.active_subscriptions_count).to be 0
         expect(list_mover_double).not_to receive(:call)
 
         remover.process_all_lists
@@ -123,20 +100,20 @@ RSpec.describe BadListSubscriptionsMigrator do
 
     context "when the bad subscriber_list has no active subscriptions" do
       before do
-        create(:subscription, subscriber_list: tax_credit_good_list)
-        create(:subscription, subscriber_list: child_benefit_good_list)
+        create(:subscription, subscriber_list: taxonomy_topic_two_good_list)
+        create(:subscription, subscriber_list: taxonomy_topic_one_good_list)
       end
 
       it "does not call the SubscriberListMover" do
-        remover = described_class.new(prefix)
+        remover = described_class.new
         list_mover_double = double("SubscriberListMover")
 
         expect(list_mover_double).not_to receive(:call)
 
         remover.process_all_lists
 
-        expect(tax_credit_good_list.active_subscriptions_count).to be 1
-        expect(child_benefit_good_list.active_subscriptions_count).to be 1
+        expect(taxonomy_topic_two_good_list.active_subscriptions_count).to be 1
+        expect(taxonomy_topic_one_good_list.active_subscriptions_count).to be 1
       end
     end
   end
