@@ -76,29 +76,4 @@ namespace :data_migration do
       puts "Updated #{args[:key]} in #{list.title} to #{new_criteria}"
     end
   end
-
-  #  This is a temporary task which is required to tidy up following an incident that
-  # resulted in users subscribing to malformed lists.
-
-  desc "Move all users subscriber to a malformed list to the equivalent working list "
-  task migrate_users_from_bad_lists: :environment do |_t, _args|
-    migrator = BadListSubscriptionsMigrator.new
-
-    bad_subscription_counts_before = migrator.bad_lists.map(&:active_subscriptions_count)
-
-    puts "Bad subscriptions count for taxonony emails: #{bad_subscription_counts_before.sum}"
-    puts "Running migration..."
-
-    migrator.process_all_lists
-
-    puts "Migration complete"
-
-    bad_lists_with_active_subs_after = migrator.bad_lists.select { |list| list.active_subscriptions_count.positive? }
-    bad_subscription_counts_after = bad_lists_with_active_subs_after.map(&:active_subscriptions_count)
-
-    puts "There are #{bad_subscription_counts_after.sum} remaining bad subscriptions for taxonomy lists."
-    if bad_lists_with_active_subs_after.present?
-      puts "These pages still have bad lists: #{bad_lists_with_active_subs_after.pluck(:url).uniq}."
-    end
-  end
 end
