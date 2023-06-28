@@ -25,10 +25,6 @@ This task changes a subscriber's email address.
 $ bundle exec rake support:change_email_address[<old_email_address>, <new_email_address>]
 ```
 
-[⚙ Run rake task on production][change]
-
-[change]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=support:change_email_address[from@example.org,to@example.org]
-
 ## View subscriber's recent emails
 
 This task shows the most recent emails for the given user.
@@ -40,10 +36,6 @@ the user's history.
 $ bundle exec rake support:view_emails[<email_address>,<limit>]
 ```
 
-[⚙ Run rake task on production][view_emails]
-
-[view_emails]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=support:view_emails[email@example.org]
-
 ## View subscriber's subscriptions
 
 This task shows you all of the active and inactive subscriptions for a given user.
@@ -51,10 +43,6 @@ This task shows you all of the active and inactive subscriptions for a given use
 ```bash
 $ bundle exec rake support:view_subscriptions[<email_address>]
 ```
-
-[⚙ Run rake task on production][view]
-
-[view]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=support:view_subscriptions[email@example.org]
 
 ## Unsubscribe a subscriber from a specific subscription
 
@@ -65,10 +53,6 @@ You can find out the slug of the subscriber list by running the `view_subscripti
 $ bundle exec rake support:unsubscribe_single_subscription[<email_address>,<subscriber_list_slug>]
 ```
 
-[⚙ Run rake task on production][unsub_specific]
-
-[unsub_specific]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=support:unsubscribe_single_subscription[email@example.org,subscriber-list-slug]
-
 ## Unsubscribe a subscriber from all emails
 
 This task unsubscribes one subscriber from everything they have subscribed to.
@@ -76,10 +60,6 @@ This task unsubscribes one subscriber from everything they have subscribed to.
 ```bash
 $ bundle exec rake support:unsubscribe_all_subscriptions[<email_address>]
 ```
-
-[⚙ Run rake task on production][unsub]
-
-[unsub]: https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=support:unsubscribe_all_subscriptions[email@example.org]
 
 ## Send a test email
 
@@ -137,12 +117,6 @@ The path should be the full path on gov.uk (for instance /government/statistics/
 
 You can also pass it a :active_on_datetime which will count how many active subscriptions there were at the end of the day on a particular date. The active_on_date defaults to today if not specified, and should be in ISO8601 format, for example 2022-03-03T12:12:16+00:00. The time will always be rounded to the end of the day, even if that is in the future.
 
-You can run the task on Jenkins with the following links:
-
-- [Integration](https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:subscriber_list_subscriber_count[%22%3Cpage_path_here%3E%22]) - Only really useful for testing
-- [Staging](https://deploy.blue.staging.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:subscriber_list_subscriber_count[%22%3Cpage_path_here%3E%22]) - Data will be a snapshot from last replication
-- [Production](https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:subscriber_list_subscriber_count[%22%3Cpage_path_here%3E%22]) - Live data
-
 ## Finding all subscriber lists that match a given page.
 
 The previous rake task only gets subscriber lists that match a URL. But subscribers can match on topics/tags/links, so to get a full idea of how many people subscribe to a page you will need to access the console:
@@ -189,9 +163,3 @@ that can be overridden to increase or decrease the output number.
 ```bash
 bundle exec rake 'report:single_page_notifications_top_subscriber_lists[5]'
 ```
-
-You can run the task on Jenkins with the following links:
-
-- [Integration](https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:single_page_notifications_top_subscriber_lists) - Only really useful for testing
-- [Staging](https://deploy.blue.staging.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:single_page_notifications_top_subscriber_lists) - Data will be a snapshot from last replication
-- [Production](https://deploy.blue.production.govuk.digital/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:single_page_notifications_top_subscriber_lists) - Live data
