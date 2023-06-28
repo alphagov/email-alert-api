@@ -63,6 +63,39 @@ whereas the travel advice index subscription (which includes all
 countries) only uses `document_type`. See [this wiki page](https://gov-uk.atlassian.net/wiki/pages/viewpage.action?pageId=108625932)
 for details of how each kind of subscription works.
 
+### UUID field
+
+- `content_id`
+
+This field stores the content ID of a page on GOV.UK.
+
+Content ID based subscriber lists match against any content changes
+that share the same content ID. These lists do not have populated
+`document_type`, `email_document_supertype` or `government_document_supertype`
+string fields.
+
+Content ID based lists can also have links. When both links and content ID
+are present, the list will match content changes by links OR by content-id.
+
+This "OR" match means we can support reverse linked email subscriptions. For example:
+
+A user subscribes to alerts on a document collection page, with content ID '123-abc'.
+The params sent to email alert api contains both links and content ID, and will
+create a subscriber list that contains:
+
+```
+content_id: "123-abc"
+links: {
+    "document_collections" : {
+        "any"=> [ "123-abc" ]
+    }
+},
+
+```
+This list will match content changes made to the page with content ID "123-abc",
+and it will also match content changes to child pages which are reverse linked to
+to page with content id "123-abc".
+
 ## Finding matches
 
 The queries on subscriber lists power the two sides of the email system:
