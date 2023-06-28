@@ -11,18 +11,19 @@ or needs guidance, can be assigned to "2nd Line--User Support Escalation".
 > their own service using Govdelivery. We do not have access to this.
 
 If it is not possible for changes to be managed by the user, it is
-possible for changes to be made manually. The following rake tasks
-should be run using the Jenkins `Run rake task` job for ease-of-use:
+possible for changes to be made manually. The following rake tasks should be
+run using the `kubectl` command, as described in the [EKS documentation][eks-docs].
 
 [email-manage]: https://www.gov.uk/email/manage
 [drug-updates]: https://www.gov.uk/drug-safety-update
+[eks-docs]: https://docs.publishing.service.gov.uk/manual/kubernetes-infrastructure.html
 
 ## Change a subscriber's email address
 
 This task changes a subscriber's email address.
 
 ```bash
-$ bundle exec rake support:change_email_address[<old_email_address>, <new_email_address>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:change_email_address[<old_email_address>, <new_email_address>]
 ```
 
 ## View subscriber's recent emails
@@ -33,7 +34,7 @@ It takes two parameters: `email_address` (required), and `limit` (optional).
 the user's history.
 
 ```bash
-$ bundle exec rake support:view_emails[<email_address>,<limit>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:view_emails[<email_address>,<limit>]
 ```
 
 ## View subscriber's subscriptions
@@ -41,7 +42,7 @@ $ bundle exec rake support:view_emails[<email_address>,<limit>]
 This task shows you all of the active and inactive subscriptions for a given user.
 
 ```bash
-$ bundle exec rake support:view_subscriptions[<email_address>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:view_subscriptions[<email_address>]
 ```
 
 ## Unsubscribe a subscriber from a specific subscription
@@ -50,7 +51,7 @@ This task unsubscribes one subscriber from a subscription, given an email addres
 You can find out the slug of the subscriber list by running the `view_subscriptions` rake task. above
 
 ```bash
-$ bundle exec rake support:unsubscribe_single_subscription[<email_address>,<subscriber_list_slug>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:unsubscribe_single_subscription[<email_address>,<subscriber_list_slug>]
 ```
 
 ## Unsubscribe a subscriber from all emails
@@ -58,7 +59,7 @@ $ bundle exec rake support:unsubscribe_single_subscription[<email_address>,<subs
 This task unsubscribes one subscriber from everything they have subscribed to.
 
 ```bash
-$ bundle exec rake support:unsubscribe_all_subscriptions[<email_address>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:unsubscribe_all_subscriptions[<email_address>]
 ```
 
 ## Send a test email
@@ -66,7 +67,7 @@ $ bundle exec rake support:unsubscribe_all_subscriptions[<email_address>]
 To send a test email to an email address (doesn't have to be subscribed to anything):
 
 ```bash
-$ bundle exec rake support:send_test_email[<email_address>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:send_test_email[<email_address>]
 ```
 
 ## Resend failed emails
@@ -78,7 +79,7 @@ an incident to resend all emails that failed with a technical failure.
 ### Using a date range
 
 ```bash
-bundle exec rake 'support:resend_failed_emails:by_date[<from_date>,<to_date>]'
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'support:resend_failed_emails:by_date[<from_date>,<to_date>]'
 ```
 
 The date format should be in ISO8601 format, for example `2020-01-01T10:00:00Z`.
@@ -87,7 +88,7 @@ Depending on the number of emails to send, the Rake task can take a few minutes 
 ### Using email IDs
 
 ```bash
-bundle exec rake 'support:resend_failed_emails:by_id[<email_one_id>,<email_two_id>]'
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'support:resend_failed_emails:by_id[<email_one_id>,<email_two_id>]'
 ```
 
 ## Get subscriber list csv report
@@ -95,7 +96,7 @@ bundle exec rake 'support:resend_failed_emails:by_id[<email_one_id>,<email_two_i
 To see a csv report for the number of subscribers for a given list:
 
 ```bash
-bundle exec rake 'report:csv_subscriber_lists[<on_date>] SLUGS=<list_slug>'
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:csv_subscriber_lists[<on_date>] SLUGS=<list_slug>'
 ```
 
 The date should be in ISO8601 format, for example 2020-01-01.
@@ -105,7 +106,7 @@ The date should be in ISO8601 format, for example 2020-01-01.
 To see a simple count of the number of subscribers for a given list:
 
 ```bash
-bundle exec rake 'report:csv_subscriber_lists[<path>,<active_on_date (optional)>]'
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:csv_subscriber_lists[<path>,<active_on_date (optional)>]'
 ```
 This will report on the number of active subscriptions for a given path.
 
@@ -122,7 +123,7 @@ You can also pass it a :active_on_datetime which will count how many active subs
 The previous rake task only gets subscriber lists that match a URL. But subscribers can match on topics/tags/links, so to get a full idea of how many people subscribe to a page you will need to access the console:
 
 ```bash
-gds govuk connect -e integration app-console email-alert-api
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rails c
 ```
 
 ..then you can create a SubscriberListQuery. If an email has already been sent out for a page, you can query the ContentChange item for that email:
@@ -154,12 +155,12 @@ If an email hasn't already been sent out, you will need to console into an app t
 This report provides a count of all subscriber lists with a content ID, followed by individual subscriber lists ordered by active subscriber count.
 
 ```bash
-bundle exec rake 'report:single_page_notifications_top_subscriber_lists'
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:single_page_notifications_top_subscriber_lists'
 ```
 
 By default output is limited to only show the top 25 lists by active subscriber count. However
 that can be overridden to increase or decrease the output number.
 
 ```bash
-bundle exec rake 'report:single_page_notifications_top_subscriber_lists[5]'
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:single_page_notifications_top_subscriber_lists[5]'
 ```
