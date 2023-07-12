@@ -151,11 +151,11 @@ RSpec.describe MatchedForNotification do
     end
 
     context "matches on content_store_document_type" do
-      let!(:list1) { create(:subscriber_list, links: { content_store_document_type: { any: %w[news_article] } }) }
+      let!(:list1) { create(:subscriber_list, links: { content_store_document_type: { any: %w[press_release] } }) }
       let!(:list2) { create(:subscriber_list, links: { content_store_document_type: { any: %w[other_type] } }) }
 
       it "finds subscriber lists matching content_store_document_type" do
-        lists = execute_query({ content_store_document_type: "news_article" }, field: :links)
+        lists = execute_query({ content_store_document_type: "press_release" }, field: :links)
         expect(lists).to eq([list1])
       end
     end

@@ -23,7 +23,7 @@ RSpec.describe ContentChangeHandlerService do
       public_updated_at: Time.zone.now.to_s,
       email_document_supertype: "email document supertype",
       government_document_supertype: "government document supertype",
-      document_type: "news_article",
+      document_type: "press_release",
       publishing_app: "publishing app",
     }
   end
@@ -37,11 +37,11 @@ RSpec.describe ContentChangeHandlerService do
   let(:document_type_hash) do
     {
       user_journey_document_supertype: "thing",
-      email_document_supertype: "other",
-      government_document_supertype: "other",
+      email_document_supertype: "announcements",
+      government_document_supertype: "press-releases",
       content_purpose_subgroup: "news",
       content_purpose_supergroup: "news_and_communications",
-      content_store_document_type: "news_article",
+      content_store_document_type: "press_release",
     }
   end
 
@@ -63,17 +63,17 @@ RSpec.describe ContentChangeHandlerService do
         description: "This is a description",
         links: hash_including(
           organisations: %w[c380ea42-5d91-41cc-b3cd-0a4cfe439461],
-          content_store_document_type: "news_article",
+          content_store_document_type: "press_release",
           taxon_tree: %w[6416e4e0-c0c1-457a-8337-4bf8ed9d5f80],
         ),
         tags: hash_including(
           topics: ["oil-and-gas/licensing"],
-          content_store_document_type: "news_article",
+          content_store_document_type: "press_release",
         ),
         email_document_supertype: "email document supertype",
         government_document_supertype: "government document supertype",
         govuk_request_id:,
-        document_type: "news_article",
+        document_type: "press_release",
         publishing_app: "publishing app",
         processed_at: nil,
         priority: "normal",
