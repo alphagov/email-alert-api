@@ -28,4 +28,11 @@ namespace :report do
   task :single_page_notifications_top_subscriber_lists, %i[limit] => :environment do |_t, args|
     puts Reports::SinglePageNotificationsReport.new(args[:limit] || 25).call.join("\n")
   end
+
+  desc "Output content-change information for a page URL"
+  task :content_change_statistics, %i[url] => :environment do |_t, args|
+    puts Reports::ContentChangeStatisticsReport.new(
+      args.fetch(:url),
+    ).call
+  end
 end

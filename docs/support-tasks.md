@@ -118,37 +118,15 @@ The path should be the full path on gov.uk (for instance /government/statistics/
 
 You can also pass it a :active_on_datetime which will count how many active subscriptions there were at the end of the day on a particular date. The active_on_date defaults to today if not specified, and should be in ISO8601 format, for example 2022-03-03T12:12:16+00:00. The time will always be rounded to the end of the day, even if that is in the future.
 
-## Finding all subscriber lists that match a given page.
+## Finding out how many messages were sent when a page changed
 
-The previous rake task only gets subscriber lists that match a URL. But subscribers can match on topics/tags/links, so to get a full idea of how many people subscribe to a page you will need to access the console:
+The previous rake task only gets subscriber lists that match a URL. But subscribers can match on topics/tags/links, so to get a full idea of how many people subscribe to a page:
 
 ```bash
-kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rails c
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:content_change_statistics[<path>]'
 ```
 
-..then you can create a SubscriberListQuery. If an email has already been sent out for a page, you can query the ContentChange item for that email:
-
-
-```
-cc = ContentChange.where(base_path: '/government/publications/my-publication').first
-```
-
-...then use that to build a SubscriberlistQuery:
-
-```
-lists = SubscriberListQuery.new(content_id: cc.content_id, tags: cc.tags, links: cc.links, document_type: cc.document_type, email_document_supertype: cc.email_document_supertype, government_document_supertype: cc.government_document_supertype).lists
-
-total_subs = lists.sum { |l| l.subscriptions.active.count }
-
-# Broken down by frequency:
-
-immediately_subs = lists.sum { |l| l.subscriptions.active.immediately.count }
-daily_subs = lists.sum { |l| l.subscriptions.active.daily.count }
-weekly_subs = lists.sum { |l| l.subscriptions.active.weekly.count }
-
-```
-
-If an email hasn't already been sent out, you will need to console into an app that has access to the Content Store and find the values for the SubscriberListQuery manually and copy/paste them across.
+This gives you a list of all the content changes that have been registered for that path - this is all the times that email-alert-api actually sent out notifications, with a breakdown for each occurence into the number of people notified immediately, in the next daily digest, and in the weekly digest.
 
 ## Get a report of single page notification subscriber lists by active subscriber count
 
