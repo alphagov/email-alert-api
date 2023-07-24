@@ -9,6 +9,8 @@ namespace :report do
   task :csv_subscriber_lists, [:date] => :environment do |_t, args|
     options = { slugs: ENV.fetch("SLUGS", ""), tags_pattern: ENV["TAGS_PATTERN"], links_pattern: ENV["LINKS_PATTERN"], headers: ENV["HEADERS"] }
     puts Reports::SubscriberListsReport.new(args[:date], **options).call
+  rescue Date::Error
+    puts "Cannot parse date, is this a valid ISO8601 date?: #{date}"
   end
 
   desc "Outputs a CSV of subscriber lists that appear to be inactive (tech debt)"
