@@ -123,10 +123,20 @@ You can also pass it a :active_on_datetime which will count how many active subs
 The previous rake task only gets subscriber lists that match a URL. But subscribers can match on topics/tags/links, so to get a full idea of how many people subscribe to a page:
 
 ```bash
-kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:content_change_statistics[<path>]'
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:historical_content_change_statistics[<path>]'
 ```
 
 This gives you a list of all the content changes that have been registered for that path - this is all the times that email-alert-api actually sent out notifications, with a breakdown for each occurence into the number of people notified immediately, in the next daily digest, and in the weekly digest.
+
+## Finding out how many messages would be sent if a page were changed
+
+The previous rake task is only useful once emails have gone out. Occasinally you might be asked for details of how many people will be notified if a major change is published to a document. You can find that out with this task:
+
+```bash
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:future_content_change_statistics[<path>,<use draft store?>]'
+```
+
+The second parameter should be true or false depending on whether you want to use information from the draft or live content stores (note that the most common thing that will change the number of subscriber lists notified are the links and organisations, and if changed they occur immediately, and do not differ on the draft and live stores).
 
 ## Get a report of single page notification subscriber lists by active subscriber count
 
