@@ -29,10 +29,18 @@ namespace :report do
     puts Reports::SinglePageNotificationsReport.new(args[:limit] || 25).call.join("\n")
   end
 
-  desc "Output content-change information for a page URL"
-  task :content_change_statistics, %i[url] => :environment do |_t, args|
-    puts Reports::ContentChangeStatisticsReport.new(
-      args.fetch(:url),
+  desc "Output how many people were notified for recent content changes to the page at the given path"
+  task :historical_content_change_statistics, %i[govuk_path] => :environment do |_t, args|
+    puts Reports::HistoricalContentChangeStatisticsReport.new(
+      args.fetch(:govuk_path),
+    ).call
+  end
+
+  desc "Output how many people would be notified if a major change were published at the given path"
+  task :future_content_change_statistics, %i[govuk_path draft] => :environment do |_t, args|
+    puts Reports::FutureContentChangeStatisticsReport.new(
+      args.fetch(:govuk_path),
+      args.fetch(:draft).downcase == "true",
     ).call
   end
 end
