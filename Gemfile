@@ -8,7 +8,7 @@ gem "bootsnap", require: false
 gem "faraday"
 gem "gds-api-adapters"
 gem "gds-sso"
-gem "govuk_app_config"
+gem "govuk_app_config", git: "https://github.com/alphagov/govuk_app_config",  branch: "no-open-telemetry-in-rake"
 gem "govuk_document_types"
 gem "govuk_personalisation"
 gem "govuk_sidekiq"

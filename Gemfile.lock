@@ -1,3 +1,21 @@
+GIT
+  remote: https://github.com/alphagov/govuk_app_config
+  revision: 898b2074783360e058ee261dddffc606b76de624
+  branch: no-open-telemetry-in-rake
+  specs:
+    govuk_app_config (9.0.4)
+      logstasher (~> 2.1)
+      opentelemetry-exporter-otlp (>= 0.25, < 0.27)
+      opentelemetry-instrumentation-all (>= 0.39.1, < 0.41.0)
+      opentelemetry-sdk (~> 1.2)
+      plek (>= 4, < 6)
+      prometheus_exporter (~> 2.0)
+      puma (>= 5.6, < 7.0)
+      rack-proxy (~> 0.7)
+      sentry-rails (~> 5.3)
+      sentry-ruby (~> 5.3)
+      statsd-ruby (~> 1.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -138,18 +156,6 @@ GEM
     google-protobuf (3.23.4-x86_64-linux)
     googleapis-common-protos-types (1.7.0)
       google-protobuf (~> 3.14)
-    govuk_app_config (9.0.4)
-      logstasher (~> 2.1)
-      opentelemetry-exporter-otlp (~> 0.25.0)
-      opentelemetry-instrumentation-all (~> 0.39.1)
-      opentelemetry-sdk (~> 1.2)
-      plek (>= 4, < 6)
-      prometheus_exporter (~> 2.0)
-      puma (>= 5.6, < 7.0)
-      rack-proxy (~> 0.7)
-      sentry-rails (~> 5.3)
-      sentry-ruby (~> 5.3)
-      statsd-ruby (~> 1.5)
     govuk_document_types (2.0.0)
     govuk_personalisation (0.14.0)
       plek (>= 1.9.0)
@@ -667,7 +673,7 @@ DEPENDENCIES
   faraday
   gds-api-adapters
   gds-sso
-  govuk_app_config
+  govuk_app_config!
   govuk_document_types
   govuk_personalisation
   govuk_sidekiq
