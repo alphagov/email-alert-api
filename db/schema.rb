@@ -119,6 +119,14 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_02_150419) do
     t.index ["sender_message_id"], name: "index_messages_on_sender_message_id", unique: true
   end
 
+  create_table "subscriber_list_audits", force: :cascade do |t|
+    t.bigint "subscriber_list_id", null: false
+    t.integer "reference_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["subscriber_list_id"], name: "index_subscriber_list_audits_on_subscriber_list_id"
+  end
+
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
     t.text "title", null: false
     t.datetime "created_at", precision: nil
@@ -207,6 +215,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_02_150419) do
   add_foreign_key "matched_content_changes", "subscriber_lists", on_delete: :cascade
   add_foreign_key "matched_messages", "messages", on_delete: :cascade
   add_foreign_key "matched_messages", "subscriber_lists", on_delete: :cascade
+  add_foreign_key "subscriber_list_audits", "subscriber_lists"
   add_foreign_key "subscription_contents", "content_changes", on_delete: :restrict
   add_foreign_key "subscription_contents", "digest_run_subscribers", on_delete: :cascade
   add_foreign_key "subscription_contents", "emails", on_delete: :cascade
