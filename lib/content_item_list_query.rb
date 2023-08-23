@@ -7,8 +7,10 @@ class ContentItemListQuery
   end
 
   def lists
-    content_item = content_store_client.content_item(govuk_path).to_hash
+    lists_by_content_item(content_store_client.content_item(govuk_path).to_hash)
+  end
 
+  def lists_by_content_item(content_item)
     SubscriberListQuery.new(
       content_id: content_item["content_id"],
       tags: tags_from_content_item(content_item),
