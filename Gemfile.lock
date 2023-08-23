@@ -112,6 +112,8 @@ GEM
     erubi (1.12.0)
     et-orbi (1.2.7)
       tzinfo
+    ethon (0.16.0)
+      ffi (>= 1.15.0)
     expgen (0.1.1)
       parslet
     factory_bot (6.4.5)
@@ -660,6 +662,9 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
+    sitemap-parser (0.5.6)
+      nokogiri (~> 1.6)
+      typhoeus (>= 0.6, < 2.0)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -674,6 +679,8 @@ GEM
     timeout (0.4.1)
     tins (1.32.1)
       sync
+    typhoeus (1.4.0)
+      ethon (>= 0.9.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
@@ -734,6 +741,7 @@ DEPENDENCIES
   sentry-sidekiq
   sidekiq-scheduler
   simplecov
+  sitemap-parser
   webmock
   with_advisory_lock
 
