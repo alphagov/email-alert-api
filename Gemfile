@@ -22,6 +22,7 @@ gem "ratelimit"
 gem "redcarpet"
 gem "sentry-sidekiq"
 gem "sidekiq-scheduler"
+gem "sitemap-parser"
 gem "with_advisory_lock"
 
 group :test do
