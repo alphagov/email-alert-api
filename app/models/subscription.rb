@@ -30,6 +30,7 @@ class Subscription < ApplicationRecord
 
   scope :active, -> { where(ended_at: nil) }
   scope :ended, -> { where.not(ended_at: nil) }
+  scope :not_historical, -> { where("ended_at IS NULL OR ended_at >= ?", 1.week.ago) }
 
   scope :active_on,
         lambda { |date|

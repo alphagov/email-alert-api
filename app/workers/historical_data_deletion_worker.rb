@@ -1,21 +1,21 @@
 class HistoricalDataDeletionWorker < ApplicationWorker
   def perform
     # cascades matched content changes
-    delete_and_log("content changes") { ContentChange.where("created_at < ?", max_retention_period) }
+    destroy_and_log("content changes") { ContentChange.where("created_at < ?", max_retention_period) }
 
     # cascades matched messages
-    delete_and_log("messages") { Message.where("created_at < ?", max_retention_period) }
+    destroy_and_log("messages") { Message.where("created_at < ?", max_retention_period) }
 
     # cascades digest run subscribers
-    delete_and_log("digest runs") { DigestRun.where("created_at < ?", max_retention_period) }
+    destroy_and_log("digest runs") { DigestRun.where("created_at < ?", max_retention_period) }
 
     # deleting subscriptions must be done before deleting subscriber lists or subscribers
-    delete_and_log("subscriptions") { Subscription.where("ended_at < ?", max_retention_period) }
+    destroy_and_log("subscriptions") { Subscription.where("ended_at < ?", max_retention_period) }
 
-    delete_and_log("subscriber lists") { historic_subscriber_lists }
+    destroy_and_log("subscriber lists") { historic_subscriber_lists }
 
     # restricts deletion if emails are present
-    delete_and_log("subscribers") { historic_subscribers }
+    destroy_and_log("subscribers") { historic_subscribers }
   end
 
 private
@@ -28,9 +28,9 @@ private
     @empty_list_retention_period ||= 7.days.ago
   end
 
-  def delete_and_log(model)
+  def destroy_and_log(model)
     start_time = Time.zone.now
-    deleted_count = yield.delete_all
+    deleted_count = yield.destroy_all
     seconds = (Time.zone.now - start_time).round(2)
 
     message = "Deleted #{deleted_count} #{model} in #{seconds} seconds"
@@ -38,7 +38,7 @@ private
   end
 
   def historic_subscriber_lists
-    subscriptions_exist = Subscription.where(
+    subscriptions_exist = Subscription.not_historical.where(
       "subscriber_lists.id = subscriptions.subscriber_list_id",
     ).arel.exists
 
@@ -48,7 +48,7 @@ private
   end
 
   def historic_subscribers
-    subscriptions_exist = Subscription.where(
+    subscriptions_exist = Subscription.not_historical.where(
       "subscribers.id = subscriptions.subscriber_id",
     ).arel.exists
 
