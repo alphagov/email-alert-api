@@ -59,7 +59,7 @@ class Reports::FutureContentChangeStatisticsReport
   end
 
   def tags_from_content_item(content_item)
-    content_item["details"]["tags"].merge(additional_items(content_item))
+    content_item["details"].fetch("tags", {}).merge(additional_items(content_item))
   end
 
   def links_from_content_item(content_item)
@@ -80,6 +80,9 @@ class Reports::FutureContentChangeStatisticsReport
   end
 
   def taxon_tree(content_item)
+    return [] unless content_item["links"].key?("taxons")
+    return [] unless content_item["links"]["taxons"].any?
+
     [content_item["links"]["taxons"].first["content_id"]] + get_parent_links(content_item["links"]["taxons"].first)
   end
 
