@@ -1,6 +1,6 @@
 module Reports::Concerns::NotificationStats
   def list_names_array(lists)
-    lists.collect(&:title)
+    lists.map { |l| "#{l.title} (#{l.subscriptions.active.count} active subscribers)" }
   end
 
   def list_stats_array(lists)

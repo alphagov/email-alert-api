@@ -40,7 +40,7 @@ namespace :report do
   task :future_content_change_statistics, %i[govuk_path draft] => :environment do |_t, args|
     puts Reports::FutureContentChangeStatisticsReport.new(
       args.fetch(:govuk_path),
-      args.fetch(:draft).downcase == "true",
+      args.fetch(:draft, "false").downcase == "true",
     ).call
   end
 end
