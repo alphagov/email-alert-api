@@ -17,7 +17,7 @@ report:csv_subscriber_lists["2020-11-05"]
 SLUGS=living-in-spain,living-in-italy report:csv_subscriber_lists["2020-11-05"]
 
 # or with tags containing a string
-TAGS_PATTERN=brexit_checklist_criteria report:csv_subscriber_lists["2020-11-05"]
+TAGS_PATTERN=country report:csv_subscriber_lists["2020-11-05"]
 
 # or with links containing a string
 LINKS_PATTERN=countries report:csv_subscriber_lists["2020-11-05"]
