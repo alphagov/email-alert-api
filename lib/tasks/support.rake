@@ -133,12 +133,4 @@ namespace :support do
       end
     end
   end
-
-  desc "Destroy all Brexit checker subscriptions"
-  task destroy_all_brexit_checker_subscriptions: :environment do
-    brexit_subscriber_lists = SubscriberList.where("tags ->> 'brexit_checklist_criteria' IS NOT NULL")
-
-    puts "Destroying #{brexit_subscriber_lists.count} subscriber #{'list'.pluralize(brexit_subscriber_lists.count)}"
-    brexit_subscriber_lists.destroy_all
-  end
 end

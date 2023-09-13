@@ -80,32 +80,4 @@ RSpec.describe "support" do
       end
     end
   end
-
-  describe "destroy_all_brexit_checker_subscriptions" do
-    before do
-      Rake::Task["support:destroy_all_brexit_checker_subscriptions"].reenable
-    end
-
-    it "destroys all Brexit checker subscriptions" do
-      subscription = create :subscription, :brexit_checker
-      subscriber_list = subscription.subscriber_list
-
-      expect {
-        Rake::Task["support:destroy_all_brexit_checker_subscriptions"].invoke
-      }.to change { SubscriberList.exists?(subscriber_list.id) }.to(false)
-
-      expect(Subscription.exists?(subscription.id)).to be false
-    end
-
-    it "only destroys Brexit checker subscriptions" do
-      create :subscription, :brexit_checker
-      subscription = create :subscription
-
-      expect {
-        Rake::Task["support:destroy_all_brexit_checker_subscriptions"].invoke
-      }.to output("Destroying 1 subscriber list\n").to_stdout
-
-      expect(Subscription.exists?(subscription.id)).to be true
-    end
-  end
 end
