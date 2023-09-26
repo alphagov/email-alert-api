@@ -5,7 +5,6 @@ class ValidTags
     alert_type
     appear_in_find_eu_exit_guidance_business_finder
     assessment_date
-    brexit_checklist_criteria
     business_activity
     business_sizes
     business_stages
