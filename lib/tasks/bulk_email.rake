@@ -26,4 +26,15 @@ namespace :bulk_email do
     end
     puts "Sending #{email_ids.count} emails to subscribers on the following lists: #{subscriber_lists.pluck(:slug).join(', ')}"
   end
+
+  desc "Send a bulk email to users that were bulk unsubscribed on Friday 22nd Sept in error"
+  task for_users_unsubscribed_in_error: :environment do
+    subscriber_list = SubscriberList.find_by(slug: "intellectual-property-trade-marks")
+
+    email_ids = BulkSubscriberListEmailBuilderForFilteredSubscriptions.new(subscriber_list).call
+    email_ids.each do |id|
+      SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate)
+    end
+    puts "Sending #{email_ids.count} emails to subscribers on subscriber list: #{subscriber_list.title}"
+  end
 end
