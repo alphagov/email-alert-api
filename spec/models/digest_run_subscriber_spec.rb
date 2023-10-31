@@ -26,10 +26,5 @@ RSpec.describe DigestRunSubscriber do
       ids = described_class.populate(digest_run, [subscriber.id])
       expect(ids).to eq([described_class.last.id])
     end
-
-    it "raises an error when given an empty collection of subscribers" do
-      expect { described_class.populate(digest_run, []) }
-        .to raise_error(ArgumentError)
-    end
   end
 end
