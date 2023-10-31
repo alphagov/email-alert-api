@@ -11,7 +11,7 @@ module TokenHelpers
     cipher = AuthTokenGeneratorService::CIPHER
     len = ActiveSupport::MessageEncryptor.key_len(cipher)
 
-    secret = Rails.application.secrets.email_alert_auth_token
+    secret = Rails.application.credentials.email_alert_auth_token
     key = ActiveSupport::KeyGenerator.new(secret, hash_digest_class: OpenSSL::Digest::SHA256).generate_key("", len)
 
     options = AuthTokenGeneratorService::OPTIONS

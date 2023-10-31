@@ -21,7 +21,7 @@ class AuthTokenGeneratorService
 
   def self.crypt
     @crypt ||= begin
-      secret = Rails.application.secrets.email_alert_auth_token
+      secret = Rails.application.credentials.email_alert_auth_token
       len = ActiveSupport::MessageEncryptor.key_len(CIPHER)
       key = ActiveSupport::KeyGenerator.new(secret).generate_key("", len)
       ActiveSupport::MessageEncryptor.new(key, **OPTIONS)

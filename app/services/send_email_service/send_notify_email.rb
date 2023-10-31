@@ -1,7 +1,7 @@
 class SendEmailService::SendNotifyEmail
   def initialize(email)
     @email = email
-    @client = Notifications::Client.new(Rails.application.secrets.notify_api_key)
+    @client = Notifications::Client.new(Rails.application.credentials.notify_api_key)
   end
 
   def self.call(*args)
