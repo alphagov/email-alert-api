@@ -23,6 +23,13 @@ class StatusUpdatesController < ApplicationController
       UnsubscribeAllService.call(subscriber, :non_existent_email) if subscriber
     end
 
+    begin
+      Email.find(reference).update!(notify_status: status)
+    rescue StandardError
+      # At the moment we don't want to do anything if
+      # the reference can't be found.
+    end
+
     head :no_content
   end
 

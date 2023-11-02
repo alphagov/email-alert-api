@@ -20,6 +20,18 @@ RSpec.describe "Receiving a status update", type: :request do
       expect(response.body).to eq("")
     end
 
+    context "with a relevant email" do
+      before do
+        @email = create(:email, id: params[:reference])
+      end
+
+      it "updates the referenced email" do
+        post("/status-updates", params:)
+
+        expect(@email.reload.notify_status).to eq(status)
+      end
+    end
+
     context "when a user does not have 'status_updates' permission" do
       let(:permissions) { %w[signin] }
 
