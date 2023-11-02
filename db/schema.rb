@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_02_140714) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_02_150419) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -74,9 +74,12 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_02_140714) do
     t.integer "status", default: 0, null: false
     t.datetime "sent_at", precision: nil
     t.uuid "content_id"
+    t.string "notify_status"
     t.index ["address"], name: "index_emails_on_address"
     t.index ["content_id"], name: "index_emails_on_content_id"
     t.index ["created_at"], name: "index_emails_on_created_at"
+    t.index ["id"], name: "index_emails_on_id"
+    t.index ["notify_status"], name: "index_emails_on_notify_status"
     t.index ["subscriber_id"], name: "index_emails_on_subscriber_id"
   end
 
