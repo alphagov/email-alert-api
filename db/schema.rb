@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
-
+ActiveRecord::Schema[7.1].define(version: 2023_11_02_140714) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -24,15 +23,15 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
     t.text "description", null: false
     t.json "links", default: {}, null: false
     t.json "tags", default: {}, null: false
-    t.datetime "public_updated_at", null: false
+    t.datetime "public_updated_at", precision: nil, null: false
     t.string "email_document_supertype", null: false
     t.string "government_document_supertype", null: false
     t.string "govuk_request_id", null: false
     t.string "document_type", null: false
     t.string "publishing_app", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "processed_at"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "processed_at", precision: nil
     t.integer "priority", default: 0
     t.string "signon_user_uid"
     t.text "footnote", default: "", null: false
@@ -43,9 +42,9 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
   create_table "digest_run_subscribers", force: :cascade do |t|
     t.integer "digest_run_id", null: false
     t.integer "subscriber_id", null: false
-    t.datetime "processed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "processed_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["digest_run_id", "subscriber_id"], name: "index_digest_run_subscribers_on_digest_run_id_and_subscriber_id", unique: true
     t.index ["digest_run_id"], name: "index_digest_run_subscribers_on_digest_run_id"
     t.index ["subscriber_id"], name: "index_digest_run_subscribers_on_subscriber_id"
@@ -53,13 +52,13 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
 
   create_table "digest_runs", force: :cascade do |t|
     t.date "date", null: false
-    t.datetime "starts_at", null: false
-    t.datetime "ends_at", null: false
+    t.datetime "starts_at", precision: nil, null: false
+    t.datetime "ends_at", precision: nil, null: false
     t.integer "range", null: false
-    t.datetime "completed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "processed_at"
+    t.datetime "completed_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "processed_at", precision: nil
     t.index ["completed_at"], name: "index_digest_runs_on_completed_at"
     t.index ["created_at"], name: "index_digest_runs_on_created_at"
     t.index ["date", "range"], name: "index_digest_runs_on_date_and_range", unique: true
@@ -68,21 +67,23 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
   create_table "emails", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.text "subject", null: false
     t.text "body", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "address", null: false
     t.bigint "subscriber_id"
     t.integer "status", default: 0, null: false
-    t.datetime "sent_at"
+    t.datetime "sent_at", precision: nil
+    t.uuid "content_id"
     t.index ["address"], name: "index_emails_on_address"
+    t.index ["content_id"], name: "index_emails_on_content_id"
     t.index ["created_at"], name: "index_emails_on_created_at"
     t.index ["subscriber_id"], name: "index_emails_on_subscriber_id"
   end
 
   create_table "matched_content_changes", force: :cascade do |t|
     t.bigint "subscriber_list_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.uuid "content_change_id", null: false
     t.index ["content_change_id", "subscriber_list_id"], name: "index_matched_content_changes_content_change_subscriber_list", unique: true
     t.index ["content_change_id"], name: "index_matched_content_changes_on_content_change_id"
@@ -92,8 +93,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
   create_table "matched_messages", force: :cascade do |t|
     t.uuid "message_id", null: false
     t.bigint "subscriber_list_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["message_id", "subscriber_list_id"], name: "index_matched_messages_on_message_id_and_subscriber_list_id", unique: true
     t.index ["message_id"], name: "index_matched_messages_on_message_id"
     t.index ["subscriber_list_id"], name: "index_matched_messages_on_subscriber_list_id"
@@ -103,12 +104,12 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
     t.text "sender_message_id"
     t.text "title", null: false
     t.text "body", null: false
-    t.datetime "processed_at"
+    t.datetime "processed_at", precision: nil
     t.string "signon_user_uid"
     t.string "govuk_request_id", null: false
     t.integer "priority", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.json "criteria_rules"
     t.boolean "omit_footer_unsubscribe_link", default: false, null: false
     t.boolean "override_subscription_frequency_to_immediate", default: false, null: false
@@ -117,8 +118,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
     t.text "title", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "document_type", default: "", null: false
     t.json "tags", default: {}, null: false
     t.json "links", default: {}, null: false
@@ -142,8 +143,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
 
   create_table "subscribers", force: :cascade do |t|
     t.string "address"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "signon_user_uid"
     t.string "govuk_account_id"
     t.index "lower((address)::text)", name: "index_subscribers_on_lower_address", unique: true
@@ -151,8 +152,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
   end
 
   create_table "subscription_contents", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "digest_run_subscriber_id"
     t.uuid "email_id"
     t.uuid "subscription_id", null: false
@@ -170,12 +171,12 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_21_161623) do
   create_table "subscriptions", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.bigint "subscriber_id", null: false
     t.bigint "subscriber_list_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "frequency", default: 0, null: false
     t.string "signon_user_uid"
     t.integer "source", default: 0, null: false
-    t.datetime "ended_at"
+    t.datetime "ended_at", precision: nil
     t.integer "ended_reason"
     t.uuid "ended_email_id"
     t.index ["created_at"], name: "index_subscriptions_on_created_at"
