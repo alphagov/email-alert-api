@@ -28,6 +28,7 @@ private
           subscriber_id: subscriber.id,
           created_at: now,
           updated_at: now,
+          content_id: content.try(:content_id),
         }
       end
     end

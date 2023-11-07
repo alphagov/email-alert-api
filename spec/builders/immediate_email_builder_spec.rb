@@ -32,6 +32,7 @@ RSpec.describe ImmediateEmailBuilder do
       it "creates an email" do
         expect(email.subject).to eq("Update from GOV.UK for: Title")
         expect(email.subscriber_id).to eq(subscriber.id)
+        expect(email.content_id).to eq(content_change.content_id)
 
         expect(email.body).to eq(
           <<~BODY,
@@ -68,6 +69,7 @@ RSpec.describe ImmediateEmailBuilder do
       it "creates an email" do
         expect(email.subject).to eq("Update from GOV.UK for: Title")
         expect(email.subscriber_id).to eq(subscriber.id)
+        expect(email.content_id).to be nil
 
         expect(email.body).to eq(
           <<~BODY,
