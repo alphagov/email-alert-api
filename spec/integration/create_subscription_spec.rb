@@ -100,10 +100,10 @@ RSpec.describe "Creating a subscription", type: :request do
         expect(subscription.reload.ended?).to be false
       end
 
-      it "sends a confirmation email" do
+      it "doesn't send a confirmation email" do
         stub_notify
         create_subscription
-        expect(a_request(:post, /notifications/)).to have_been_made.at_least_once
+        expect(a_request(:post, /notifications/)).to_not have_been_made
       end
     end
 

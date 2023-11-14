@@ -20,18 +20,22 @@ class CreateSubscriptionService
       )
 
       if subscription
-        return subscription if subscription.frequency == frequency
+        if subscription.frequency == frequency
+          return { record: subscription, new_record: false }
+        end
 
         subscription.end(reason: :frequency_changed)
       end
 
-      Subscription.create!(
+      new_subscription = Subscription.create!(
         subscriber:,
         subscriber_list:,
         frequency:,
         signon_user_uid: current_user.uid,
         source: subscription ? :frequency_changed : :user_signed_up,
       )
+
+      { record: new_subscription, new_record: true }
     rescue ArgumentError
       # This happens if a frequency is provided that isn't included
       # in the enum which is in the Subscription model

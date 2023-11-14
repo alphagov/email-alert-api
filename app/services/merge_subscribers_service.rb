@@ -49,7 +49,8 @@ private
       subscriber_to_keep,
       other.frequency,
       current_user,
-    )
+    )[:record]
+
     new_subscription.update!(source: :subscriber_merged)
     new_subscription
   end

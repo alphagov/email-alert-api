@@ -12,12 +12,9 @@ class SubscriptionsController < ApplicationController
       current_user,
     )
 
-    unless params[:skip_confirmation_email]
-      email = SubscriptionConfirmationEmailBuilder.call(subscription:)
-      SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_transactional)
-    end
+    send_confirmation_email(subscription)
 
-    render json: { subscription: }
+    render json: { subscription: subscription[:record] }
   end
 
   def show
@@ -37,7 +34,7 @@ class SubscriptionsController < ApplicationController
       current_user,
     )
 
-    render json: { subscription: new_subscription }
+    render json: { subscription: new_subscription[:record] }
   end
 
   def latest_matching
@@ -62,5 +59,13 @@ private
 
   def subscription_params
     params.permit(:id, :address, :subscriber_list_id, :frequency)
+  end
+
+  def send_confirmation_email(subscription)
+    return if params[:skip_confirmation_email]
+    return unless subscription[:new_record]
+
+    email = SubscriptionConfirmationEmailBuilder.call(subscription: subscription[:record])
+    SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_transactional)
   end
 end
