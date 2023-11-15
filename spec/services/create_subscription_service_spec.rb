@@ -4,14 +4,16 @@ RSpec.describe CreateSubscriptionService do
   let(:frequency) { "daily" }
   let(:user) { create :user }
   let(:args) { [subscriber_list, subscriber, frequency, user] }
+  let(:new_subscription) { described_class.call(*args) }
+  let(:subscription_record) { new_subscription[:record] }
 
   describe ".call" do
     it "creates a subscription if one does not exist" do
-      new_subscription = described_class.call(*args)
-      expect(new_subscription.subscriber_list).to eq subscriber_list
-      expect(new_subscription.subscriber).to eq subscriber
-      expect(new_subscription.frequency).to eq frequency
-      expect(new_subscription.source).to eq "user_signed_up"
+      expect(subscription_record.subscriber_list).to eq subscriber_list
+      expect(subscription_record.subscriber).to eq subscriber
+      expect(subscription_record.frequency).to eq frequency
+      expect(subscription_record.source).to eq "user_signed_up"
+      expect(new_subscription[:new_record]).to eq true
     end
 
     it "replaces a subscription if the frequencies differ" do
@@ -22,15 +24,14 @@ RSpec.describe CreateSubscriptionService do
         frequency: "weekly",
       )
 
-      new_subscription = described_class.call(*args)
+      expect(subscription_record.subscriber_list).to eq subscriber_list
+      expect(subscription_record.subscriber).to eq subscriber
+      expect(subscription_record.frequency).to eq frequency
+      expect(subscription_record.source).to eq "frequency_changed"
+      expect(new_subscription[:new_record]).to eq true
 
       expect(subscription.reload).to be_ended
       expect(subscription.ended_reason).to eq "frequency_changed"
-
-      expect(new_subscription.subscriber_list).to eq subscriber_list
-      expect(new_subscription.subscriber).to eq subscriber
-      expect(new_subscription.frequency).to eq frequency
-      expect(new_subscription.source).to eq "frequency_changed"
     end
 
     it "preserves a subscription if the frequency is unchanged" do
@@ -41,8 +42,8 @@ RSpec.describe CreateSubscriptionService do
         frequency:,
       )
 
-      new_subscription = described_class.call(*args)
-      expect(new_subscription).to eq subscription
+      expect(subscription_record).to eq subscription
+      expect(new_subscription[:new_record]).to eq false
     end
 
     it "ignores subscriptions that were previously ended" do
@@ -54,10 +55,10 @@ RSpec.describe CreateSubscriptionService do
         frequency:,
       )
 
-      new_subscription = described_class.call(*args)
-      expect(new_subscription).to_not be_ended
-      expect(new_subscription.frequency).to eq frequency
-      expect(new_subscription.source).to eq "user_signed_up"
+      expect(subscription_record).to_not be_ended
+      expect(subscription_record.frequency).to eq frequency
+      expect(subscription_record.source).to eq "user_signed_up"
+      expect(new_subscription[:new_record]).to eq true
     end
 
     it "raises a RecordInvalid error if the frequency is invalid" do
