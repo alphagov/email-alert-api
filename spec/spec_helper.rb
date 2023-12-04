@@ -19,6 +19,10 @@ Rails.application.load_tasks
 
 ActiveRecord::Migration.maintain_test_schema!
 
+email_alert_api_sql_file = Tempfile.new("email-alert-api.sql")
+email_alert_api_sql_file.write(URI.parse("https://raw.githubusercontent.com/alphagov/govuk-helm-charts/main/charts/db-backup/scripts/email-alert-api.sql").open(&:read))
+email_alert_api_sql_file.close
+
 RSpec.configure do |config|
   config.disable_monkey_patching!
   config.use_transactional_fixtures = true
@@ -43,6 +47,9 @@ RSpec.configure do |config|
       example.run
     end
   end
+
+  config.add_setting :email_alert_api_sql_file_path
+  config.email_alert_api_sql_file_path = email_alert_api_sql_file.path
 end
 
 WebMock.disable_net_connect!(allow_localhost: true)
