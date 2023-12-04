@@ -15,3 +15,35 @@ It is possible that a given travel advice item or medical alert might be updated
 ## Dependencies
 
 This system depends on the Search API structure, so radical changes to the search API's results format may cause problems.
+
+## Manual Checking
+
+There is a rake task to create a subscriber to both the medical and travel alerts. In production this account will persist, but if you want to use it in integration you will need to run the task before testing, because integration can only send to one email, and the email anonymisation process during database syncing will remove that one email address.
+
+```
+kubectl config use-context govuk-<ENVIRONMENT>
+kubectl -n apps deploy/email-alert-api -- rake 'alert_listeners:verify_or_create'
+```
+
+The listener subscribers receive emails into google group accounts:
+- Production: email-alert-api-alert-listener@digital.cabinet-office.gov.uk
+- Staging: email-alert-api-staging@digital.cabinet-office-gov.uk
+- Integration: email-alert-api-integration@digital.cabinet-office-gov.uk
+
+See also [Receive emails from Email Alert API in Integration and Staging](receiving-emails-from-email-alert-api-in-integration-and-staging.md)
+
+## Testing
+
+To test the alert in integration, you will need to run the task above (to create the listener), then create a medical alert or travel advice update, and wait one hour. You should see no alert initially (because hopefully the integration listener account will have received the email). To trigger the alert, first find out the content id of the alert  you have just publised, then open the console and update the emails for that
+
+```
+kubectl config use-context govuk-integration
+kubectl -n apps deploy/email-alert-api -- rails c
+
+(Rails console)
+> emails = Email.where(content_id: <your content id> notify_status: "delivered")
+> emails.each { |eml| eml.notify_status = nil; eml.save }
+> AlertCheckWorker.new.perform(<your document type, either "medical_safety_alert" or "travel_advice|>)
+```
+
+This will clear the delivered status for the email, and run the alert check worker. Prometheus should collect the metrics after a minute, and set off the alert.
