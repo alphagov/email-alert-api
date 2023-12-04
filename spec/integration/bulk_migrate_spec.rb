@@ -41,6 +41,13 @@ RSpec.describe "Migrating users from one subscriber list to another", type: :req
         "from_slug" => source_list.slug,
       }
     end
+
+    around(:each) do |example|
+      ClimateControl.modify(BULK_MIGRATE_CONFIRMATION_EMAIL_ACCOUNT: "test@test.uk") do
+        example.run
+      end
+    end
+
     it "migrates subscribers" do
       post("/subscriber-lists/bulk-migrate", params:)
 
