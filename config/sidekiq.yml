@@ -46,4 +46,4 @@
     check_travel_advice_alerts:
       every: '15m'
       class: AlertCheckWorker
-      args:  ["travel_advice_alert"]
+      args:  ["travel_advice"]
