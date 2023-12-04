@@ -16,7 +16,7 @@ run using the `kubectl` command, as described in the [EKS documentation][eks-doc
 
 [email-manage]: https://www.gov.uk/email/manage
 [drug-updates]: https://www.gov.uk/drug-safety-update
-[eks-docs]: https://docs.publishing.service.gov.uk/manual/kubernetes-infrastructure.html
+[eks-docs]: https://docs.publishing.service.gov.uk/kubernetes/cheatsheet.html
 
 ## Change a subscriber's email address
 
