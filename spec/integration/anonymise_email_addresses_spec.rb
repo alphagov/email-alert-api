@@ -1,5 +1,5 @@
 RSpec.describe "Anonymising email addresses" do
-  let(:sql) { File.read("lib/data_hygiene/anonymise_email_addresses.sql") }
+  let(:sql) { File.read(RSpec.configuration.email_alert_api_sql_file_path) }
 
   let(:connection) { ActiveRecord::Base.connection }
   let(:column_names) do
