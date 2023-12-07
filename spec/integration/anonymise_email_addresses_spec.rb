@@ -9,30 +9,35 @@ RSpec.describe "Anonymising email addresses" do
   end
 
   def execute_sql
-    ActiveRecord::Base.connection.execute(sql.gsub(/#.*$/, ""))
+    connection.execute(sql)
   end
 
   it "deletes an email older than a day old" do
-    email = create(:email, address: "foo@example.com", created_at: Time.zone.parse("13/03/2018 16:30:17"))
+    create(:email, address: "foo@example.com", subject: "", body: "", created_at: Time.zone.parse("2023-12-05 12:34:56"))
+    expect(Email.find_by(address: "foo@example.com")).not_to be_nil
+
     execute_sql
 
-    expect { email.reload }
-      .to raise_error(ActiveRecord::RecordNotFound)
+    expect(Email.find_by(address: "foo@example.com")).to be_nil
   end
 
   it "doesn't delete an email thats a day old or less" do
-    email = create(:email, address: "foo@example.com")
+    create(:email, address: "foo@example.com", subject: "test", body: "", created_at: Time.now(in: "-02:00"))
+    expect(Email.find_by(subject: "test")).not_to be_nil
+
     execute_sql
 
-    expect(email).to be_present
+    expect(Email.find_by(subject: "test")).not_to be_nil
   end
 
   it "anonymises addresses in the subscribers table" do
-    subscriber = create(:subscriber, address: "foo@example.com")
+    create(:subscriber, address: "foo@example.net")
+    expect(Subscriber.find_by(address: "foo@example.net")).not_to be_nil
 
-    expect { execute_sql }
-      .to change { subscriber.reload.address }
-      .to("anonymous-1@example.com")
+    execute_sql
+
+    expect(Subscriber.find_by(address: "foo@example.net")).to be_nil
+    expect(Subscriber.find_by(address: "anon-1@example.com")).not_to be_nil
   end
 
   it "keeps the pre-existing null addresses in the subscribers table" do
@@ -46,24 +51,21 @@ RSpec.describe "Anonymising email addresses" do
   end
 
   it "anonymises addresses in the emails table" do
-    email = create(:email, address: "foo@example.com")
+    create(:email, address: "foo@example.net")
+    expect(Email.find_by(address: "foo@example.net")).not_to be_nil
 
-    expect { execute_sql }
-      .to change { email.reload.address }
-      .to("anonymous-1@example.com")
-  end
+    execute_sql
 
-  it "does not anonymise signon user addresses" do
-    user = create(:user, email: "foo@digital.cabinet-office.gov.uk")
-    expect { execute_sql }.not_to(change { user.reload.email })
+    expect(Email.find_by(address: "foo@example.net")).to be_nil
+    expect(Email.find_by(address: "anon-1@example.com")).not_to be_nil
   end
 
   it "anonymises uses of addresses within the email" do
     email = create(
       :email,
-      address: "foo@example.com",
-      subject: "Email for foo@example.com",
-      body: <<~HDOC,
+      address: "foo@example.net",
+      subject: "Email for foo@example.net",
+      body: <<~BODY,
         [Thailand travel advice](https://www.gov.uk/foreign-travel-advice/thailand)
 
         10:51am, 4 April 2018: Another test that email sent ok
@@ -72,16 +74,17 @@ RSpec.describe "Anonymising email addresses" do
         You’re getting this email because you subscribed to ‘Thailand  - travel advice’ updates on GOV.UK.
 
         [Unsubscribe from ‘Thailand  - travel advice’](https://www.gov.uk/email/unsubscribe/8697f282-21f5-474f-a69f-abc3f70b18a8)
-        [View, unsubscribe or change the frequency of your subscriptions](https://www.gov.uk/email/authenticate?address=foo@example.com)
-      HDOC
+        [View, unsubscribe or change the frequency of your subscriptions](https://www.gov.uk/email/authenticate?address=foo@example.net)
+      BODY
     )
 
     execute_sql
     email.reload
-    expect(email.body).not_to match(/foo@example.com/)
-    expect(email.subject).to eq("Email for anonymous-1@example.com")
+
+    expect(email.body).not_to match(/foo@example.net/)
+    expect(email.subject).to eq("Email for anon-1@example.com")
     expect(email.body).to match(
-      /#{Regexp.escape("[View, unsubscribe or change the frequency of your subscriptions](https://www.gov.uk/email/authenticate?address=anonymous-1@example.com)")}/,
+      /#{Regexp.escape("[View, unsubscribe or change the frequency of your subscriptions](https://www.gov.uk/email/authenticate?address=anon-1@example.com)")}/,
     )
   end
 
@@ -98,19 +101,21 @@ RSpec.describe "Anonymising email addresses" do
   end
 
   it "assigns the same anonymous address if the original addresses were the same" do
-    foo_subscriber = create(:subscriber, address: "foo@example.com")
-    bar_subscriber = create(:subscriber, address: "bar@example.com")
-
-    foo_email = create(:email, address: "foo@example.com")
-    bar_email = create(:email, address: "bar@example.com")
+    foo_subscriber_id = create(:subscriber, address: "foo@example.com").id
+    bar_subscriber_id = create(:subscriber, address: "bar@example.com").id
+    foo_email_id = create(:email, address: "foo@example.com").id
+    bar_email_id = create(:email, address: "bar@example.com").id
 
     execute_sql
+    foo_subscriber = Subscriber.find(foo_subscriber_id)
+    bar_subscriber = Subscriber.find(bar_subscriber_id)
+    foo_email = Email.find(foo_email_id)
+    bar_email = Email.find(bar_email_id)
 
-    expect(foo_email.reload.address).to eq(foo_subscriber.reload.address)
-    expect(foo_email.reload.address).to_not eq(bar_subscriber.reload.address)
-
-    expect(bar_email.reload.address).to eq(bar_subscriber.reload.address)
-    expect(bar_subscriber.reload.address).to_not eq(foo_subscriber.reload.address)
+    expect(foo_email.address).to eq(foo_subscriber.address)
+    expect(foo_email.address).to_not eq(bar_subscriber.address)
+    expect(bar_email.address).to eq(bar_subscriber.address)
+    expect(bar_subscriber.address).to_not eq(foo_subscriber.address)
   end
 
   it "handles addresses only differing in capitalisation" do

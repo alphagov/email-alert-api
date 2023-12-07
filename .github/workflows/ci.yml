@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Setup Postgres
         id: setup-postgres
-        uses: alphagov/govuk-infrastructure/.github/actions/setup-postgres@sengi/generalise-postgres-action
+        uses: alphagov/govuk-infrastructure/.github/actions/setup-postgres@main
         with:
           POSTGRES_USER: email-alert-api
 
