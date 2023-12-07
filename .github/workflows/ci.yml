@@ -41,13 +41,17 @@ jobs:
     steps:
       - name: Setup Postgres
         id: setup-postgres
-        uses: alphagov/govuk-infrastructure/.github/actions/setup-postgres@main
+        uses: alphagov/govuk-infrastructure/.github/actions/setup-postgres@sengi/generalise-postgres-action
+        with:
+          POSTGRES_USER: email-alert-api
 
       - name: Setup Redis
         uses: alphagov/govuk-infrastructure/.github/actions/setup-redis@main
 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
