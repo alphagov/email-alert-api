@@ -105,10 +105,12 @@ FactoryBot.define do
 
     trait :travel_advice do
       links { { countries: { any: [SecureRandom.uuid] } } }
+      slug { "travel-advice-for-all-countries-travel-advice" }
     end
 
     trait :medical_safety_alert do
       tags { { format: { any: %w[medical_safety_alert] }, alert_type: { any: %w[devices drugs field-safety-notices company-led-drugs] } } }
+      slug { "medical-device-alerts-drug-alerts-field-safety-notice-national-patient-safety-alert-and-device-safety-information" }
     end
 
     trait :brexit_checker do

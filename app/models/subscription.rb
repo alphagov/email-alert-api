@@ -13,6 +13,7 @@ class Subscription < ApplicationRecord
     subscriber_list_changed: 3,
     bulk_immediate_to_digest: 4, # Historical (for a one-off migration)
     subscriber_merged: 5,
+    support_task: 6,
   }, _prefix: true
 
   enum ended_reason: {
