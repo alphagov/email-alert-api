@@ -133,4 +133,38 @@ namespace :support do
       end
     end
   end
+
+  namespace :emails do
+    desc "Show delivery statistics for a content_id"
+    task :stats_for_content_id, %i[content_id start_date end_date] => :environment do |_t, args|
+      content_id = args[:content_id]
+      start_date = Time.zone.now - 7.days
+      end_date = Time.zone.now
+      begin
+        start_date = Time.zone.strptime(args[:start_date], "%F").beginning_of_day if args[:start_date]
+        end_date = Time.zone.strptime(args[:start_date], "%F").end_of_day if args[:end_date]
+      rescue ArgumentError
+        abort("Cannot parse dates, are they valid ISO8601 dates (YYYY-MM-DD)?")
+      end
+
+      sent = Email.where("content_id = ? AND updated_at >= ? AND updated_at <= ?", content_id, start_date, end_date)
+
+      if sent.any?
+        puts "#{sent.count} emails sent for #{content_id} between #{start_date} and #{end_date}\n\n"
+        puts "Most recent sent on: #{sent.order(:sent_at).first.created_at}\n\n"
+
+        puts "Email Alert API Status (when sending to Notify)\n"
+        puts "- Failed: #{sent.where(status: 'failed').count}"
+        puts "- Sent:   #{sent.where(status: 'sent').count}\n\n"
+
+        puts "Notify Status (set by callback when delivering)\n"
+        puts "- No calback: #{sent.where(notify_status: nil).count}"
+        puts "- Permanent Failure: #{sent.where(notify_status: 'permanent-failure').count}"
+        puts "- Temporary Failure: #{sent.where(notify_status: 'temporary-failure').count}"
+        puts "- Delivered:  #{sent.where(notify_status: 'delivered').count}\n\n"
+      else
+        puts "No emails sent for #{content_id} between #{start_date} and #{end_date}\n\n"
+      end
+    end
+  end
 end

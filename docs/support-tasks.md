@@ -152,3 +152,9 @@ that can be overridden to increase or decrease the output number.
 ```bash
 kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:single_page_notifications_top_subscriber_lists[5]'
 ```
+
+## Find out sent/delivered stats for a specific Content ID:
+
+```bash
+kubectl -n apps exec it deploy/email-alert-api -- bundle exec rake 'support:emails:stats_for_content_id[<CONTENT ID>,<START_DATE (optional)>,<END_DATE (optional)>]'
+```

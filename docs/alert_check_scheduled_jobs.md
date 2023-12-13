@@ -47,3 +47,12 @@ kubectl -n apps deploy/email-alert-api -- rails c
 ```
 
 This will clear the delivered status for the email, and run the alert check worker. Prometheus should collect the metrics after a minute, and set off the alert.
+
+## Support Tasks
+
+To check the emails sent out for a specific Content ID (if an alert goes off), you can use this task:
+
+```
+kubectl config use-context govuk-<ENVIRONMENT>
+kubectl -n apps deploy/email-alert-api -- rake 'support:emails:stats_for_content_id[<CONTENT ID>,<START_DATE (optional)>,<END_DATE (optional)>]'
+```
