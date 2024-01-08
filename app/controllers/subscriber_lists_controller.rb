@@ -20,6 +20,26 @@ class SubscriberListsController < ApplicationController
     end
   end
 
+  def metrics
+    render(
+      json: {
+        subscriber_list_count: active_subscriber_count("/#{params[:path]}"),
+        all_notify_count: all_notify_count("/#{params[:path]}"),
+      },
+    )
+  end
+
+  def active_subscriber_count(govuk_path)
+    subscriber_list = SubscriberList.find_by(url: govuk_path)
+    subscriber_list ? subscriber_list.subscriptions.active.count : 0
+  end
+
+  def all_notify_count(govuk_path)
+    return 0 unless EmailCriteriaQuery.new(govuk_path:).call
+
+    SubscriberListsByPathQuery.new(govuk_path:).call.sum { |l| l.subscriptions.active.count }
+  end
+
   def create
     subscriber_list = CreateSubscriberListService.call(
       title: params.fetch(:title),

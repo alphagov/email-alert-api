@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     patch "/subscriber-lists/:slug", to: "subscriber_lists#update"
     post "/subscriber-lists/:slug/bulk-unsubscribe", to: "subscriber_lists#bulk_unsubscribe"
     post "/subscriber-lists/bulk-migrate", to: "subscriber_lists#bulk_migrate"
+    get "/subscriber-lists/metrics/*path", to: "subscriber_lists#metrics"
 
     resources :content_changes, only: %i[create], path: "content-changes"
     resources :spam_reports, path: "spam-reports", only: %i[create]
