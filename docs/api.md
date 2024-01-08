@@ -73,6 +73,23 @@ It will respond with the JSON response for the `GET` call above.
 
 Returns a `404 Not Found` if there is no such list.
 
+### `GET /subscriber-lists/metrics/*path`
+
+Looks for a subscriber list with a matching path and returns the
+active subscriber list count (or 0 if the list is empty or does
+not exist), and performs a content change query on the path and
+also returns that value (or 0 if the path doesn't generate email
+alerts or there are no subscribers):
+
+```json
+{
+  "subscriber_list_count": 12,
+  "all_notify_count": 26
+}
+```
+
+Always returns 200.
+
 ### `PATCH /subscriber-lists/xxx`
 
 Update data that helps describe the subscriber list, such as the title.
@@ -88,7 +105,7 @@ It requires at least one parameter to update.
 The following fields are accepted:
 - title: The title of this particular list, which will be shown to the user;
   email sent to a user;
-- description: A description of the content this list represents, used by [email-alert-service](https://github.com/alphagov/email-alert-service) to construct emails when a page is unpublished. 
+- description: A description of the content this list represents, used by [email-alert-service](https://github.com/alphagov/email-alert-service) to construct emails when a page is unpublished.
 
 Any additional parameters will be ignored.
 
