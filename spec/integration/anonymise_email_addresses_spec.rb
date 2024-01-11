@@ -84,7 +84,7 @@ RSpec.describe "Anonymising email addresses" do
     expect(email.body).not_to match(/foo@example.net/)
     expect(email.subject).to eq("Email for anon-1@example.com")
     expect(email.body).to match(
-      /#{Regexp.escape("[View, unsubscribe or change the frequency of your subscriptions](https://www.gov.uk/email/authenticate?address=anon-1@example.com)")}/,
+      /#{Regexp.escape('[View, unsubscribe or change the frequency of your subscriptions](https://www.gov.uk/email/authenticate?address=anon-1@example.com)')}/,
     )
   end
 
