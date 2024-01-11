@@ -236,7 +236,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.0-x86_64-linux)
       racc (~> 1.4)
-    notifications-ruby-client (5.4.0)
+    notifications-ruby-client (6.0.0)
       jwt (>= 1.5, < 3)
     null_logger (0.0.1)
     oauth2 (2.0.9)
