@@ -4,6 +4,31 @@ module NotifyRequestHelpers
     stub_request(:post, /notifications\.service\.gov\.uk/).to_return(body:)
   end
 
+  def stub_notify_email_delivery_status_delivered(reference)
+    stub_request(:get, "https://api.notifications.service.gov.uk/v2/notifications?reference=#{reference}&status=delivered&template_type=email").to_return(
+      body: {
+        notifications: [
+          {
+            "id": "740e5834-3a29-46b4-9a6f-16142fde533a",
+            "reference": reference,
+            "type": "email",
+            "status": "delivered",
+          },
+        ],
+        "links": {},
+      }.to_json,
+    )
+  end
+
+  def stub_notify_email_delivery_status_delivered_empty(reference)
+    stub_request(:get, "https://api.notifications.service.gov.uk/v2/notifications?reference=#{reference}&status=delivered&template_type=email").to_return(
+      body: {
+        notifications: [],
+        "links": {},
+      }.to_json,
+    )
+  end
+
   def expect_an_email_was_sent(subject: /.*/, address: "test@test.com")
     request_data = nil
 
