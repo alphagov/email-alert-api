@@ -3,6 +3,7 @@ class ValidTags
     aircraft_category
     aircraft_type
     alert_type
+    algorithmic_transparency_record_function
     appear_in_find_eu_exit_guidance_business_finder
     assessment_date
     business_activity
