@@ -26,7 +26,7 @@ module SearchAlertListHelpers
     }
   end
 
-  def stub_medical_safety_alert_feed(content_id:, age:)
+  def stub_medical_safety_alert_query(content_id:, age:)
     stub_request(:get, "http://search-api.dev.gov.uk/search.json?count=50&fields=content_id,link,public_timestamp&filter_format=medical_safety_alert&order=-public_timestamp")
       .to_return(status: 200, body: medical_safety_alert_search_body(content_id:, public_timestamp: (Time.zone.now - age).strftime("%Y-%m-%dT%H:%M:%SZ")).to_json, headers: {})
   end

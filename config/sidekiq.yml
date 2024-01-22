@@ -41,9 +41,9 @@
       class: RecoverLostJobsWorker
     check_medical_safety_alerts:
       every: '15m'
-      class: AlertCheckWorker
+      class: PollingAlertCheckWorker
       args:  ["medical_safety_alert"]
     check_travel_advice_alerts:
       every: '15m'
-      class: AlertCheckWorker
+      class: PollingAlertCheckWorker
       args:  ["travel_advice"]

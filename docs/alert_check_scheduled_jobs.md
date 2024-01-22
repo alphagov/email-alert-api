@@ -8,6 +8,10 @@ The jobs run every 15 minutes, and checks for alerts that meet the following cri
 - created at least one hour ago (very new alerts are excluded)
 - created no more than 2 days ago (older alerts are excluded)
 
+## Fallback to active polling
+
+As a backup in case there are no emails with a notify_status of "delivered" (this can happen if the callback url from notify gets mass-blocked), the system will explicitly poll Notify for the status of emails related to the alert. It will poll up to a hundred different emails, and only if none of them have been delivered will the alert state be set.
+
 ## Multiple changes to a content item
 
 It is possible that a given travel advice item or medical alert might be updated more than once in two days, but there's no way to know about that through the Search API (we can only find out the last update to a given page). In this case we can only check that emails were delivered after the last public update. The 1 hour lag before an alert becomes checkable plus the 15 minute update frequency means that if a change happens between 60 and 75 minutes after the previous change the system can only confirms that emails were sent out for the most recent update, and if further proof of the previous update is needed a developer will have to check that manually. If the change happens later than 75 minutes, both changes will have been checked by separate runs of the job.
@@ -41,12 +45,11 @@ kubectl config use-context govuk-integration
 kubectl -n apps deploy/email-alert-api -- rails c
 
 (Rails console)
-> emails = Email.where(content_id: <your content id> notify_status: "delivered")
-> emails.each { |eml| eml.notify_status = nil; eml.save }
-> AlertCheckWorker.new.perform(<your document type, either "medical_safety_alert" or "travel_advice|>)
+> Email.where(content_id: <your content id>).delete_all
+> PollingAlertCheckWorker.new.perform(<your document type, either "medical_safety_alert" or "travel_advice|>)
 ```
 
-This will clear the delivered status for the email, and run the alert check worker. Prometheus should collect the metrics after a minute, and set off the alert.
+The alert check worker will find no emails with notify status "delivered", and nothing to actively poll (no emails with notify status nil), and will set the alert metric. Prometheus should collect the metrics after a minute, and set off the alert.
 
 ## Support Tasks
 
