@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   scope format: false, defaults: { format: :json } do
-    root "welcome#index"
     resources :subscriber_lists, path: "subscriber-lists", only: %i[create]
     get "/subscriber-lists", to: "subscriber_lists#index"
     get "/subscriber-lists/:slug", to: "subscriber_lists#show"
