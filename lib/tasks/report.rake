@@ -43,4 +43,11 @@ namespace :report do
       args.fetch(:draft, "false").downcase == "true",
     ).call
   end
+
+  desc "Output how many people are subscribed to lists created from a finder at the given path"
+  task :finder_statistics, %i[govuk_path] => :environment do |_t, args|
+    puts Reports::FinderStatisticsReport.new(
+      args.fetch(:govuk_path),
+    ).call
+  end
 end
