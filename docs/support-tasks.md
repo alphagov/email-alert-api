@@ -113,10 +113,26 @@ This will report on the number of active subscriptions for a given path.
 > **Warning**
 >
 > This is called simple because it only gets subscriber lists for a direct path. There may still be subscriptions by topic or link, so finding an empty or missing subcription list does not mean that no-one will receive email updates about that page! See below for a more detailed description of how to get the subscriber list.
+> It also won't work that well if the path is a finder. See below for better tasks for finders or detailed subscriber lists.
 
 The path should be the full path on gov.uk (for instance /government/statistics/examples if the page you're interested in is https://www.gov.uk/government/statistics/examples)
 
 You can also pass it a :active_on_datetime which will count how many active subscriptions there were at the end of the day on a particular date. The active_on_date defaults to today if not specified, and should be in ISO8601 format, for example 2022-03-03T12:12:16+00:00. The time will always be rounded to the end of the day, even if that is in the future.
+
+## Get stats for subscribers to a finder by its URL
+
+To see a report on the number of subscribers to a finder, :
+
+```bash
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:finder_statistics[<path>]'
+```
+This will report on the number of subscriber lists to the finder on a given path.
+
+The path should be the full path on gov.uk (for instance /cma-cases if the page you're interested in is https://www.gov.uk/cma-cases)
+
+Because finder subscriptions can include the filters active on the finder at the point the subscription was created, there may be more than one subscriber list. Finders require an email_alert_signup item in the links section of their content item to allow alerts, so if there are no subscriptions to a finder
+it may be because it cannot be signed up to.
+
 
 ## Finding out how many messages were sent when a page changed
 
