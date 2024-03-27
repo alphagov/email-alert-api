@@ -186,7 +186,7 @@ GEM
       rdoc
       reline (>= 0.4.2)
     json (2.7.1)
-    json-schema (4.2.0)
+    json-schema (4.3.0)
       addressable (>= 2.8)
     jwt (2.8.1)
       base64
