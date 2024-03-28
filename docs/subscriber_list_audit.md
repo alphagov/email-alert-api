@@ -24,8 +24,8 @@ missing we know they can't be triggered.
 
 This is a long-running job which needs to be run asynchronously. To kick it off, use:
 
-```
-kubectl -n apps deploy/email-alert-api -- rake 'subscriber_list_audit:start'
+```bash
+kubectl -n apps exec -it deploy/email-alert-api -- rake 'subscriber_list_audit:start'
 ```
 
 NB: It will probably only reliably run in production, as the time taken to iterate
@@ -34,14 +34,14 @@ by the environment sync.
 
 To check the number of workers remaining on the job:
 
-```
-kubectl -n apps deploy/email-alert-api -- rake 'subscriber_list_audit:queue_size'
+```bash
+kubectl -n apps exec -it deploy/email-alert-api -- rake 'subscriber_list_audit:queue_size'
 ```
 
 When there are no workers remaining, you can run:
 
-```
-kubectl -n apps deploy/email-alert-api -- rake 'subscriber_list_audit:report'
+```bash
+kubectl -n apps exec -it deploy/email-alert-api -- rake 'subscriber_list_audit:report'
 ```
 
 to get a list of all subscriber lists without matching SubscriberListAudit records.
