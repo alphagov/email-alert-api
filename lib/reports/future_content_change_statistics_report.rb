@@ -1,4 +1,5 @@
 require "reports/concerns/notification_stats"
+require "content_item_list_query"
 
 class Reports::FutureContentChangeStatisticsReport
   include Reports::Concerns::NotificationStats

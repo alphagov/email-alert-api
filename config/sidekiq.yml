@@ -12,6 +12,7 @@
   - [email_generation_digest, 4] # To generate emails to users with daily or weekly subscriptions for content changes and messages.
   - [send_email_immediate, 2] # To send emails to users with immediate subscriptions.
   - [send_email_digest, 2] # To send digest emails to users with either daily or weekly subscriptions.
+  - [subscriber_list_audit, 1] # To crawl the GOV.UK site for audit purposes.
   - [default, 1] # Miscellaneous operations e.g. initiating digest runs, monitoring, DB cleanup and recovering lost Sidekiq jobs.
 :scheduler:
   :schedule:
