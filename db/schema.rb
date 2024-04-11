@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_02_150419) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_11_100041) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -119,6 +119,14 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_02_150419) do
     t.index ["sender_message_id"], name: "index_messages_on_sender_message_id", unique: true
   end
 
+  create_table "subscriber_list_audits", force: :cascade do |t|
+    t.bigint "subscriber_list_id", null: false
+    t.integer "reference_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["subscriber_list_id"], name: "index_subscriber_list_audits_on_subscriber_list_id"
+  end
+
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
     t.text "title", null: false
     t.datetime "created_at", precision: nil
@@ -135,6 +143,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_02_150419) do
     t.string "links_digest"
     t.uuid "content_id"
     t.text "description"
+    t.datetime "last_audited_at"
     t.index ["content_id"], name: "index_subscriber_lists_on_content_id"
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
     t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
@@ -207,6 +216,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_02_150419) do
   add_foreign_key "matched_content_changes", "subscriber_lists", on_delete: :cascade
   add_foreign_key "matched_messages", "messages", on_delete: :cascade
   add_foreign_key "matched_messages", "subscriber_lists", on_delete: :cascade
+  add_foreign_key "subscriber_list_audits", "subscriber_lists"
   add_foreign_key "subscription_contents", "content_changes", on_delete: :restrict
   add_foreign_key "subscription_contents", "digest_run_subscribers", on_delete: :cascade
   add_foreign_key "subscription_contents", "emails", on_delete: :cascade
