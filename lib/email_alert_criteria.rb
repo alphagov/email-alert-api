@@ -65,7 +65,6 @@ class EmailAlertCriteria
 
   def contains_supported_attribute?
     supported_attributes = %w[
-      topics
       policies
       service_manual_topics
       taxons
