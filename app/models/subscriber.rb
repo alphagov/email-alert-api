@@ -43,10 +43,6 @@ class Subscriber < ApplicationRecord
     !govuk_account_id.nil?
   end
 
-  def nullified?
-    address.nil?
-  end
-
   def as_json(options = {})
     options[:except] ||= %i[signon_user_uid]
     super(options)
