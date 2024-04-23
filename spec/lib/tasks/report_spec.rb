@@ -47,28 +47,48 @@ RSpec.describe "report" do
   end
 
   describe "future_content_change_statistics" do
+    after(:each) do
+      Rake::Task["report:future_content_change_statistics"].reenable
+    end
+
     context "with a valid content item" do
+      let(:subscriber_list) { create(:subscriber_list, :for_single_page_subscription) }
+      let(:path) { subscriber_list_path(subscriber_list) }
+
       before do
-        subscriber_list = create(:subscriber_list, :for_single_page_subscription)
-        # match_by_tags_content_item_for_subscriber_list(subscriber_list:)
-        @path = subscriber_list_path(subscriber_list)
+        match_by_tags_content_item_for_subscriber_list(subscriber_list:)
       end
 
       it "outputs a report of people who would be notified of a major change" do
-        expect { Rake::Task["report:future_content_change_statistics"].invoke(@path) }
-          .to output(/title 1 \([0-9]+ active subscribers\)/).to_stdout
+        expect { Rake::Task["report:future_content_change_statistics"].invoke(path) }
+          .to output(/#{subscriber_list.title} \([0-9]+ active subscribers\)/).to_stdout
+      end
+    end
+
+    context "with a valid draft content item" do
+      let(:subscriber_list) { create(:subscriber_list, :for_single_page_subscription) }
+      let(:path) { subscriber_list_path(subscriber_list) }
+
+      before do
+        match_by_tags_content_item_for_subscriber_list(subscriber_list:, draft: true)
+      end
+
+      it "outputs a report of people who would be notified of a major change" do
+        expect { Rake::Task["report:future_content_change_statistics"].invoke(path, "true") }
+          .to output(/#{subscriber_list.title} \([0-9]+ active subscribers\)/).to_stdout
       end
     end
 
     context "with a content item that wouldn't trigger an alert" do
+      let(:subscriber_list) { create(:subscriber_list, :for_single_page_subscription) }
+      let(:path) { subscriber_list_path(subscriber_list) }
+
       before do
-        subscriber_list = create(:subscriber_list, :for_single_page_subscription)
         match_by_tags_non_triggering_content_item_for_subscriber_list(subscriber_list:)
-        @path_2 = subscriber_list_path(subscriber_list)
       end
 
       it "outputs a report of people who would be notified of a major change" do
-        expect { Rake::Task["report:future_content_change_statistics"].invoke(@path_2) }
+        expect { Rake::Task["report:future_content_change_statistics"].invoke(path) }
           .to output(/would not trigger an email alert/).to_stdout
       end
     end
