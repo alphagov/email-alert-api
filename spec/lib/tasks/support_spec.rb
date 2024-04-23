@@ -1,4 +1,33 @@
 RSpec.describe "support" do
+  after(:each) do
+    Rake::Task["support:emails:stats_for_content_id"].reenable
+  end
+
+  describe "stats_for_content_id" do
+    context "with invalid dates" do
+      it "outputs all subscriptions for a subscriber" do
+        expect { Rake::Task["support:emails:stats_for_content_id"].invoke(SecureRandom.uuid, "bad_date", "bad_date") }
+          .to raise_error(SystemExit, /Cannot parse dates/)
+      end
+    end
+
+    context "with matching emails" do
+      let(:valid_email) { create(:email, content_id: SecureRandom.uuid) }
+
+      it "outputs all subscriptions for a subscriber" do
+        expect { Rake::Task["support:emails:stats_for_content_id"].invoke(valid_email.content_id) }
+          .to output(/1 emails sent/).to_stdout
+      end
+    end
+
+    context "without matching emails" do
+      it "outputs all subscriptions for a subscriber" do
+        expect { Rake::Task["support:emails:stats_for_content_id"].invoke(SecureRandom.uuid) }
+          .to output(/No emails sent/).to_stdout
+      end
+    end
+  end
+
   describe "get_notifications_from_notify_by_email_id" do
     before { stub_request(:get, /notifications\.service\.gov\.uk/).to_return(status: 404) }
 
