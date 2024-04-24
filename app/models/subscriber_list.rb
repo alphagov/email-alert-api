@@ -27,6 +27,11 @@ class SubscriberList < ApplicationRecord
           SubscriberListsByCriteriaQuery.call(self, criteria_rules)
         }
 
+  scope :unaudited_since,
+        lambda { |since_date|
+          where("last_audited_at IS NULL OR last_audited_at < ?", since_date)
+        }
+
   def active_subscriptions_count
     subscriptions.active.count
   end
