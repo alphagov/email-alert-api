@@ -22,23 +22,6 @@ class SubscriberList < ApplicationRecord
     self.links_digest = HashDigest.new(links).generate
   end
 
-  scope :find_by_links_value,
-        lambda { |content_id|
-          # For this query to return the content id has to be wrapped in a
-          # double quote blame psql 9.
-          sql = <<~SQLSTRING
-            :id IN (
-                 SELECT json_array_elements(
-                  CASE
-                    WHEN ((link_table.link#>'{any}') IS NOT NULL) THEN link_table.link->'any'
-                    WHEN ((link_table.link#>'{all}') IS NOT NULL) THEN link_table.link->'all'
-                    ELSE link_table.link
-                  END)::text AS content_id FROM (SELECT ((json_each(links)).value)::json AS link) AS link_table
-            )
-          SQLSTRING
-          where(sql, id: "\"#{content_id}\"")
-        }
-
   scope :matching_criteria_rules,
         lambda { |criteria_rules|
           SubscriberListsByCriteriaQuery.call(self, criteria_rules)
