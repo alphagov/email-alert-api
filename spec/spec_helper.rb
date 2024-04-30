@@ -3,6 +3,7 @@ ENV["RAILS_ENV"] ||= "test"
 require "simplecov"
 SimpleCov.start "rails" do
   enable_coverage :branch
+  minimum_coverage line: 95
 end
 
 $LOAD_PATH << File.join(__dir__, "..")
