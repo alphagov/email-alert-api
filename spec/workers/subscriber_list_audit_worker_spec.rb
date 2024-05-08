@@ -9,7 +9,7 @@ RSpec.describe SubscriberListAuditWorker do
       "government_document_supertype" => "email",
       "details" => {
         "tags" => {
-          "topics" => ["motoring/road_rage"],
+          "tribunal_decision_categories" => %w[agency-workers],
         },
         "change_history" => [
           { "public_timestamp" => Time.zone.now.to_s, "note" => "changed" },
@@ -20,8 +20,8 @@ RSpec.describe SubscriberListAuditWorker do
 
   before do
     @sl1 = create(:subscriber_list, :for_single_page_subscription)
-    @sl2 = create(:subscriber_list, :for_single_page_subscription, tags: { topics: { any: ["motoring/calmness"] } })
-    @sl3 = create(:subscriber_list, :for_single_page_subscription, tags: { topics: { any: ["motoring/neutrality"] } })
+    @sl2 = create(:subscriber_list, :for_single_page_subscription, tags: { tribunal_decision_categories: { any: %w[part-time-workers] } })
+    @sl3 = create(:subscriber_list, :for_single_page_subscription, tags: { tribunal_decision_categories: { any: %w[flexible-working] } })
 
     @path_sl1 = URI(@sl1.url).path
     @path_sl2 = URI(@sl2.url).path
@@ -35,7 +35,7 @@ RSpec.describe SubscriberListAuditWorker do
     content_item = content_item_for_base_path(@path_sl2).merge(required_match_attributes).merge(
       "details" => {
         "tags" => {
-          "topics" => ["motoring/calmness"],
+          "tribunal_decision_categories" => %w[part-time-workers],
         },
         "change_history" => [
           { "public_timestamp" => Time.zone.now.to_s, "note" => "changed" },
@@ -49,7 +49,7 @@ RSpec.describe SubscriberListAuditWorker do
     content_item = content_item_for_base_path(@path_sl3).merge(required_match_attributes).merge(
       "details" => {
         "tags" => {
-          "topics" => ["motoring/calmness"],
+          "tribunal_decision_categories" => %w[part-time-workers],
         },
       },
     )

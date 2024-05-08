@@ -15,7 +15,7 @@ RSpec.describe Reports::SubscriberListsReport do
   end
 
   it "returns data around active lists for the given date" do
-    expected_criteria_bits = '{"document_type":"","tags":{"topics":{"any":["motoring/road_rage"]}},' \
+    expected_criteria_bits = '{"document_type":"","tags":{"tribunal_decision_categories":{"any":["agency-workers"]}},' \
       '"links":{},"email_document_supertype":"","government_document_supertype":""}'
 
     expected = CSV.generate do |csv|
@@ -68,7 +68,7 @@ RSpec.describe Reports::SubscriberListsReport do
   it "can filter based on list tags (as a string)" do
     create(:subscriber_list, tags: {})
 
-    output = described_class.new(created_at.to_s, tags_pattern: "road").call
+    output = described_class.new(created_at.to_s, tags_pattern: "agency").call
     expect(output.lines.count).to eq 2
 
     output = described_class.new(created_at.to_s, tags_pattern: "nothing").call

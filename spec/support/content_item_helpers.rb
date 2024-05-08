@@ -16,12 +16,12 @@ module ContentItemHelpers
     }
   end
 
-  def match_by_tags_content_item_for_subscriber_list(subscriber_list:, tags: { "topics" => ["motoring/road_rage"] }, draft: false)
+  def match_by_tags_content_item_for_subscriber_list(subscriber_list:, tags: { "tribunal_decision_categories" => %w[agency-workers] }, draft: false)
     content_item = content_item_for_base_path(subscriber_list_path(subscriber_list)).merge(required_match_attributes(tags:))
     stub_content_store_has_item(subscriber_list_path(subscriber_list), content_item, draft:)
   end
 
-  def match_by_tags_non_triggering_content_item_for_subscriber_list(subscriber_list:, tags: { "topics" => ["motoring/road_rage"] })
+  def match_by_tags_non_triggering_content_item_for_subscriber_list(subscriber_list:, tags: { "tribunal_decision_categories" => %w[agency-workers] })
     merge_items = required_match_attributes(tags:)
     merge_items.delete("locale")
     content_item = content_item_for_base_path(subscriber_list_path(subscriber_list)).merge(merge_items)

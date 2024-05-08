@@ -13,12 +13,12 @@ RSpec.describe TagsValidator do
   let(:valid_tags) { %w[alpha-numeric-123 Capitals underscores_ slash/separated] }
 
   it "is valid when tags meet the formatting rules" do
-    record = record_class.new(tags: { topics: { any: valid_tags } })
+    record = record_class.new(tags: { tribunal_decision_categories: { any: valid_tags } })
     expect(record).to be_valid
   end
 
   it "is invalid when tag values aren't set as an array" do
-    record = record_class.new(tags: { topics: { any: "a-tag" } })
+    record = record_class.new(tags: { tribunal_decision_categories: { any: "a-tag" } })
     expect(record).to be_invalid
     expect(record.errors[:tags]).to match(["All tag values must be sent as Arrays"])
   end
@@ -31,8 +31,8 @@ RSpec.describe TagsValidator do
   end
 
   it "is invalid when the value for a tag doesn't match the allowed characters" do
-    record = record_class.new(tags: { topics: { any: ["<script>"] } })
+    record = record_class.new(tags: { tribunal_decision_categories: { any: ["<script>"] } })
     expect(record).to be_invalid
-    expect(record.errors[:tags]).to match(["topics has a value with an invalid format."])
+    expect(record.errors[:tags]).to match(["tribunal_decision_categories has a value with an invalid format."])
   end
 end

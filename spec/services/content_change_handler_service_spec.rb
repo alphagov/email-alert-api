@@ -9,7 +9,7 @@ RSpec.describe ContentChangeHandlerService do
     {
       subject: "This is a subject",
       tags: {
-        topics: ["oil-and-gas/licensing"],
+        tribunal_decision_categories: %w[transfer-of-undertakings],
       },
       links: {
         organisations: %w[c380ea42-5d91-41cc-b3cd-0a4cfe439461],
@@ -31,7 +31,7 @@ RSpec.describe ContentChangeHandlerService do
   let(:govuk_request_id) { SecureRandom.uuid }
 
   let!(:subscriber_list) do
-    create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } })
+    create(:subscriber_list, tags: { tribunal_decision_categories: { any: %w[transfer-of-undertakings] } })
   end
 
   let(:document_type_hash) do
@@ -67,7 +67,7 @@ RSpec.describe ContentChangeHandlerService do
           taxon_tree: %w[6416e4e0-c0c1-457a-8337-4bf8ed9d5f80],
         ),
         tags: hash_including(
-          topics: ["oil-and-gas/licensing"],
+          tribunal_decision_categories: %w[transfer-of-undertakings],
           content_store_document_type: "press_release",
         ),
         email_document_supertype: "email document supertype",

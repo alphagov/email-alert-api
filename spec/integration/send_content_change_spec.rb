@@ -4,7 +4,7 @@ RSpec.describe "Sending a content change", type: :request do
       subject: "This is a subject",
       body: "body stuff",
       tags: {
-        topics: ["oil-and-gas/licensing"],
+        tribunal_decision_categories: %w[transfer-of-undertakings],
       },
       links: {
         organisations: %w[

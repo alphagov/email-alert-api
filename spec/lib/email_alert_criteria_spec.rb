@@ -82,7 +82,7 @@ RSpec.describe EmailAlertCriteria do
     end
 
     context "when the content item is valid because it contains a supported link type" do
-      let!(:content_item) { valid_content_item_no_parent.merge("links" => { "topics" => [{ "locale" => "en" }] }) }
+      let!(:content_item) { valid_content_item_no_parent.merge("links" => { "taxons" => [{ "locale" => "en" }] }) }
 
       it "should return true" do
         expect(subject.would_trigger_alert?).to be true

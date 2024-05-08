@@ -1,12 +1,12 @@
 RSpec.describe "Daily digests", type: :request do
-  let(:list_one_topic_id) { "0eb5d0f0-d384-4f27-9da8-3f9e9b22a820" }
+  let(:list_organisation_id) { "0eb5d0f0-d384-4f27-9da8-3f9e9b22a820" }
   let(:list_two_taxon_id) { "6416e4e0-c0c1-457a-8337-4bf8ed9d5f80" }
 
   let(:subscriber_list_one) do
     create_subscriber_list(
       title: "Subscriber list one",
       links: {
-        topics: { any: [list_one_topic_id] },
+        organisations: { any: [list_organisation_id] },
       },
     )
   end
@@ -36,7 +36,7 @@ RSpec.describe "Daily digests", type: :request do
         description: "Description one",
         change_note: "Change note one",
         public_updated_at: "2017-01-01 10:00:00",
-        links: { topics: [list_one_topic_id] },
+        links: { organisations: [list_organisation_id] },
       )
     end
 
@@ -71,7 +71,7 @@ RSpec.describe "Daily digests", type: :request do
     )
 
     travel_to(Time.zone.parse("2017-01-01 09:30")) do
-      create_content_change(links: { topics: [list_one_topic_id] })
+      create_content_change(links: { organisations: [list_organisation_id] })
     end
 
     travel_to(Time.zone.parse("2017-01-01 09:32")) do

@@ -21,15 +21,15 @@ RSpec.describe LinksValidator do
   it "is invalid when links with other formats are provided" do
     record = record_class.new(links: {
       organisations: { any: %w[dogs cats] },
-      topics: { any: %w[dogs cats] },
+      countries: { any: %w[dogs cats] },
       foo: { any: %w([dogs] !cats) },
       people: { any: %w[\u0000] },
-      policies: { any: "><script>alert(1);</script>" },
+      taxon_tree: { any: "><script>alert(1);</script>" },
     })
 
     expect(record).to be_invalid
     expect(record.errors[:links]).to match([
-      "foo, people, and policies has a value with an invalid format.",
+      "foo, people, and taxon_tree has a value with an invalid format.",
     ])
   end
 end

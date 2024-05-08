@@ -1,10 +1,10 @@
 RSpec.describe MatchedContentChangeGenerationService do
   let(:content_change) do
-    create(:content_change, tags: { topics: ["oil-and-gas/licensing"] })
+    create(:content_change, tags: { tribunal_decision_categories: %w[transfer-of-undertakings] })
   end
 
   let!(:subscriber_list) do
-    create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } })
+    create(:subscriber_list, tags: { tribunal_decision_categories: { any: %w[transfer-of-undertakings] } })
   end
 
   describe ".call" do

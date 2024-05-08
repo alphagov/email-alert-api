@@ -61,7 +61,7 @@ Pact.provider_states_for "GDS API Adapters" do
     end
   end
 
-  provider_state "a subscriber list with the tag topic: motoring/road_rage exists" do
+  provider_state "a subscriber list with the tag tribunal decision category: agency-workers exists" do
     set_up do
       create(:subscriber_list)
     end

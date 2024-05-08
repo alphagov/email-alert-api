@@ -11,7 +11,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
         create(
           :subscriber_list,
           links: {
-            topics: { any: [uuid, "drug-device-alert"] },
+            taxon_tree: { any: [uuid, "96d2db38-2ddd-4a3c-b9b4-11e310c8f256"] },
           },
           tags: {},
           document_type: "",
@@ -23,7 +23,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
           :subscriber_list,
           links: {},
           tags: {
-            topics: { any: ["oil-and-gas/licensing", "drug-device-alert"] },
+            tribunal_decision_categories: { any: %w[transfer-of-undertakings time-to-train] },
           },
           document_type: "",
         )
@@ -42,7 +42,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
         create(
           :subscriber_list,
           links: {
-            topics: { any: %w[vat-rates] },
+            taxon_tree: { any: %w[642f0671-8521-4210-91d4-9c9c0e4e2187] },
           },
           tags: {},
           document_type: "tax",
@@ -50,7 +50,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
       end
 
       it "responds with the matching subscriber list" do
-        get_subscriber_list(links: { topics: { any: [uuid, "drug-device-alert"] } })
+        get_subscriber_list(links: { taxon_tree: { any: [uuid, "96d2db38-2ddd-4a3c-b9b4-11e310c8f256"] } })
         database_subscriber_list = subscriber_list_links_only
 
         expect(response_subscriber_list).to include(
@@ -64,13 +64,13 @@ RSpec.describe "Browsing subscriber lists", type: :request do
       end
 
       it "finds subscriber lists that match all of the links" do
-        get_subscriber_list(links: { topics: { any: [uuid, "drug-device-alert"] } })
+        get_subscriber_list(links: { taxon_tree: { any: [uuid, "96d2db38-2ddd-4a3c-b9b4-11e310c8f256"] } })
         expect(response.status).to eq(200)
         expect(response_subscriber_list[:id]).to eq(subscriber_list_links_only.id)
       end
 
       it "finds subscriber lists that match all of the tags" do
-        get_subscriber_list(tags: { topics: { any: ["drug-device-alert", "oil-and-gas/licensing"] } })
+        get_subscriber_list(tags: { tribunal_decision_categories: { any: %w[time-to-train transfer-of-undertakings] } })
         expect(response.status).to eq(200)
         expect(response_subscriber_list[:id]).to eq(subscriber_list_tags_only.id)
       end
@@ -83,7 +83,7 @@ RSpec.describe "Browsing subscriber lists", type: :request do
 
       it "finds subscriber lists that match links and document type" do
         get_subscriber_list(
-          links: { topics: { any: %w[vat-rates] } },
+          links: { taxon_tree: { any: %w[642f0671-8521-4210-91d4-9c9c0e4e2187] } },
           document_type: "tax",
         )
         expect(response.status).to eq(200)
@@ -96,10 +96,10 @@ RSpec.describe "Browsing subscriber lists", type: :request do
       end
 
       it "copes if the (legacy) links / tags are not in a hash" do
-        get_subscriber_list(links: { topics: [uuid, "drug-device-alert"] })
+        get_subscriber_list(links: { taxon_tree: [uuid, "96d2db38-2ddd-4a3c-b9b4-11e310c8f256"] })
         expect(response_subscriber_list[:id]).to eq(subscriber_list_links_only.id)
 
-        get_subscriber_list(tags: { topics: ["drug-device-alert", "oil-and-gas/licensing"] })
+        get_subscriber_list(tags: { tribunal_decision_categories: %w[time-to-train transfer-of-undertakings] })
         expect(response_subscriber_list[:id]).to eq(subscriber_list_tags_only.id)
       end
     end
