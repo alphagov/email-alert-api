@@ -76,40 +76,4 @@ namespace :data_migration do
       puts "Updated #{args[:key]} in #{list.title} to #{new_criteria}"
     end
   end
-
-  desc "Find any active subscriber lists for specialist topics"
-  task find_active_specialist_topic_lists: :environment do
-    specialist_topic_lists = SubscriberList.where("url LIKE ?", "%/topic/%")
-    lists_with_active_subs = specialist_topic_lists.select do |list|
-      list.active_subscriptions_count.positive?
-    end
-    puts "Lists with active subscriptions are:#{lists_with_active_subs.pluck(:slug)}"
-  end
-
-  desc "Migrate one orphaned user from an archived specialist topic"
-  task migrate_single_orphaned_subscriber: :environment do
-    retired_specialist_topic_slug = "schools-colleges-and-children-s-services-early-years"
-    converted_document_collection_slug = "early-years-and-childcare-guidance-for-providers"
-    SubscriberListMover.new(from_slug: retired_specialist_topic_slug, to_slug: converted_document_collection_slug).call
-  end
-
-  desc "Bulk unsubscribe all remaining specialist topic subscriber lists"
-  task bulk_unsubscribe_all_specialist_topic_lists: :environment do
-    slugs = %w[
-      oil-and-gas-onshore-oil-and-gas
-      producing-and-distributing-food-food-labelling
-      schools-colleges-and-children-s-services-safeguarding-children
-      further-education-and-skills-apprenticeships
-      farming-and-food-grants-and-payments-state-aid
-      driving-tests-and-learning-to-drive-cars-and-trailers
-      schools-colleges-and-children-s-services
-      business-tax-7748361f85
-    ]
-    slugs.each do |slug|
-      list = SubscriberList.find_by(slug:)
-      list.subscriptions.active.each do |subscription|
-        subscription.end(reason: :subscriber_list_changed)
-      end
-    end
-  end
 end
