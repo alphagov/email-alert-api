@@ -24,32 +24,10 @@ class SubscriberListMover
       )
     end
 
-    source_subscriber_list.subscribers.each do |subscriber|
-      Subscription.transaction do
-        existing_subscription = Subscription.active.find_by(
-          subscriber:,
-          subscriber_list: source_subscriber_list,
-        )
-
-        next unless existing_subscription
-
-        existing_subscription.end(reason: :subscriber_list_changed)
-
-        subscribed_to_destination_subscriber_list = Subscription.find_by(
-          subscriber:,
-          subscriber_list: destination_subscriber_list,
-        )
-
-        if subscribed_to_destination_subscriber_list.nil?
-          Subscription.create!(
-            subscriber:,
-            subscriber_list: destination_subscriber_list,
-            frequency: existing_subscription.frequency,
-            source: :subscriber_list_changed,
-          )
-        end
-      end
-    end
+    BulkMigrateListWorker.perform_async(
+      source_subscriber_list.id,
+      destination_subscriber_list.id,
+    )
 
     puts "#{active_subscription_count} active subscribers moved from #{from_slug} to #{to_slug}."
 
