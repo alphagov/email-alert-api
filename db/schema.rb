@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_11_100041) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_13_131857) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -144,6 +144,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_11_100041) do
     t.uuid "content_id"
     t.text "description"
     t.datetime "last_audited_at"
+    t.datetime "last_alerted_at"
     t.index ["content_id"], name: "index_subscriber_lists_on_content_id"
     t.index ["document_type"], name: "index_subscriber_lists_on_document_type"
     t.index ["email_document_supertype"], name: "index_subscriber_lists_on_email_document_supertype"
