@@ -7,6 +7,7 @@ class ProcessContentChangeWorker < ApplicationWorker
       return if content_change.processed_at
 
       MatchedContentChangeGenerationService.call(content_change)
+      UpdateLastAlertedAtSubscriberListService.call(content_change)
       ImmediateEmailGenerationService.call(content_change)
 
       content_change.update!(processed_at: Time.zone.now)
