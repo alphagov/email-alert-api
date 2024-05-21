@@ -18,15 +18,15 @@ RSpec.describe "Creating a subscriber list", type: :request do
 
       expect(subscriber_list).to include(
         "tags" => {
-          "topics" => {
-            "any" => ["oil-and-gas/licensing"],
+          "tribunal_decision_categories" => {
+            "any" => %w[transfer-of-undertakings],
           },
           "location" => {
             "all" => %w[france germany],
           },
         },
         "links" => {
-          "topics" => {
+          "organisations" => {
             "any" => %w[uuid-888],
           },
           "taxon_tree" => {
@@ -44,7 +44,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
       it "converts them to a nested hash" do
         create_subscriber_list(
           tags: { location: %w[france germany] },
-          links: { topics: %w[uuid-888] },
+          links: { organisations: %w[uuid-888] },
         )
 
         expect(response_subscriber_list).to include(
@@ -54,7 +54,7 @@ RSpec.describe "Creating a subscriber list", type: :request do
             },
           },
           "links" => {
-            "topics" => {
+            "organisations" => {
               "any" => %w[uuid-888],
             },
           },
@@ -115,11 +115,11 @@ RSpec.describe "Creating a subscriber list", type: :request do
       defaults = {
         title: "This is a sample title",
         tags: {
-          topics: { any: ["oil-and-gas/licensing"] },
+          tribunal_decision_categories: { any: %w[transfer-of-undertakings] },
           location: { all: %w[france germany] },
         },
         links: {
-          topics: { any: %w[uuid-888] },
+          organisations: { any: %w[uuid-888] },
           taxon_tree: { all: %w[taxon1 taxon2] },
         },
       }

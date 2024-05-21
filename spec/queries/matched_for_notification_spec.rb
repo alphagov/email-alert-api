@@ -4,7 +4,7 @@ RSpec.describe MatchedForNotification do
       @subscriber_list_that_should_never_match = create(
         :subscriber_list,
         tags: {
-          topics: { any: %w[Badical-Turbo-Radness] }, format: { any: %w[news_story] }
+          tribunal_decision_categories: { any: %w[jurisdictional-points] }, format: { any: %w[news_story] }
         },
       )
     end
@@ -26,126 +26,140 @@ RSpec.describe MatchedForNotification do
         @lists = {
           tags:
             {
-              any_topic_paye_any_format_guides: create_subscriber_list_with_tags_facets(topics: { any: %w[paye] }, format: { any: %w[policy guide] }),
-              any_topic_vat_licensing: create_subscriber_list_with_tags_facets(topics: { any: %w[vat licensing] }),
+              any_category_tax_any_format_guides: create_subscriber_list_with_tags_facets(tribunal_decision_categories: { any: %w[tax] }, format: { any: %w[policy guide] }),
+              any_category_pension_harassment: create_subscriber_list_with_tags_facets(tribunal_decision_categories: { any: %w[pension harassment] }),
             },
           links:
             {
-              any_topic_paye_any_format_guides: create_subscriber_list_with_links_facets(topics: { any: %w[paye] }, format: { any: %w[policy guide] }),
-              any_topic_vat_licensing: create_subscriber_list_with_links_facets(topics: { any: %w[vat licensing] }),
+              any_category_tax_any_format_guides: create_subscriber_list_with_links_facets(taxon_tree: { any: %w[uuid-001] }, format: { any: %w[policy guide] }),
+              any_category_pension_harassment: create_subscriber_list_with_links_facets(taxon_tree: { any: %w[uuid-002 uuid-003] }),
             },
         }
       end
 
-      %i[links tags].each do |key|
-        it "finds subscriber lists where at least one value of each #{key} in the subscription is present in the query_hash" do
-          lists = execute_query({ topics: %w[paye], format: %w[guide] }, field: key)
-          expect(lists).to eq([@lists[key][:any_topic_paye_any_format_guides]])
+      it "finds subscriber lists where at least one value of each link in the subscription is present in the query_hash" do
+        lists = execute_query({ taxon_tree: %w[uuid-001], format: %w[guide] }, field: :links)
+        expect(lists).to eq([@lists[:links][:any_category_tax_any_format_guides]])
 
-          lists = execute_query({ topics: %w[paye], format: %w[guide] }, field: key)
-          expect(lists).to eq([@lists[key][:any_topic_paye_any_format_guides]])
+        lists = execute_query({ taxon_tree: %w[uuid-001], format: %w[guide] }, field: :links)
+        expect(lists).to eq([@lists[:links][:any_category_tax_any_format_guides]])
 
-          lists = execute_query({ topics: %w[vat] }, field: key)
-          expect(lists).to eq([@lists[key][:any_topic_vat_licensing]])
+        lists = execute_query({ taxon_tree: %w[uuid-002] }, field: :links)
+        expect(lists).to eq([@lists[:links][:any_category_pension_harassment]])
 
-          lists = execute_query({ topics: %w[licensing] }, field: key)
-          expect(lists).to eq([@lists[key][:any_topic_vat_licensing]])
-        end
+        lists = execute_query({ taxon_tree: %w[uuid-003] }, field: :links)
+        expect(lists).to eq([@lists[:links][:any_category_pension_harassment]])
+      end
+
+      it "finds subscriber lists where at least one value of each tag in the subscription is present in the query_hash" do
+        lists = execute_query({ tribunal_decision_categories: %w[tax], format: %w[guide] }, field: :tags)
+        expect(lists).to eq([@lists[:tags][:any_category_tax_any_format_guides]])
+
+        lists = execute_query({ tribunal_decision_categories: %w[tax], format: %w[guide] }, field: :tags)
+        expect(lists).to eq([@lists[:tags][:any_category_tax_any_format_guides]])
+
+        lists = execute_query({ tribunal_decision_categories: %w[pension] }, field: :tags)
+        expect(lists).to eq([@lists[:tags][:any_category_pension_harassment]])
+
+        lists = execute_query({ tribunal_decision_categories: %w[harassment] }, field: :tags)
+        expect(lists).to eq([@lists[:tags][:any_category_pension_harassment]])
       end
     end
 
-    context "matches on all topics" do
+    context "matches on all tribunal decision categories" do
       before do
-        @all_topics_tax_vat = create_subscriber_list_with_tags_facets(topics: { all: %w[vat tax] })
-        @all_topics_tax_vat_licensing = create_subscriber_list_with_tags_facets(topics: { all: %w[vat tax licensing] })
+        @all_categories_tax_pension = create_subscriber_list_with_tags_facets(tribunal_decision_categories: { all: %w[pension tax] })
+        @all_categories_tax_pension_harassment = create_subscriber_list_with_tags_facets(tribunal_decision_categories: { all: %w[pension tax harassment] })
       end
 
-      it "finds subscriber lists matching all topics" do
-        lists = execute_query({ topics: %w[vat tax] })
-        expect(lists).to eq([@all_topics_tax_vat])
+      it "finds subscriber lists matching all tribunal decision categories" do
+        lists = execute_query({ tribunal_decision_categories: %w[pension tax] })
+        expect(lists).to eq([@all_categories_tax_pension])
       end
     end
 
-    context "matches on any and all topics" do
+    context "matches on any and all tribunal decision categories" do
       before do
-        @all_topics_tax_vat_any_topics_licensing_paye = create_subscriber_list_with_tags_facets(topics: { all: %w[vat tax], any: %w[licensing paye] })
-        @all_topics_tax_vat_licensing_any_topics_paye = create_subscriber_list_with_tags_facets(topics: { all: %w[vat tax schools], any: %w[paye] })
+        @all_categories_tax_pension_any_categories_harassment_tax = create_subscriber_list_with_tags_facets(tribunal_decision_categories: { all: %w[pension tax], any: %w[harassment tax] })
+        @all_categories_tax_pension_harassment_any_categories_tax = create_subscriber_list_with_tags_facets(tribunal_decision_categories: { all: %w[pension tax renumeration], any: %w[tax] })
       end
 
-      it "finds subscriber lists matching on both of all and one of any topics" do
-        lists = execute_query({ topics: %w[vat tax licensing] })
-        expect(lists).to eq([@all_topics_tax_vat_any_topics_licensing_paye])
+      it "finds subscriber lists matching on both of all and one of any tribunal decision categories" do
+        lists = execute_query({ tribunal_decision_categories: %w[pension tax harassment] })
+        expect(lists).to eq([@all_categories_tax_pension_any_categories_harassment_tax])
       end
 
-      it "does not find subscriber list for mixture of all and any topics when not all topics present" do
-        lists = execute_query({ field: :links, query_hash: { topics: %w[vat licensing] } })
-        expect(lists).not_to include(@all_topics_tax_vat_any_topics_licensing_paye)
+      it "does not find subscriber list for mixture of all and any tribunal decision categories when not all tribunal decision categories present" do
+        lists = execute_query({ field: :links, query_hash: { tribunal_decision_categories: %w[pension harassment] } })
+        expect(lists).not_to include(@all_categories_tax_pension_any_categories_harassment_tax)
       end
     end
 
-    context "matches on all topics and any policies" do
+    context "matches on all tribunal decision judges and any tribunal decision categories" do
       before do
-        @all_topics_tax_vat_any_policies_economy_industry = create_subscriber_list_with_tags_facets(topics: { all: %w[vat tax] }, policies: { any: %w[economy industry] })
-        @all_topics_vat_any_policies_economy_industry = create_subscriber_list_with_tags_facets(topics: { all: %w[paye schools] }, policies: { any: %w[economy industry] })
+        @all_judges_tax_pension_any_categories_redundancy_protective_award =
+          create_subscriber_list_with_tags_facets(tribunal_decision_judges: { all: %w[pension tax] }, tribunal_decision_categories: { any: %w[redundancy protective-award] })
+        @all_judges_pension_any_categories_redundancy_protective_award =
+          create_subscriber_list_with_tags_facets(tribunal_decision_judges: { all: %w[tax renumeration] }, tribunal_decision_categories: { any: %w[redundancy protective-award] })
       end
 
-      it "finds subscriber lists matching a mix of all topics and any policies" do
-        lists = execute_query({ topics: %w[vat tax], policies: %w[economy industry] })
-        expect(lists).to eq([@all_topics_tax_vat_any_policies_economy_industry])
+      it "finds subscriber lists matching a mix of all tribunal decision judges and any tribunal decision categories" do
+        lists = execute_query({ tribunal_decision_judges: %w[pension tax], tribunal_decision_categories: %w[redundancy protective-award] })
+        expect(lists).to eq([@all_judges_tax_pension_any_categories_redundancy_protective_award])
       end
 
-      it "does not find subscriber list for mix of all topics and any policies when not all topics present" do
-        lists = execute_query({ field: :links, query_hash: { topics: %w[vat], policies: %w[economy] } })
-        expect(lists).not_to include(@all_topics_tax_vat_any_policies_economy_industry)
+      it "does not find subscriber list for mix of all tribunal decision judges and any tribunal decision categories when not all tribunal decision judges present" do
+        lists = execute_query({ field: :links, query_hash: { tribunal_decision_judges: %w[pension], tribunal_decision_categories: %w[redundancy] } })
+        expect(lists).not_to include(@all_judges_tax_pension_any_categories_redundancy_protective_award)
       end
     end
 
-    context "matches on all topics and all policies" do
+    context "matches on all tribunal decision judges and all tribunal decision categories" do
       before do
-        @all_topics_tax_vat = create_subscriber_list_with_tags_facets(topics: { all: %w[vat tax] })
-        @all_topics_tax_vat_all_policies_economy_industry = create_subscriber_list_with_tags_facets(topics: { all: %w[vat tax] }, policies: { all: %w[economy industry] })
-        @all_topics_vat_policies_economy_industry = create_subscriber_list_with_tags_facets(topics: { all: %w[paye schools] }, policies: { all: %w[economy broadband] })
+        @all_judges_tax_pension = create_subscriber_list_with_tags_facets(tribunal_decision_judges: { all: %w[pension tax] })
+        @all_judges_tax_pension_all_categories_redundancy_protective_award = create_subscriber_list_with_tags_facets(tribunal_decision_judges: { all: %w[pension tax] }, tribunal_decision_categories: { all: %w[redundancy protective-award] })
+        @all_judges_pension_tribunal_decision_categories_redundancy_protective_award = create_subscriber_list_with_tags_facets(tribunal_decision_judges: { all: %w[tax renumeration] }, tribunal_decision_categories: { all: %w[redundancy broadband] })
       end
 
-      it "finds subscriber lists matching a mix of all topics and policies" do
-        lists = execute_query({ topics: %w[vat tax licensing], policies: %w[economy industry] })
-        expect(lists).to include(@all_topics_tax_vat_all_policies_economy_industry)
+      it "finds subscriber lists matching a mix of all tribunal decision judges and tribunal decision categories" do
+        lists = execute_query({ tribunal_decision_judges: %w[pension tax harassment], tribunal_decision_categories: %w[redundancy protective-award] })
+        expect(lists).to include(@all_judges_tax_pension_all_categories_redundancy_protective_award)
       end
 
-      it "does not find subscriber list for all topics when not all topics present" do
-        lists = execute_query({ topics: %w[vat schools] })
-        expect(lists).not_to include(@all_topics_tax_vat)
+      it "does not find subscriber list for all tribunal decision judges when not all tribunal decision judges present" do
+        lists = execute_query({ tribunal_decision_judges: %w[pension renumeration] })
+        expect(lists).not_to include(@all_judges_tax_pension)
       end
 
-      it "does not find subscriber list for mix of all topics and policies when not all policies present" do
-        lists = execute_query({ topics: %w[vat tax ufos], policies: %w[economy acceptable_footwear] })
-        expect(lists).to_not include(@all_topics_tax_vat_all_policies_economy_schools)
+      it "does not find subscriber list for mix of all tribunal decision judges and tribunal decision categories when not all tribunal decision categories present" do
+        lists = execute_query({ tribunal_decision_judges: %w[pension tax ufos], tribunal_decision_categories: %w[redundancy acceptable_footwear] })
+        expect(lists).to_not include(@all_judges_tax_pension_all_categories_redundancy_renumeration)
       end
     end
 
     context "there are other, non-matching link types in the query hash" do
       before do
-        @topics_any_licensing = create_subscriber_list_with_tags_facets(topics: { any: %w[licensing] })
+        @tribunal_decision_categories_any_harassment = create_subscriber_list_with_tags_facets(tribunal_decision_categories: { any: %w[harassment] })
       end
 
       it "finds lists where all the link types in the subscription have a value present" do
-        lists = execute_query({ topics: %w[licensing], another_link_thats_not_part_of_the_subscription: %w[elephants] })
-        expect(lists).to eq([@topics_any_licensing])
+        lists = execute_query({ tribunal_decision_categories: %w[harassment], another_link_thats_not_part_of_the_subscription: %w[practice-and-procedure-issues] })
+        expect(lists).to eq([@tribunal_decision_categories_any_harassment])
       end
     end
 
     context "there are non-matching values in the query_hash" do
       before do
-        @topics_any_licensing = create_subscriber_list_with_tags_facets(topics: { any: %w[licensing] })
+        @tribunal_decision_categories_any_harassment = create_subscriber_list_with_tags_facets(tribunal_decision_categories: { any: %w[harassment] })
       end
 
       it "finds lists where all the link types in the subscription have a value present" do
-        lists = execute_query({ topics: %w[licensing elephants] })
-        expect(lists).to eq([@topics_any_licensing])
+        lists = execute_query({ tribunal_decision_categories: %w[harassment practice-and-procedure-issues] })
+        expect(lists).to eq([@tribunal_decision_categories_any_harassment])
       end
 
       it "doesn't return lists which have no tag types present in the document" do
-        lists = execute_query({ another_tag_thats_not_part_of_any_subscription: %w[elephants] })
+        lists = execute_query({ another_tag_thats_not_part_of_any_subscription: %w[practice-and-procedure-issues] })
         expect(lists).to eq([])
       end
     end

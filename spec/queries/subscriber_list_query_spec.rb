@@ -1,7 +1,7 @@
 RSpec.describe SubscriberListQuery do
   let(:content_id) { "37ac8e5c-331a-48fc-8ac0-d401579c3d30" }
-  let(:tags) { { policies: %w[eggs] } }
-  let(:links) { { policies: %w[f05dc04b-ca95-4cca-9875-a7591d055467], taxon_tree: %w[f05dc04b-ca95-4cca-9875-a7591d055448] } }
+  let(:tags) { { tribunal_decision_categories: %w[public-interest-disclosure] } }
+  let(:links) { { organisations: %w[f05dc04b-ca95-4cca-9875-a7591d055467], taxon_tree: %w[f05dc04b-ca95-4cca-9875-a7591d055448] } }
   let(:document_type) { "travel_advice" }
   let(:email_document_supertype) { "publications" }
   let(:government_document_supertype) { "news_stories" }
@@ -103,8 +103,8 @@ RSpec.describe SubscriberListQuery do
   end
 
   context "when a subscriber_list has document types and tags" do
-    let(:content_change_tags) { { policies: %w[eggs] } }
-    let(:list_tags) { { policies: { any: %w[eggs] } } }
+    let(:content_change_tags) { { tribunal_decision_categories: %w[public-interest-disclosure] } }
+    let(:list_tags) { { tribunal_decision_categories: { any: %w[public-interest-disclosure] } } }
 
     it "includes lists that match on document types and tags" do
       content_change = build_content_change(document_type_attributes.merge(tags: content_change_tags))
@@ -116,7 +116,7 @@ RSpec.describe SubscriberListQuery do
 
     it "excludes lists that match on document type but do not match on tags" do
       content_change = build_content_change(document_type_attributes.merge(tags: content_change_tags))
-      list = create_subscriber_list(document_type_attributes.merge(tags: { policies: { any: %w[cheese] } }))
+      list = create_subscriber_list(document_type_attributes.merge(tags: { tribunal_decision_categories: { any: %w[contract-of-employment] } }))
       query = described_class.new(**content_change)
 
       expect(query.lists).not_to include(list)
@@ -133,19 +133,19 @@ RSpec.describe SubscriberListQuery do
   end
 
   context "when a subscriber_list has document types and links" do
-    let(:policy_id) { "f05dc04b-ca95-4cca-9875-a7591d055467" }
+    let(:document_collection_id) { "f05dc04b-ca95-4cca-9875-a7591d055467" }
     let(:taxon_id) { "f05dc04b-ca95-4cca-9875-a7591d055448" }
 
     let(:content_change_links) do
       {
-        policies: [policy_id],
+        organisations: [document_collection_id],
         taxon_tree: [taxon_id],
       }
     end
 
     let(:subscriber_list_links) do
       {
-        policies: { any: [policy_id] },
+        organisations: { any: [document_collection_id] },
         taxon_tree: { all: [taxon_id] },
       }
     end
@@ -160,7 +160,7 @@ RSpec.describe SubscriberListQuery do
 
     it "excludes lists that match on document type but do not match on link" do
       content_change = build_content_change(document_type_attributes.merge(links: content_change_links))
-      list = create_subscriber_list(document_type_attributes.merge(links: { policies: { any: %w[random-content-id] } }))
+      list = create_subscriber_list(document_type_attributes.merge(links: { organisations: { any: %w[random-content-id] } }))
       query = described_class.new(**content_change)
 
       expect(query.lists).not_to include(list)
@@ -277,7 +277,7 @@ RSpec.describe SubscriberListQuery do
     let(:document_collection_id) { "4d74904a-e45e-47e4-921d-c9dc13c8c9de" }
     let(:content_change_links) { { document_collections: [document_collection_id] } }
     let(:subscriber_list_links) { { document_collections: { any: [document_collection_id] } } }
-    let(:unmatched_content_change_links) { { policies: %w[f05dc04b-ca95-4cca-9875-a7591d055467] } }
+    let(:unmatched_content_change_links) { { people: %w[f05dc04b-ca95-4cca-9875-a7591d055467] } }
     let(:unmatched_content_id) { "f05dc04b-ca95-4cca-9875-a7591d055467" }
 
     it "includes lists that match on content id and match on links" do

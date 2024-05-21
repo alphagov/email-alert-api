@@ -7,7 +7,7 @@ RSpec.describe CreateSubscriberListService do
 
     let(:matching_criteria) do
       {
-        tags: { topics: { any: %w[oil-and-gas/licensing] } },
+        tags: { tribunal_decision_categories: { any: %w[transfer-of-undertakings] } },
         links: { taxon_tree: { any: %w[uuid] } },
         document_type: "travel_advice",
         email_document_supertype: "publications",
@@ -82,7 +82,7 @@ RSpec.describe CreateSubscriberListService do
         expect(list.document_type).to eq("travel_advice")
         expect(list.email_document_supertype).to eq("publications")
         expect(list.government_document_supertype).to eq("news_stories")
-        expect(list.tags).to eq(topics: { any: ["oil-and-gas/licensing"] })
+        expect(list.tags).to eq(tribunal_decision_categories: { any: %w[transfer-of-undertakings] })
         expect(list.links).to match(taxon_tree: { any: %w[uuid] })
       end
 

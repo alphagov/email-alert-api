@@ -17,24 +17,24 @@ RSpec.describe SubscriberList, type: :model do
     end
 
     it "is valid when tags 'hash' has 'any' values that are arrays" do
-      subject.tags = { topics: { any: %w[bar] } }
+      subject.tags = { tribunal_decision_categories: { any: %w[pension] } }
 
       expect(subject).to be_valid
     end
 
     it "is valid when tags 'hash' has 'all' values that are arrays" do
-      subject.tags = { topics: { all: %w[bar] } }
+      subject.tags = { tribunal_decision_categories: { all: %w[pension] } }
 
       expect(subject).to be_valid
     end
 
     it "is invalid when tags 'hash' has values that are not whitelisted" do
       subject.tags = {
-        foo: { any: %w[bar] },
+        foo: { any: %w[pension] },
         dogs: { all: %w[bark] },
-        organisations: { any: %w[bar] },
-        people: { any: %w[bar] },
-        world_locations: { all: %w[bar] },
+        organisations: { any: %w[pension] },
+        people: { any: %w[pension] },
+        world_locations: { all: %w[pension] },
       }
 
       expect(subject).to be_invalid
@@ -42,33 +42,33 @@ RSpec.describe SubscriberList, type: :model do
     end
 
     it "is invalid when tags 'hash' has values that are not arrays" do
-      subject.tags = { topics: { any: "bar" } }
+      subject.tags = { tribunal_decision_categories: { any: "pension" } }
 
       expect(subject).to be_invalid
       expect(subject.errors[:tags]).to include("All tag values must be sent as Arrays")
     end
 
     it "is valid when links 'hash' has 'any' values that are arrays" do
-      subject.links = { foo: { any: %w[bar] } }
+      subject.links = { foo: { any: %w[pension] } }
 
       expect(subject).to be_valid
     end
 
     it "is valid when links 'hash' has 'all' values that are arrays" do
-      subject.links = { foo: { all: %w[bar] } }
+      subject.links = { foo: { all: %w[pension] } }
 
       expect(subject).to be_valid
     end
 
     it "is invalid when links 'hash' has 'any' values that are not arrays" do
-      subject.links = { foo: { any: "bar" } }
+      subject.links = { foo: { any: "pension" } }
 
       expect(subject).to be_invalid
       expect(subject.errors[:links]).to include("All link values must be sent as Arrays")
     end
 
     it "is invalid when links 'hash' has 'all' values that are not arrays" do
-      subject.links = { foo: { all: "bar" } }
+      subject.links = { foo: { all: "pension" } }
 
       expect(subject).to be_invalid
       expect(subject.errors[:links]).to include("All link values must be sent as Arrays")
@@ -128,10 +128,10 @@ RSpec.describe SubscriberList, type: :model do
 
   describe "#tags" do
     it "deserializes the tag arrays" do
-      list = create(:subscriber_list, tags: { topics: { any: ["environmental-management/boating"], all: ["oil-and-gas/licensing"] } })
+      list = create(:subscriber_list, tags: { tribunal_decision_categories: { any: %w[pension], all: %w[transfer-of-undertakings] } })
       list.reload
 
-      expect(list.tags).to eq(topics: { any: ["environmental-management/boating"], all: ["oil-and-gas/licensing"] })
+      expect(list.tags).to eq(tribunal_decision_categories: { any: %w[pension], all: %w[transfer-of-undertakings] })
     end
   end
 

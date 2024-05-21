@@ -3,13 +3,13 @@ RSpec.describe ProcessMessageWorker do
     create(
       :message,
       criteria_rules: [
-        { type: "tag", key: "topics", value: "oil-and-gas/licensing" },
+        { type: "tag", key: "tribunal_decision_categories", value: "transfer-of-undertakings" },
       ],
     )
   end
 
   let(:subscriber_list) do
-    create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } })
+    create(:subscriber_list, tags: { tribunal_decision_categories: { any: %w[transfer-of-undertakings] } })
   end
 
   describe "#perform" do

@@ -100,7 +100,7 @@ FactoryBot.define do
   factory :subscriber_list do
     sequence(:title) { |n| "title #{n}" }
     sequence(:slug) { |n| "title-#{n}" }
-    tags { { topics: { any: ["motoring/road_rage"] } } }
+    tags { { tribunal_decision_categories: { any: %w[agency-workers] } } }
     created_at { 1.year.ago }
 
     trait :travel_advice do

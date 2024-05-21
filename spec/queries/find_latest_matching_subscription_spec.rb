@@ -1,6 +1,6 @@
 RSpec.describe FindLatestMatchingSubscription do
   let!(:subscriber) { create(:subscriber) }
-  let!(:subscriber_list) { create(:subscriber_list, tags: { topics: { any: ["oil-and-gas/licensing"] } }) }
+  let!(:subscriber_list) { create(:subscriber_list, tags: { tribunal_decision_categories: { any: %w[transfer-of-undertakings] } }) }
   let!(:original_subscription) { create_subscription(:ended, :daily, created_at: 5.days.ago) }
   # `let` (as opposed to `let!`) is lazy, so value will vary according to other subscriptions
   # that have been created, therefore we can safely assert against it
