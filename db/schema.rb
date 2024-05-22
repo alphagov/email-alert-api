@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_13_131857) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_22_152228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -75,6 +75,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_13_131857) do
     t.datetime "sent_at", precision: nil
     t.uuid "content_id"
     t.string "notify_status"
+    t.uuid "subscription_id"
     t.index ["address"], name: "index_emails_on_address"
     t.index ["content_id"], name: "index_emails_on_content_id"
     t.index ["created_at"], name: "index_emails_on_created_at"
@@ -117,14 +118,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_13_131857) do
     t.boolean "omit_footer_unsubscribe_link", default: false, null: false
     t.boolean "override_subscription_frequency_to_immediate", default: false, null: false
     t.index ["sender_message_id"], name: "index_messages_on_sender_message_id", unique: true
-  end
-
-  create_table "subscriber_list_audits", force: :cascade do |t|
-    t.bigint "subscriber_list_id", null: false
-    t.integer "reference_count", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["subscriber_list_id"], name: "index_subscriber_list_audits_on_subscriber_list_id"
   end
 
   create_table "subscriber_lists", id: :serial, force: :cascade do |t|
@@ -217,7 +210,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_13_131857) do
   add_foreign_key "matched_content_changes", "subscriber_lists", on_delete: :cascade
   add_foreign_key "matched_messages", "messages", on_delete: :cascade
   add_foreign_key "matched_messages", "subscriber_lists", on_delete: :cascade
-  add_foreign_key "subscriber_list_audits", "subscriber_lists"
   add_foreign_key "subscription_contents", "content_changes", on_delete: :restrict
   add_foreign_key "subscription_contents", "digest_run_subscribers", on_delete: :cascade
   add_foreign_key "subscription_contents", "emails", on_delete: :cascade
