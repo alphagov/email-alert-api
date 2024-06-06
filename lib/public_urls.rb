@@ -24,14 +24,6 @@ module PublicUrls
       url_for(base_path: "/email/unsubscribe/#{subscription.id}", **params)
     end
 
-    def unsubscribe_one_click(subscription, **utm_params)
-      subscriber_id = subscription.subscriber_id
-      token = AuthTokenGeneratorService.call(subscriber_id:, one_click: true)
-
-      params = utm_params.merge(token:)
-      url_for(base_path: "/email/unsubscribe/one-click/#{subscription.id}", **params)
-    end
-
   private
 
     def website_root
