@@ -15,7 +15,6 @@ RSpec.describe SendEmailService::SendNotifyEmail do
       expect(notify_client).to have_received(:send_email).with(
         email_address: email.address,
         template_id: Rails.application.config.notify_template_id,
-        one_click_unsubscribe_url: nil,
         reference: email.id,
         personalisation: {
           subject: email.subject,
@@ -29,26 +28,6 @@ RSpec.describe SendEmailService::SendNotifyEmail do
         expect { described_class.call(email) }
           .to change { email.reload.status }.to("sent")
           .and change { email.reload.sent_at }.to(Time.zone.now)
-      end
-    end
-
-    context "with a subscription id passed in" do
-      let!(:subscription) { create(:subscription) }
-      let(:email) { create(:email, subscription_id: subscription.id) }
-
-      it "includes a one-click unsubscribe parameter" do
-        described_class.call(email)
-
-        expect(notify_client).to have_received(:send_email).with(
-          email_address: email.address,
-          template_id: Rails.application.config.notify_template_id,
-          one_click_unsubscribe_url: /\/email\/unsubscribe\/one-click\/#{subscription.id}.*token=/,
-          reference: email.id,
-          personalisation: {
-            subject: email.subject,
-            body: email.body,
-          },
-        )
       end
     end
 

@@ -26,7 +26,6 @@ private
           subject:,
           body: body(subscription, subscriber),
           subscriber_id: subscriber.id,
-          subscription_id: subscription.id,
           created_at: now,
           updated_at: now,
           content_id: content.try(:content_id),
