@@ -7,6 +7,7 @@ RSpec.describe SendEmailService::SendNotifyEmail do
 
     before do
       allow(Notifications::Client).to receive(:new).and_return(notify_client)
+      Rails.application.config.notify_template_id = "Hello!"
     end
 
     it "uses a Notifications::Client to send an email" do
@@ -28,6 +29,44 @@ RSpec.describe SendEmailService::SendNotifyEmail do
         expect { described_class.call(email) }
           .to change { email.reload.status }.to("sent")
           .and change { email.reload.sent_at }.to(Time.zone.now)
+      end
+    end
+
+    context "with a subscription id passed in" do
+      let!(:subscription) { create(:subscription) }
+      let(:email) { create(:email, subscription_id: subscription.id) }
+
+      it "includes a one-click unsubscribe parameter" do
+        described_class.call(email)
+
+        expect(notify_client).to have_received(:send_email).with(
+          email_address: email.address,
+          template_id: Rails.application.config.notify_template_id,
+          one_click_unsubscribe_url: /\/email\/unsubscribe\/one-click\/#{subscription.id}.*token=/,
+          reference: email.id,
+          personalisation: {
+            subject: email.subject,
+            body: email.body,
+          },
+        )
+      end
+    end
+
+    context "when there is no subscription" do
+      let(:email) { create(:email, subscription_id: nil) }
+
+      it "includes a one-click unsubscribe parameter" do
+        described_class.call(email)
+
+        expect(notify_client).to have_received(:send_email).with(
+          email_address: email.address,
+          template_id: Rails.application.config.notify_template_id,
+          reference: email.id,
+          personalisation: {
+            subject: email.subject,
+            body: email.body,
+          },
+        )
       end
     end
 
