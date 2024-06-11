@@ -5,7 +5,7 @@ class StatusUpdatesController < ApplicationController
     status = params.require(:status)
     reference = params.require(:reference)
 
-    logger.info("Email #{reference} callback received with status: #{status}")
+    logger.debug("Email #{reference} callback received with status: #{status}")
     GovukStatsd.increment("status_update.status.#{status}")
 
     # We are deliberatly omitting "technical-failure" as Notify say this is
