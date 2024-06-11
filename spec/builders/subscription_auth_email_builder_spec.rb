@@ -39,8 +39,8 @@ RSpec.describe SubscriptionAuthEmailBuilder do
 
           If you did not request this email, you can ignore it.
 
-          Thanks 
-          GOV.UK emails 
+          Thanks
+          GOV.UK emails
         BODY
       )
     end

@@ -9,15 +9,18 @@ class SendEmailService::SendNotifyEmail
   end
 
   def call
-    client.send_email(
+    email_params = {
       email_address: email.address,
       template_id: Rails.application.config.notify_template_id,
       reference: email.id,
+      one_click_unsubscribe_url: one_click_unsubscribe_url(email.subscription_id),
       personalisation: {
         subject: email.subject,
         body: email.body,
       },
-    )
+    }
+
+    client.send_email(email_params.compact)
 
     Metrics.sent_to_notify_successfully
     email.update!(status: :sent, sent_at: Time.zone.now)
@@ -38,6 +41,19 @@ class SendEmailService::SendNotifyEmail
 private
 
   attr_reader :email, :client
+
+  def one_click_unsubscribe_url(subscription_id)
+    return nil unless subscription_id
+
+    subscription = Subscription.find(subscription_id)
+    return nil if subscription.nil?
+
+    PublicUrls.unsubscribe_one_click(
+      subscription,
+      utm_source: subscription.subscriber_list.slug,
+      utm_content: subscription.frequency,
+    )
+  end
 
   def undeliverable_failure?(error)
     return false unless error.is_a?(Notifications::Client::BadRequestError)

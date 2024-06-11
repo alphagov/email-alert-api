@@ -17,6 +17,7 @@ class DigestEmailBuilder
       ),
       body:,
       subscriber_id: subscriber.id,
+      subscription_id: subscription.id,
     )
   end
 

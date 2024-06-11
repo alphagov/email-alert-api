@@ -5,7 +5,7 @@ RSpec.describe DigestEmailBuilder do
   let(:content) { [build(:content_change), build(:message)] }
 
   let(:subscription) do
-    build(
+    create(
       :subscription,
       frequency:,
       subscriber_list:,
@@ -36,6 +36,7 @@ RSpec.describe DigestEmailBuilder do
     context "for a daily update" do
       it "creates an Email" do
         expect(email.subscriber_id).to eq(subscriber.id)
+        expect(email.subscription_id).to eq(subscription.id)
         expect(email.subject).to eq "Daily update from GOV.UK for: Test title 1"
 
         expect(email.body).to eq(
@@ -65,6 +66,7 @@ RSpec.describe DigestEmailBuilder do
 
       it "creates an Email" do
         expect(email.subscriber_id).to eq(subscriber.id)
+        expect(email.subscription_id).to eq(subscription.id)
         expect(email.subject).to eq "Weekly update from GOV.UK for: Test title 1"
 
         expect(email.body).to include(
