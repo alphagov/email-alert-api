@@ -22,7 +22,6 @@ Bundler.require(*Rails.groups)
 
 module EmailAlertApi
   class Application < Rails::Application
-    config.time_zone = "London"
     config.api_only = true
     config.load_defaults 7.1
 
