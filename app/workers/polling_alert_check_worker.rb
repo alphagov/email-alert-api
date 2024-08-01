@@ -14,8 +14,11 @@ class PollingAlertCheckWorker < ApplicationWorker
 
     Rails.logger.info("Checking #{document_type.titleize} records: #{delivered} out of #{content_items.count} alerts have been delivered to at least one recipient")
 
-    Rails.cache.write("current_#{document_type}s", content_items.count, expires_in: 15.minutes)
-    Rails.cache.write("delivered_#{document_type}s", delivered, expires_in: 15.minutes)
+    # Job runs every 15 minutes, expiry is 2 x job so that we don't have blank spots
+    # if the job is slightly delayed.
+    expiry_time = Time.zone.now + 30.minutes
+    Rails.cache.write("current_#{document_type}s", content_items.count, expires_at: expiry_time)
+    Rails.cache.write("delivered_#{document_type}s", delivered, expires_at: expiry_time)
   end
 
   def any_emails_delivered_for?(content_id, valid_from, document_type)
