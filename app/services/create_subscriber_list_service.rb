@@ -11,10 +11,21 @@ class CreateSubscriberListService
 
   def call
     subscriber_list = FindExactQuery.new(**matching_criteria).exact_match
-    return SubscriberList.create!(subscriber_list_params) unless subscriber_list
+    subscriber_list_params_saved = subscriber_list_params
+    return SubscriberList.create!(subscriber_list_params_saved) unless subscriber_list
 
     subscriber_list.update!(title:, url:)
     subscriber_list
+  rescue ActiveRecord::RecordNotUnique => e
+    conflicting_record = SubscriberList.where(slug: result).first
+    GovukError.notify(
+      e,
+      extra: {
+        slug: subscriber_list_params_saved[:slug],
+        conflicting_record_id: conflicting_record.id,
+        conflicting_record_slug: conflicting_record.slug,
+      },
+    )
   end
 
 private
