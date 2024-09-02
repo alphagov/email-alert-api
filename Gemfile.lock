@@ -132,7 +132,7 @@ GEM
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
-    gds-api-adapters (96.0.2)
+    gds-api-adapters (96.0.3)
       addressable
       link_header
       null_logger
@@ -188,7 +188,7 @@ GEM
     hashdiff (1.1.0)
     hashie (5.0.0)
     http-accept (1.7.0)
-    http-cookie (1.0.6)
+    http-cookie (1.0.7)
       domain_name (~> 0.5)
     httparty (0.22.0)
       csv
@@ -226,7 +226,7 @@ GEM
     method_source (1.0.0)
     mime-types (3.5.2)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2024.0604)
+    mime-types-data (3.2024.0820)
     mini_mime (1.1.5)
     mini_portile2 (2.8.7)
     minitest (5.25.1)
