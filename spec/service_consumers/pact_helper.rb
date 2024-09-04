@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] = "test"
 ENV["PACT_DO_NOT_TRACK"] = "true"
 
+require "active_support/inflector"
 require "pact/provider/rspec"
 require "webmock/rspec"
 require "factory_bot_rails"
@@ -17,6 +18,7 @@ Pact.configure do |config|
   config.include WebMock::Matchers
   config.include FactoryBot::Syntax::Methods
   config.include GdsApi::TestHelpers::AccountApi
+  config.include ActiveSupport::Inflector::Inflections
 end
 
 WebMock.allow_net_connect!
