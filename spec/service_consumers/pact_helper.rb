@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] = "test"
 ENV["PACT_DO_NOT_TRACK"] = "true"
 
+require "active_support/inflector"
 require "pact/provider/rspec"
 require "webmock/rspec"
 require "factory_bot_rails"
@@ -17,10 +18,10 @@ Pact.configure do |config|
   config.include WebMock::Matchers
   config.include FactoryBot::Syntax::Methods
   config.include GdsApi::TestHelpers::AccountApi
+  config.include ActiveSupport::Inflector
 end
 
 WebMock.allow_net_connect!
-DatabaseCleaner.allow_remote_database_url = true
 
 def url_encode(str)
   ERB::Util.url_encode(str)
@@ -41,12 +42,16 @@ Pact.service_provider "Email Alert API" do
 end
 
 Pact.provider_states_for "GDS API Adapters" do
+  DatabaseCleaner.allow_remote_database_url = true
+
   set_up do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.start
     GDS::SSO.test_user = create(:user, permissions: %w[internal_app])
   end
 
   tear_down do
-    DatabaseCleaner.clean_with :truncation
+    DatabaseCleaner.clean
   end
 
   provider_state "a subscription with the uuid 719efe7b-00d0-4168-ac30-99fe6093e3fc exists" do
