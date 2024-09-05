@@ -2,6 +2,20 @@ RSpec.describe PollingAlertCheckWorker do
   include SearchAlertListHelpers
   include NotifyRequestHelpers
 
+  def expect_cache_flags_to_contain(current, delivered)
+    expect(Rails.cache).to receive(:write) do |name, count, hash|
+      expect(name).to eq("current_medical_safety_alerts")
+      expect(count).to eq(current)
+      expect(hash[:expires_at]).to be_within(5.seconds).of(Time.zone.now + 30.minutes)
+    end
+
+    expect(Rails.cache).to receive(:write) do |name, count, hash|
+      expect(name).to eq("delivered_medical_safety_alerts")
+      expect(count).to eq(delivered)
+      expect(hash[:expires_at]).to be_within(5.seconds).of(Time.zone.now + 30.minutes)
+    end
+  end
+
   describe "#perform", caching: true do
     def perform
       described_class.new.perform("medical_safety_alert")
@@ -11,8 +25,8 @@ RSpec.describe PollingAlertCheckWorker do
       before { stub_medical_safety_alert_query(content_id: SecureRandom.uuid, age: 30.minutes) }
 
       it "should put 0/0 in the cache" do
-        expect(Rails.cache).to receive(:write).with("current_medical_safety_alerts", 0, expires_in: 15.minutes)
-        expect(Rails.cache).to receive(:write).with("delivered_medical_safety_alerts", 0, expires_in: 15.minutes)
+        expect_cache_flags_to_contain(0, 0)
+
         perform
       end
     end
@@ -21,8 +35,8 @@ RSpec.describe PollingAlertCheckWorker do
       before { stub_medical_safety_alert_query(content_id: SecureRandom.uuid, age: 3.days) }
 
       it "should put 0/0 in the cache" do
-        expect(Rails.cache).to receive(:write).with("current_medical_safety_alerts", 0, expires_in: 15.minutes)
-        expect(Rails.cache).to receive(:write).with("delivered_medical_safety_alerts", 0, expires_in: 15.minutes)
+        expect_cache_flags_to_contain(0, 0)
+
         perform
       end
     end
@@ -35,8 +49,8 @@ RSpec.describe PollingAlertCheckWorker do
       end
 
       it "should put 1/1 in the cache" do
-        expect(Rails.cache).to receive(:write).with("current_medical_safety_alerts", 1, expires_in: 15.minutes)
-        expect(Rails.cache).to receive(:write).with("delivered_medical_safety_alerts", 1, expires_in: 15.minutes)
+        expect_cache_flags_to_contain(1, 1)
+
         perform
       end
     end
@@ -50,8 +64,8 @@ RSpec.describe PollingAlertCheckWorker do
       end
 
       it "should put 1/0 in the cache" do
-        expect(Rails.cache).to receive(:write).with("current_medical_safety_alerts", 1, expires_in: 15.minutes)
-        expect(Rails.cache).to receive(:write).with("delivered_medical_safety_alerts", 0, expires_in: 15.minutes)
+        expect_cache_flags_to_contain(1, 0)
+
         perform
       end
     end
@@ -68,8 +82,8 @@ RSpec.describe PollingAlertCheckWorker do
       end
 
       it "should put 1/1 in the cache" do
-        expect(Rails.cache).to receive(:write).with("current_medical_safety_alerts", 1, expires_in: 15.minutes)
-        expect(Rails.cache).to receive(:write).with("delivered_medical_safety_alerts", 1, expires_in: 15.minutes)
+        expect_cache_flags_to_contain(1, 1)
+
         perform
       end
 
@@ -89,8 +103,8 @@ RSpec.describe PollingAlertCheckWorker do
       end
 
       it "should put 1/0 in the cache" do
-        expect(Rails.cache).to receive(:write).with("current_medical_safety_alerts", 1, expires_in: 15.minutes)
-        expect(Rails.cache).to receive(:write).with("delivered_medical_safety_alerts", 0, expires_in: 15.minutes)
+        expect_cache_flags_to_contain(1, 0)
+
         perform
       end
     end
