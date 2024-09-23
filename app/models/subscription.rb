@@ -4,9 +4,9 @@ class Subscription < ApplicationRecord
 
   has_many :subscription_contents, dependent: :destroy
 
-  enum frequency: { immediately: 0, daily: 1, weekly: 2 }
+  enum :frequency, { immediately: 0, daily: 1, weekly: 2 }
 
-  enum source: {
+  enum :source, {
     user_signed_up: 0,
     frequency_changed: 1,
     imported: 2, # Historical (from govDelivery migration)
@@ -14,9 +14,9 @@ class Subscription < ApplicationRecord
     bulk_immediate_to_digest: 4, # Historical (for a one-off migration)
     subscriber_merged: 5,
     support_task: 6,
-  }, _prefix: true
+  }, prefix: true
 
-  enum ended_reason: {
+  enum :ended_reason, {
     unsubscribed: 0,
     non_existent_email: 1,
     frequency_changed: 2,
@@ -27,7 +27,7 @@ class Subscription < ApplicationRecord
     subscriber_merged: 7,
     bulk_unsubscribed: 8,
     bulk_migrated: 9,
-  }, _prefix: :ended
+  }, prefix: :ended
 
   scope :active, -> { where(ended_at: nil) }
   scope :ended, -> { where.not(ended_at: nil) }

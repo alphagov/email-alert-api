@@ -1,3 +1,5 @@
+require "ostruct"
+
 class SubscribersAuthTokenController < ApplicationController
   before_action :validate_params
 
