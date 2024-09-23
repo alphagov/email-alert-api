@@ -16,7 +16,7 @@ class ContentChange < ApplicationRecord
   has_many :matched_content_changes
   has_many :subscription_contents
 
-  enum priority: { normal: 0, high: 1 }
+  enum :priority, { normal: 0, high: 1 }
 
   def queue
     priority == "high" ? :send_email_immediate_high : :send_email_immediate

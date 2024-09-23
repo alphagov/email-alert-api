@@ -8,7 +8,7 @@ class Message < ApplicationRecord
   validates :criteria_rules, criteria_schema: true, allow_blank: true
   validates :sender_message_id, uuid: true, uniqueness: true, allow_nil: true
 
-  enum priority: { normal: 0, high: 1 }
+  enum :priority, { normal: 0, high: 1 }
 
   def queue
     :send_email_immediate

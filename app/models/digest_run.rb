@@ -9,7 +9,7 @@ class DigestRun < ApplicationRecord
   has_many :digest_run_subscribers, dependent: :destroy
   has_many :subscribers, through: :digest_run_subscribers
 
-  enum range: { daily: 0, weekly: 1 }
+  enum :range, { daily: 0, weekly: 1 }
 
   def mark_as_completed
     completed_time = digest_run_subscribers.maximum(:processed_at) || Time.zone.now
