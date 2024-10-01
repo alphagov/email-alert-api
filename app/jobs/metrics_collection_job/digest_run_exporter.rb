@@ -1,4 +1,4 @@
-class MetricsCollectionWorker::DigestRunExporter < MetricsCollectionWorker::BaseExporter
+class MetricsCollectionJob::DigestRunExporter < MetricsCollectionJob::BaseExporter
   def call
     critical_digest_runs = DigestRun.where("created_at < ?", 2.hours.ago)
                                     .where(completed_at: nil)

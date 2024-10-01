@@ -1,4 +1,4 @@
-RSpec.describe MetricsCollectionWorker::MessageExporter do
+RSpec.describe MetricsCollectionJob::MessageExporter do
   describe ".call" do
     let(:statsd) { double }
 

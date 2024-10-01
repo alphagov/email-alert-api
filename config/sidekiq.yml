@@ -36,7 +36,7 @@
       class: DigestRunCompletionMarkerJob
     metrics_collection:
       every: '1m'
-      class: MetricsCollectionWorker
+      class: MetricsCollectionJob
     recover_lost_jobs:
       every: '30m'
       class: RecoverLostJobsWorker
