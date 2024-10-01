@@ -1,4 +1,4 @@
-RSpec.describe HistoricalDataDeletionWorker do
+RSpec.describe HistoricalDataDeletionJob do
   describe "#perform" do
     let(:historic_date) { 2.years.ago }
 
