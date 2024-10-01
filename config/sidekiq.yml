@@ -33,7 +33,7 @@
       class: EmailDeletionWorker
     digest_run_completion_marker:
       every: '1m'
-      class: DigestRunCompletionMarkerWorker
+      class: DigestRunCompletionMarkerJob
     metrics_collection:
       every: '1m'
       class: MetricsCollectionWorker

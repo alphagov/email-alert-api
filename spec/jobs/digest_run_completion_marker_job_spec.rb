@@ -1,4 +1,4 @@
-RSpec.describe DigestRunCompletionMarkerWorker, type: :worker do
+RSpec.describe DigestRunCompletionMarkerJob, type: :worker do
   describe "#perform" do
     context "when a digest run is processed and has processed subscribers" do
       let(:digest_run) { create(:digest_run, processed_at: Time.zone.now) }
