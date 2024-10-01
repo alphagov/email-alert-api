@@ -1,4 +1,4 @@
-class PollingAlertCheckWorker < ApplicationWorker
+class PollingAlertCheckJob < ApplicationJob
   include SearchAlertList
 
   def perform(document_type)

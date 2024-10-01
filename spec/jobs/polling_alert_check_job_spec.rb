@@ -1,4 +1,4 @@
-RSpec.describe PollingAlertCheckWorker do
+RSpec.describe PollingAlertCheckJob do
   include SearchAlertListHelpers
   include NotifyRequestHelpers
 
