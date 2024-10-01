@@ -1,4 +1,4 @@
-class SubscriberListAuditWorker < ApplicationWorker
+class SubscriberListAuditJob < ApplicationJob
   sidekiq_options queue: :subscriber_list_audit
 
   def perform(url_batch, audit_start_time_string)
