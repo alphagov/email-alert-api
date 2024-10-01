@@ -24,7 +24,7 @@
       class: WeeklyDigestInitiatorWorker
     historical_data_deletion:
       cron: '0 12 * * * Europe/London' # every day at midday
-      class: HistoricalDataDeletionWorker
+      class: HistoricalDataDeletionJob
     nullify_subscribers:
       every: '1h'
       class: NullifySubscribersWorker

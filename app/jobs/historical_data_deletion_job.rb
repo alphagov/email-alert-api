@@ -1,4 +1,4 @@
-class HistoricalDataDeletionWorker < ApplicationWorker
+class HistoricalDataDeletionJob < ApplicationJob
   def perform
     # cascades matched content changes
     delete_and_log("content changes") { ContentChange.where("created_at < ?", max_retention_period) }
