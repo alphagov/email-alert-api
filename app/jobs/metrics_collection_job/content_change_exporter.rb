@@ -1,4 +1,4 @@
-class MetricsCollectionWorker::ContentChangeExporter < MetricsCollectionWorker::BaseExporter
+class MetricsCollectionJob::ContentChangeExporter < MetricsCollectionJob::BaseExporter
   def call
     GovukStatsd.gauge("content_changes.unprocessed_total", unprocessed_content_changes)
   end

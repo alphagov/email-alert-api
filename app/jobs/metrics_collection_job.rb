@@ -1,4 +1,4 @@
-class MetricsCollectionWorker < ApplicationWorker
+class MetricsCollectionJob < ApplicationWorker
   def perform
     ContentChangeExporter.call
     DigestRunExporter.call

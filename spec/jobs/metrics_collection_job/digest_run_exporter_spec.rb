@@ -1,4 +1,4 @@
-RSpec.describe MetricsCollectionWorker::DigestRunExporter do
+RSpec.describe MetricsCollectionJob::DigestRunExporter do
   describe ".call" do
     it "records number of unprocessed digest runs over 2 hours old (critical)" do
       # Digest runs must be created after 8am to validate
