@@ -1,4 +1,4 @@
-class ProcessMessageWorker < ApplicationWorker
+class ProcessMessageJob < ApplicationJob
   sidekiq_options queue: :process_and_generate_emails
 
   def perform(message_id)

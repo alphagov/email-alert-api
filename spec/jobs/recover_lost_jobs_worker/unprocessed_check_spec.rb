@@ -20,7 +20,7 @@ RSpec.describe RecoverLostJobsWorker::UnprocessedCheck do
 
     it "can also recover Messages" do
       work = create(:message, created_at: 1.hour.ago, processed_at: nil)
-      expect(ProcessMessageWorker).to receive(:perform_async).with(work.id)
+      expect(ProcessMessageJob).to receive(:perform_async).with(work.id)
       subject.call
     end
 
