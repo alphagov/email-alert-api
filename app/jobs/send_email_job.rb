@@ -1,4 +1,4 @@
-class SendEmailWorker < ApplicationWorker
+class SendEmailJob < ApplicationJob
   # More information around the rate limit can be found here ->
   # https://docs.publishing.service.gov.uk/manual/govuk-notify.html under "GOV.UK Emails".
   RATE_LIMIT_THRESHOLD = 21_600 # max requests in a minute, equates to 350 a second
@@ -7,7 +7,7 @@ class SendEmailWorker < ApplicationWorker
   def perform(email_id, metrics, queue)
     if rate_limit_exceeded?
       logger.warn("Rescheduling email #{email_id} due to exceeding rate limit")
-      SendEmailWorker.set(queue: queue || "send_email_immediate")
+      SendEmailJob.set(queue: queue || "send_email_immediate")
                            .perform_in(5.minutes, email_id, metrics, queue)
       return
     end

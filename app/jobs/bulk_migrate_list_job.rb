@@ -67,7 +67,7 @@ private
         destination_id: destination_list.id,
         count: subscribers_to_move_count,
       )
-      SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_transactional)
+      SendEmailJob.perform_async_in_queue(email.id, queue: :send_email_transactional)
       logger.info("Migration of subscriberlist #{source_list.id} complete. Email with id #{email.id} queued for delivery")
     end
   end

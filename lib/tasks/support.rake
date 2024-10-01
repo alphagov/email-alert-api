@@ -103,7 +103,7 @@ namespace :support do
       subject: "Test email",
       body: "This is a test email.",
     )
-    SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_immediate)
+    SendEmailJob.perform_async_in_queue(email.id, queue: :send_email_immediate)
   end
 
   namespace :resend_failed_emails do
@@ -115,7 +115,7 @@ namespace :support do
       puts "Resending #{ids.length} emails"
 
       ids.each do |id|
-        SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate_high)
+        SendEmailJob.perform_async_in_queue(id, queue: :send_email_immediate_high)
       end
     end
 
@@ -129,7 +129,7 @@ namespace :support do
       puts "Resending #{ids.length} emails"
 
       ids.each do |id|
-        SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate_high)
+        SendEmailJob.perform_async_in_queue(id, queue: :send_email_immediate_high)
       end
     end
   end
