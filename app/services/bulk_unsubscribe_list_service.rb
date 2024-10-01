@@ -13,7 +13,7 @@ class BulkUnsubscribeListService
   def call
     message = Message.create!(message_params) if message_params
     Metrics.message_created if message
-    BulkUnsubscribeListWorker.perform_async(
+    BulkUnsubscribeListJob.perform_async(
       subscriber_list.id,
       message&.id,
     )

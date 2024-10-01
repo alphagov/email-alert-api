@@ -7,7 +7,7 @@ RSpec.describe BulkUnsubscribeListService do
     let(:govuk_request_id) { SecureRandom.uuid }
 
     it "queues a job" do
-      expect(BulkUnsubscribeListWorker).to receive(:perform_async)
+      expect(BulkUnsubscribeListJob).to receive(:perform_async)
 
       described_class.call(subscriber_list:, params:, govuk_request_id:)
     end

@@ -1,4 +1,4 @@
-class BulkUnsubscribeListWorker < ApplicationWorker
+class BulkUnsubscribeListJob < ApplicationJob
   sidekiq_options queue: :process_and_generate_emails
 
   def perform(subscriber_list_id, message_id)
