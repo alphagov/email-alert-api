@@ -29,11 +29,11 @@ RSpec.describe "bulk_email" do
       allow(BulkSubscriberListEmailBuilder).to receive(:call)
         .and_return([1, 2])
 
-      expect(SendEmailWorker)
+      expect(SendEmailJob)
         .to receive(:perform_async_in_queue)
         .with(1, queue: :send_email_immediate)
 
-      expect(SendEmailWorker)
+      expect(SendEmailJob)
         .to receive(:perform_async_in_queue)
         .with(2, queue: :send_email_immediate)
 
