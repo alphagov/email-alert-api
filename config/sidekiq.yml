@@ -21,7 +21,7 @@
       class: DailyDigestInitiatorJob
     weekly_digest_initiator:
       cron: '30 8 * * 6 Europe/London' # every Saturday at 8:30am
-      class: WeeklyDigestInitiatorWorker
+      class: WeeklyDigestInitiatorJob
     historical_data_deletion:
       cron: '0 12 * * * Europe/London' # every day at midday
       class: HistoricalDataDeletionJob
