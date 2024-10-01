@@ -37,7 +37,7 @@ RSpec.describe RecoverLostJobsWorker::UnprocessedCheck do
       work1 = create(:digest_run, created_at: 1.hour.ago, date: Date.current, range: :daily)
       work2 = create(:digest_run, created_at: 1.hour.ago, date: Date.current, range: :weekly)
 
-      expect(DailyDigestInitiatorWorker).to receive(:perform_async).with(work1.date.to_s)
+      expect(DailyDigestInitiatorJob).to receive(:perform_async).with(work1.date.to_s)
       expect(WeeklyDigestInitiatorWorker).to receive(:perform_async).with(work2.date.to_s)
 
       subject.call

@@ -18,7 +18,7 @@
   :schedule:
     daily_digest_initiator:
       cron: '30 8 * * * Europe/London' # every day at 8:30am
-      class: DailyDigestInitiatorWorker
+      class: DailyDigestInitiatorJob
     weekly_digest_initiator:
       cron: '30 8 * * 6 Europe/London' # every Saturday at 8:30am
       class: WeeklyDigestInitiatorWorker

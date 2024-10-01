@@ -1,6 +1,6 @@
 class RecoverLostJobsWorker::MissingDigestRunsCheck
   def call
-    recover(DailyDigestInitiatorWorker, non_existent_daily_digests)
+    recover(DailyDigestInitiatorJob, non_existent_daily_digests)
     recover(WeeklyDigestInitiatorWorker, non_existent_weekly_digests)
   end
 
