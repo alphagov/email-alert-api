@@ -17,7 +17,7 @@ RSpec.describe RecoverLostJobsWorker::OldPendingEmailsCheck do
 
     it "does not recover emails that aren't pending" do
       create(:email, created_at: 4.hours.ago, status: :sent)
-      expect(ProcessContentChangeWorker).not_to receive(:perform_async_in_queue)
+      expect(ProcessContentChangeJob).not_to receive(:perform_async_in_queue)
       subject.call
     end
   end

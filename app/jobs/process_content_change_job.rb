@@ -1,4 +1,4 @@
-class ProcessContentChangeWorker < ApplicationWorker
+class ProcessContentChangeJob < ApplicationJob
   sidekiq_options queue: :process_and_generate_emails
 
   def perform(content_change_id)

@@ -1,6 +1,6 @@
 class RecoverLostJobsWorker::UnprocessedCheck
   def call
-    recover(ProcessContentChangeWorker, old_unprocessed(ContentChange).pluck(:id))
+    recover(ProcessContentChangeJob, old_unprocessed(ContentChange).pluck(:id))
     recover(ProcessMessageWorker, old_unprocessed(Message).pluck(:id))
     recover(DigestEmailGenerationJob, old_unprocessed(DigestRunSubscriber).pluck(:id))
     recover(DailyDigestInitiatorJob, old_unprocessed(DigestRun.daily).pluck(:date).map(&:to_s))
