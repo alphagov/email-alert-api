@@ -1,5 +1,5 @@
-class ApplicationWorker
-  include Sidekiq::Worker
+class ApplicationJob
+  include Sidekiq::Job
 
 private
 
