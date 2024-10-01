@@ -27,7 +27,7 @@
       class: HistoricalDataDeletionJob
     nullify_subscribers:
       every: '1h'
-      class: NullifySubscribersWorker
+      class: NullifySubscribersJob
     email_deleter:
       every: '1h'
       class: EmailDeletionJob
