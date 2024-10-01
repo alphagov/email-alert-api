@@ -46,7 +46,7 @@ RSpec.describe "Weekly digests", type: :request do
 
     travel_to(Time.zone.parse("2017-01-07 10:00")) do
       WeeklyDigestInitiatorJob.new.perform
-      Sidekiq::Worker.drain_all
+      Sidekiq::Job.drain_all
     end
 
     email_data = expect_an_email_was_sent(
@@ -84,7 +84,7 @@ RSpec.describe "Weekly digests", type: :request do
 
     travel_to(Time.zone.parse("2017-01-07 10:00")) do
       WeeklyDigestInitiatorJob.new.perform
-      Sidekiq::Worker.drain_all
+      Sidekiq::Job.drain_all
     end
 
     expect_an_email_was_sent(
