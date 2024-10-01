@@ -7,7 +7,7 @@ RSpec.describe "Unsubscribing from a subscriber_list", type: :request do
     travel_to(Time.zone.yesterday.midday) { create_content_change }
 
     travel_to(Time.zone.today.midday) do
-      DailyDigestInitiatorWorker.new.perform
+      DailyDigestInitiatorJob.new.perform
       Sidekiq::Worker.drain_all
     end
 
@@ -19,7 +19,7 @@ RSpec.describe "Unsubscribing from a subscriber_list", type: :request do
     travel_to(Time.zone.today.midnight) { create_content_change }
 
     travel_to(Time.zone.tomorrow.midday) do
-      DailyDigestInitiatorWorker.new.perform
+      DailyDigestInitiatorJob.new.perform
       Sidekiq::Worker.drain_all
     end
 

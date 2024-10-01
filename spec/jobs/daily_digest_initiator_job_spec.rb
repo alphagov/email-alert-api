@@ -1,4 +1,4 @@
-RSpec.describe DailyDigestInitiatorWorker do
+RSpec.describe DailyDigestInitiatorJob do
   describe ".perform" do
     it "calls the daily digest initiator service" do
       expect(DigestInitiatorService).to receive(:call)

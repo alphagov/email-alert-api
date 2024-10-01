@@ -41,7 +41,7 @@ RSpec.describe "Daily digests", type: :request do
     end
 
     travel_to(Time.zone.parse("2017-01-02 10:00")) do
-      DailyDigestInitiatorWorker.new.perform
+      DailyDigestInitiatorJob.new.perform
       Sidekiq::Worker.drain_all
     end
 
@@ -79,7 +79,7 @@ RSpec.describe "Daily digests", type: :request do
     end
 
     travel_to(Time.zone.parse("2017-01-02 10:00")) do
-      DailyDigestInitiatorWorker.new.perform
+      DailyDigestInitiatorJob.new.perform
       Sidekiq::Worker.drain_all
     end
 
