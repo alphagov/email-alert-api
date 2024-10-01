@@ -1,4 +1,4 @@
-RSpec.describe ProcessMessageWorker do
+RSpec.describe ProcessMessageJob do
   let(:message) do
     create(
       :message,

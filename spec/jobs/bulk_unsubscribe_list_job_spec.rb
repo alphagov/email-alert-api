@@ -33,11 +33,11 @@ RSpec.describe BulkUnsubscribeListJob do
         )
       end
 
-      it "delegates to ProcessMessageWorker" do
-        doub = instance_double(ProcessMessageWorker)
+      it "delegates to ProcessMessageJob" do
+        doub = instance_double(ProcessMessageJob)
         expect(doub).to receive(:perform).with(message.id)
 
-        expect(ProcessMessageWorker).to receive(:new).and_return(doub)
+        expect(ProcessMessageJob).to receive(:new).and_return(doub)
 
         described_class.new.perform(subscriber_list.id, message.id)
       end
