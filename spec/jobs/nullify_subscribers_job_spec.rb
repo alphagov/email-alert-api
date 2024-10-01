@@ -1,7 +1,7 @@
 require "spec_helper"
 require "gds_api/test_helpers/account_api"
 
-RSpec.describe NullifySubscribersWorker do
+RSpec.describe NullifySubscribersJobs do
   include GdsApi::TestHelpers::AccountApi
 
   describe ".perform" do
