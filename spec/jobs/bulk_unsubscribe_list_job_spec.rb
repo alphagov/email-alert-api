@@ -1,4 +1,4 @@
-RSpec.describe BulkUnsubscribeListWorker do
+RSpec.describe BulkUnsubscribeListJob do
   let(:message) { nil }
 
   let!(:subscriber_list) { create(:subscriber_list) }
