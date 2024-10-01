@@ -1,6 +1,6 @@
 require "gds_api/test_helpers/content_store"
 
-RSpec.describe SubscriberListAuditWorker do
+RSpec.describe SubscriberListAuditJob do
   include GdsApi::TestHelpers::ContentStore
 
   let(:required_match_attributes) do
