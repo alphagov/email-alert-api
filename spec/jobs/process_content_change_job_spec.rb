@@ -37,7 +37,7 @@ RSpec.describe ProcessContentChangeJob do
       processed_content = create(:content_change, processed_at: Time.zone.now)
 
       expect(ImmediateEmailGenerationService).not_to receive(:call)
-      expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
+      expect(SendEmailJob).not_to receive(:perform_async_in_queue)
 
       described_class.new.perform(processed_content.id)
     end

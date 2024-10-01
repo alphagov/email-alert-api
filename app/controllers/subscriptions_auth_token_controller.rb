@@ -8,7 +8,7 @@ class SubscriptionsAuthTokenController < ApplicationController
     token = generate_token
     email = build_email(token, subscriber_list)
 
-    SendEmailWorker
+    SendEmailJob
       .perform_async_in_queue(email.id, queue: :send_email_transactional)
 
     render json: {}, status: :ok

@@ -8,7 +8,7 @@ RSpec.describe SubscriberListMover do
     list_2.subscriptions << create_list(:subscription, 1)
 
     allow($stdout).to receive(:puts)
-    allow(SendEmailWorker).to receive(:perform_async_in_queue)
+    allow(SendEmailJob).to receive(:perform_async_in_queue)
   end
 
   around(:each) do |example|
@@ -64,7 +64,7 @@ RSpec.describe SubscriberListMover do
             destination_id: destination_subscriber_list.id,
             count: 2)
 
-      expect(SendEmailWorker)
+      expect(SendEmailJob)
         .to receive(:perform_async_in_queue)
         .with(email.id, queue: :send_email_transactional)
 
@@ -83,11 +83,11 @@ RSpec.describe SubscriberListMover do
             body: anything,
             subscriber_lists: source_subscriber_list)
 
-      expect(SendEmailWorker)
+      expect(SendEmailJob)
         .to receive(:perform_async_in_queue)
         .with(1, queue: :send_email_immediate)
 
-      expect(SendEmailWorker)
+      expect(SendEmailJob)
         .to receive(:perform_async_in_queue)
         .with(2, queue: :send_email_immediate)
 

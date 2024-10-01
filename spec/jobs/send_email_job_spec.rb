@@ -1,4 +1,4 @@
-RSpec.describe SendEmailWorker do
+RSpec.describe SendEmailJob do
   let(:rate_limiter) do
     instance_double(Ratelimit, exceeded?: false, add: nil)
   end

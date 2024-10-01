@@ -23,7 +23,7 @@ class DigestEmailGenerationJob < ApplicationJob
     end
 
     email_ids.each do |email_id|
-      SendEmailWorker.perform_async_in_queue(email_id, queue: :send_email_digest)
+      SendEmailJob.perform_async_in_queue(email_id, queue: :send_email_digest)
     end
   end
 

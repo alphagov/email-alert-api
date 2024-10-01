@@ -39,11 +39,11 @@ RSpec.describe BulkMigrateListJob do
     end
 
     it "queues a confirmation email when the migration is complete" do
-      allow(SendEmailWorker).to receive(:perform_async_in_queue)
+      allow(SendEmailJob).to receive(:perform_async_in_queue)
       described_class.new.perform(source_list.id, destination_list.id)
 
       expect(Email.last.subject).to eq("Bulk migration of #{source_list.title} is complete")
-      expect(SendEmailWorker).to have_received(:perform_async_in_queue).with(Email.last.id, queue: :send_email_transactional)
+      expect(SendEmailJob).to have_received(:perform_async_in_queue).with(Email.last.id, queue: :send_email_transactional)
     end
   end
 end

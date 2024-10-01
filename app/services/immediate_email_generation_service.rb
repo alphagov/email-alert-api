@@ -11,7 +11,7 @@ class ImmediateEmailGenerationService
     subscriber_batches.each do |batch|
       email_ids = batch.generate_emails
       email_ids.each do |id|
-        SendEmailWorker.perform_async_in_queue(
+        SendEmailJob.perform_async_in_queue(
           id,
           worker_metrics,
           queue: content.queue,
