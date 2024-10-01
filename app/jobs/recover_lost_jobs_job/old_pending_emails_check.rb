@@ -1,4 +1,4 @@
-class RecoverLostJobsWorker::OldPendingEmailsCheck
+class RecoverLostJobsJob::OldPendingEmailsCheck
   def call
     old_pending_emails = Email.where(status: :pending)
                               .where("created_at <= ?", 3.hours.ago)

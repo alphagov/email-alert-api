@@ -1,4 +1,4 @@
-class RecoverLostJobsWorker::UnprocessedCheck
+class RecoverLostJobsJob::UnprocessedCheck
   def call
     recover(ProcessContentChangeJob, old_unprocessed(ContentChange).pluck(:id))
     recover(ProcessMessageJob, old_unprocessed(Message).pluck(:id))

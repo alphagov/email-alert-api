@@ -39,7 +39,7 @@
       class: MetricsCollectionJob
     recover_lost_jobs:
       every: '30m'
-      class: RecoverLostJobsWorker
+      class: RecoverLostJobsJob
     check_medical_safety_alerts:
       every: '15m'
       class: PollingAlertCheckJob

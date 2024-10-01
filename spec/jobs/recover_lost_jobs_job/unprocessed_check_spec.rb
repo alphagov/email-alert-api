@@ -1,4 +1,4 @@
-RSpec.describe RecoverLostJobsWorker::UnprocessedCheck do
+RSpec.describe RecoverLostJobsJob::UnprocessedCheck do
   describe "#call" do
     it "recovers unprocessed work over an hour old" do
       work = create(:content_change, created_at: 1.hour.ago, processed_at: nil)

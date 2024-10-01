@@ -1,4 +1,4 @@
-RSpec.describe RecoverLostJobsWorker::OldPendingEmailsCheck do
+RSpec.describe RecoverLostJobsJob::OldPendingEmailsCheck do
   describe "#call" do
     it "recovers pending emails over an hour old" do
       email = create(:email, created_at: 4.hours.ago)

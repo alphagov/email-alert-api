@@ -1,4 +1,4 @@
-RSpec.describe RecoverLostJobsWorker::MissingDigestRunsCheck do
+RSpec.describe RecoverLostJobsJob::MissingDigestRunsCheck do
   describe "#call" do
     it "can create missing work for the week" do
       tuesday = Time.zone.parse("2017-01-10 10:30")
