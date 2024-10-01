@@ -1,4 +1,4 @@
-RSpec.describe ProcessContentChangeWorker do
+RSpec.describe ProcessContentChangeJob do
   let(:content_change) do
     create(:content_change, tags: { tribunal_decision_categories: %w[transfer-of-undertakings] })
   end
