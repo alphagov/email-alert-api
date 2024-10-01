@@ -32,7 +32,7 @@ private
 
   def enqueue_jobs(digest_run_subscriber_ids)
     digest_run_subscriber_ids.each do |digest_run_subscriber_id|
-      DigestEmailGenerationWorker.perform_async(digest_run_subscriber_id)
+      DigestEmailGenerationJob.perform_async(digest_run_subscriber_id)
     end
   end
 end

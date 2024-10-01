@@ -1,4 +1,4 @@
-RSpec.describe DigestEmailGenerationWorker do
+RSpec.describe DigestEmailGenerationJob do
   describe ".perform_async" do
     before do
       Sidekiq::Testing.fake! do
