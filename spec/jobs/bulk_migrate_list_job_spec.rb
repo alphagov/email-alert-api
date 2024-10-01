@@ -1,4 +1,4 @@
-RSpec.describe BulkMigrateListWorker do
+RSpec.describe BulkMigrateListJob do
   let!(:source_list) { create(:subscriber_list) }
   let!(:destination_list) { create(:subscriber_list) }
 

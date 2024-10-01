@@ -1,4 +1,4 @@
-class BulkMigrateListWorker < ApplicationWorker
+class BulkMigrateListJob < ApplicationJob
   def perform(source_list_id, destination_list_id)
     @source_list_id = source_list_id
     @destination_list_id = destination_list_id

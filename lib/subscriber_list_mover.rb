@@ -24,7 +24,7 @@ class SubscriberListMover
       )
     end
 
-    BulkMigrateListWorker.perform_async(
+    BulkMigrateListJob.perform_async(
       source_subscriber_list.id,
       destination_subscriber_list.id,
     )
