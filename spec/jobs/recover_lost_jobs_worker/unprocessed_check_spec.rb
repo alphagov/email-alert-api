@@ -26,7 +26,7 @@ RSpec.describe RecoverLostJobsWorker::UnprocessedCheck do
 
     it "can also recover DigestRunSubscribers" do
       work = create(:digest_run_subscriber, created_at: 1.hour.ago, processed_at: nil)
-      expect(DigestEmailGenerationWorker).to receive(:perform_async).with(work.id)
+      expect(DigestEmailGenerationJob).to receive(:perform_async).with(work.id)
       subject.call
     end
 

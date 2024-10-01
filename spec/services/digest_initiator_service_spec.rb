@@ -9,7 +9,7 @@ RSpec.describe DigestInitiatorService do
 
     before do
       allow(DigestRunSubscriberQuery).to receive(:call).and_return(subscribers)
-      allow(DigestEmailGenerationWorker).to receive(:perform_async)
+      allow(DigestEmailGenerationJob).to receive(:perform_async)
     end
 
     context "when a digest run isn't processed" do
@@ -35,11 +35,11 @@ RSpec.describe DigestInitiatorService do
           .to(true)
       end
 
-      it "enqueues DigestEmailGenerationWorker for each DigestRunSubscriber" do
+      it "enqueues DigestEmailGenerationJob for each DigestRunSubscriber" do
         described_class.call(date: Date.current, range: Frequency::DAILY)
         ids = DigestRunSubscriber.last(2).pluck(:id)
-        expect(DigestEmailGenerationWorker).to have_received(:perform_async).with(ids[0])
-        expect(DigestEmailGenerationWorker).to have_received(:perform_async).with(ids[1])
+        expect(DigestEmailGenerationJob).to have_received(:perform_async).with(ids[0])
+        expect(DigestEmailGenerationJob).to have_received(:perform_async).with(ids[1])
       end
 
       it "can resume a partially processed digest run" do
