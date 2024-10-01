@@ -30,7 +30,7 @@
       class: NullifySubscribersWorker
     email_deleter:
       every: '1h'
-      class: EmailDeletionWorker
+      class: EmailDeletionJob
     digest_run_completion_marker:
       every: '1m'
       class: DigestRunCompletionMarkerJob

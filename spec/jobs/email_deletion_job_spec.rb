@@ -1,4 +1,4 @@
-RSpec.describe EmailDeletionWorker do
+RSpec.describe EmailDeletionJob do
   describe "#perform" do
     def perform
       described_class.new.perform

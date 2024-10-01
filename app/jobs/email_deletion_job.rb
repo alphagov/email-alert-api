@@ -1,4 +1,4 @@
-class EmailDeletionWorker < ApplicationWorker
+class EmailDeletionJob < ApplicationJob
   def perform
     run_with_advisory_lock(Email, "delete") do
       start_time = Time.zone.now
