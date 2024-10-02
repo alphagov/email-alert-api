@@ -12,9 +12,8 @@ group][integration-group]. It has an email address of
 `email-alert-api-integration@digital.cabinet-office.gov.uk`.
 
 This email is associated with an integration test user account, and
-the credentials are stored in govuk-secrets:
+the credentials are stored in [AWS Secrets Manager][aws-secrets] as `2ndline/govuk-accounts-integration`
 
-https://github.com/alphagov/govuk-secrets/tree/main/pass/2ndline/govuk-account/integration.gpg
 
 This email address can be used to sign up to subscriptions on
 https://www.integration.publishing.service.gov.uk/.
@@ -51,7 +50,7 @@ you'll need to recreate them.
 ## Troubleshooting
 
 You might be prompted for http basic auth when you are passed through the account authentication process. 
-If so, those credentials are listed in https://github.com/alphagov/govuk-secrets/tree/main/pass/2ndline/govuk-account/integration.gpg
+If so, those credentials are listed in [AWS Secrets Manager][aws-secrets] as `2ndline/govuk-accounts-integration`
 
 [logging-emails]: https://github.com/alphagov/email-alert-api/blob/006afa2ee6c35631b83b16519f8af2c6c2ea5c59/app/services/send_email_service/send_pseudo_email.rb#L10-L20
 [integration-group]: https://groups.google.com/a/digital.cabinet-office.gov.uk/g/email-alert-api-integration
@@ -59,3 +58,4 @@ If so, those credentials are listed in https://github.com/alphagov/govuk-secrets
 [Travel Advice Publisher]: https://travel-advice-publisher.integration.publishing.service.gov.uk/admin/countries/thailand
 [staging-group]: https://groups.google.com/a/digital.cabinet-office.gov.uk/g/email-alert-api-staging
 [data sync]: /manual/govuk-env-sync.html
+[aws-secrets]: https://docs.publishing.service.gov.uk/manual/secrets-manager.html
