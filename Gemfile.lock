@@ -113,10 +113,10 @@ GEM
       ffi (>= 1.15.0)
     expgen (0.1.1)
       parslet
-    factory_bot (6.4.5)
+    factory_bot (6.5.0)
       activesupport (>= 5.0.0)
-    factory_bot_rails (6.4.3)
-      factory_bot (~> 6.4)
+    factory_bot_rails (6.4.4)
+      factory_bot (~> 6.5)
       railties (>= 5.0.0)
     faraday (2.12.0)
       faraday-net_http (>= 2.0, < 3.4)
@@ -210,7 +210,7 @@ GEM
     logstasher (2.1.5)
       activesupport (>= 5.2)
       request_store
-    loofah (2.23.0)
+    loofah (2.23.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     mail (2.8.1)
