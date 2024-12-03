@@ -199,8 +199,9 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.8.2)
-    json-schema (5.1.0)
+    json-schema (5.1.1)
       addressable (~> 2.8)
+      bigdecimal (~> 3.1)
     jsonpath (1.1.5)
       multi_json
     jwt (2.9.3)
