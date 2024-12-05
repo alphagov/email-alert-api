@@ -18,33 +18,33 @@
   :schedule:
     daily_digest_initiator:
       cron: '30 8 * * * Europe/London' # every day at 8:30am
-      class: DailyDigestInitiatorWorker
+      class: DailyDigestInitiatorJob
     weekly_digest_initiator:
       cron: '30 8 * * 6 Europe/London' # every Saturday at 8:30am
-      class: WeeklyDigestInitiatorWorker
+      class: WeeklyDigestInitiatorJob
     historical_data_deletion:
       cron: '0 12 * * * Europe/London' # every day at midday
-      class: HistoricalDataDeletionWorker
+      class: HistoricalDataDeletionJob
     nullify_subscribers:
       every: '1h'
-      class: NullifySubscribersWorker
+      class: NullifySubscribersJob
     email_deleter:
       every: '1h'
-      class: EmailDeletionWorker
+      class: EmailDeletionJob
     digest_run_completion_marker:
       every: '1m'
-      class: DigestRunCompletionMarkerWorker
+      class: DigestRunCompletionMarkerJob
     metrics_collection:
       every: '1m'
-      class: MetricsCollectionWorker
+      class: MetricsCollectionJob
     recover_lost_jobs:
       every: '30m'
-      class: RecoverLostJobsWorker
+      class: RecoverLostJobsJob
     check_medical_safety_alerts:
       every: '15m'
-      class: PollingAlertCheckWorker
+      class: PollingAlertCheckJob
       args:  ["medical_safety_alert"]
     check_travel_advice_alerts:
       every: '15m'
-      class: PollingAlertCheckWorker
+      class: PollingAlertCheckJob
       args:  ["travel_advice"]

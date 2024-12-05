@@ -46,7 +46,7 @@ kubectl -n apps deploy/email-alert-api -- rails c
 
 (Rails console)
 > Email.where(content_id: <your content id>).delete_all
-> PollingAlertCheckWorker.new.perform(<your document type, either "medical_safety_alert" or "travel_advice|>)
+> PollingAlertCheckJob.new.perform(<your document type, either "medical_safety_alert" or "travel_advice|>)
 ```
 
 The alert check worker will find no emails with notify status "delivered", and nothing to actively poll (no emails with notify status nil), and will set the alert metric. Prometheus should collect the metrics after a minute, and set off the alert.
