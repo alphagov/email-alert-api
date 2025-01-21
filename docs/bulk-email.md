@@ -1,8 +1,8 @@
 # Send a bulk email
 
 Sometimes it may be necessary to send a bulk email to many subscribers at once.
-There is [a Rake task in email-alert-api][rake-task] to perform this task and
-it's [available as a job in Jenkins][send-bulk-production].
+There is [a Rake task in email-alert-api][rake-task] to perform this task.
+You may want to create a temporary rake task instead, see [this example](https://github.com/alphagov/email-alert-api/commit/05ff8fb824690e0a086e0d6ac03c16e80ef90b59).
 
 [rake-task]: https://github.com/alphagov/email-alert-api/blob/main/lib/tasks/bulk_email.rake
 
