@@ -79,6 +79,27 @@ namespace :support do
     end
   end
 
+  desc "Unsubscribe all active subscribers from a single subscription list"
+  task :unsubscribe_all_subscribers_from_subscription, [:subscriber_list_slug] => :environment do |_t, args|
+    subscriber_list_slug = args[:subscriber_list_slug]
+    subscriber_list = SubscriberList.find_by(slug: subscriber_list_slug)
+
+    abort("Cannot find subscriber list #{subscriber_list_slug}") if subscriber_list.nil?
+
+    subscribers = subscriber_list.subscribers
+
+    subscribers.each do |subscriber|
+      active_subscription = Subscription.active.find_by(subscriber_list:, subscriber:)
+
+      if active_subscription
+        active_subscription.end(reason: :unsubscribed)
+        puts "Unsubscribing #{subscriber.address} from #{subscriber_list_slug}"
+      else
+        puts "Subscriber #{subscriber.address} already unsubscribed from #{subscriber_list_slug}"
+      end
+    end
+  end
+
   desc "Unsubscribe a subscriber from all subscriptions"
   task :unsubscribe_all_subscriptions, [:email_address] => :environment do |_t, args|
     email_address = args[:email_address]

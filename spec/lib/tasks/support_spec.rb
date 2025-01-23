@@ -109,4 +109,36 @@ RSpec.describe "support" do
       end
     end
   end
+
+  describe "#unsubscribe_all_subscribers_from_subscription" do
+    after(:each) do
+      Rake::Task["support:unsubscribe_all_subscribers_from_subscription"].reenable
+    end
+
+    it "outputs an error message to the user if subscription list is not found" do
+      expect { Rake::Task["support:unsubscribe_all_subscribers_from_subscription"].invoke("invalid-subscription-list") }
+      .to raise_error(SystemExit, /Cannot find subscriber list invalid-subscription-list/)
+    end
+
+    it "successfully unsubscribes active subscribers from valid subscription list" do
+      subscriber = create(:subscriber, address: "subscribed@test.com")
+      subscriber_list = create(:subscriber_list, slug: "my-list", title: "My List")
+      active_subscription = create(:subscription, subscriber_list:, subscriber:)
+
+      expect { Rake::Task["support:unsubscribe_all_subscribers_from_subscription"].invoke("my-list") }
+      .to output("Unsubscribing subscribed@test.com from my-list\n").to_stdout
+      .and change { active_subscription.reload.ended_reason }
+      .from(nil)
+      .to("unsubscribed")
+    end
+
+    it "displays message if subscriber has already been unsubscribed from valid subscription list" do
+      subscriber = create(:subscriber, address: "unsubscribed@test.com")
+      subscriber_list = create(:subscriber_list, slug: "another-list", title: "Another List")
+      create(:subscription, :ended, subscriber_list:, subscriber:)
+
+      expect { Rake::Task["support:unsubscribe_all_subscribers_from_subscription"].invoke("another-list") }
+      .to output(/Subscriber unsubscribed@test.com already unsubscribed from another-list/).to_stdout
+    end
+  end
 end
