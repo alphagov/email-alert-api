@@ -72,7 +72,7 @@ namespace :support do
       active_subscription = Subscription.active.find_by(subscriber_list:, subscriber:)
       if active_subscription
         active_subscription.end(reason: :unsubscribed)
-        puts "Unsubscribing from #{email_address} from #{subscriber_list_slug}"
+        puts "Unsubscribing #{email_address} from #{subscriber_list_slug}"
       else
         puts "Subscriber #{email_address} already unsubscribed from #{subscriber_list_slug}"
       end
