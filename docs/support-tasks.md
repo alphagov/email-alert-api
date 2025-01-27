@@ -54,6 +54,13 @@ You can find out the slug of the subscriber list by running the `view_subscripti
 $ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:unsubscribe_single_subscription[<email_address>,<subscriber_list_slug>]
 ```
 
+## Unsubscribe all subscribers from a specific subscription
+
+This task unsubscribes all active subscribers from a subscription, given a subscriber list slug.
+
+```bash
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:unsubscribe_all_subscribers_from_subscription[<subscriber_list_slug>]
+
 ## Unsubscribe a subscriber from all emails
 
 This task unsubscribes one subscriber from everything they have subscribed to.
