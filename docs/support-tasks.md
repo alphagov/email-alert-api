@@ -60,6 +60,7 @@ This task unsubscribes all active subscribers from a subscription, given a subsc
 
 ```bash
 $ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:unsubscribe_all_subscribers_from_subscription[<subscriber_list_slug>]
+```
 
 ## Unsubscribe a subscriber from all emails
 
