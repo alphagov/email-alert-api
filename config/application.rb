@@ -23,7 +23,7 @@ Bundler.require(*Rails.groups)
 module EmailAlertApi
   class Application < Rails::Application
     config.api_only = true
-    config.load_defaults 7.1
+    config.load_defaults 8.0
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
