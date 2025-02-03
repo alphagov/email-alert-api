@@ -178,7 +178,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_sidekiq (9.0.4)
+    govuk_sidekiq (9.0.5)
       gds-api-adapters (>= 19.1.0)
       govuk_app_config (>= 1.1)
       redis-client (>= 0.22.2)
@@ -428,7 +428,7 @@ GEM
     opentelemetry-instrumentation-rack (0.26.0)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
-    opentelemetry-instrumentation-rails (0.35.0)
+    opentelemetry-instrumentation-rails (0.35.1)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-action_mailer (~> 0.4.0)
       opentelemetry-instrumentation-action_pack (~> 0.11.0)
@@ -534,7 +534,7 @@ GEM
       date
       stringio
     public_suffix (6.0.1)
-    puma (6.5.0)
+    puma (6.6.0)
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.8.1)
@@ -663,9 +663,9 @@ GEM
     rufus-scheduler (3.9.1)
       fugit (~> 1.1, >= 1.1.6)
     securerandom (0.4.1)
-    sentry-rails (5.22.1)
+    sentry-rails (5.22.3)
       railties (>= 5.0)
-      sentry-ruby (~> 5.22.1)
+      sentry-ruby (~> 5.22.3)
     sentry-ruby (5.22.3)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
