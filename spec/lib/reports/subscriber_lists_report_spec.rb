@@ -15,8 +15,8 @@ RSpec.describe Reports::SubscriberListsReport do
   end
 
   it "returns data around active lists for the given date" do
-    expected_criteria_bits = '{"document_type":"","tags":{"tribunal_decision_categories":{"any":["agency-workers"]}},' \
-      '"links":{},"email_document_supertype":"","government_document_supertype":""}'
+    expected_criteria_bits = '{"links":{},"tags":{"tribunal_decision_categories":{"any":["agency-workers"]}},' \
+                             '"email_document_supertype":"","government_document_supertype":"","document_type":""}'
 
     expected = CSV.generate do |csv|
       csv << %w[
