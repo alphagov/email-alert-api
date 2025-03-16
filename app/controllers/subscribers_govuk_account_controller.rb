@@ -26,7 +26,7 @@ class SubscribersGovukAccountController < ApplicationController
         subscriber:,
       )
 
-      SendEmailWorker.perform_async_in_queue(
+      SendEmailJob.perform_async_in_queue(
         email.id,
         queue: :send_email_transactional,
       )

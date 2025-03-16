@@ -8,7 +8,7 @@ namespace :bulk_email do
       subscriber_lists:,
     )
     email_ids.each do |id|
-      SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate)
+      SendEmailJob.perform_async_in_queue(id, queue: :send_email_immediate)
     end
     puts "Sending #{email_ids.count} emails to subscribers on the following lists: #{subscriber_lists.pluck(:slug).join(', ')}"
   end
@@ -22,7 +22,7 @@ namespace :bulk_email do
       subscriber_lists:,
     )
     email_ids.each do |id|
-      SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate)
+      SendEmailJob.perform_async_in_queue(id, queue: :send_email_immediate)
     end
     puts "Sending #{email_ids.count} emails to subscribers on the following lists: #{subscriber_lists.pluck(:slug).join(', ')}"
   end
