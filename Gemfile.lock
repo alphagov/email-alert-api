@@ -131,7 +131,7 @@ GEM
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
-    gds-api-adapters (98.4.0)
+    gds-api-adapters (99.0.0)
       addressable
       link_header
       null_logger
@@ -227,10 +227,10 @@ GEM
       net-smtp
     marcel (1.0.4)
     method_source (1.0.0)
-    mime-types (3.6.1)
+    mime-types (3.6.2)
       logger
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2025.0318)
+    mime-types-data (3.2025.0325)
     mini_mime (1.1.5)
     mini_portile2 (2.8.8)
     minitest (5.25.5)
