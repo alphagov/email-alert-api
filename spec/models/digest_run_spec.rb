@@ -28,7 +28,7 @@ RSpec.describe DigestRun do
     context "weekly" do
       it "sets starts_at to 8am on date - 1.week" do
         instance = described_class.create!(date: Date.current, range: "weekly")
-        expect(instance.starts_at).to eq(Time.zone.parse("08:00", (Date.current - 1.week)))
+        expect(instance.starts_at).to eq(Time.zone.parse("08:00", Date.current - 1.week))
       end
 
       it "sets ends_at to 8am on date" do
