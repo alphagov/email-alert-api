@@ -108,6 +108,7 @@ GEM
     drb (2.2.1)
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
+    erb (5.0.1)
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
@@ -148,21 +149,21 @@ GEM
       warden-oauth2 (~> 0.0.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-protobuf (4.30.2)
+    google-protobuf (4.31.0)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.30.2-aarch64-linux)
+    google-protobuf (4.31.0-aarch64-linux-gnu)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.30.2-arm64-darwin)
+    google-protobuf (4.31.0-arm64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.30.2-x86_64-linux)
+    google-protobuf (4.31.0-x86_64-linux-gnu)
       bigdecimal
       rake (>= 13)
     googleapis-common-protos-types (1.20.0)
       google-protobuf (>= 3.18, < 5.a)
-    govuk_app_config (9.17.3)
+    govuk_app_config (9.17.4)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.31)
       opentelemetry-instrumentation-all (>= 0.39.1, < 0.77.0)
@@ -217,7 +218,7 @@ GEM
     logstasher (2.1.5)
       activesupport (>= 5.2)
       request_store
-    loofah (2.24.0)
+    loofah (2.24.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     mail (2.8.1)
@@ -232,7 +233,7 @@ GEM
       mime-types-data (~> 3.2025, >= 3.2025.0507)
     mime-types-data (3.2025.0507)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.8)
+    mini_portile2 (2.8.9)
     minitest (5.25.5)
     msgpack (1.8.0)
     multi_json (1.15.0)
@@ -362,7 +363,7 @@ GEM
     opentelemetry-instrumentation-aws_lambda (0.3.0)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
-    opentelemetry-instrumentation-aws_sdk (0.8.0)
+    opentelemetry-instrumentation-aws_sdk (0.8.1)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
     opentelemetry-instrumentation-base (0.23.0)
@@ -546,7 +547,7 @@ GEM
     pry-byebug (3.11.0)
       byebug (~> 12.0)
       pry (>= 0.13, < 0.16)
-    psych (5.2.4)
+    psych (5.2.6)
       date
       stringio
     public_suffix (6.0.2)
@@ -604,7 +605,8 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    rdoc (6.13.1)
+    rdoc (6.14.0)
+      erb
       psych (>= 4.0.0)
     redcarpet (3.6.1)
     redis (5.3.0)
@@ -756,7 +758,7 @@ GEM
     with_advisory_lock (5.1.0)
       activerecord (>= 6.1)
       zeitwerk (>= 2.6)
-    zeitwerk (2.7.2)
+    zeitwerk (2.7.3)
 
 PLATFORMS
   aarch64-linux
