@@ -105,7 +105,7 @@ GEM
     dig_rb (1.0.1)
     docile (1.4.0)
     domain_name (0.6.20240107)
-    drb (2.2.1)
+    drb (2.2.3)
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
     erb (5.0.1)
@@ -753,7 +753,7 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    with_advisory_lock (5.1.0)
+    with_advisory_lock (5.3.0)
       activerecord (>= 6.1)
       zeitwerk (>= 2.6)
     zeitwerk (2.7.3)
