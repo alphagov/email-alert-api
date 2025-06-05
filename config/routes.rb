@@ -33,4 +33,7 @@ Rails.application.routes.draw do
       GovukHealthcheck::ActiveRecord,
     )
   end
+
+  require "sidekiq/web"
+  mount Sidekiq::Web, at: "/sidekiq"
 end
