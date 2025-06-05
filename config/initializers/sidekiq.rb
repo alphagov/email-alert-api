@@ -21,4 +21,5 @@ end
 
 Sidekiq.configure_server do |config|
   config.logger.level = Rails.logger.level
+  config.default_capsule[:job_logger] = ExperimentalJobLogger
 end

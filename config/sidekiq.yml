@@ -3,9 +3,6 @@
 :concurrency: 32
 :timeout: 4
 :max_retries: 9
-:capsules:
-  :default:
-    :job_logger: ExperimentalJobLogger
 :queues:
   # See here to understand priorities: https://github.com/mperham/sidekiq/wiki/Advanced-Options#queues
   # Use powers of 2: higher priority groups are checked twice as often.
