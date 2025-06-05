@@ -143,7 +143,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
     end
 
     it "does not send an email" do
-      expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
+      expect(SendEmailJob).not_to receive(:perform_async_in_queue)
       post path, params:
     end
 
@@ -153,7 +153,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       end
 
       it "sends an email" do
-        expect(SendEmailWorker).to receive(:perform_async_in_queue)
+        expect(SendEmailJob).to receive(:perform_async_in_queue)
         post path, params:
       end
     end
@@ -174,7 +174,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
         end
 
         it "does not send an email" do
-          expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
+          expect(SendEmailJob).not_to receive(:perform_async_in_queue)
           post path, params:
         end
       end
@@ -190,7 +190,7 @@ RSpec.describe "Subscribers GOV.UK account", type: :request do
       end
 
       it "does not send an email" do
-        expect(SendEmailWorker).not_to receive(:perform_async_in_queue)
+        expect(SendEmailJob).not_to receive(:perform_async_in_queue)
         post path, params:
       end
     end

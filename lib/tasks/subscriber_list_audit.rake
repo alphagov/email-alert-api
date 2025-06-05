@@ -20,7 +20,7 @@ namespace :subscriber_list_audit do
       puts("Read #{urls.count} URLs from sitemap section #{sitemap_url}")
 
       urls.each_slice(batch_size) do |batch|
-        SubscriberListAuditWorker.perform_async(batch, audit_start_time.to_s)
+        SubscriberListAuditJob.perform_async(batch, audit_start_time.to_s)
       end
     end
 
