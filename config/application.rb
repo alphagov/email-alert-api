@@ -46,5 +46,13 @@ module EmailAlertApi
     config.action_dispatch.rescue_responses["ActiveModel::ValidationError"] = :unprocessable_entity
 
     config.notify_template_id = ENV["GOVUK_NOTIFY_TEMPLATE_ID"]
+
+    # This also configures session_options for use below
+    config.session_store :cookie_store, key: "_interslice_session"
+
+    # Required for all session management (regardless of session_store)
+    config.middleware.use ActionDispatch::Cookies
+
+    config.middleware.use config.session_store, config.session_options
   end
 end
