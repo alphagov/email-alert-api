@@ -65,6 +65,7 @@ class ValidTags
     subject
     therapeutic_area
     tiers_or_standalone_items
+    topics
     tribunal_decision_categories
     tribunal_decision_category
     tribunal_decision_country
