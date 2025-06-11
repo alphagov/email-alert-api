@@ -24,7 +24,7 @@ class SubscriberListMover
       )
     end
 
-    BulkMigrateListWorker.perform_async(
+    BulkMigrateListJob.perform_async(
       source_subscriber_list.id,
       destination_subscriber_list.id,
     )
@@ -33,7 +33,7 @@ class SubscriberListMover
 
     if send_email
       puts "Sending emails to subscribers about change"
-      emails.each { |id| SendEmailWorker.perform_async_in_queue(id, queue: :send_email_immediate) }
+      emails.each { |id| SendEmailJob.perform_async_in_queue(id, queue: :send_email_immediate) }
     end
   end
 

@@ -66,6 +66,6 @@ private
     return unless subscription[:new_record]
 
     email = SubscriptionConfirmationEmailBuilder.call(subscription: subscription[:record])
-    SendEmailWorker.perform_async_in_queue(email.id, queue: :send_email_transactional)
+    SendEmailJob.perform_async_in_queue(email.id, queue: :send_email_transactional)
   end
 end

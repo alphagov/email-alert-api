@@ -36,7 +36,7 @@ RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:each) do
-    Sidekiq::Worker.clear_all
+    Sidekiq::Job.clear_all
   end
 
   config.after type: :request do
@@ -58,7 +58,7 @@ end
 WebMock.disable_net_connect!(allow_localhost: true)
 
 Sidekiq::Testing.inline!
-Sidekiq::Worker.clear_all
+Sidekiq::Job.clear_all
 Sidekiq.configure_client do |config|
   config.logger = nil
 end
