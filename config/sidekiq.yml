@@ -8,12 +8,19 @@
   # Use powers of 2: higher priority groups are checked twice as often.
   - [send_email_transactional, 8] # To send one-off emails, such as subscription confirmation.
   - [send_email_immediate_high, 8] # To send high priority emails to users with immediate subscriptions e.g. travel advice.
-  - [process_and_generate_emails, 4] # To generate emails to users with immediate subscriptions for content changes and messages.
   - [email_generation_digest, 4] # To generate emails to users with daily or weekly subscriptions for content changes and messages.
   - [send_email_immediate, 2] # To send emails to users with immediate subscriptions.
   - [send_email_digest, 2] # To send digest emails to users with either daily or weekly subscriptions.
   - [subscriber_list_audit, 1] # To crawl the GOV.UK site for audit purposes.
   - [default, 1] # Miscellaneous operations e.g. initiating digest runs, monitoring, DB cleanup and recovering lost Sidekiq jobs.
+:capsules:
+  # Bulk capsule is for heavy jobs like ContentChanges which we can't control the rate of, but which should only be handled
+  # a few at a time to prevent running the worker process/pod out of memory/ Compare this with Digest generators, which are heavy
+  # weight but we control the rate of, so they're safe to be in the default capsule.
+  :bulk:
+    :concurrency: 2
+    :queues:
+      - [process_and_generate_emails, 4] # To generate emails to users with immediate subscriptions for content changes and messages.
 :scheduler:
   :schedule:
     daily_digest_initiator:
