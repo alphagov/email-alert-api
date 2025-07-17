@@ -76,6 +76,8 @@ class ValidTags
     tribunal_decision_sub_categories
     tribunal_decision_sub_category
     types_of_support
+    ukhsa_chemical_name
+    ukhsa_product_category
     value_of_funding
     vessel_type
     will_continue_on
