@@ -725,7 +725,7 @@ GEM
     table_print (1.5.7)
     term-ansicolor (1.11.2)
       tins (~> 1.0)
-    thor (1.3.2)
+    thor (1.4.0)
     timeout (0.4.3)
     tins (1.37.0)
       bigdecimal
