@@ -24,7 +24,7 @@ class PollingAlertCheckJob < ApplicationJob
   def any_emails_delivered_for?(content_id, valid_from, document_type)
     return true if Email.where("notify_status = 'delivered' AND content_id = ? AND created_at > ?", content_id, valid_from).exists?
 
-    Rails.logger.info("First pass couldn't find any delivered emails for #{document_type.titleize} records with content id #{content_id}, reverting to polling")
+    Rails.logger.warn("No records in database of delivered emails for #{document_type.titleize} records with content id #{content_id}, polling Notify directly about first 100 emails")
 
     service = CheckNotifyEmailService.new("delivered")
     Email.sent.where("content_id = ? AND created_at > ? AND notify_status IS NULL", content_id, valid_from).order(:created_at).first(100).any? do |email|
