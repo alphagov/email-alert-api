@@ -24,6 +24,15 @@ namespace :report do
     ).call
   end
 
+  desc "Output a subscribers count list for past dates by the subscrber_list URL "
+  task :subscriber_count_list, %i[url start_date end_date] => :environment do |_t, args|
+    puts Reports::SubscriberCountListReport.new(
+      args.fetch(:url),
+      args[:start_date],
+      args[:end_date],
+    ).call
+  end
+
   desc "Output a report of top single page notification subscriber lists"
   task :single_page_notifications_top_subscriber_lists, %i[limit] => :environment do |_t, args|
     puts Reports::SinglePageNotificationsReport.new(args[:limit] || 25).call.join("\n")
