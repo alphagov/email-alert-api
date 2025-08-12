@@ -38,14 +38,16 @@ namespace :data_migration do
     title = args[:title]
     subscriber_lists = SubscriberList.where("title ILIKE ?", "%#{title}%")
 
-    raise "Cannot find any subscriber lists with title containing `#{title}`" if subscriber_lists.nil?
+    if subscriber_lists.present?
+      puts "Found #{subscriber_lists.count} subscriber lists containing '#{title}'"
 
-    puts "Found #{subscriber_lists.count} subscriber lists containing '#{title}'"
-
-    subscriber_lists.each do |subscriber_list|
-      puts "============================="
-      puts "title: #{subscriber_list.title}"
-      puts "slug: #{subscriber_list.slug}"
+      subscriber_lists.each do |subscriber_list|
+        puts "============================="
+        puts "title: #{subscriber_list.title}"
+        puts "slug: #{subscriber_list.slug}"
+      end
+    else
+      raise "Cannot find any subscriber lists with title containing `#{title}`"
     end
   end
 
