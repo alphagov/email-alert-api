@@ -14,6 +14,48 @@ RSpec.describe SubscriberListsByCriteriaQuery do
       expect(result).to contain_exactly(list)
     end
 
+    it "can match a content_id" do
+      uuid = SecureRandom.uuid
+      list = create(:subscriber_list, content_id: uuid, tags: { format: { any: %w[match] } })
+
+      result = described_class.call(
+        SubscriberList,
+        [
+          { type: "content_id", key: "format", value: uuid.to_s },
+        ],
+      )
+
+      expect(result).to contain_exactly(list)
+    end
+
+    it "raises error when an invalid rule" do
+      rule = {
+        none_of: [
+          { type: "tag", key: "format", value: "match_a" },
+        ],
+      }
+
+      expect {
+        described_class.call(
+          SubscriberList,
+          [
+            rule,
+          ],
+        )
+      }.to raise_error(RuntimeError, "Invalid rule: #{rule.inspect}")
+    end
+
+    it "raises error when an invalid rule type" do
+      expect {
+        described_class.call(
+          SubscriberList,
+          [
+            { type: "giraffe", key: "format", value: "1" },
+          ],
+        )
+      }.to raise_error(RuntimeError, /Unexpected rule type: giraffe/)
+    end
+
     it "can match a tag" do
       list = create(:subscriber_list, tags: { format: { any: %w[match] } })
       create(:subscriber_list, tags: { format: { any: %w[no-match] } })

@@ -45,5 +45,21 @@ RSpec.describe "alert_listeners" do
         expect(list_slugs).to match_array(ALERT_SLUGS)
       end
     end
+
+    context "when alert listener hasn't been set" do
+      it "aborts with an error" do
+        ENV["ALERT_LISTENER_EMAIL_ACCOUNT"] = nil
+
+        expect { Rake::Task["alert_listeners:verify_or_create"].invoke }.to raise_error(SystemExit, /Can't create listener: ALERT_LISTENER_EMAIL_ACCOUNT env var missing!/)
+      end
+    end
+
+    context "when subscriber list is missing" do
+      it "aborts with an error" do
+        SubscriberList.first.delete
+
+        expect { Rake::Task["alert_listeners:verify_or_create"].invoke }.to raise_error(SystemExit, /Can't create listener: one or more subscriber_lists missing/)
+      end
+    end
   end
 end

@@ -52,4 +52,30 @@ RSpec.describe "bulk_email" do
         ).to_stdout
     end
   end
+
+  describe "for_lists_and_explicitly_including_addresses" do
+    let(:subscriber) { create(:subscriber, address: "test@example.com") }
+    let(:subscriber_list) { create(:subscriber_list) }
+    let(:subscription) { create(:subscription, subscriber:, subscriber_list:) }
+
+    before do
+      Rake::Task["bulk_email:for_lists_and_explicitly_including_addresses"].reenable
+    end
+
+    around(:each) do |example|
+      ClimateControl.modify(SUBJECT: "subject", BODY: "body") do
+        example.run
+      end
+    end
+
+    it "states how many emails are being sent, and to where" do
+      allow(BulkSubscriberListEmailBuilderWithAccount).to receive(:call)
+        .and_return([1])
+
+      expect { Rake::Task["bulk_email:for_lists_and_explicitly_including_addresses"].invoke(subscriber_list.id) }
+        .to output(
+          /Sending 1 emails to subscribers on the following lists: #{subscriber_list.slug}/,
+        ).to_stdout
+    end
+  end
 end
