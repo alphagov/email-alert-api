@@ -1,6 +1,6 @@
 # email-alert-api
 
-Sends emails to users that subscribe to specific GOV.UK email alerts.
+Sends emails to users that subscribe to specific GOV.UK email alerts
 
 Provides a consistent internal interface to external email
 notification services. Currently supports only [GOV.UK Notify](https://www.notifications.service.gov.uk/).
