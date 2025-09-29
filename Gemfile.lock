@@ -207,7 +207,7 @@ GEM
       bigdecimal (~> 3.1)
     jsonpath (1.1.5)
       multi_json
-    jwt (2.10.2)
+    jwt (3.1.2)
       base64
     language_server-protocol (3.17.0.5)
     link_header (0.0.8)
