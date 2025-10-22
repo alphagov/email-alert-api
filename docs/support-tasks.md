@@ -114,7 +114,7 @@ The date should be in ISO8601 format, for example 2020-01-01.
 To see a simple count of the number of subscribers for a given list:
 
 ```bash
-kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:csv_subscriber_lists[<path>,<active_on_date (optional)>]'
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:subscriber_list_subscriber_count[<path>,<active_on_date (optional)>]'
 ```
 This will report on the number of active subscriptions for a given path.
 
