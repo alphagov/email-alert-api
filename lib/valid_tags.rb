@@ -5,6 +5,12 @@ class ValidTags
     alert_type
     algorithmic_transparency_record_function
     appear_in_find_eu_exit_guidance_business_finder
+    armed_forces_covenant_business_company_size
+    armed_forces_covenant_business_date_signed
+    armed_forces_covenant_business_industry
+    armed_forces_covenant_business_ownership
+    armed_forces_covenant_business_pledged
+    armed_forces_covenant_business_region
     assessment_date
     business_activity
     business_sizes
