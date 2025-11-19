@@ -1,6 +1,6 @@
 class MetricsCollectionJob::ContentChangeExporter < MetricsCollectionJob::BaseExporter
   def call
-    GovukStatsd.gauge("content_changes.unprocessed_total", unprocessed_content_changes)
+    PrometheusMetrics.observe("total_unprocessed_content_changes", unprocessed_content_changes)
   end
 
 private
