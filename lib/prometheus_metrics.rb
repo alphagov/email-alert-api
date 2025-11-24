@@ -16,6 +16,11 @@ class PrometheusMetrics
     end
   end
 
+  def self.observe(name, value, labels = {})
+    metric = PrometheusExporter::Client.default.find_registered_metric(name_with_prefix(name))
+    metric.observe(value, labels)
+  end
+
   def self.name_with_prefix(name)
     "#{PREFIX}#{name}"
   end
