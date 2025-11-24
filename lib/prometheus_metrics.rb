@@ -6,6 +6,10 @@ class PrometheusMetrics
       name: "total_unprocessed_content_changes",
       description: "Total number of unprocessed content changes over 120 minutes old.",
     },
+    {
+      name: "total_unprocessed_digest_runs",
+      description: "Total number of unprocessed digest runs over 120 minutes old.",
+    },
   ].freeze
 
   def self.register
