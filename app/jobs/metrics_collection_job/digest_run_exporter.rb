@@ -4,6 +4,6 @@ class MetricsCollectionJob::DigestRunExporter < MetricsCollectionJob::BaseExport
                                     .where(completed_at: nil)
                                     .count
 
-    GovukStatsd.gauge("digest_runs.critical_total", critical_digest_runs)
+    PrometheusMetrics.observe("total_unprocessed_digest_runs", critical_digest_runs)
   end
 end

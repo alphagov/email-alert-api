@@ -5,7 +5,7 @@ RSpec.describe MetricsCollectionJob::DigestRunExporter do
       travel_to("10:00") do
         create(:digest_run, created_at: 2.days.ago, date: 2.days.ago)
         create(:digest_run, created_at: 21.minutes.ago, date: Time.zone.today)
-        expect(GovukStatsd).to receive(:gauge).with("digest_runs.critical_total", 1)
+        expect(PrometheusMetrics).to receive(:observe).with("total_unprocessed_digest_runs", 1)
         described_class.call
       end
     end
