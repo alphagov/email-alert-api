@@ -21,6 +21,10 @@ class PrometheusMetrics
       name: "content_changes_created",
       description: "Content changes counter",
     },
+    {
+      name: "unsubscribed_reason",
+      description: "Counter for user unsubscribed and reason",
+    },
   ].freeze
 
   def self.register

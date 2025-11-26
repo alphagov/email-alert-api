@@ -6,7 +6,7 @@ class Metrics
     end
 
     def unsubscribed(reason, value = 1)
-      count("unsubscribed.reason.#{reason}", value)
+      PrometheusMetrics.observe("unsubscribed_reason", value, { reason: reason })
     end
 
     def sent_to_notify_successfully

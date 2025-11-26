@@ -19,4 +19,12 @@ RSpec.describe Metrics do
       described_class.content_change_created
     end
   end
+
+  describe ".unsubscribed" do
+    it "increments the counter when a user is unsubscribed with the reason" do
+      expect(PrometheusMetrics).to receive(:observe).with("unsubscribed_reason", 1, { reason: "unsubscribed" })
+
+      described_class.unsubscribed("unsubscribed")
+    end
+  end
 end
