@@ -1,8 +1,7 @@
 class Metrics
   class << self
     def content_change_emails(content_change, count)
-      count("content_change_emails.publishing_app.#{content_change.publishing_app}.immediate", count)
-      count("content_change_emails.document_type.#{content_change.document_type}.immediate", count)
+      PrometheusMetrics.observe("immediate_content_change_batch_emails", count, { publishing_app: content_change.publishing_app, document_type: content_change.document_type })
     end
 
     def unsubscribed(reason, value = 1)

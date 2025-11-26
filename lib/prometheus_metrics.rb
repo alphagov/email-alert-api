@@ -14,6 +14,10 @@ class PrometheusMetrics
       name: "total_unprocessed_messages",
       description: "Total number of unprocessed messages over 120 minutes old.",
     },
+    {
+      name: "immediate_content_change_batch_emails",
+      description: "Total number of batched content change emails by publishing app and document type",
+    },
   ].freeze
 
   COUNTERS = [
