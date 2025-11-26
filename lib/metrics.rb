@@ -18,7 +18,7 @@ class Metrics
     end
 
     def sent_to_pseudo_successfully
-      increment("pseudo.email_send_request")
+      PrometheusMetrics.observe("pseudo_email_send_request_success", 1)
     end
 
     def content_change_created

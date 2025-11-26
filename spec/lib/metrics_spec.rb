@@ -43,4 +43,12 @@ RSpec.describe Metrics do
       described_class.failed_to_send_to_notify
     end
   end
+
+  describe ".sent_to_pseudo_successfully" do
+    it "increments the counter when there is a successful pseudo email send request" do
+      expect(PrometheusMetrics).to receive(:observe).with("pseudo_email_send_request_success", 1)
+
+      described_class.sent_to_pseudo_successfully
+    end
+  end
 end
