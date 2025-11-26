@@ -27,4 +27,12 @@ RSpec.describe Metrics do
       described_class.unsubscribed("unsubscribed")
     end
   end
+
+  describe ".sent_to_notify_successfully" do
+    it "increments the counter when there is a successful email send request to Notify" do
+      expect(PrometheusMetrics).to receive(:observe).with("notify_email_send_request_success", 1)
+
+      described_class.sent_to_notify_successfully
+    end
+  end
 end

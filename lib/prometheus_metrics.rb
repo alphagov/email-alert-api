@@ -25,6 +25,10 @@ class PrometheusMetrics
       name: "unsubscribed_reason",
       description: "Counter for user unsubscribed and reason",
     },
+    {
+      name: "notify_email_send_request_success",
+      description: "Counter for successful email send requests to Notify",
+    },
   ].freeze
 
   def self.register
