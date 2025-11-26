@@ -37,6 +37,10 @@ class PrometheusMetrics
       name: "pseudo_email_send_request_success",
       description: "Counter for successful pseudo email send request",
     },
+    {
+      name: "message_created",
+      description: "Counter for messages created",
+    },
   ].freeze
 
   def self.register

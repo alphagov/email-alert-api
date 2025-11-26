@@ -26,7 +26,7 @@ class Metrics
     end
 
     def message_created
-      increment("messages_created")
+      PrometheusMetrics.observe("message_created", 1)
     end
 
     def email_send_request(provider_name, &block)

@@ -51,4 +51,12 @@ RSpec.describe Metrics do
       described_class.sent_to_pseudo_successfully
     end
   end
+
+  describe ".message_created" do
+    it "increments the counter when a message is created" do
+      expect(PrometheusMetrics).to receive(:observe).with("message_created", 1)
+
+      described_class.message_created
+    end
+  end
 end
