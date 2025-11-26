@@ -29,6 +29,10 @@ class PrometheusMetrics
       name: "notify_email_send_request_success",
       description: "Counter for successful email send requests to Notify",
     },
+    {
+      name: "notify_email_send_request_failure",
+      description: "Counter for failed email send requests to Notify",
+    },
   ].freeze
 
   def self.register

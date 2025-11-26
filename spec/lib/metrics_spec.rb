@@ -35,4 +35,12 @@ RSpec.describe Metrics do
       described_class.sent_to_notify_successfully
     end
   end
+
+  describe ".failed_to_send_to_notify" do
+    it "increments the counter when there is a failed attempt to email send request to Notify" do
+      expect(PrometheusMetrics).to receive(:observe).with("notify_email_send_request_failure", 1)
+
+      described_class.failed_to_send_to_notify
+    end
+  end
 end

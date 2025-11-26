@@ -14,7 +14,7 @@ class Metrics
     end
 
     def failed_to_send_to_notify
-      increment("notify.email_send_request.failure")
+      PrometheusMetrics.observe("notify_email_send_request_failure", 1)
     end
 
     def sent_to_pseudo_successfully
