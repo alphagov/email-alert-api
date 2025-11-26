@@ -18,6 +18,10 @@ class PrometheusMetrics
       name: "immediate_content_change_batch_emails",
       description: "Total number of batched content change emails by publishing app and document type",
     },
+    {
+      name: "content_change_created_until_email_sent",
+      description: "Time between content change created and email sent (milliseconds)",
+    },
   ].freeze
 
   COUNTERS = [
