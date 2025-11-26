@@ -11,4 +11,12 @@ RSpec.describe Metrics do
       described_class.content_change_emails(content_change, 1)
     end
   end
+
+  describe ".content_change_created" do
+    it "increments the counter for the number of content changes created" do
+      expect(PrometheusMetrics).to receive(:observe).with("content_changes_created", 1)
+
+      described_class.content_change_created
+    end
+  end
 end

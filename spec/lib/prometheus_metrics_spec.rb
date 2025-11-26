@@ -7,6 +7,12 @@ RSpec.describe PrometheusMetrics do
           .with(:gauge, "#{described_class::PREFIX}#{gauge[:name]}", gauge[:description])
       end
 
+      described_class::COUNTERS.each do |counter|
+        expect(PrometheusExporter::Client.default)
+          .to receive(:register)
+          .with(:counter, "#{described_class::PREFIX}#{counter[:name]}", counter[:description])
+      end
+
       described_class.register
     end
   end
@@ -25,7 +31,7 @@ RSpec.describe PrometheusMetrics do
       allow(metric).to receive(:observe)
     end
 
-    it "updates the gauge if a gauge with that name exists" do
+    it "updates the metric if a metric with that name exists" do
       allow(PrometheusExporter::Client.default).to receive(:find_registered_metric).and_return(metric)
 
       described_class.observe("total_unprocessed_content_changes", 1)

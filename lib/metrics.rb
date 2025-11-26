@@ -22,7 +22,7 @@ class Metrics
     end
 
     def content_change_created
-      increment("content_changes_created")
+      PrometheusMetrics.observe("content_changes_created", 1)
     end
 
     def message_created

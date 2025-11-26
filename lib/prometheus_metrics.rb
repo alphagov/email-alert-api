@@ -16,10 +16,23 @@ class PrometheusMetrics
     },
   ].freeze
 
+  COUNTERS = [
+    {
+      name: "content_changes_created",
+      description: "Content changes counter",
+    },
+  ].freeze
+
   def self.register
     GAUGES.each do |gauge|
       PrometheusExporter::Client.default.register(
         :gauge, name_with_prefix(gauge[:name]), gauge[:description]
+      )
+    end
+
+    COUNTERS.each do |counter|
+      PrometheusExporter::Client.default.register(
+        :counter, name_with_prefix(counter[:name]), counter[:description]
       )
     end
   end
