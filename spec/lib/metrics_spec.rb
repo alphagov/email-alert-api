@@ -55,4 +55,15 @@ RSpec.describe Metrics do
       described_class.message_created
     end
   end
+
+  # describe ".content_change_created_until_email_sent" do
+  #   it "sends data on time between content change created and email sent" do
+  #     sent_time = Time.now
+  #     difference = (sent_time - 2.minutes.ago) * 1000
+
+  #     expect(PrometheusMetrics).to receive(:observe).with("content_change_created_until_email_sent", difference)
+
+  #     described_class.content_change_created_until_email_sent(2.minutes.ago, sent_time)
+  #   end
+  # end
 end

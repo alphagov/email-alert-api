@@ -46,7 +46,8 @@ class Metrics
 
     def content_change_created_until_email_sent(created_time, sent_time)
       difference = (sent_time - created_time) * 1000
-      timing("content_change_created_until_email_sent", difference)
+
+      PrometheusMetrics.observe("content_change_created_until_email_sent", difference)
     end
 
   private
