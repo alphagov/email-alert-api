@@ -22,6 +22,10 @@ class PrometheusMetrics
       name: "content_change_created_until_email_sent",
       description: "Time between content change created and email sent (milliseconds)",
     },
+    {
+      name: "email_bulk_insert_size",
+      description: "Size of email bulk insert",
+    },
   ].freeze
 
   COUNTERS = [

@@ -40,8 +40,8 @@ class Metrics
       PrometheusMetrics.observe("digest_initiator_service", 1, { range: range })
     end
 
-    def email_bulk_insert(size, &block)
-      time("email_bulk_insert.#{size}.timing", &block)
+    def email_bulk_insert(size)
+      PrometheusMetrics.observe("email_bulk_insert_size", size)
     end
 
     def content_change_created_until_email_sent(created_time, sent_time)
