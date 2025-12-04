@@ -32,8 +32,8 @@ class Metrics
       PrometheusMetrics.observe("email_send_request", 1, { provider: provider_name })
     end
 
-    def digest_email_generation(range, &block)
-      time("digest_email_generation.#{range}.timing", &block)
+    def digest_email_generation(range)
+      PrometheusMetrics.observe("digest_email_generation", 1, { range: range })
     end
 
     def digest_initiator_service(range, &block)

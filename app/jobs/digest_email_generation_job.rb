@@ -30,14 +30,14 @@ class DigestEmailGenerationJob < ApplicationJob
 private
 
   def create_email(digest_run_subscriber, digest_item)
-    Metrics.digest_email_generation(digest_run_subscriber.digest_run.range) do
-      email = DigestEmailBuilder.call(
-        content: digest_item.content,
-        subscription: digest_item.subscription,
-      )
+    email = DigestEmailBuilder.call(
+      content: digest_item.content,
+      subscription: digest_item.subscription,
+    )
 
-      email.id
-    end
+    Metrics.digest_email_generation(digest_run_subscriber.digest_run.range) if email
+
+    email.id
   end
 
   def fill_subscription_content(email_id, digest_item, digest_run_subscriber)

@@ -75,4 +75,12 @@ RSpec.describe Metrics do
       described_class.email_send_request("notify")
     end
   end
+
+  describe ".digest_email_generation" do
+    it "sends data on when an email digest has been created for a range" do
+      expect(PrometheusMetrics).to receive(:observe).with("digest_email_generation", 1, { range: "daily" })
+
+      described_class.digest_email_generation("daily")
+    end
+  end
 end

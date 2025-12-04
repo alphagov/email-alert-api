@@ -53,6 +53,10 @@ class PrometheusMetrics
       name: "email_send_request",
       description: "Counter for when email send request has been made to Notify/pseudo",
     },
+    {
+      name: "digest_email_generation",
+      description: "Counter for when a digest email has been generated",
+    },
   ].freeze
 
   def self.register
