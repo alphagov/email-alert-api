@@ -67,4 +67,12 @@ RSpec.describe Metrics do
       described_class.content_change_created_until_email_sent(created_time, sent_time)
     end
   end
+
+  describe ".email_send_request" do
+    it "sends data on when a email send request and to which provider" do
+      expect(PrometheusMetrics).to receive(:observe).with("email_send_request", 1, { provider: "notify" })
+
+      described_class.email_send_request("notify")
+    end
+  end
 end

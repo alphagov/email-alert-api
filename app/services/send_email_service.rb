@@ -10,9 +10,11 @@ class SendEmailService
 
   def call
     if send_to_notify?
-      Metrics.email_send_request("notify") { SendNotifyEmail.call(email) }
+      Metrics.email_send_request("notify")
+      SendNotifyEmail.call(email)
     else
-      Metrics.email_send_request("pseudo") { SendPseudoEmail.call(email) }
+      Metrics.email_send_request("pseudo")
+      SendPseudoEmail.call(email)
     end
 
     record_sent_metrics

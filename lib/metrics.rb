@@ -28,8 +28,8 @@ class Metrics
       PrometheusMetrics.observe("message_created", 1)
     end
 
-    def email_send_request(provider_name, &block)
-      time("#{provider_name}.email_send_request.timing", &block)
+    def email_send_request(provider_name)
+      PrometheusMetrics.observe("email_send_request", 1, { provider: provider_name })
     end
 
     def digest_email_generation(range, &block)
