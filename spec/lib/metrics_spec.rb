@@ -83,4 +83,12 @@ RSpec.describe Metrics do
       described_class.digest_email_generation("daily")
     end
   end
+
+  describe ".digest_initiator_service" do
+    it "sends data on when an email digest run has been created for a range" do
+      expect(PrometheusMetrics).to receive(:observe).with("digest_initiator_service", 1, { range: "daily" })
+
+      described_class.digest_initiator_service("daily")
+    end
+  end
 end

@@ -57,6 +57,10 @@ class PrometheusMetrics
       name: "digest_email_generation",
       description: "Counter for when a digest email has been generated",
     },
+    {
+      name: "digest_initiator_service",
+      description: "Counter for when a digest run has been created for subscribers",
+    },
   ].freeze
 
   def self.register
