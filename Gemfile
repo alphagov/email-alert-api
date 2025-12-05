@@ -8,7 +8,7 @@ gem "bootsnap", require: false
 gem "faraday"
 gem "gds-api-adapters"
 gem "gds-sso"
-gem "govuk_app_config", "9.22.0"
+gem "govuk_app_config", "9.22.2"
 gem "govuk_document_types"
 gem "govuk_personalisation"
 gem "govuk_sidekiq"
