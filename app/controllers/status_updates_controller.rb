@@ -6,7 +6,8 @@ class StatusUpdatesController < ApplicationController
     reference = params.require(:reference)
 
     logger.debug("Email #{reference} callback received with status: #{status}")
-    GovukStatsd.increment("status_update.status.#{status}")
+
+    PrometheusMetrics.observe("email_callback_status", 1, { status: status })
 
     # We are deliberatly omitting "technical-failure" as Notify say this is
     # not sent via callback. If we start receiving these we should chat to

@@ -65,6 +65,10 @@ class PrometheusMetrics
       name: "digest_initiator_service",
       description: "Counter for when a digest run has been created for subscribers",
     },
+    {
+      name: "email_callback_status",
+      description: "Counter for email callback received",
+    },
   ].freeze
 
   def self.register
