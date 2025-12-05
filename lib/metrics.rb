@@ -49,23 +49,5 @@ class Metrics
 
       PrometheusMetrics.observe("content_change_created_until_email_sent", difference)
     end
-
-  private
-
-    def increment(metric)
-      GovukStatsd.increment(metric)
-    end
-
-    def time(metric, &block)
-      GovukStatsd.time(metric, &block)
-    end
-
-    def timing(namespace, difference)
-      GovukStatsd.timing(namespace, difference)
-    end
-
-    def count(namespace, value)
-      GovukStatsd.count(namespace, value)
-    end
   end
 end
