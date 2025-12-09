@@ -19,14 +19,14 @@ private
   attr_reader :range, :date
 
   def create_digest_run_subscribers(digest_run)
-    Metrics.digest_initiator_service(range) do
-      subscriber_ids = DigestRunSubscriberQuery.call(digest_run:).pluck(:id)
+    Metrics.digest_initiator_service(range)
 
-      subscriber_ids.each_slice(1000) do |subscriber_ids_chunk|
-        digest_run_subscriber_ids = DigestRunSubscriber.populate(digest_run, subscriber_ids_chunk)
+    subscriber_ids = DigestRunSubscriberQuery.call(digest_run:).pluck(:id)
 
-        enqueue_jobs(digest_run_subscriber_ids)
-      end
+    subscriber_ids.each_slice(1000) do |subscriber_ids_chunk|
+      digest_run_subscriber_ids = DigestRunSubscriber.populate(digest_run, subscriber_ids_chunk)
+
+      enqueue_jobs(digest_run_subscriber_ids)
     end
   end
 

@@ -6,6 +6,7 @@ class Email < ApplicationRecord
   def self.timed_bulk_insert(records, batch_size)
     return insert_all!(records) unless records.size == batch_size
 
-    Metrics.email_bulk_insert(batch_size) { insert_all!(records) }
+    Metrics.email_bulk_insert(batch_size)
+    insert_all!(records)
   end
 end

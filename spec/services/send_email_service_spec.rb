@@ -23,12 +23,16 @@ RSpec.describe SendEmailService do
       it "delegates sending configured emails to SendNotifyEmail" do
         email = create(:email, address: "person-2@example.com")
         expect(described_class::SendNotifyEmail).to receive(:call).with(email)
+        expect(Metrics).to receive(:email_send_request).with("notify")
+
         described_class.call(email:)
       end
 
       it "delegates those not configured to be sent via SendPseudoEmail" do
         email = create(:email, address: "person-3@example.com")
         expect(described_class::SendPseudoEmail).to receive(:call).with(email)
+        expect(Metrics).to receive(:email_send_request).with("pseudo")
+
         described_class.call(email:)
       end
     end
