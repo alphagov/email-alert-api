@@ -13,7 +13,7 @@ class StatusUpdatesController < ApplicationController
     # not sent via callback. If we start receiving these we should chat to
     # Notify about why.
     unless %w[delivered permanent-failure temporary-failure].include?(status)
-      error = "Recieved an unexpected status from Notify: '#{status}'"
+      error = "Received an unexpected status from Notify: '#{status}'"
       GovukError.notify(error)
       render json: { error: }, status: :unprocessable_entity
       return
