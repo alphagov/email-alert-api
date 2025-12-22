@@ -203,9 +203,9 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.16.0)
-    json-schema (6.0.0)
+    json-schema (6.1.0)
       addressable (~> 2.8)
-      bigdecimal (~> 3.1)
+      bigdecimal (>= 3.1, < 5)
     jsonpath (1.1.5)
       multi_json
     jwt (3.1.2)
