@@ -74,7 +74,7 @@ RSpec.describe EmailAlertCriteria do
     end
 
     context "when the content item is valid because it is the single instance of service_manual_service_standard" do
-      let!(:content_item) { valid_content_item_no_parent.merge("parent" => %w[00f693d4-866a-4fe6-a8d6-09cd7db8980b]) }
+      let!(:content_item) { valid_content_item_no_parent.merge("links" => { "parent" => [{ "content_id" => "00f693d4-866a-4fe6-a8d6-09cd7db8980b" }] }) }
 
       it "should return true" do
         expect(subject.would_trigger_alert?).to be true
