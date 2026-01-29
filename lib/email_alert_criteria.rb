@@ -80,7 +80,7 @@ class EmailAlertCriteria
   end
 
   def links_to_service_manual_service_standard?
-    content_item["parent"] == %w[00f693d4-866a-4fe6-a8d6-09cd7db8980b]
+    content_item.dig("links", "parent", 0, "content_id") == "00f693d4-866a-4fe6-a8d6-09cd7db8980b"
   end
 
   def has_relevant_document_supertype?
