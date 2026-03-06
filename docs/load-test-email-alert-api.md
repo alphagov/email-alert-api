@@ -12,7 +12,7 @@ To perform a load test you will need:
 - An approach to simulate the delay of an actual request to Notify - we
   previously used a `Kernel.sleep(0.1)` to apply this.
 
-When performing the test you should inform the `#govuk-2ndline`
+When performing the test you should inform the `#govuk-technical-on-call`
 channel as they may see alerts during it.
 
 [rake tasks]: https://github.com/alphagov/email-alert-api/pull/1494
