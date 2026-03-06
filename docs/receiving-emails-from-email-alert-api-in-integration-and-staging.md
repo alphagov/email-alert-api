@@ -42,8 +42,8 @@ an email to confirm the subscription. Once confirmed, you can then publish
 a change in [Travel Advice Publisher][] to generate the content change
 alert email.
 
-If you are testing over multiple days, bear in mind that each night the
-databases in Integration and Staging are reset due to the [data sync][].
+If you are testing over multiple days, bear in mind that the
+databases are reset due to the [data sync][] in Integration (weekly) and Staging (nightly).
 This will mean that any test subscriptions you've created will be lost and
 you'll need to recreate them.
 
@@ -57,5 +57,5 @@ If so, those credentials are listed in [AWS Secrets Manager][aws-secrets] as `2n
 [travel-advice]: https://www.integration.publishing.service.gov.uk/foreign-travel-advice/thailand/email-signup
 [Travel Advice Publisher]: https://travel-advice-publisher.integration.publishing.service.gov.uk/admin/countries/thailand
 [staging-group]: https://groups.google.com/a/digital.cabinet-office.gov.uk/g/email-alert-api-staging
-[data sync]: /manual/govuk-env-sync.html
+[data sync]: https://docs.publishing.service.gov.uk/manual/govuk-env-sync.html
 [aws-secrets]: https://docs.publishing.service.gov.uk/manual/secrets-manager.html
