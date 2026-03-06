@@ -29,15 +29,6 @@ HEADERS=title,individual_subscribers,daily_subscribers,weekly_subscribers,total_
 ```
 All available headers are used by default, pass in the name of the headers as they are in the first row of the default output
 
-[⚙ Run rake task on Integration][rake-csv-subscriber-lists]
-
-[rake-csv-subscriber-lists]: https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:csv_subscriber_lists
-
-
-[⚙ Run rake task with limited number of headers on Integration][rake-csv-subscriber-lists-limited-number-headers]
-
-[rake-csv-subscriber-lists-limited-number-headers]: https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=HEADERS=title,individual_subscribers,daily_subscribers,weekly_subscribers,total_subscribers%20report:csv_subscriber_lists
-
 ## Content changes for each subscriber list
 
 This generates a CSV report of matched content changes over the last week.
@@ -48,7 +39,3 @@ report:matched_content_changes
 # or with a specific range
 START_DATE=2020-08-07 END_DATE=2020-08-13 report:matched_content_changes
 ```
-
-[⚙ Run rake task on Integration][rake-matched-content-changes]
-
-[rake-matched-content-changes]: https://deploy.integration.publishing.service.gov.uk/job/run-rake-task/parambuild/?TARGET_APPLICATION=email-alert-api&MACHINE_CLASS=email_alert_api&RAKE_TASK=report:matched_content_changes
