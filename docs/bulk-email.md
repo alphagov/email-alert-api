@@ -40,15 +40,13 @@ lists for travel advice, you could use the following query:
 
 ## 3. Send a test email
 
-Use [the Send bulk emails job in Staging][send-bulk-staging] to send the email.
+Run the [bulk_email][send-bulk-email] rake task in Staging to send the email.
 
 **Make sure you know [how to receive emails in Staging][staging-emails].**
 
-[send-bulk-staging]: https://deploy.blue.staging.govuk.digital/job/send-bulk-email/
+[send-bulk-email]: https://github.com/alphagov/email-alert-api/blob/main/lib/tasks/bulk_email.rake
 [staging-emails]: https://docs.publishing.service.gov.uk/repos/email-alert-api/receiving-emails-from-email-alert-api-in-integration-and-staging.html
 
 ## 4. Send the real email
 
-Use [the Send bulk emails job in Production][send-bulk-production] to send the email.
-
-[send-bulk-production]: https://deploy.blue.production.govuk.digital/job/send-bulk-email/
+Run the [bulk_email][send-bulk-email] rake task in Production to send the email.

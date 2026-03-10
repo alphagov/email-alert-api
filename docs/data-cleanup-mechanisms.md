@@ -25,33 +25,33 @@ removed anyway to prevent storing user's data indefinitely if, for whatever
 reason, a subscriber ends up with no subscriptions. This has happened before,
 unintentionally, see [here][sub bug] and [here][sub bug two].
 
-The [NullifySubscribersWorker] runs [every hour].
+The [NullifySubscribersJob] runs [every hour].
 
-[every hour]: https://github.com/alphagov/email-alert-api/blob/cefdfa76b13915ea96b131490fd3186b6d52cf05/config/sidekiq.yml#L27
-[NullifySubscribersWorker]: https://github.com/alphagov/email-alert-api/blob/master/app/workers/nullify_subscribers_worker.rb
+[every hour]: https://github.com/alphagov/email-alert-api/blob/main/config/sidekiq.yml#L36
+[NullifySubscribersJob]: https://github.com/alphagov/email-alert-api/blob/main/app/jobs/nullify_subscribers_job.rb
 [sub bug]: https://github.com/alphagov/email-alert-api/pull/1462/commits/053859c5962eef104256661f28727b08a43e3d31
 [sub bug two]: https://github.com/alphagov/email-alert-api/pull/1462/commits/a4b3e82801d79abd3989b1dd60ffd499e7ce82ba
 
 ## Deleting emails
 
-The [EmailDeletionWorker] deletes emails after 7 days. These recently archived
+The [EmailDeletionJob] deletes emails after 7 days. These recently archived
 emails get deleted regularly to keep the database performant as we produce a
 large quantity which the system only uses for a short period of time. In deleting
 these emails we also delete their associated subscription contents through a
 [db cascade]. As of 05/11/2020 we generate around ~3 million emails per day.
 
-The [deletion worker] runs every hour. Every hour was chosen to limit the worst
+The [deletion job] runs every hour. Every hour was chosen to limit the worst
 case backlog (and potential performance impact) if a run of the job fails for
 transient reasons. Note that it often takes 10-30 minutes just to delete an hour's
 worth of email, so it's not feasible to run this job more frequently.
 
-[deletion worker]: https://github.com/alphagov/email-alert-api/blob/b850dc646202aaa9e2fac88986a6f3d0c738be78/config/sidekiq.yml#L33
-[EmailDeletionWorker]: https://github.com/alphagov/email-alert-api/blob/a62abc85453b723d683c2dc13f3bf0065fb86d5f/app/workers/email_deletion_worker.rb
+[deletion job]: https://github.com/alphagov/email-alert-api/blob/main/config/sidekiq.yml#L39
+[EmailDeletioJob]: https://github.com/alphagov/email-alert-api/blob/main/app/jobs/email_deletion_job.rb
 [db cascade]: https://github.com/alphagov/email-alert-api/blob/11fb84542e6c7f3995f419e4affaf56aa759ec6c/db/schema.rb#L206
 
 ## Deleting historic data
 
-The [HistoricalDataDeletionWorker] deletes data we deem as historic everday at
+The [HistoricalDataDeletionJob] deletes data we deem as historic everday at
 [midday]. Midday was chosen as removing historic data is deemed non urgent work
 and so running once a day, in hours, seems sufficient.
 
@@ -65,6 +65,6 @@ capacity issues.
 You can read in more detail about the decision to implement the historic
 deletion of data in [ADR-7].
 
-[midday]: https://github.com/alphagov/email-alert-api/blob/cefdfa76b13915ea96b131490fd3186b6d52cf05/config/sidekiq.yml#L24
-[HistoricalDataDeletionWorker]: https://github.com/alphagov/email-alert-api/blob/a62abc85453b723d683c2dc13f3bf0065fb86d5f/app/workers/historical_data_deletion_worker.rb
+[midday]: https://github.com/alphagov/email-alert-api/blob/main/config/sidekiq.yml#L33
+[HistoricalDataDeletionWorker]: https://github.com/alphagov/email-alert-api/blob/main/app/jobs/historical_data_deletion_job.rb
 [ADR-7]: https://github.com/alphagov/email-alert-api/blob/master/docs/adr/adr-007-retain-data-for-up-to-one-year.md#decision
