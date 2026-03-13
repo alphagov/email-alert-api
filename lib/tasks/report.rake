@@ -1,3 +1,5 @@
+require "aws-sdk-s3"
+
 namespace :report do
   desc "Outputs a CSV of content changes by subscriber list"
   task matched_content_changes: :environment do
@@ -8,7 +10,16 @@ namespace :report do
   desc "Outputs a CSV of information for each subscriber list within a year for a past date, format: 'yyyy-mm-dd'"
   task :csv_subscriber_lists, [:date] => :environment do |_t, args|
     options = { slugs: ENV.fetch("SLUGS", ""), tags_pattern: ENV["TAGS_PATTERN"], links_pattern: ENV["LINKS_PATTERN"], headers: ENV["HEADERS"] }
-    puts Reports::SubscriberListsReport.new(args[:date], **options).call
+    filename = "csv_subscriber_list_#{Time.zone.now.utc.strftime('%Y%m%d%H%M%S')}.csv"
+
+    bucket = ENV["AWS_S3_ASSET_BUCKET_NAME"]
+    key = "data/email-alert-api/#{filename}"
+
+    s3 = Aws::S3::Client.new
+    output = Reports::SubscriberListsReport.new(args[:date], **options).call
+
+    s3.put_object({ body: output, bucket:, key: })
+    puts "File uploaded to S3 bucket successfully"
   end
 
   desc "Outputs a CSV of subscriber lists that appear to be inactive (tech debt)"
