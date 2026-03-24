@@ -12,9 +12,11 @@ RSpec.describe "report" do
   end
 
   describe "csv_subscriber_lists" do
-    it "outputs a report of data concerning subscriber lists for a given date" do
+    it "uploads a report of data concerning subscriber lists for a given date to s3" do
+      allow(Aws::S3::Client).to receive(:new).and_return(instance_double(Aws::S3::Client, put_object: true))
+
       expect { Rake::Task["report:csv_subscriber_lists"].invoke(6.months.ago.to_s) }
-        .to output.to_stdout
+        .to output("File uploaded to S3 bucket successfully\n").to_stdout
     end
   end
 
