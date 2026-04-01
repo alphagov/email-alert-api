@@ -755,7 +755,7 @@ DEPENDENCIES
   listen
   nokogiri
   notifications-ruby-client
-  pact
+  pact (~> 1.67)
   pact_broker-client
   pg
   plek
