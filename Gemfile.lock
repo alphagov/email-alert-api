@@ -99,7 +99,7 @@ GEM
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.3.0)
-    bigdecimal (4.1.1)
+    bigdecimal (4.1.2)
     bootsnap (1.23.0)
       msgpack (~> 1.2)
     brakeman (8.0.4)
@@ -185,7 +185,7 @@ GEM
       rake (~> 13.3)
     googleapis-common-protos-types (1.22.0)
       google-protobuf (~> 4.26)
-    govuk_app_config (9.23.11)
+    govuk_app_config (9.24.0)
       connection_pool (< 3)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.34)
@@ -226,7 +226,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
-    json (2.19.3)
+    json (2.19.4)
     json-schema (6.2.0)
       addressable (~> 2.8)
       bigdecimal (>= 3.1, < 5)
@@ -773,7 +773,7 @@ DEPENDENCIES
   faraday
   gds-api-adapters
   gds-sso
-  govuk_app_config (= 9.23.11)
+  govuk_app_config (= 9.24.0)
   govuk_document_types
   govuk_personalisation
   govuk_sidekiq
