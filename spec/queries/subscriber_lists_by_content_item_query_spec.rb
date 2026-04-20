@@ -39,7 +39,7 @@ RSpec.describe SubscriberListsByContentItemQuery do
         "taxons" => [{
           "content_id" => "f05dc04b-ca95-4cca-9875-a7591d055448",
           "links" => {
-            "parent_taxons" => ["content_id": "f05dc04b-ca95-4cca-9875-a7591d055448"],
+            "parent_taxons" => [{ "content_id": "f05dc04b-ca95-4cca-9875-a7591d055448" }],
           },
         }],
       })
@@ -63,8 +63,10 @@ RSpec.describe SubscriberListsByContentItemQuery do
     it "includes lists that match on parent staxons links" do
       content_item = content_item_for_base_path(govuk_path).merge("links" => {
         "taxons" => [
-          "links" => {
-            "parent_taxons" => ["content_id" => "f05dc04b-ca95-4cca-9875-a7591d055448"],
+          {
+            "links" => {
+              "parent_taxons" => [{ "content_id" => "f05dc04b-ca95-4cca-9875-a7591d055448" }],
+            },
           },
         ],
       })
@@ -77,7 +79,9 @@ RSpec.describe SubscriberListsByContentItemQuery do
     it "does not return links in list if parent_taxons key is not present" do
       content_item = content_item_for_base_path(govuk_path).merge("links" => {
         "taxons" => [
-          "links" => {},
+          {
+            "links" => {},
+          },
         ],
       })
       create(:subscriber_list, content_id: content_item["content_id"])
@@ -90,8 +94,10 @@ RSpec.describe SubscriberListsByContentItemQuery do
     it "does not return links in list if parent_taxons array is empty" do
       content_item = content_item_for_base_path(govuk_path).merge("links" => {
         "taxons" => [
-          "links" => {
-            "parent_taxons" => [],
+          {
+            "links" => {
+              "parent_taxons" => [],
+            },
           },
         ],
       })
