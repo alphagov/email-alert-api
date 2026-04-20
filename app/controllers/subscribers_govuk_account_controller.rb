@@ -53,6 +53,7 @@ private
     @api_response = { govuk_account_session: account_response["govuk_account_session"] }.compact
 
     render status: :forbidden, json: @api_response and return unless email
+
     render status: :forbidden, json: @api_response and return unless email_verified
 
     @subscriber = Subscriber.resilient_find_or_create(email, signon_user_uid: current_user.uid)

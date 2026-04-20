@@ -276,8 +276,12 @@ FactoryBot.define do
     body do
       {
         "status_code" => 400,
-        "errors" => ["error" => "ValidationError",
-                     "message" => "bad status is not one of [created, sending, sent, delivered, pending, failed, technical-failure, temporary-failure, permanent-failure, accepted, received]"],
+        "errors" => [
+          {
+            "error" => "ValidationError",
+            "message" => "bad status is not one of [created, sending, sent, delivered, pending, failed, technical-failure, temporary-failure, permanent-failure, accepted, received]",
+          },
+        ],
       }
     end
 
