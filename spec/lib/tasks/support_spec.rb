@@ -266,14 +266,14 @@ RSpec.describe "support" do
       subscription2 = create(:subscription, :ended, subscriber_list: subscriber_list2, subscriber:)
 
       report = <<~TEXT
-        [{:status=>"Active",
-          :subscriber_list=>"#{subscriber_list1.title} (slug: #{subscriber_list1.slug})",
-          :frequency=>"#{subscription1.frequency}",
-          :timeline=>"Subscribed #{subscription1.created_at}"},
-         {:status=>"Inactive (#{subscription2.ended_reason})",
-          :subscriber_list=>"#{subscriber_list2.title} (slug: #{subscriber_list2.slug})",
-          :frequency=>"#{subscription2.frequency}",
-          :timeline=>
+        [{status: "Active",
+          subscriber_list: "#{subscriber_list1.title} (slug: #{subscriber_list1.slug})",
+          frequency: "#{subscription1.frequency}",
+          timeline: "Subscribed #{subscription1.created_at}"},
+         {status: "Inactive (#{subscription2.ended_reason})",
+          subscriber_list: "#{subscriber_list2.title} (slug: #{subscriber_list2.slug})",
+          frequency: "#{subscription2.frequency}",
+          timeline:
            "Subscribed #{subscription2.created_at}, Ended #{subscription2.ended_at}"}]
       TEXT
 
