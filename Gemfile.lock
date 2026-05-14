@@ -783,6 +783,7 @@ DEPENDENCIES
   listen
   nokogiri
   notifications-ruby-client
+  ostruct
   pact (~> 1.67)
   pact_broker-client
   pg
