@@ -6,6 +6,7 @@ gem "rails", "8.1.3"
 
 gem "aws-sdk-s3"
 gem "bootsnap", require: false
+gem "csv"
 gem "faraday"
 gem "gds-api-adapters"
 gem "gds-sso"

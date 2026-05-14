@@ -767,6 +767,7 @@ DEPENDENCIES
   bootsnap
   brakeman
   climate_control
+  csv
   database_cleaner
   equivalent-xml
   factory_bot_rails
