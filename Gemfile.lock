@@ -185,7 +185,7 @@ GEM
       rake (~> 13.3)
     googleapis-common-protos-types (1.23.0)
       google-protobuf (~> 4.26)
-    govuk_app_config (9.24.1)
+    govuk_app_config (9.25.0)
       connection_pool (< 4)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.34)
@@ -226,7 +226,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
-    json (2.19.5)
+    json (2.19.7)
     json-schema (6.2.0)
       addressable (~> 2.8)
       bigdecimal (>= 3.1, < 5)
@@ -541,11 +541,11 @@ GEM
     pry-byebug (3.12.0)
       byebug (~> 13.0)
       pry (>= 0.13, < 0.17)
-    psych (5.3.1)
+    psych (5.4.0)
       date
       stringio
     public_suffix (7.0.5)
-    puma (8.0.1)
+    puma (8.0.2)
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.8.1)
@@ -755,7 +755,7 @@ GEM
     with_advisory_lock (7.5.0)
       activerecord (>= 7.2)
       zeitwerk (>= 2.7)
-    zeitwerk (2.8.1)
+    zeitwerk (2.8.2)
 
 PLATFORMS
   aarch64-linux
@@ -774,7 +774,7 @@ DEPENDENCIES
   faraday
   gds-api-adapters
   gds-sso
-  govuk_app_config (= 9.24.1)
+  govuk_app_config (= 9.25.0)
   govuk_document_types
   govuk_personalisation
   govuk_sidekiq
