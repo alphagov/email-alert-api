@@ -1,6 +1,6 @@
 # Alert Check Scheduled Jobs
 
-Two sets of alerts (Medical Safety Alerts and Travel Advice Alerts) are critical, so it's important to check that they have gone out correctly. To do this we have a pair of scheduled sidekiq jobs. These jobs use the public search API to find a list of relevant Content IDs, then iterate that list checking for the existence of at least one Email record which has that Content ID and a notify_status of "delivered", and which was created after the public update time . Via the prometheus collector, we return metrics of the number of alerts and the number of alerts that have at least one delivery record. Ideally those number should be the same (0 & 0 is okay, 2 & 2 is okay, but 2 & 1 is an alert state).
+Two sets of alerts (Medical Safety Alerts and Travel Advice Alerts) are critical, so it's important to check that they have gone out correctly. To do this we have [a pair of scheduled sidekiq jobs](https://github.com/alphagov/email-alert-api/blob/main/config/sidekiq.yml#L50-L57). These jobs use the public search API to find a list of relevant Content IDs, then iterate that list checking for the existence of at least one Email record which has that Content ID and a notify_status of "delivered", and which was created after the public update time . Via the prometheus collector, we return metrics of the number of alerts and the number of alerts that have at least one delivery record. Ideally those number should be the same (0 & 0 is okay, 2 & 2 is okay, but 2 & 1 is an alert state).
 
 The jobs run every 15 minutes, and checks for alerts that meet the following criteria from the Search API results:
 - document type is `medical_safety_alert` or `travel_advice`
@@ -38,7 +38,12 @@ See also [Receive emails from Email Alert API in Integration and Staging](receiv
 
 ## Testing
 
-To test the alert in integration, you will need to run the task above (to create the listener), then create a medical alert or travel advice update, and wait one hour. You should see no alert initially (because hopefully the integration listener account will have received the email). To trigger the alert, first find out the content id of the alert  you have just publised, then open the console and update the emails for that
+To test the alert in integration:
+
+1. Run [the task above](#manual-checking) (to create the listener)
+2. Create a [medical alert](https://specialist-publisher.integration.publishing.service.gov.uk/medical-safety-alerts) or [travel advice](https://travel-advice-publisher.integration.publishing.service.gov.uk/admin) update
+3. Wait one hour - you should see no alert initially (because hopefully the [integration listener account](https://groups.google.com/a/digital.cabinet-office.gov.uk/g/email-alert-api-integration) will have received the email)
+4. To trigger the alert, first find out the `content_id` of the alert you have just published, then open the console and update the emails for that.
 
 ```
 kubectl config use-context govuk-integration
@@ -46,10 +51,10 @@ kubectl -n apps deploy/email-alert-api -- rails c
 
 (Rails console)
 > Email.where(content_id: <your content id>).delete_all
-> PollingAlertCheckJob.new.perform(<your document type, either "medical_safety_alert" or "travel_advice|>)
+> PollingAlertCheckJob.new.perform(<your document type, either "medical_safety_alert" or "travel_advice">)
 ```
 
-The alert check worker will find no emails with notify status "delivered", and nothing to actively poll (no emails with notify status nil), and will set the alert metric. Prometheus should collect the metrics after a minute, and set off the alert.
+The [alert check worker](https://github.com/alphagov/email-alert-api/blob/main/app/jobs/polling_alert_check_job.rb) will find no emails with notify status "delivered", and nothing to actively poll (no emails with notify status `nil`), and will set the alert metric. Prometheus should collect the metrics after a minute, and set off the alert.
 
 ## Support Tasks
 

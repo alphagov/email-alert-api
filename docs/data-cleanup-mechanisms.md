@@ -46,7 +46,7 @@ transient reasons. Note that it often takes 10-30 minutes just to delete an hour
 worth of email, so it's not feasible to run this job more frequently.
 
 [deletion job]: https://github.com/alphagov/email-alert-api/blob/main/config/sidekiq.yml#L39
-[EmailDeletioJob]: https://github.com/alphagov/email-alert-api/blob/main/app/jobs/email_deletion_job.rb
+[EmailDeletionJob]: https://github.com/alphagov/email-alert-api/blob/main/app/jobs/email_deletion_job.rb
 [db cascade]: https://github.com/alphagov/email-alert-api/blob/11fb84542e6c7f3995f419e4affaf56aa759ec6c/db/schema.rb#L206
 
 ## Deleting historic data
@@ -66,5 +66,5 @@ You can read in more detail about the decision to implement the historic
 deletion of data in [ADR-7].
 
 [midday]: https://github.com/alphagov/email-alert-api/blob/main/config/sidekiq.yml#L33
-[HistoricalDataDeletionWorker]: https://github.com/alphagov/email-alert-api/blob/main/app/jobs/historical_data_deletion_job.rb
+[HistoricalDataDeletionJob]: https://github.com/alphagov/email-alert-api/blob/main/app/jobs/historical_data_deletion_job.rb
 [ADR-7]: https://github.com/alphagov/email-alert-api/blob/master/docs/adr/adr-007-retain-data-for-up-to-one-year.md#decision
