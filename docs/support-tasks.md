@@ -23,7 +23,7 @@ run using the `kubectl` command, as described in the [EKS documentation][eks-doc
 This task changes a subscriber's email address.
 
 ```bash
-$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:change_email_address[<old_email_address>, <new_email_address>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'support:change_email_address[<old_email_address>, <new_email_address>]'
 ```
 
 ## View subscriber's recent emails
@@ -34,7 +34,7 @@ It takes two parameters: `email_address` (required), and `limit` (optional).
 the user's history.
 
 ```bash
-$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:view_emails[<email_address>,<limit>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'support:view_emails[<email_address>,<limit>]'
 ```
 
 ## View subscriber's subscriptions
@@ -42,7 +42,7 @@ $ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:vi
 This task shows you all of the active and inactive subscriptions for a given user.
 
 ```bash
-$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:view_subscriptions[<email_address>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'support:view_subscriptions[<email_address>]'
 ```
 
 ## Unsubscribe a subscriber from a specific subscription
@@ -51,7 +51,7 @@ This task unsubscribes one subscriber from a subscription, given an email addres
 You can find out the slug of the subscriber list by running the `view_subscriptions` rake task. above
 
 ```bash
-$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:unsubscribe_single_subscription[<email_address>,<subscriber_list_slug>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'support:unsubscribe_single_subscription[<email_address>,<subscriber_list_slug>]'
 ```
 
 ## Unsubscribe all subscribers from a specific subscription
@@ -59,7 +59,7 @@ $ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:un
 This task unsubscribes all active subscribers from a subscription, given a subscriber list slug.
 
 ```bash
-$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:unsubscribe_all_subscribers_from_subscription[<subscriber_list_slug>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'support:unsubscribe_all_subscribers_from_subscription[<subscriber_list_slug>]'
 ```
 
 ## Unsubscribe a subscriber from all emails
@@ -67,7 +67,7 @@ $ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:un
 This task unsubscribes one subscriber from everything they have subscribed to.
 
 ```bash
-$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:unsubscribe_all_subscriptions[<email_address>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'support:unsubscribe_all_subscriptions[<email_address>]'
 ```
 
 ## Send a test email
@@ -75,7 +75,7 @@ $ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:un
 To send a test email to an email address (doesn't have to be subscribed to anything):
 
 ```bash
-$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake support:send_test_email[<email_address>]
+$ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'support:send_test_email[<email_address>]'
 ```
 
 ## Resend failed emails
