@@ -707,7 +707,7 @@ GEM
     sidekiq-scheduler (6.0.2)
       rufus-scheduler (~> 3.2)
       sidekiq (>= 7.3, < 9)
-    simplecov (1.0.0)
+    simplecov (1.0.1)
     sitemap-parser (0.5.6)
       nokogiri (~> 1.6)
       typhoeus (>= 0.6, < 2.0)
