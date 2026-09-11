@@ -36,4 +36,29 @@ namespace :bulk_email do
     end
     puts "Sending #{email_ids.count} emails to subscribers on the following lists: #{subscriber_lists.pluck(:slug).join(', ')}"
   end
+
+  desc "Send a bulk email to users that are subscribed to specific subscription lists"
+  task for_subscriber_lists: :environment do
+    subscriber_lists = %w[
+      department-for-culture-media-and-sport-9a1e4ff9b9
+      all-announcements-about-all-topics-by-department-for-culture-media-sport
+      all-publications-about-all-topics-by-department-for-culture-media-sport
+      consultations-about-all-topics-by-department-for-culture-media-sport
+      policy-papers-and-consultations-with-organisation-of-department-for-culture-media-and-sport
+      news-stories-related-to-department-for-culture-media-sport
+      press-releases-about-all-topics-by-department-for-culture-media-sport
+    ]
+
+    subscriber_lists.each do |subscriber_list|
+      SubscriberList.find_by(slug: subscriber_list)
+
+      email_ids = BulkSubscriberListEmailBuilderSubscriptions.call(subscriber_list:)
+
+      email_ids.each do |id|
+        SendEmailJob.perform_async_in_queue(id, queue: :send_email_immediate)
+      end
+
+      puts "Sending #{email_ids.count} emails to subscribers on subscriber list: #{subscriber_list.title}"
+    end
+  end
 end
