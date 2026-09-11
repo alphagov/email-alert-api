@@ -4,12 +4,8 @@ class BulkSubscriberListEmailBuilderSubscriptions
   BATCH_SIZE = 5000
 
   def initialize(subscriber_list:)
-    case subscriber_list.slug
-    when "department-for-culture-media-and-sport-9a1e4ff9b9"
-      @subject = dcms_email_subject
-      @body = dcms_email_body
-    end
-
+    @subject = dcms_email_subject
+    @body = dcms_email_body
     @subscriber_lists = subscriber_list
     @now = Time.zone.now
   end
