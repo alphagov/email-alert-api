@@ -34,6 +34,26 @@ RSpec.describe "report" do
     end
   end
 
+  describe "subscriber_list_by_slug_subscriber_count" do
+    after(:each) do
+      Rake::Task["report:subscriber_list_by_slug_subscriber_count"].reenable
+    end
+
+    context "with a valid subscriber list" do
+      let(:subscriber_list) { create(:subscriber_list) }
+
+      it "outputs a count of subscribers for a matched subscriber list" do
+        expect { Rake::Task["report:subscriber_list_by_slug_subscriber_count"].invoke(subscriber_list.slug) }
+          .to output.to_stdout
+      end
+    end
+
+    it "outputs a helpful message if the subscriber list is not found" do
+      expect { Rake::Task["report:subscriber_list_by_slug_subscriber_count"].invoke("non-existent-slug") }
+      .to raise_error(RuntimeError, "Subscriber list cannot be found with slug: non-existent-slug")
+    end
+  end
+
   describe "single_page_notifications_top_subscriber_lists" do
     it "outputs a report of single page notification subscriber lists" do
       expect { Rake::Task["report:single_page_notifications_top_subscriber_lists"].invoke }
