@@ -35,6 +35,13 @@ namespace :report do
     ).call
   end
 
+  desc "Output a simple count of active subscribers by subscriber_list slug"
+  task :subscriber_list_by_slug_subscriber_count, %i[slug] => :environment do |_t, args|
+    puts Reports::SubscriberListBySlugSubscriberCountReport.new(
+      args.fetch(:slug),
+    ).call
+  end
+
   desc "Output a subscribers count list for past dates by the subscrber_list URL "
   task :subscriber_count_list, %i[url start_date end_date] => :environment do |_t, args|
     puts Reports::SubscriberCountListReport.new(
