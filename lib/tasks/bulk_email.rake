@@ -41,12 +41,6 @@ namespace :bulk_email do
   task for_subscriber_lists: :environment do
     subscriber_lists = %w[
       department-for-culture-media-and-sport-9a1e4ff9b9
-      all-announcements-about-all-topics-by-department-for-culture-media-sport
-      all-publications-about-all-topics-by-department-for-culture-media-sport
-      consultations-about-all-topics-by-department-for-culture-media-sport
-      policy-papers-and-consultations-with-organisation-of-department-for-culture-media-and-sport
-      news-stories-related-to-department-for-culture-media-sport
-      press-releases-about-all-topics-by-department-for-culture-media-sport
     ]
 
     subscriber_lists.each do |subscriber_list|
