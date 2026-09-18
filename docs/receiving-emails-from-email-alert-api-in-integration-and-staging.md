@@ -1,9 +1,17 @@
 # Receive emails from Email Alert API in Integration and Staging
 
 In order to test receiving real emails from Email Alert API we have configured
-Google groups for the integration and staging environments. Emails
+Google groups for the Integration and Staging environments. Emails
 sent to addresses other than those of these groups will be
-[written to a logfile][logging-emails].
+[written to a logfile][logging-emails], and you can view them
+through Logit - see [this example query][logit-query].
+
+The default configuration in govuk-helm-charts limits emails to
+be sent to one email address, which is the Google group for
+Integration or Staging. See an [example of this config][helm-charts-config].
+
+The Google group email address also needs to be included in [Notify's
+guest list][notify-guest-list].
 
 ## In Integration
 
@@ -11,9 +19,9 @@ In Integration there is the [Email Alert API Integration Google
 group][integration-group]. It has an email address of
 `email-alert-api-integration@digital.cabinet-office.gov.uk`.
 
-This email is associated with an integration test user account, and
-the credentials are stored in [AWS Secrets Manager][aws-secrets] as `2ndline/govuk-accounts-integration`
-
+This email is associated with an Integration test user account
+with GOV.UK One Login, and the credentials are stored in
+[AWS Secrets Manager][aws-secrets] as `2ndline/govuk-accounts-integration`.
 
 This email address can be used to sign up to subscriptions on
 https://www.integration.publishing.service.gov.uk/.
@@ -59,3 +67,6 @@ If so, those credentials are listed in [AWS Secrets Manager][aws-secrets] as `2n
 [staging-group]: https://groups.google.com/a/digital.cabinet-office.gov.uk/g/email-alert-api-staging
 [data sync]: https://docs.publishing.service.gov.uk/manual/govuk-env-sync.html
 [aws-secrets]: https://docs.publishing.service.gov.uk/manual/secrets-manager.html
+[logit-query]: https://kibana.logit.io/s/42f4d2d5-e9ce-451f-8ffc-cdb25bd624f8/goto/1633450c81219a1bab69e3f582520d0f?security_tenant=global
+[helm-charts-config]: https://github.com/alphagov/govuk-helm-charts/blob/948ddd80fe7a09482c532a73507a455790c47eac/charts/app-config/values-integration.yaml#L1069-L1070
+[notify-guest-list]: https://www.notifications.service.gov.uk/services/b5213d78-8e54-4e76-8c0c-0adba7670579/api/guest-list
