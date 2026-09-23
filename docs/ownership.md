@@ -15,5 +15,7 @@ The owning team for this repo is responsible for the following maintenance tasks
   two owners. We have the following groups:
   - [Email Alert API Integration](https://groups.google.com/a/digital.cabinet-office.gov.uk/g/email-alert-api-integration)
   - [Email Alert API Staging](https://groups.google.com/a/digital.cabinet-office.gov.uk/g/email-alert-api-staging)
+  - [Email Alert API Alert Listener](https://groups.google.com/a/digital.cabinet-office.gov.uk/g/email-alert-api-alert-listener)
+  - [Email Alert API Bulk Migrate](https://groups.google.com/a/digital.cabinet-office.gov.uk/g/email-alert-api-bulk-migrate)
 
 [rotate-notify-keys]: https://docs.publishing.service.gov.uk/manual/govuk-notify.html#rotating-api-keys
