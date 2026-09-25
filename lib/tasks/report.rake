@@ -27,7 +27,7 @@ namespace :report do
     puts Reports::PotentiallyDeadListsReport.new.call
   end
 
-  desc "Output a simple count of subscribers by the subscrber_list URL"
+  desc "Output a simple count of subscribers by the subscriber_list URL"
   task :subscriber_list_subscriber_count, %i[url active_on_date] => :environment do |_t, args|
     puts Reports::SubscriberListSubscriberCountReport.new(
       args.fetch(:url),
@@ -42,7 +42,7 @@ namespace :report do
     ).call
   end
 
-  desc "Output a subscribers count list for past dates by the subscrber_list URL "
+  desc "Output a subscribers count list for past dates by the subscriber_list URL"
   task :subscriber_count_list, %i[url start_date end_date] => :environment do |_t, args|
     puts Reports::SubscriberCountListReport.new(
       args.fetch(:url),

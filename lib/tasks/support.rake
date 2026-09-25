@@ -179,7 +179,7 @@ namespace :support do
         puts "- Sent:   #{sent.where(status: 'sent').count}\n\n"
 
         puts "Notify Status (set by callback when delivering)\n"
-        puts "- No calback: #{sent.where(notify_status: nil).count}"
+        puts "- No callback: #{sent.where(notify_status: nil).count}"
         puts "- Permanent Failure: #{sent.where(notify_status: 'permanent-failure').count}"
         puts "- Temporary Failure: #{sent.where(notify_status: 'temporary-failure').count}"
         puts "- Delivered:  #{sent.where(notify_status: 'delivered').count}\n\n"
