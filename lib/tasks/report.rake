@@ -19,7 +19,7 @@ namespace :report do
     output = Reports::SubscriberListsReport.new(args[:date], **options).call
 
     s3.put_object({ body: output, bucket:, key: })
-    puts "File uploaded to S3 bucket successfully"
+    puts "File uploaded to S3 bucket successfully: #{bucket}, #{key}"
   end
 
   desc "Outputs a CSV of subscriber lists that appear to be inactive (tech debt)"

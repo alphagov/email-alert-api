@@ -13,10 +13,13 @@ RSpec.describe "report" do
 
   describe "csv_subscriber_lists" do
     it "uploads a report of data concerning subscriber lists for a given date to s3" do
+      ENV["AWS_S3_ASSET_BUCKET_NAME"] = "S3_BUCKET_NAME"
+      key = "data/email-alert-api/csv_subscriber_list_#{Time.zone.now.utc.strftime('%Y%m%d%H%M%S')}.csv"
+
       allow(Aws::S3::Client).to receive(:new).and_return(instance_double(Aws::S3::Client, put_object: true))
 
       expect { Rake::Task["report:csv_subscriber_lists"].invoke(6.months.ago.to_s) }
-        .to output("File uploaded to S3 bucket successfully\n").to_stdout
+        .to output("File uploaded to S3 bucket successfully: #{ENV['AWS_S3_ASSET_BUCKET_NAME']}, #{key}\n").to_stdout
     end
   end
 
