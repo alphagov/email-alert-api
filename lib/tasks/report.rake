@@ -3,8 +3,19 @@ require "aws-sdk-s3"
 namespace :report do
   desc "Outputs a CSV of content changes by subscriber list"
   task matched_content_changes: :environment do
-    puts Reports::MatchedContentChangesReport.new.call(start_time: ENV["START_DATE"],
-                                                       end_time: ENV["END_DATE"])
+    filename = "matched_content_changes_#{Time.zone.now.utc.strftime('%Y%m%d%H%M%S')}.csv"
+
+    bucket = ENV["AWS_S3_ASSET_BUCKET_NAME"]
+    key = "data/email-alert-api/#{filename}"
+
+    s3 = Aws::S3::Client.new
+    output = Reports::MatchedContentChangesReport.new.call(
+      start_time: ENV["START_DATE"],
+      end_time: ENV["END_DATE"],
+    )
+
+    s3.put_object({ body: output, bucket:, key: })
+    puts "File uploaded to S3 bucket successfully: #{bucket}, #{key}"
   end
 
   desc "Outputs a CSV of information for each subscriber list within a year for a past date, format: 'yyyy-mm-dd'"
@@ -19,15 +30,24 @@ namespace :report do
     output = Reports::SubscriberListsReport.new(args[:date], **options).call
 
     s3.put_object({ body: output, bucket:, key: })
-    puts "File uploaded to S3 bucket successfully"
+    puts "File uploaded to S3 bucket successfully: #{bucket}, #{key}"
   end
 
   desc "Outputs a CSV of subscriber lists that appear to be inactive (tech debt)"
   task potentially_dead_lists: :environment do
-    puts Reports::PotentiallyDeadListsReport.new.call
+    filename = "potentially_dead_lists_#{Time.zone.now.utc.strftime('%Y%m%d%H%M%S')}.csv"
+
+    bucket = ENV["AWS_S3_ASSET_BUCKET_NAME"]
+    key = "data/email-alert-api/#{filename}"
+
+    s3 = Aws::S3::Client.new
+    output = Reports::PotentiallyDeadListsReport.new.call
+
+    s3.put_object({ body: output, bucket:, key: })
+    puts "File uploaded to S3 bucket successfully: #{bucket}, #{key}"
   end
 
-  desc "Output a simple count of subscribers by the subscrber_list URL"
+  desc "Output a simple count of subscribers by the subscriber_list URL"
   task :subscriber_list_subscriber_count, %i[url active_on_date] => :environment do |_t, args|
     puts Reports::SubscriberListSubscriberCountReport.new(
       args.fetch(:url),
@@ -42,7 +62,7 @@ namespace :report do
     ).call
   end
 
-  desc "Output a subscribers count list for past dates by the subscrber_list URL "
+  desc "Output a subscribers count list for past dates by the subscriber_list URL"
   task :subscriber_count_list, %i[url start_date end_date] => :environment do |_t, args|
     puts Reports::SubscriberCountListReport.new(
       args.fetch(:url),
