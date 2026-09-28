@@ -149,7 +149,15 @@ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake SLUGS=<list_
 
 The date should be in ISO8601 format (YYYY-MM-DD), for example 2020-01-01.
 
-### Get the number of subscribers for a subscriber list by month
+### Find subscriber lists by title match
+
+This will return the full title and slug for each subscriber list that contains the string provided. This can be useful if you need to find out how many subscriber lists there are for a particular organisation, or in preparation of [updating a subscriber list](/lib/tasks/data_migration.rake).
+
+```bash
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:find_subscriber_list_by_title[<title>] '
+```
+
+### Get the number of subscribers for a subscriber list by month
 
 This rake task requires a URL to get the subscriber count for the 1st of each month:
 
