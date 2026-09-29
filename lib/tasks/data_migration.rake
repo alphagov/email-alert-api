@@ -33,24 +33,6 @@ namespace :data_migration do
     end
   end
 
-  desc "Find subscriber lists by title match"
-  task :find_subscriber_list_by_title, %i[title] => :environment do |_t, args|
-    title = args[:title]
-    subscriber_lists = SubscriberList.where("title ILIKE ?", "%#{title}%")
-
-    if subscriber_lists.present?
-      puts "Found #{subscriber_lists.count} subscriber lists containing '#{title}'"
-
-      subscriber_lists.each do |subscriber_list|
-        puts "============================="
-        puts "title: #{subscriber_list.title}"
-        puts "slug: #{subscriber_list.slug}"
-      end
-    else
-      raise "Cannot find any subscriber lists with title containing `#{title}`"
-    end
-  end
-
   # WARNING: this will cause any in-flight signup journeys to 404,
   # as the slug is used as the ID of the list to subscribe to.
   desc "Update subscriber list slug"

@@ -91,38 +91,6 @@ RSpec.describe "data_migration" do
     end
   end
 
-  describe "find_subscriber_list_by_title" do
-    before do
-      Rake::Task["data_migration:find_subscriber_list_by_title"].reenable
-    end
-
-    it "outputs a list of subscriber lists that contain the title" do
-      list1 = create(:subscriber_list, title: "Special title")
-      list2 = create(:subscriber_list, title: "Special title")
-
-      expect { Rake::Task["data_migration:find_subscriber_list_by_title"].invoke("Special title") }
-        .to output(
-          <<~TEXT,
-            Found 2 subscriber lists containing 'Special title'
-            =============================
-            title: Special title
-            slug: #{list1.slug}
-            =============================
-            title: Special title
-            slug: #{list2.slug}
-          TEXT
-        ).to_stdout
-    end
-
-    it "raises an error if title isn't found in any subscriber lists" do
-      # create(:subscriber_list)
-
-      expect {
-        Rake::Task["data_migration:find_subscriber_list_by_title"].invoke("Unknown title")
-      }.to raise_error(RuntimeError, /Cannot find any subscriber lists with title containing `Unknown title`/)
-    end
-  end
-
   describe "update_subscriber_list_tag" do
     before do
       Rake::Task["data_migration:update_subscriber_list_tag"].reenable
