@@ -32,9 +32,9 @@
     historical_data_deletion:
       cron: '0 12 * * * Europe/London' # every day at midday
       class: HistoricalDataDeletionJob
-    # nullify_subscribers:
-    #   every: '1h'
-    #   class: NullifySubscribersJob
+    nullify_subscribers:
+      every: '1h'
+      class: NullifySubscribersJob
     email_deleter:
       every: '1h'
       class: EmailDeletionJob
