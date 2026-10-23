@@ -185,7 +185,7 @@ kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:subs
 To see a simple count of the number of subscribers for a given list by slug:
 
 ```bash
-kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:subscriber_list_by_slug_subscriber_count[<path>]'
+kubectl -n apps exec -it deploy/email-alert-api -- bundle exec rake 'report:subscriber_list_by_slug_subscriber_count[<slug>]'
 ```
 Both of the rake tasks above will report on the number of active subscriptions for a given path.
 
