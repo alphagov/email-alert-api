@@ -26,7 +26,7 @@ so we know that it can't be triggered.
 This is a long-running job which needs to be run asynchronously. To kick it off, use:
 
 ```bash
-kubectl -n apps exec -it deploy/email-alert-api -- rake 'subscriber_list_audit:start'
+govuk-cli jobrequest create email-alert-api --follow -- rake 'subscriber_list_audit:start'
 ```
 
 NB: It will probably only reliably run in production, as the time taken to iterate
@@ -36,13 +36,13 @@ by the environment sync.
 To check the number of workers remaining on the job:
 
 ```bash
-kubectl -n apps exec -it deploy/email-alert-api -- rake 'subscriber_list_audit:queue_size'
+govuk-cli jobrequest create email-alert-api --follow -- rake 'subscriber_list_audit:queue_size'
 ```
 
 When there are no workers remaining, you can run:
 
 ```bash
-kubectl -n apps exec -it deploy/email-alert-api -- rake 'subscriber_list_audit:report[2024-04-16]'
+govuk-cli jobrequest create email-alert-api --follow -- rake 'subscriber_list_audit:report[2024-04-16]'
 ```
 
 to get a list of all subscriber lists that have either not been marked in an audit, or have not
