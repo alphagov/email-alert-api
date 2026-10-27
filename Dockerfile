@@ -13,6 +13,7 @@ RUN bootsnap precompile --gemfile .
 
 
 FROM --platform=$TARGETPLATFORM $base_image
+RUN install_packages libcurl4t64
 
 ENV GOVUK_APP_NAME=email-alert-api
 
