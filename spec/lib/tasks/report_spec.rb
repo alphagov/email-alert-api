@@ -6,13 +6,15 @@ RSpec.describe "report" do
 
   describe "matched_content_changes" do
     it "outputs a CSV of matched content changes" do
-      ENV["AWS_S3_ASSET_BUCKET_NAME"] = "S3_BUCKET_NAME"
-      key = "data/email-alert-api/matched_content_changes_#{Time.zone.now.utc.strftime('%Y%m%d%H%M%S')}.csv"
+      travel_to(Time.utc(2026, 10, 27, 14, 38, 22)) do
+        ENV["AWS_S3_ASSET_BUCKET_NAME"] = "S3_BUCKET_NAME"
+        key = "data/email-alert-api/matched_content_changes_#{Time.zone.now.utc.strftime('%Y%m%d%H%M%S')}.csv"
 
-      allow(Aws::S3::Client).to receive(:new).and_return(instance_double(Aws::S3::Client, put_object: true))
+        allow(Aws::S3::Client).to receive(:new).and_return(instance_double(Aws::S3::Client, put_object: true))
 
-      expect { Rake::Task["report:matched_content_changes"].invoke }
-        .to output("File uploaded to S3 bucket successfully: #{ENV['AWS_S3_ASSET_BUCKET_NAME']}, #{key}\n").to_stdout
+        expect { Rake::Task["report:matched_content_changes"].invoke }
+          .to output("File uploaded to S3 bucket successfully: #{ENV['AWS_S3_ASSET_BUCKET_NAME']}, #{key}\n").to_stdout
+      end
     end
   end
 
