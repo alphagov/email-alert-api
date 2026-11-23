@@ -115,4 +115,157 @@ namespace :report do
       args.fetch(:govuk_path),
     ).call
   end
+
+  desc "Outputs CSVs of content changes by publishing organisation, grouped by month and week"
+  task content_changes_by_organisation: :environment do
+    months = ENV.fetch("MONTHS", 12).to_i
+    raise ArgumentError, "MONTHS must be greater than 0" unless months.positive?
+
+    start_date = months.months.ago
+    end_date = Time.current
+
+    org_names = GdsApi.organisations.organisations.with_subsequent_pages.to_h do |org|
+      [org.dig("details", "content_id"), org["title"]]
+    end
+
+    monthly_counts = Hash.new(0)
+    weekly_counts = Hash.new(0)
+
+    ContentChange.where(created_at: start_date..end_date).find_each do |content_change|
+      org_ids =
+        content_change.links[:primary_publishing_organisation] ||
+        []
+
+      month = content_change.created_at.to_date.beginning_of_month
+      week = content_change.created_at.to_date.beginning_of_week(:monday)
+
+      org_ids.each do |content_id|
+        org_title = org_names[content_id]
+        next unless org_title
+
+        monthly_counts[[month, org_title]] += 1
+        weekly_counts[[week, org_title]] += 1
+      end
+    end
+
+    build_csv = lambda do |period_header, counts|
+      CSV.generate do |csv|
+        csv << [period_header, "organisation", "content_changes"]
+
+        counts
+          .sort_by { |(period, organisation), _count| [period, organisation] }
+          .each do |(period, organisation), count|
+            csv << [period.iso8601, organisation, count]
+          end
+      end
+    end
+
+    timestamp = Time.zone.now.utc.strftime("%Y%m%d%H%M%S")
+    bucket = ENV["AWS_S3_ASSET_BUCKET_NAME"]
+    s3 = Aws::S3::Client.new
+
+    reports = {
+      "monthly" => build_csv.call("month_starting", monthly_counts),
+      "weekly" => build_csv.call("week_starting", weekly_counts),
+    }
+
+    reports.each do |period, output|
+      filename = "content_changes_by_organisation_#{period}_#{timestamp}.csv"
+      key = "data/email-alert-api/#{filename}"
+
+      s3.put_object(
+        body: output,
+        bucket:,
+        key:,
+        content_type: "text/csv",
+      )
+
+      puts "File uploaded to S3 bucket successfully: #{bucket}, #{key}"
+    end
+  end
+
+  desc "Outputs CSVs of email updates recipients by publishing organisation, grouped by month and week"
+  task subscribers_by_organisation: :environment do
+    org_names = GdsApi.organisations.organisations.with_subsequent_pages.to_h do |org|
+      [org.dig("details", "content_id"), org["title"]]
+    end
+
+    monthly_counts = Hash.new(0)
+    weekly_counts = Hash.new(0)
+
+    start_time = 12.months.ago
+    end_time = Time.current
+
+    ContentChange
+      .where(created_at: start_time..end_time)
+      .includes(matched_content_changes: :subscriber_list)
+      .find_each(batch_size: 5_000) do |content_change|
+      month = content_change.created_at.strftime("%Y-%m")
+      week = content_change.created_at.to_date.beginning_of_week(:monday).iso8601
+
+      org_ids =
+        content_change.links[:primary_publishing_organisation] ||
+        []
+
+      # Number of active subscriptions matched to each content change at that point in time
+      subscriber_count = content_change.matched_content_changes.sum do |match|
+        match
+          .subscriber_list
+          .subscriptions
+          .active_on(content_change.created_at.to_date)
+          .count
+      end
+
+      org_ids.each do |content_id|
+        org_title = org_names[content_id]
+        next unless org_title
+
+        monthly_counts[[month, org_title]] += subscriber_count
+        weekly_counts[[week, org_title]] += subscriber_count
+      end
+    end
+
+    monthly_csv = CSV.generate do |csv|
+      csv << %w[month organisation notification_recipients]
+
+      monthly_counts
+        .sort_by { |(month, org), _| [month, org] }
+        .each do |(month, org), count|
+          csv << [month, org, count]
+        end
+    end
+
+    weekly_csv = CSV.generate do |csv|
+      csv << %w[week_starting organisation notification_recipients]
+
+      weekly_counts
+        .sort_by { |(week, org), _| [week, org] }
+        .each do |(week, org), count|
+          csv << [week, org, count]
+        end
+    end
+
+    timestamp = Time.zone.now.utc.strftime("%Y%m%d%H%M%S")
+    bucket = ENV["AWS_S3_ASSET_BUCKET_NAME"]
+    s3 = Aws::S3::Client.new
+
+    reports = {
+      "monthly" => monthly_csv,
+      "weekly" => weekly_csv,
+    }
+
+    reports.each do |period, output|
+      filename = "notification_recipients_by_organisation_#{period}_#{timestamp}.csv"
+      key = "data/email-alert-api/#{filename}"
+
+      s3.put_object(
+        body: output,
+        bucket:,
+        key:,
+        content_type: "text/csv",
+      )
+
+      puts "File uploaded to S3 bucket successfully: #{bucket}, #{key}"
+    end
+  end
 end
