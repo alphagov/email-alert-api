@@ -193,13 +193,27 @@ namespace :report do
     monthly_counts = Hash.new(0)
     weekly_counts = Hash.new(0)
 
-    start_time = 12.months.ago
+    start_time = ENV.fetch("MONTHS", 12).to_i.months.ago
     end_time = Time.current
 
-    ContentChange
-      .where(created_at: start_time..end_time)
+    subscription_counts = {}
+
+    content_changes = ContentChange.where(created_at: start_time..end_time)
+    total = content_changes.count
+    processed = 0
+    batch_size = ENV.fetch("BATCH_SIZE", 100).to_i
+
+    puts "Processing #{total} content changes..."
+
+    content_changes
       .includes(matched_content_changes: :subscriber_list)
-      .find_each(batch_size: 5_000) do |content_change|
+      .find_each(batch_size: batch_size) do |content_change|
+      processed += 1
+      if (processed % batch_size).zero?
+        percentage = (processed.to_f / total * 100).round(1)
+        puts "Processed #{processed}/#{total} content changes (#{percentage}%)"
+      end
+
       month = content_change.created_at.strftime("%Y-%m")
       week = content_change.created_at.to_date.beginning_of_week(:monday).iso8601
 
@@ -209,8 +223,10 @@ namespace :report do
 
       # Number of active subscriptions matched to each content change at that point in time
       subscriber_count = content_change.matched_content_changes.sum do |match|
-        match
-          .subscriber_list
+        subscriber_list = match.subscriber_list
+        cache_key = [subscriber_list.id, content_change.created_at.to_date]
+
+        subscription_counts[cache_key] ||= subscriber_list
           .subscriptions
           .active_on(content_change.created_at.to_date)
           .count
