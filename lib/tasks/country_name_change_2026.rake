@@ -28,4 +28,19 @@ task country_name_change_find_lists: :environment do
     end
     puts ""
   end
+
+  desc "Update subscriber list tags for country name changes"
+  task update_multiple_subscriber_list_tag: :environment do
+    run_task = lambda do |name, *args|
+      task = Rake::Task[name]
+      task.reenable
+      task.invoke(*args)
+    end
+
+    %w[location destination_country country].each do |tag|
+      COUNTRY_LIST.each do |original, new|
+        run_task.call("update_subscriber_list_tag", tag, original.downcase.parameterize, new.downcase.parameterize)
+      end
+    end
+  end
 end
